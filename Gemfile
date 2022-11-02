@@ -69,3 +69,6 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+gem 'jwt'
+gem 'bcrypt', '~> 3.1', '>= 3.1.12'
