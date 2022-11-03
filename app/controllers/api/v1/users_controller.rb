@@ -45,7 +45,7 @@ class Api::V1::UsersController < ApplicationController
     @otp_generate = 4.times.map { rand(10) }.join
     @current_user.update(otp: @otp_generate)
     UserMailer.user_forgot_password(@current_user.email, @otp_generate).deliver_now
-    return render json: { message: 'OTP is ' ,otp: @otp_generate }, status: :ok
+    return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
   end
 
   def reset_user_password
