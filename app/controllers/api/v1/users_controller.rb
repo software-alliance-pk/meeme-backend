@@ -10,14 +10,16 @@ class Api::V1::UsersController < ApplicationController
 
   # GET /users/{username}
   def show
-    render json: @user, status: :ok
+    render json: {user: @user,
+                  profile_image: @user.profile_image.attached? ? rails_blob_path(@user.profile_image): ''},
+           status: :ok
   end
 
   # POST /users
   def create
     @user = User.new(user_params)
     if @user.save
-      render json: @user, status: :created
+      render json: { user: @user, profile_image: @user.profile_image.attached? ? rails_blob_path(@user.profile_image): '' }, status: :created
     else
       render json: { errors: @user.errors.full_messages },
              status: :unprocessable_entity
@@ -31,7 +33,8 @@ class Api::V1::UsersController < ApplicationController
              status: :unprocessable_entity
     else
       @current_user.update(user_params)
-      render json: { user: @current_user },
+      render json: { user: @current_user,
+                     profile_image: @current_user.profile_image.attached? ? rails_blob_path(@current_user.profile_image): '' },
              status: :ok
     end
   end
@@ -80,7 +83,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.permit(:username, :email, :phone, :bio, :password, :password_confirmation
+    params.permit(:username, :email, :phone, :bio, :password, :password_confirmation, :profile_image
     )
   end
 end
