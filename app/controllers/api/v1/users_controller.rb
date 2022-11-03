@@ -27,7 +27,6 @@ class Api::V1::UsersController <  Api::V1::ApiController
 
   # PUT /users/{username}
   def update_user
-    debugger
     unless @current_user.update(user_params)
       render_error_messages(@user)
     else
