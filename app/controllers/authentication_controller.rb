@@ -10,7 +10,9 @@ class AuthenticationController < ApplicationController
       @user.verification_tokens.create(token: token)
       render json: { token: token,
                      expiry: time.strftime("%m-%d-%Y %H:%M"),
-                     user: @user }, status: :ok
+                     user: @user,
+                     message: "Successfully Logged In" },
+             status: :ok
     else
       render json: { error: 'unauthorized' }, status: :unauthorized
     end
@@ -23,7 +25,7 @@ class AuthenticationController < ApplicationController
       @current_user.verification_tokens.find_by_token(token).destroy
       render json: { message: 'Successfully Signed Out' }, status: :ok
     else
-      return render json: { error: 'Verification Token Not Found' }, status: :not_found
+      return render json: { message: 'Verification Token Not Found' }, status: :not_found
     end
   end
 

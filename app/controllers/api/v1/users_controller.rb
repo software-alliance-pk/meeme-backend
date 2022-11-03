@@ -19,9 +19,9 @@ class Api::V1::UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      render json: { user: @user, profile_image: @user.profile_image.attached? ? rails_blob_path(@user.profile_image): '' }, status: :created
+      render json: { user: @user, profile_image: @user.profile_image.attached? ? rails_blob_path(@user.profile_image): '',message: 'User created successfully'}, status: :created
     else
-      render json: { errors: @user.errors.full_messages },
+      render json: { message: @user.errors.full_messages},
              status: :unprocessable_entity
     end
   end
@@ -29,12 +29,13 @@ class Api::V1::UsersController < ApplicationController
   # PUT /users/{username}
   def update_user
     unless @current_user.update(user_params)
-      render json: { errors: @user.errors.full_messages },
+      render json: { message: @user.errors.full_messages },
              status: :unprocessable_entity
     else
       @current_user.update(user_params)
       render json: { user: @current_user,
-                     profile_image: @current_user.profile_image.attached? ? rails_blob_path(@current_user.profile_image): '' },
+                     profile_image: @current_user.profile_image.attached? ? rails_blob_path(@current_user.profile_image): '',
+                     message: "Profile Updated"},
              status: :ok
     end
   end
@@ -50,16 +51,16 @@ class Api::V1::UsersController < ApplicationController
     if UserMailer.user_forgot_password(@current_user.email, @otp_generate).deliver_now
       return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
     else
-      return render json: { error: 'OTP was not send successfully' }, status: :unprocessable_entity
+      return render json: { message: 'OTP was not send successfully' }, status: :unprocessable_entity
     end
   end
 
   def reset_user_password
     if params[:otp].empty?
-      return render json: { error: 'OTP not present' }, status: :unprocessable_entity
+      return render json: { message: 'OTP not present' }, status: :unprocessable_entity
     end
     if params[:password].empty? || params[:password_confirmation].empty?
-      return render json: { error: 'Password not present' }, status: :unprocessable_entity
+      return render json: { message: 'Password not present' }, status: :unprocessable_entity
     end
 
     if @current_user.otp == params[:otp]
@@ -79,7 +80,7 @@ class Api::V1::UsersController < ApplicationController
   def find_user
     @user = User.find_by_username!(params[:_username])
   rescue ActiveRecord::RecordNotFound
-    render json: { errors: 'User not found' }, status: :not_found
+    render json: { message: 'User not found' }, status: :not_found
   end
 
   def user_params
