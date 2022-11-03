@@ -1,4 +1,4 @@
-class Api::V1::UsersController < ApplicationController
+class Api::V1::UsersController <  Api::V1::ApiController
   before_action :authorize_request, except: :create
   before_action :find_user, except: %i[create index update_user forgot_password reset_user_password]
 
@@ -21,16 +21,15 @@ class Api::V1::UsersController < ApplicationController
     if @user.save
       render json: { user: @user, profile_image: @user.profile_image.attached? ? rails_blob_path(@user.profile_image): '',message: 'User created successfully'}, status: :created
     else
-      render json: { message: @user.errors.full_messages},
-             status: :unprocessable_entity
+      render_error_messages(@user)
     end
   end
 
   # PUT /users/{username}
   def update_user
+    debugger
     unless @current_user.update(user_params)
-      render json: { message: @user.errors.full_messages },
-             status: :unprocessable_entity
+      render_error_messages(@user)
     else
       @current_user.update(user_params)
       render json: { user: @current_user,
@@ -59,12 +58,15 @@ class Api::V1::UsersController < ApplicationController
     if params[:otp].empty?
       return render json: { message: 'OTP not present' }, status: :unprocessable_entity
     end
-    if params[:password].empty? || params[:password_confirmation].empty?
+    if params[:password].empty?
       return render json: { message: 'Password not present' }, status: :unprocessable_entity
+    end
+    if params[:confirm_password].empty?
+      return render json: { message: 'Confirm Password not present' }, status: :unprocessable_entity
     end
 
     if @current_user.otp == params[:otp]
-      if params[:password] == params[:password_confirmation]
+      if params[:password] == params[:confirm_password]
         @current_user.update(password: params[:password])
         render json: { message: "Password updated" }, status: :ok
       else
@@ -76,7 +78,6 @@ class Api::V1::UsersController < ApplicationController
   end
 
   private
-
   def find_user
     @user = User.find_by_username!(params[:_username])
   rescue ActiveRecord::RecordNotFound

@@ -13,11 +13,11 @@ Rails.application.routes.draw do
         end
         get '/*a', to: 'application#not_found'
       end
+      post '/auth/login', to: "authentication#login"
+      post '/auth/logout', to: "authentication#logout"
     end
   end
 
-  post '/auth/login', to: "authentication#login"
-  post '/auth/logout', to: "authentication#logout"
   # post '/auth/forgot_password', to: "authentication#forgot_password"
 
 end

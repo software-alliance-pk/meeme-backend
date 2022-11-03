@@ -1,4 +1,4 @@
-class AuthenticationController < ApplicationController
+class Api::V1::AuthenticationController < Api::V1::ApiController
   before_action :authorize_request, except: :login
 
   # POST /auth/login
@@ -14,7 +14,7 @@ class AuthenticationController < ApplicationController
                      message: "Successfully Logged In" },
              status: :ok
     else
-      render json: { error: 'Enter valid email/password' }, status: :unauthorized
+      render json: { message: 'Invalid Email or Password' }, status: :unauthorized
     end
   end
 
