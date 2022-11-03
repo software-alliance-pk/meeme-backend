@@ -14,7 +14,7 @@ class AuthenticationController < ApplicationController
                      message: "Successfully Logged In" },
              status: :ok
     else
-      render json: { error: 'unauthorized' }, status: :unauthorized
+      render json: { error: 'Enter valid email/password' }, status: :unauthorized
     end
   end
 
