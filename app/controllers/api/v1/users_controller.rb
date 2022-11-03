@@ -44,21 +44,24 @@ class Api::V1::UsersController < ApplicationController
   def forgot_password
     @otp_generate = 4.times.map { rand(10) }.join
     @current_user.update(otp: @otp_generate)
-    UserMailer.user_forgot_password(@current_user.email, @otp_generate).deliver_now
-    return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
+    if UserMailer.user_forgot_password(@current_user.email, @otp_generate).deliver_now
+      return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
+    else
+      return render json: { error: 'OTP was not send successfully' }, status: :unprocessable_entity
+    end
   end
 
   def reset_user_password
     if params[:otp].empty?
       return render json: { error: 'OTP not present' }, status: :unprocessable_entity
     end
-    if params[:password].empty? || params[:confirm_password].empty?
+    if params[:password].empty? || params[:password_confirmation].empty?
       return render json: { error: 'Password not present' }, status: :unprocessable_entity
     end
 
     if @current_user.otp == params[:otp]
-      if params[:password] == params[:confirm_password]
-        @current_user.update(password_digest: params[:password])
+      if params[:password] == params[:password_confirmation]
+        @current_user.update(password: params[:password])
         render json: { message: "Password updated" }, status: :ok
       else
         render json: { message: "Passwords don't match" }, status: :not_found

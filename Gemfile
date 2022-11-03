@@ -72,5 +72,5 @@ group :test do
 end
 
 gem 'jwt'
-gem 'bcrypt', '~> 3.1', '>= 3.1.12'
-gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
+gem 'bcrypt'
+gem 'dotenv-rails'
