@@ -26,16 +26,21 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def update_posts
-    @post = @current_user.posts.find(params[:post_id])
-    unless @post.update(post_params)
-      render_error_messages(@post)
-    else
-      @post.update(post_params)
-      render json: { post: @post,
-                     post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
-                     message: "Post Updated" },
-             status: :ok
+    begin
+      @post = @current_user.posts.find(params[:post_id])
+      unless @post.update(post_params)
+        render_error_messages(@post)
+      else
+        @post.update(post_params)
+        render json: { post: @post,
+                       post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
+                       message: "Post Updated" },
+               status: :ok
+      end
+    rescue
+      render json: { message: "Post not found" }, status: :unauthorized
     end
+
   end
 
   def destroy
