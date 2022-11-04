@@ -9,6 +9,7 @@ class SocialLoginService
     @type = type
     @fcm_token = fcm_token
   end
+
   def social_login
     if @provider == 'google'
       google_signup(@token)
@@ -27,9 +28,9 @@ class SocialLoginService
     json_response = JSON.parse(response.body)
     user = create_user(json_response['email'], json_response['sub'], json_response)
 
-
+    profile_image=  @user.profile_image.attached? ? rails_blob_path(@user.profile_image) : '',
     token = JsonWebTokenService.encode(user_id: @user.id)
-    [user, token]
+    [user, token, profile_image]
   end
 
   def facebook_signup(token)
@@ -38,10 +39,10 @@ class SocialLoginService
     return JSON.parse(response.body) if response.code != '200'
 
     json_response = JSON.parse(response.body)
-    user= create_user(json_response['email'], json_response['sub'], json_response)
-
+    user = create_user(json_response['email'], json_response['sub'], json_response)
+    profile_image=  @user.profile_image.attached? ? rails_blob_path(@user.profile_image) : '',
     token = JsonWebTokenService.encode(user_id: @user.id)
-    [user, token]
+    [user, token, profile_image]
   end
 
   def apple_signup(token)
@@ -71,9 +72,8 @@ class SocialLoginService
   private
 
   def create_user(email, provider_id, response)
-    if (@user =  User.find_by(email: email))
-      debugger
-      resource
+    if (@user = User.find_by(email: email))
+      @user
     else
       @user = User.create(email: email, password: PASSWORD_DIGEST, password_confirmation: PASSWORD_DIGEST, username: response['name'])
     end

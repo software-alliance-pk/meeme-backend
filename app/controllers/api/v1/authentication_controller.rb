@@ -4,6 +4,9 @@ class Api::V1::AuthenticationController < Api::V1::ApiController
   # POST /auth/login
   def login
     @user = User.find_by_email(params[:email])
+
+    return render json: { message: "Email not valid" }, status: :not_found unless @user
+
     if @user&.authenticate(params[:password])
       token = JsonWebTokenService.encode(user_id: @user.id)
       time = Time.now + 24.hours.to_i
@@ -11,10 +14,11 @@ class Api::V1::AuthenticationController < Api::V1::ApiController
       render json: { token: token,
                      expiry: time.strftime("%m-%d-%Y %H:%M"),
                      user: @user,
+                     profile_image: @user.profile_image.attached? ? rails_blob_path(@user.profile_image) : '',
                      message: "Successfully Logged In" },
              status: :ok
     else
-      render json: { message: 'Invalid Email or Password' }, status: :unauthorized
+      render json: { message: 'Invalid Password' }, status: :unauthorized
     end
   end
 

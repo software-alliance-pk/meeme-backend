@@ -1,6 +1,6 @@
 class Api::V1::UsersController <  Api::V1::ApiController
-  before_action :authorize_request, except: :create
-  before_action :find_user, except: %i[create index update_user forgot_password reset_user_password]
+  before_action :authorize_request, except: %i[create forgot_password reset_user_password]
+  before_action :find_user, except: %i[create index update_user]
 
   # GET /users
   def index
@@ -19,7 +19,7 @@ class Api::V1::UsersController <  Api::V1::ApiController
   def create
     @user = User.new(user_params)
     if @user.save
-      render json: { user: @user, profile_image: @user.profile_image.attached? ? rails_blob_path(@user.profile_image): '',message: 'User created successfully'}, status: :created
+      render json: { user: @user, profile_image: @user.profile_image.attached? ? rails_blob_path(@user.profile_image): '',message: 'User created successfully'}, status: :ok
     else
       render_error_messages(@user)
     end
@@ -45,8 +45,8 @@ class Api::V1::UsersController <  Api::V1::ApiController
 
   def forgot_password
     @otp_generate = 4.times.map { rand(10) }.join
-    @current_user.update(otp: @otp_generate)
-    if UserMailer.user_forgot_password(@current_user.email, @otp_generate).deliver_now
+    @user.update(otp: @otp_generate)
+    if UserMailer.user_forgot_password(@user.email, @otp_generate).deliver_now
       return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
     else
       return render json: { message: 'OTP was not send successfully' }, status: :unprocessable_entity
@@ -60,13 +60,13 @@ class Api::V1::UsersController <  Api::V1::ApiController
     if params[:password].empty?
       return render json: { message: 'Password not present' }, status: :unprocessable_entity
     end
-    if params[:confirm_password].empty?
+    if params[:password_confirmation].empty?
       return render json: { message: 'Confirm Password not present' }, status: :unprocessable_entity
     end
 
-    if @current_user.otp == params[:otp]
-      if params[:password] == params[:confirm_password]
-        @current_user.update(password: params[:password])
+    if @user.otp == params[:otp]
+      if params[:password] == params[:password_confirmation]
+        @user.update(password: params[:password])
         render json: { message: "Password updated" }, status: :ok
       else
         render json: { message: "Passwords don't match" }, status: :not_found
@@ -78,7 +78,7 @@ class Api::V1::UsersController <  Api::V1::ApiController
 
   private
   def find_user
-    @user = User.find_by_username!(params[:_username])
+    @user = User.find_by_email(params[:email])
   rescue ActiveRecord::RecordNotFound
     render json: { message: 'User not found' }, status: :not_found
   end
