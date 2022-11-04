@@ -11,7 +11,7 @@ class Api::V1::UsersController <  Api::V1::ApiController
   # GET /users/{username}
   def show
     render json: {user: @user,
-                  profile_image: @user.profile_image.attached? ? url_for(@user.profile_image): ''},
+                  profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url: ''},
            status: :ok
   end
 
@@ -19,7 +19,7 @@ class Api::V1::UsersController <  Api::V1::ApiController
   def create
     @user = User.new(user_params)
     if @user.save
-      render json: { user: @user, profile_image: @user.profile_image.attached? ? url_for(@user.profile_image): '',message: 'User created successfully'}, status: :ok
+      render json: { user: @user, profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',message: 'User created successfully'}, status: :ok
     else
       render_error_messages(@user)
     end
@@ -32,7 +32,7 @@ class Api::V1::UsersController <  Api::V1::ApiController
     else
       @current_user.update(user_params)
       render json: { user: @current_user,
-                     profile_image: @current_user.profile_image.attached? ? url_for(@current_user.profile_image): '',
+                     profile_image: @current_user.profile_image.attached? ? @current_user.profile_image.blob.url: '',
                      message: "Profile Updated"},
              status: :ok
     end

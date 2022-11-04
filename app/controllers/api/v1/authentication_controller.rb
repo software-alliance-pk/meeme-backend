@@ -14,7 +14,7 @@ class Api::V1::AuthenticationController < Api::V1::ApiController
       render json: { token: token,
                      expiry: time.strftime("%m-%d-%Y %H:%M"),
                      user: @user,
-                     profile_image: @user.profile_image.attached? ? url_for(@user.profile_image) : '',
+                     profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
                      message: "Successfully Logged In" },
              status: :ok
     else

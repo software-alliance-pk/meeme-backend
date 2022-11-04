@@ -74,3 +74,4 @@ end
 gem 'jwt'
 gem 'bcrypt'
 gem 'dotenv-rails'
+gem 'cloudinary'
