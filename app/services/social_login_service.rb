@@ -28,7 +28,7 @@ class SocialLoginService
     json_response = JSON.parse(response.body)
     user = create_user(json_response['email'], json_response['sub'], json_response)
 
-    profile_image=  @user.profile_image.attached? ? rails_blob_path(@user.profile_image) : '',
+    profile_image=  @user.profile_image.attached? ? url_for(@user.profile_image) : '',
     token = JsonWebTokenService.encode(user_id: @user.id)
     [user, token, profile_image]
   end
@@ -40,7 +40,7 @@ class SocialLoginService
 
     json_response = JSON.parse(response.body)
     user = create_user(json_response['email'], json_response['sub'], json_response)
-    profile_image=  @user.profile_image.attached? ? rails_blob_path(@user.profile_image) : '',
+    profile_image=  @user.profile_image.attached? ? url_for(@user.profile_image) : '',
     token = JsonWebTokenService.encode(user_id: @user.id)
     [user, token, profile_image]
   end
