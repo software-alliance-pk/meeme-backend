@@ -1,5 +1,6 @@
 class Api::V1::PostsController < Api::V1::ApiController
   before_action :authorize_request
+  before_action :find_post, only: [:show, :update_posts, :destroy]
 
   def index
     @posts = @current_user.posts
@@ -26,35 +27,29 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def update_posts
-    begin
-      @post = @current_user.posts.find(params[:post_id])
-      unless @post.update(post_params)
-        render_error_messages(@post)
-      else
-        @post.update(post_params)
-        render json: { post: @post,
-                       post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
-                       message: "Post Updated" },
-               status: :ok
-      end
-    rescue
-      render json: { message: "Post not found" }, status: :unauthorized
+    unless @post.update(post_params)
+      render_error_messages(@post)
+    else
+      @post.update(post_params)
+      render json: { post: @post,
+                     post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
+                     message: "Post Updated" },
+             status: :ok
     end
-
   end
 
   def destroy
-    begin
-      @post = @current_user.posts.find(params[:post_id])
-      @post.destroy
-      render json: { message: "Post successfully destroyed" }, status: :ok
-    rescue
-      render json: { message: "Post not found" }, status: :unauthorized
-    end
-
+    @post.destroy
+    render json: { message: "Post successfully destroyed" }, status: :ok
   end
 
   private
+
+  def find_post
+    unless (@post = @current_user.posts.find_by(id: params[:post_id]))
+      return render json: { message: 'Post Not found' }
+    end
+  end
 
   def post_params
     params.permit(:id, :description, :tags, :post_likes, :post_image, :user_id)
