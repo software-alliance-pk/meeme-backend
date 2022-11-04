@@ -44,7 +44,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       @post.destroy
       render json: { message: "Post successfully destroyed" }, status: :ok
     rescue
-      render json: { message: "Post not found" }, status: :unauthorizedF
+      render json: { message: "Post not found" }, status: :unauthorized
     end
 
   end
