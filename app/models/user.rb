@@ -8,5 +8,6 @@ class User < ApplicationRecord
             length: { minimum: 6 },
             if: -> { new_record? || !password.nil? }
   has_many :verification_tokens, dependent: :destroy
-  has_one_attached :profile_image
+  has_one_attached :profile_image, dependent: :destroy
+  has_many :posts, dependent: :destroy
 end

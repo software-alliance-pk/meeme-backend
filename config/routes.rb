@@ -15,7 +15,12 @@ Rails.application.routes.draw do
       end
       post '/auth/login', to: "authentication#login"
       post '/auth/logout', to: "authentication#logout"
-      post '/social/social_login',to: "social_login#social_login"
+      post '/social/social_login', to: "social_login#social_login"
+      resources :posts do
+        collection do
+          put :update_posts
+        end
+      end
     end
   end
 
