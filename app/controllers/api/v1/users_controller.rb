@@ -32,7 +32,7 @@ class Api::V1::UsersController <  Api::V1::ApiController
     else
       @current_user.update(user_params)
       render json: { user: @current_user,
-                     profile_image: @current_user.profile_image.attached? ? url_for(@current_user.profile_image_url): '',
+                     profile_image: @current_user.profile_image.attached? ? url_for(@current_user.profile_image): '',
                      message: "Profile Updated"},
              status: :ok
     end
