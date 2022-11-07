@@ -29,6 +29,7 @@ Rails.application.routes.draw do
           get :child_comments
           put :update_child_comments
           delete :child_comment_destroy
+          post :create_child_comment
         end
       end
     end

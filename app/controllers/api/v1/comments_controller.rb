@@ -1,6 +1,6 @@
 class Api::V1::CommentsController < Api::V1::ApiController
   before_action :authorize_request
-  before_action :find_comment, only: [:show, :update_comments, :destroy]
+  before_action :find_comment, only: [:show, :update_comments, :destroy,:create_child_comment]
   before_action :find_child_comment, only: [:update_child_comments, :child_comments, :child_comment_destroy]
 
   def index
@@ -36,6 +36,18 @@ class Api::V1::CommentsController < Api::V1::ApiController
     @comment = Post.find(params[:post_id]).comments.new(description: params[:description],
                                                         user_id: @current_user.id,
                                                         post_id: params[:post_id])
+    if @comment.save
+      render json: { comment: @comment }, status: :ok
+    else
+      render_error_messages(@comment)
+    end
+  end
+
+  def create_child_comment
+    @comment = Post.find(params[:post_id]).comments.new(description: params[:description],
+                                                        user_id: @current_user.id,
+                                                        post_id: params[:post_id],
+                                                        parent_id: params[:comment_id])
     if @comment.save
       render json: { comment: @comment }, status: :ok
     else
