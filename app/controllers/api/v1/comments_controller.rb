@@ -1,7 +1,7 @@
 class Api::V1::CommentsController < Api::V1::ApiController
   before_action :authorize_request
   before_action :find_comment, only: [:show, :update_comments, :destroy,:create_child_comment]
-  before_action :find_child_comment, only: [:update_child_comments, :child_comments, :child_comment_destroy]
+  before_action :find_child_comment, only: [:child_comments, :child_comment_destroy]
 
   def index
     @comments = @current_user.posts.find_by(id: params[:post_id])
