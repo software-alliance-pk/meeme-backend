@@ -10,4 +10,5 @@ class User < ApplicationRecord
   has_many :verification_tokens, dependent: :destroy
   has_one_attached :profile_image, dependent: :destroy
   has_many :posts, dependent: :destroy
+  has_many :comments ,dependent: :destroy
 end

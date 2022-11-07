@@ -11,6 +11,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   end
 
+
   def show
     render json: { post: @current_user.posts },
            # post_image: @post.post_image.attached? ? @post.post_image.blob.url : '' },

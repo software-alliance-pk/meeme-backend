@@ -10,6 +10,8 @@ Rails.application.routes.draw do
           put :update_user
           post :forgot_password
           post :reset_user_password
+          get :all_data
+
         end
         get '/*a', to: 'application#not_found'
       end
@@ -19,6 +21,14 @@ Rails.application.routes.draw do
       resources :posts do
         collection do
           put :update_posts
+        end
+      end
+      resources :comments do
+        collection do
+          put :update_comments
+          get :child_comments
+          put :update_child_comments
+          delete :child_comment_destroy
         end
       end
     end

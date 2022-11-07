@@ -8,6 +8,10 @@ class Api::V1::UsersController < Api::V1::ApiController
     render json: @users, status: :ok
   end
 
+  def all_data
+    @users=User.all
+  end
+
   # GET /users/{username}
   def show
     render json: { user: @user,
