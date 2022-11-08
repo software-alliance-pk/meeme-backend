@@ -3,7 +3,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   before_action :find_post, only: [:show, :update_posts, :destroy]
 
   def index
-    @posts = @current_user.posts
+    @posts = @current_user.posts.by_recently_created(20)
     if @posts.present?
       # render index, status: :ok
     else
@@ -13,7 +13,7 @@ class Api::V1::PostsController < Api::V1::ApiController
 
 
   def show
-    render json: { post: @current_user.posts },
+    render json: { post: @current_user.posts.by_recently_created },
            # post_image: @post.post_image.attached? ? @post.post_image.blob.url : '' },
            status: :ok
   end

@@ -9,7 +9,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def all_data
-    @users=User.all
+    @posts = Post.all.by_recently_created(20)
   end
 
   # GET /users/{username}

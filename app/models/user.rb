@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  scope :by_recently_created, -> (limit) { order(created_at: :desc).limit(limit) }
+
   has_secure_password
   # mount_uploader :avatar, AvatarUploader
   validates :email, presence: true, uniqueness: true
