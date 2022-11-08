@@ -8,7 +8,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     render json: @users, status: :ok
   end
 
-  def all_data
+  def all_posts
     @posts = Post.all.by_recently_created(20)
   end
 

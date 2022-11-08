@@ -10,7 +10,7 @@ Rails.application.routes.draw do
           put :update_user
           post :forgot_password
           post :reset_user_password
-          get :all_data
+          get :all_posts
 
         end
         get '/*a', to: 'application#not_found'
@@ -31,6 +31,9 @@ Rails.application.routes.draw do
           delete :child_comment_destroy
           post :create_child_comment
         end
+      end
+      resources :likes do
+
       end
     end
   end
