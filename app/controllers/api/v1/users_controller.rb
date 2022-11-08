@@ -9,9 +9,12 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def all_posts
-    @posts = Post.all.by_recently_created(20)
+    @posts = Post.all
   end
 
+  def open_profile
+    @profile=User.find_by(id: params[:id])
+  end
   # GET /users/{username}
   def show
     render json: { user: @user,
