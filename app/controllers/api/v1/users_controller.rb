@@ -14,6 +14,7 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def open_profile
     @profile=User.find_by(id: params[:id])
+    return render json: { message: "User not found" }, status: :not_found unless @profile
   end
   # GET /users/{username}
   def show
