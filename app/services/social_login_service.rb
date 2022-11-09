@@ -28,8 +28,9 @@ class SocialLoginService
     json_response = JSON.parse(response.body)
     user = create_user(json_response['email'], json_response['sub'], json_response)
 
-    profile_image=  @user.profile_image.attached? ? @user.profile_image.blob.url : '',
-    token = JsonWebTokenService.encode(user_id: @user.id)
+    profile_image=  user.profile_image.attached? ? user.profile_image.blob.url : ''
+    token = JsonWebTokenService.encode(user_id: user.id)
+    user.verification_tokens.create(token: token,user_id: user.id)
     [user, token, profile_image]
   end
 
@@ -40,8 +41,10 @@ class SocialLoginService
 
     json_response = JSON.parse(response.body)
     user = create_user(json_response['email'], json_response['sub'], json_response)
-    profile_image=  @user.profile_image.attached? ? @user.profile_image.blob.url : '',
-    token = JsonWebTokenService.encode(user_id: @user.id)
+    profile_image=  user.profile_image.attached? ? user.profile_image.blob.url : ''
+    token = JsonWebTokenService.encode(user_id: user.id)
+    user.verification_tokens.create(token: token,user_id: user.id)
+
     [user, token, profile_image]
   end
 
@@ -61,11 +64,11 @@ class SocialLoginService
     end
 
     data = token_data.with_indifferent_access
+    token = JsonWebTokenService.encode(user_id: @user.id)
     user = create_user(data['email'], data['sub'], data)
     if @fcm_token.present?
       token = user.mobile_devices.find_or_create_by(mobile_token: @fcm_token)
     end
-    token = JsonWebTokenService.encode(user_id: @user.id)
     [user, token]
   end
 

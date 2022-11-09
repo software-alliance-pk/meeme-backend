@@ -6,7 +6,6 @@ class Api::V1::AuthenticationController < Api::V1::ApiController
     @user = User.find_by_email(params[:email])
 
     return render json: { message: "Email not valid" }, status: :not_found unless @user
-
     if @user&.authenticate(params[:password])
       token = JsonWebTokenService.encode(user_id: @user.id)
       time = Time.now + 24.hours.to_i
