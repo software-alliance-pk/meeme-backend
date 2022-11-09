@@ -28,8 +28,8 @@ class SocialLoginService
     json_response = JSON.parse(response.body)
     user = create_user(json_response['email'], json_response['sub'], json_response)
 
-    profile_image=  @user.profile_image.attached? ? @user.profile_image.blob.url : '',
-    token = JsonWebTokenService.encode(user_id: @user.id)
+    profile_image=  user.profile_image.attached? ? user.profile_image.blob.url : ''
+    token = JsonWebTokenService.encode(user_id: user.id)
     [user, token, profile_image]
   end
 
@@ -40,8 +40,8 @@ class SocialLoginService
 
     json_response = JSON.parse(response.body)
     user = create_user(json_response['email'], json_response['sub'], json_response)
-    profile_image=  @user.profile_image.attached? ? @user.profile_image.blob.url : '',
-    token = JsonWebTokenService.encode(user_id: @user.id)
+    profile_image=  user.profile_image.attached? ? user.profile_image.blob.url : ''
+    token = JsonWebTokenService.encode(user_id: user.id)
     [user, token, profile_image]
   end
 
