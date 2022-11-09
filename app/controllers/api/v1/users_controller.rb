@@ -9,7 +9,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def all_posts
-    @posts = Post.all
+    @posts = Post.all.order('updated_at DESC')
   end
 
   def open_profile
