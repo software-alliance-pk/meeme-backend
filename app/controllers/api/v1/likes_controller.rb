@@ -1,4 +1,4 @@
-class  Api::V1::LikesController <  Api::V1::ApiController
+class Api::V1::LikesController < Api::V1::ApiController
   before_action :authorize_request
   before_action :check_post_or_comment, only: [:create]
 
@@ -6,11 +6,14 @@ class  Api::V1::LikesController <  Api::V1::ApiController
     if already_liked?(@type)
       dislike(@type)
     else
-      like = @subject.likes.new(post_id: params[:post_id], comment_id: params[:comment_id],user_id: @current_user.id)
+      like = @subject.likes.new(post_id: params[:post_id], comment_id: params[:comment_id], user_id: @current_user.id, is_liked: true)
       if like.save
         render json: {
-          message: "#{@current_user.username} liked #{@type} , #{@subject.description}"
-        }, status: :ok
+          user: @current_user.username,
+          liked: @type ,
+          description: @subject.description,
+          like_count: @subject.likes.where(is_liked: true).count,
+          post_like_status: @subject.likes.last.is_liked}, status: :ok
       end
     end
   end
@@ -36,23 +39,26 @@ class  Api::V1::LikesController <  Api::V1::ApiController
   def already_liked?(type)
     result = false
     if type == 'post'
-      result = Like.where(post_id: params[:post_id],user_id: @current_user.id).exists?
+      result = Like.where(post_id: params[:post_id], user_id: @current_user.id).exists?
     else
-      result = Like.where(comment_id: params[:comment_id],user_id: @current_user.id).exists?
+      result = Like.where(comment_id: params[:comment_id], user_id: @current_user.id).exists?
     end
     result
   end
 
   def dislike(type)
     if type == 'post'
-      like = Like.find_by(post_id: params[:post_id],user_id: @current_user.id)
+      like = Like.find_by(post_id: params[:post_id], user_id: @current_user.id)
     else
-      like = Like.find_by(comment_id: params[:comment_id],user_id: @current_user.id)
+      like = Like.find_by(comment_id: params[:comment_id], user_id: @current_user.id)
     end
     return unless like
     like.destroy
     render json: {
-      message: "#{@current_user.username} unliked #{type}, #{@subject.description}"
-    }, status: :ok
+      user: @current_user.username,
+      unliked: type,
+      description: @subject.description,
+      likes_count: @subject.likes.count,
+      post_like_status: false}, status: :ok
   end
 end

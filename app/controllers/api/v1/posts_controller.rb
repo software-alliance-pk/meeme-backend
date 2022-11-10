@@ -53,6 +53,6 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def post_params
-    params.permit(:id, :description, :tags, :post_likes, :post_image, :user_id)
+    params.permit(:id, :description, :tags, :post_likes, :post_image, :user_id,:tournament_banner_id)
   end
 end
