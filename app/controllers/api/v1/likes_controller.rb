@@ -12,7 +12,7 @@ class Api::V1::LikesController < Api::V1::ApiController
           user: @current_user.username,
           liked: @type ,
           description: @subject.description,
-          like_count: @subject.likes.where(is_liked: true).count,
+          likes_count: @subject.likes.where(is_liked: true).count,
           post_like_status: @subject.likes.last.is_liked}, status: :ok
       end
     end
