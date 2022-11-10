@@ -13,9 +13,10 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def open_profile
-    @profile=User.find_by(id: params[:id])
+    @profile = User.find_by(id: params[:id])
     return render json: { message: "User not found" }, status: :not_found unless @profile
   end
+
   # GET /users/{username}
   def show
     render json: { user: @user,
@@ -52,13 +53,13 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def forgot_password
-    @otp_generate = 4.times.map { rand(10) }.join
-    @user.update(otp: @otp_generate)
-    if UserMailer.user_forgot_password(@user.email, @otp_generate).deliver_now
-      return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
-    else
-      return render json: { message: 'OTP was not send successfully' }, status: :unprocessable_entity
-    end
+      @otp_generate = 4.times.map { rand(10) }.join
+      @user.update(otp: @otp_generate)
+      if UserMailer.user_forgot_password(@user.email, @otp_generate).deliver_now
+        return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
+      else
+        return render json: { message: 'OTP was not send successfully' }, status: :unprocessable_entity
+      end
   end
 
   def reset_user_password
@@ -87,9 +88,12 @@ class Api::V1::UsersController < Api::V1::ApiController
   private
 
   def find_user
-    @user = User.find_by_email(params[:email])
-  rescue ActiveRecord::RecordNotFound
-    render json: { message: 'User not found' }, status: :not_found
+  #   @user = User.find_by_email(params[:email])
+  # rescue ActiveRecord::RecordNotFound
+  #    render json: { message: 'User not found' }, status: :not_found
+   unless (@user = User.find_by_email(params[:email]))
+        return render json: { message: 'User Not found' }
+      end
   end
 
   def user_params
