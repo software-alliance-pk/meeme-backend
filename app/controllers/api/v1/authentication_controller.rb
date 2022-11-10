@@ -22,7 +22,7 @@ class Api::V1::AuthenticationController < Api::V1::ApiController
   end
 
   def logout
-    token = request.headers['Authorization']
+    token = request.headers['Authorization'].split(' ').last
     verification_token = @current_user.verification_tokens.find_by_token(token)
     if verification_token
       @current_user.verification_tokens.find_by_token(token).destroy
