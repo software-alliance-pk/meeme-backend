@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[create forgot_password reset_user_password]
-  before_action :find_user, except: %i[create index update_user]
+  before_action :find_user, except: %i[create index update_user all_posts]
 
   # GET /users
   def index

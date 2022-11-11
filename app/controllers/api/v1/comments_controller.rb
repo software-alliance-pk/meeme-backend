@@ -88,7 +88,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   def child_comment_destroy
-    @child_comment = @child_comment.find_by(id: params[:id])
+    @child_comment = Comment.find_by(id: params[:comment_id])
     if @child_comment.present?
       @child_comment.destroy
       render json: { message: "Child Comment successfully destroyed" }, status: :ok
