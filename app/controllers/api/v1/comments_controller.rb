@@ -4,7 +4,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
   before_action :find_child_comment, only: [:child_comments, :child_comment_destroy]
 
   def index
-    @comments = @current_user.posts.find_by(id: params[:post_id])
+    @comments = Post.find_by(id: params[:post_id])
     if @comments.present?
       @comments = @comments.comments
       if @comments.present?
