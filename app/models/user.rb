@@ -16,4 +16,5 @@ class User < ApplicationRecord
   has_many :likes, dependent: :destroy
   has_many :tournament_users
   has_many :tournament_banners, through: :tournament_users
+  has_many :followers, dependent: :destroy
 end

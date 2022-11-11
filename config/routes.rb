@@ -36,9 +36,13 @@ Rails.application.routes.draw do
       resources :likes do
 
       end
+      resources :followers do
+        collection do
+          put :update_follower
+          get :show_pending_requests
+          post :send_a_follow_request_to_user
+        end
+      end
     end
   end
-
-  # post '/auth/forgot_password', to: "authentication#forgot_password"
-
 end
