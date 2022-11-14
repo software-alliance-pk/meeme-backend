@@ -14,8 +14,8 @@ class Api::V1::UsersController < Api::V1::ApiController
                    posts: @current_user.posts,
                    followers: @current_user.followers.where(is_following: true).count,
                    following: Follower.where(is_following: true, follower_user_id: @current_user.id).count,
-                   tournament_posts: "Yet to be added",
-                   badges: "Yet to be added"},
+                   tournament_posts: [],
+                   badges: []},
            status: :ok
   end
 
@@ -25,8 +25,8 @@ class Api::V1::UsersController < Api::V1::ApiController
                    posts: @user.posts,
                    followers: @user.followers.where(is_following: true).count,
                    following: Follower.where(is_following: true, follower_user_id: @user.id).count,
-                   tournament_posts: "Yet to be added",
-                   badges: "Yet to be added" },
+                   tournament_posts: [],
+                   badges: [] },
            status: :ok
   end
 
