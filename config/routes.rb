@@ -12,6 +12,10 @@ Rails.application.routes.draw do
           post :reset_user_password
           get :all_posts
           get :open_profile
+          get :open_current_user
+          get :open_some_other_user
+
+
 
         end
         get '/*a', to: 'application#not_found'

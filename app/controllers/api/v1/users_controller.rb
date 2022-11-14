@@ -1,11 +1,33 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[create forgot_password reset_user_password]
-  before_action :find_user, except: %i[create index update_user all_posts]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user]
 
   # GET /users
   def index
     @users = User.all
     render json: @users, status: :ok
+  end
+
+  def open_current_user
+    render json: { your_profile: @current_user,
+                   profile_image: @current_user.profile_image.attached? ? @current_user.profile_image.blob.url : '',
+                   posts: @current_user.posts,
+                   followers: @current_user.followers.where(is_following: true).count,
+                   following: Follower.where(is_following: true, follower_user_id: @current_user.id).count,
+                   tournament_posts: "Yet to be added",
+                   badges: "Yet to be added"},
+           status: :ok
+  end
+
+  def open_some_other_user
+    render json: { your_profile: @user,
+                   profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
+                   posts: @user.posts,
+                   followers: @user.followers.where(is_following: true).count,
+                   following: Follower.where(is_following: true, follower_user_id: @user.id).count,
+                   tournament_posts: "Yet to be added",
+                   badges: "Yet to be added" },
+           status: :ok
   end
 
   def all_posts
@@ -53,13 +75,13 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def forgot_password
-      @otp_generate = 4.times.map { rand(10) }.join
-      @user.update(otp: @otp_generate)
-      if UserMailer.user_forgot_password(@user.email, @otp_generate).deliver_now
-        return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
-      else
-        return render json: { message: 'OTP was not send successfully' }, status: :unprocessable_entity
-      end
+    @otp_generate = 4.times.map { rand(10) }.join
+    @user.update(otp: @otp_generate)
+    if UserMailer.user_forgot_password(@user.email, @otp_generate).deliver_now
+      return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
+    else
+      return render json: { message: 'OTP was not send successfully' }, status: :unprocessable_entity
+    end
   end
 
   def reset_user_password
@@ -88,12 +110,12 @@ class Api::V1::UsersController < Api::V1::ApiController
   private
 
   def find_user
-  #   @user = User.find_by_email(params[:email])
-  # rescue ActiveRecord::RecordNotFound
-  #    render json: { message: 'User not found' }, status: :not_found
-   unless (@user = User.find_by_email(params[:email]))
-        return render json: { message: 'User Not found' }
-      end
+    #   @user = User.find_by_email(params[:email])
+    # rescue ActiveRecord::RecordNotFound
+    #    render json: { message: 'User not found' }, status: :not_found
+    unless (@user = User.find_by_email(params[:email]) || User.find_by_id(params[:id]))
+      return render json: { message: 'User Not found' }
+    end
   end
 
   def user_params
