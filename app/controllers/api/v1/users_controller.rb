@@ -9,25 +9,10 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def open_current_user
-    render json: { your_profile: @current_user,
-                   profile_image: @current_user.profile_image.attached? ? @current_user.profile_image.blob.url : '',
-                   posts: @current_user.posts,
-                   followers: @current_user.followers.where(is_following: true).count,
-                   following: Follower.where(is_following: true, follower_user_id: @current_user.id).count,
-                   tournament_posts: [],
-                   badges: []},
-           status: :ok
+
   end
 
   def open_some_other_user
-    render json: { your_profile: @user,
-                   profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
-                   posts: @user.posts,
-                   followers: @user.followers.where(is_following: true).count,
-                   following: Follower.where(is_following: true, follower_user_id: @user.id).count,
-                   tournament_posts: [],
-                   badges: [] },
-           status: :ok
   end
 
   def all_posts
