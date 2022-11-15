@@ -6,7 +6,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
   def index
     @comments = Post.find_by(id: params[:post_id])
     if @comments.present?
-      @comments = @comments.comments
+      @comments = @comments.comments.where(parent_id: nil)
       if @comments.present?
         # render index, status: :ok
       else
