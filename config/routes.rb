@@ -47,6 +47,11 @@ Rails.application.routes.draw do
           post :send_a_follow_request_to_user
         end
       end
+      resources :tournament_banners do
+        collection do
+          post :enroll_in_tournament
+        end
+      end
     end
   end
 end

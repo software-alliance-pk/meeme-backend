@@ -1,4 +1,4 @@
-json.child_comments do
+  json.child_comments do
   json.(@child_comment) do |child_comment|
     json.id child_comment.id
     json.description child_comment.description
