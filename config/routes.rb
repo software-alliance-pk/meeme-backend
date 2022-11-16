@@ -15,8 +15,6 @@ Rails.application.routes.draw do
           get :open_current_user
           get :open_some_other_user
 
-
-
         end
         get '/*a', to: 'application#not_found'
       end
@@ -50,6 +48,8 @@ Rails.application.routes.draw do
       resources :tournament_banners do
         collection do
           post :enroll_in_tournament
+          get :tournament_posts
+          post :like_dislike_a_tournament_post
         end
       end
     end
