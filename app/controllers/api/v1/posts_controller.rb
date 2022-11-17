@@ -11,7 +11,6 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   end
 
-
   def show
     render json: { post: @current_user.posts.by_recently_created },
            # post_image: @post.post_image.attached? ? @post.post_image.blob.url : '' },
@@ -44,6 +43,18 @@ class Api::V1::PostsController < Api::V1::ApiController
     render json: { message: "Post successfully destroyed" }, status: :ok
   end
 
+  def explore
+    if params[:tag]
+      @posts = Post.tagged_with(params[:tag])
+      if @posts.present?
+      else
+        render json: { message: "No Post found against this tag " }, status: :not_found
+      end
+    else
+      render json: { message: "Tag not found " }, status: :not_found
+    end
+  end
+
   private
 
   def find_post
@@ -53,6 +64,6 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def post_params
-    params.permit(:id, :description, :tags, :post_likes, :post_image, :user_id,:tournament_banner_id,:tournament_meme)
+    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme)
   end
 end

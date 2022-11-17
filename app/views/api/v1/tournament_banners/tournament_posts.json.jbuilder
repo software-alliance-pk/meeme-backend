@@ -4,7 +4,7 @@ json.tournament_posts do
     json.username post.user.username
     json.id post.id
     json.description post.description
-    json.tags post.tags
+    json.tag_list post.tag_list
     json.likes post.likes.count
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
   end

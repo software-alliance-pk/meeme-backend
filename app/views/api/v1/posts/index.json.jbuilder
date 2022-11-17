@@ -3,5 +3,6 @@ json.posts do
     json.id post.id
     json.description post.description
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
+    json.tag_list post.tag_list
   end
 end

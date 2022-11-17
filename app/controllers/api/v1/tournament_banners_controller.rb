@@ -80,7 +80,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
 
   #
   def post_params
-    params.permit(:id, :description, :post_image, :tags, :created_at, :updated_at).merge(user_id: @current_user.id, tournament_meme: true, tournament_banner_id: @tournament.id)
+    params.permit(:id, :tag_list,:description, :post_image, :created_at, :updated_at).merge(user_id: @current_user.id, tournament_meme: true, tournament_banner_id: @tournament.id)
   end
 
   def tournament_entry_params
@@ -89,7 +89,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
 
   def check_user_is_in_tournament
     if (@tournament.tournament_users.find_by(user_id: @current_user.id).present?)
-      return render json: { message: 'Already enrolled', status: false }, status: :not_found
+      return render json: { message: 'Already enrolled', status: false }, status: :ok
     end
   end
 end
