@@ -43,7 +43,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   end
 
   def create_tournament
-    @tournament_banner=TournamentBanner.create!(title: params[:title],start_date: params[:start_date] ,end_date: params[:end_date] )
+    @tournament_banner = TournamentBanner.create!(title: params[:title], start_date: params[:start_date], end_date: params[:end_date])
     render json: { tournament_banner: @tournament_banner }, status: :ok
   end
 
@@ -58,6 +58,11 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     else
       render json: { message: "Post is not in this tournament" }, status: :not_found
     end
+  end
+
+  def show_tournament_rules
+    @tournament=@tournament.tournament_banner_rule
+    return render json: { rules: @tournament }, status: :ok if @tournament
   end
 
   private

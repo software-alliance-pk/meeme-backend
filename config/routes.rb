@@ -51,6 +51,7 @@ Rails.application.routes.draw do
           get :tournament_posts
           post :like_dislike_a_tournament_post
           post :create_tournament
+          get :show_tournament_rules
         end
       end
     end
