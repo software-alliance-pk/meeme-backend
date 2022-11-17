@@ -21,7 +21,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   def enroll_in_tournament
     @tournament_user = @tournament.tournament_users.new(tournament_entry_params)
     if @tournament_user.save
-      render json: { message: "#{@current_user.username} has enrolled in #{@tournament.title}" }
+      render json: { message: "#{@current_user.username} has enrolled in #{@tournament.title}", status: true }
     else
       render_error_messages(@tournament_user)
     end
@@ -40,6 +40,11 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     else
       render json: { message: "User is not enrolled in tournament" }, status: :not_found
     end
+  end
+
+  def create_tournament
+    @tournament_banner=TournamentBanner.create!(title: params[:title],start_date: params[:start_date] ,end_date: params[:end_date] )
+    render json: { tournament_banner: @tournament_banner }, status: :ok
   end
 
   def like_dislike_a_tournament_post
@@ -74,7 +79,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
 
   def check_user_is_in_tournament
     if (@tournament.tournament_users.find_by(user_id: @current_user.id).present?)
-      return render json: { message: 'Already enrolled' }, status: :not_found
+      return render json: { message: 'Already enrolled', status: false }, status: :not_found
     end
   end
 end
