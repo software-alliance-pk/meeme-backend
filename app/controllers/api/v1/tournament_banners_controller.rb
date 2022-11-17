@@ -65,6 +65,11 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     return render json: { rules: @tournament }, status: :ok if @tournament
   end
 
+  def show_tournament_prices
+    @tournament=@tournament.ranking_price
+    return render json: { rules: @tournament }, status: :ok if @tournament
+  end
+
   private
 
   def find_tournament
