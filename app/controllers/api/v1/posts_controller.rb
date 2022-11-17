@@ -44,6 +44,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def explore
+    @tags=ActsAsTaggableOn::Tag.all.pluck(:name).uniq
     if params[:tag]
       @posts = Post.tagged_with(params[:tag])
       if @posts.present?
