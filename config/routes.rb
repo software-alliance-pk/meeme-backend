@@ -56,6 +56,13 @@ Rails.application.routes.draw do
           get :show_tournament_prices
         end
       end
+      resources :stories do
+        collection do
+          post :like_dislike_a_story
+          post :story_comment
+          get :show_story_comments
+        end
+      end
     end
   end
 end
