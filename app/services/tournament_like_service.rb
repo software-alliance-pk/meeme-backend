@@ -13,7 +13,8 @@ class TournamentLikeService
         # like.destroy
         coins = User.find(@current_user_id).coins
         message = "You have already locked your option as liked"
-        [like, message, coins]
+        check=false
+        [like, message, coins,check]
       end
     else
       like = Like.new(post_id: @post_id, user_id: @current_user_id, is_liked: true)
@@ -23,8 +24,9 @@ class TournamentLikeService
       coins += user_coin
       User.find(@current_user_id).update(coins: coins)
       message = "Liked 50 coins added"
+      check=true
     end
-    [like, message, coins]
+    [like, message, coins,check]
   end
 
   def dislike_for_tournament
@@ -34,8 +36,9 @@ class TournamentLikeService
         return unless like
         # like.destroy
         coins = User.find(@current_user_id).coins
-        message = "You have already locked your option as liked"
-        [like, message, coins]
+        message = "You have already locked your option as disliked"
+        check=false
+        [like, message, coins,check]
       end
     else
       like = Like.new(post_id: @post_id, user_id: @current_user_id, is_liked: false)
@@ -45,8 +48,9 @@ class TournamentLikeService
       coins += user_coin
       User.find(@current_user_id).update(coins: coins)
       message = "DisLiked added 50 coins in your wallet"
+      check=true
     end
-    [like, message, coins]
+    [like, message, coins,check]
   end
 
   def already_liked?
