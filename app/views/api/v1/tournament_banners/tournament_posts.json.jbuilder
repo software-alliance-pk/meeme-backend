@@ -1,4 +1,5 @@
 json.tournament_name @tournament.title
+json.tournament_posts_count @tournament.posts.count
 json.tournament_posts do
   json.(@tournament.posts) do |post|
     json.username post.user.username
