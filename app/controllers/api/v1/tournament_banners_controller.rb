@@ -7,7 +7,8 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     render json: { tournament: @tournament,
                    tournament_banner_image: @tournament.tournament_banner_photo.attached? ? @tournament.tournament_banner_photo.blob.url : '',
                    tournament_users_count: @tournament.tournament_users.count,
-                   tournament_posts_count: @tournament.posts.count
+                   tournament_posts_count: @tournament.posts.count,
+                    is_current_user_enrolled: @tournament.users.find_by(id: @current_user.id).present?
     }, status: :ok
   end
 
