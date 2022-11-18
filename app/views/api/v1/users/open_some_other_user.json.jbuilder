@@ -1,5 +1,5 @@
 json.profile do
-  json.user @user
+  json.user @user.attributes.except('coins')
   json.user_image @user.profile_image.attached? ? @user.profile_image.blob.url : ''
   json.post_count @user.posts.count
   json.followers  @user.followers.where(is_following: true).count
