@@ -64,7 +64,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     if @tournament.posts.find_by(id: params[:post_id]).present?
       if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
         response = TournamentLikeService.new(params[:post_id], @current_user.id).create_for_tournament
-        render json: { like: response[0], message: response[1],coin:response[2],check: response[3] }, status: :ok
+        render json: { like: response[0], message: response[1],coin:response[2],check: response[3]}, status: :ok
       else
         render json: { message: "User is not enrolled in this tournament" }, status: :not_found
       end
