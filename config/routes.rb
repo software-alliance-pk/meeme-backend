@@ -50,7 +50,8 @@ Rails.application.routes.draw do
         collection do
           post :enroll_in_tournament
           get :tournament_posts
-          post :like_dislike_a_tournament_post
+          post :like_unlike_a_tournament_post
+          post :dislike_a_tournament_post
           post :create_tournament
           get :show_tournament_rules
           get :show_tournament_prices

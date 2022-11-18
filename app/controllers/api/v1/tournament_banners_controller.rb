@@ -47,11 +47,24 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     render json: { tournament_banner: @tournament_banner }, status: :ok
   end
 
-  def like_dislike_a_tournament_post
+  def like_unlike_a_tournament_post
     if @tournament.posts.find_by(id: params[:post_id]).present?
       if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
         response = TournamentLikeService.new(params[:post_id], @current_user.id).create_for_tournament
-        render json: { like: response[0], message: response[1] }, status: :ok
+        render json: { like: response[0], message: response[1],coin:response[2] }, status: :ok
+      else
+        render json: { message: "User is not enrolled in this tournament" }, status: :not_found
+      end
+    else
+      render json: { message: "Post is not in this tournament" }, status: :not_found
+    end
+  end
+
+  def dislike_a_tournament_post
+    if @tournament.posts.find_by(id: params[:post_id]).present?
+      if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
+        response = TournamentLikeService.new(params[:post_id], @current_user.id).dislike_for_tournament
+        render json: { like: response[0], message: response[1],coin:response[2] }, status: :ok
       else
         render json: { message: "User is not enrolled in this tournament" }, status: :not_found
       end
