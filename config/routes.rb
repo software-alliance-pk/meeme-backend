@@ -55,6 +55,7 @@ Rails.application.routes.draw do
           post :create_tournament
           get :show_tournament_rules
           get :show_tournament_prices
+          get :tournament_winner
         end
       end
       resources :stories do
