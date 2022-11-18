@@ -16,7 +16,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def all_posts
-    @posts = Post.all.order('updated_at DESC')
+    @posts = Post.where(tournament_meme: false).order('updated_at DESC')
   end
 
   def open_profile

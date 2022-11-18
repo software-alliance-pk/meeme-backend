@@ -17,7 +17,7 @@ class TournamentLikeService
         [like, message, coins,check]
       end
     else
-      like = Like.new(post_id: @post_id, user_id: @current_user_id, is_liked: true)
+      like = Like.new(post_id: @post_id, user_id: @current_user_id, is_liked: true,is_judged: true,status: 1)
       like.save
       coins = +50
       user_coin = User.find(@current_user_id).coins
@@ -41,7 +41,7 @@ class TournamentLikeService
         [like, message, coins,check]
       end
     else
-      like = Like.new(post_id: @post_id, user_id: @current_user_id, is_liked: false)
+      like = Like.new(post_id: @post_id, user_id: @current_user_id, is_liked: false,is_judged: true,status: 2)
       like.save
       coins = +50
       user_coin = User.find(@current_user_id).coins

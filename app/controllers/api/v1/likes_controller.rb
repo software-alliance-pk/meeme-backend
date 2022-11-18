@@ -1,6 +1,8 @@
 class Api::V1::LikesController < Api::V1::ApiController
   before_action :authorize_request
+  before_action :is_judged
   before_action :check_post_or_comment, only: [:create]
+
 
   def create
     if already_liked?(@type)
@@ -60,5 +62,13 @@ class Api::V1::LikesController < Api::V1::ApiController
       description: @subject.description,
       likes_count: @subject.likes.count,
       post_like_status: false}, status: :ok
+  end
+
+  def is_judged
+    if Like.find_by(post_id: params[:post_id], is_judged: true).present?
+      return render json: {
+        message: 'This post belogs to tournament'
+      }, status: :unprocessable_entity
+    end
   end
 end
