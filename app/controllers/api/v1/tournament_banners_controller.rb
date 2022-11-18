@@ -19,6 +19,18 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     end
   end
 
+  def tournament_winner
+    @check=[]
+    @tournament_posts=@tournament.posts.each do|post|
+      @check.push([post.likes.count,post.id])
+      @result=@check.each_with_index.max
+    end
+    render json: { post:  Post.find(@result[0][1]),
+                   likes: (@result[0][0]),
+                   user: Post.find(@result[0][1]).user.username,
+                   message: "winner" }, status: :ok
+  end
+
   def enroll_in_tournament
     @tournament_user = @tournament.tournament_users.new(tournament_entry_params)
     if @tournament_user.save
