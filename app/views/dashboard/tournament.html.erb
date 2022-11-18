@@ -1,0 +1,467 @@
+<main>
+    <section id="memee">
+        <%=render "dashboard/sidebar" %>
+        <div id="tormnt" class="main_side">
+            <div id="top_header">
+                <div class="left_blk">
+                    <h1>Tournament</h1>
+                    <div class="img">
+                        <img src="<%= asset_path("icon-header.svg")%>" alt="">
+                    </div>
+                </div>
+                <div class="side">
+                    <button type="button" class="site_btn prime_btn round px">Add Banner</button>
+                    <button type="button" class="btn bell_btn">
+                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
+                        <span>2</span>
+                    </button>
+                </div>
+            </div>
+            <div class="inner_blk">
+                <div class="top">
+                    <div class="season_detail">
+                        <h4 class="mb-0">Tournament Season</h4>
+                        <div class="dropdown">
+                            <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                Season 1 (April)
+                                <img src="<%= asset_path("icon-polygon.svg")%>" alt="">
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><button type="button">Season 1 (April)</button></li>
+                                <li><button type="button">Season 2 (May)</button></li>
+                                <li><button type="button">Season 3 (June)</button></li>
+                                <li><button type="button">Season 4 (July)</button></li>
+                            </ul>
+                        </div>
+                        <p>Participants: <span>300 Joined</span></p>
+                    </div>
+                    <h4 class="fw_400 mb-0">
+                        <a href="?">Toournament Winners</a>
+                    </h4>
+                </div>
+                <div id="table_blk">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 6rem">Rank</th>
+                                <th style="width: 15rem">Name</th>
+                                <th style="width: 22rem">Email</th>
+                                <th style="width: 10.6rem">Up Vote</th>
+                                <th style="width: 13rem">Down Vote</th>
+                                <th style="width: 13rem">Date Joined</th>
+                                <th style="width: 12rem">Participated</th>
+                                <th style="width: 10rem">Image</th>
+                                <th style="width: 8rem">Status</th>
+                                <th style="width: 2rem"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="win">1</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li>
+                                                <button type="button" class="pop_btn"
+                                                    data-popup="trans_profile">Reward</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="win">2</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li><button type="button">Reward</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="win">3</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li><button type="button">Reward</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="win">4</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li><button type="button">Reward</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="win win_5">5</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li><button type="button">Reward</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="win win_5">1</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li><button type="button">Reward</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="win win_5">1</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li><button type="button">Reward</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="win win_5">1</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li><button type="button">Reward</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="win win_10">10</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li><button type="button">Reward</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="win win_10">11</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li><button type="button">Reward</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="win win_10">12</div>
+                                </td>
+                                <td>Mr Astronut</td>
+                                <td>iammemer@memee.com</td>
+                                <td>2485</td>
+                                <td>12</td>
+                                <td>Jan 5, 2022</td>
+                                <td>23</td>
+                                <td>
+                                    <div class="img">
+                                        <img src="<%= asset_path("tr-1.jpg")%>" alt="">
+                                    </div>
+                                </td>
+                                <td>Ongoing</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn drop_btn" data-bs-toggle="dropdown">
+                                            <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><button type="button">Disable Account</button></li>
+                                            <li><button type="button">Reward</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="paginate_sec">
+                    <p>Showing 1 to 9 of 200 entries</p>
+                    <ul class="pagination">
+                        <li class="me-4">
+                            <a href="#" aria-label="Previous">
+                                <img src="<%= asset_path("left_small_arrow.svg")%>" aria-hidden="true" alt="icon">
+                                Previous
+                            </a>
+                        </li>
+                        <li class="active"><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li class="ms-4">
+                            <a href="#" aria-label="Previous">
+                                Next
+                                <img src="<%= asset_path("right_small_arrow.svg")%>" aria-hidden="true" alt="icon">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="popup" data-popup="trans_profile" id="tormnt_modal">
+            <div class="table_dv">
+                <div class="table_cell">
+                    <div class="contain">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <div class="_inner">
+                                    <button type="button" class="x_btn"></button>
+                                    <h3>Reward</h3>
+                                    <div class="detail_blk">
+                                        <div class="left_blk">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 13rem;">Name</th>
+                                                        <th style="width: 22rem;">Email</th>
+                                                        <th>Date Joined</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Mr Astronut</td>
+                                                        <td>iammemer@memee.com</td>
+                                                        <td>Jan 1, 2022</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <form action="">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <h6 class="form_label">Gift Card #</h6>
+                                                        <div class="form_blk">
+                                                            <input type="text" class="input" placeholder="000000">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <h6 class="form_label">Coin</h6>
+                                                        <div class="form_blk">
+                                                            <input type="text" class="input" value="2334">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="btn_blk">
+                                                    <button type="button"
+                                                        class="site_btn prime_btn round w-100">Send</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="right_blk">
+                                            <div class="img">
+                                                <img src="<%= asset_path("tormnt-modal.jpg")%>" alt="">
+                                            </div>
+                                            <div class="vote_blk">
+                                                <span class="vote">
+                                                    <img src="<%= asset_path("icon-vote-up.svg")%>" alt="">
+                                                    324
+                                                </span>
+                                                <span class="vote vote_down">
+                                                    <img src="<%= asset_path("icon-vote-down.svg")%>" alt="">
+                                                    12
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

@@ -1,0 +1,278 @@
+<main>
+    <section id="memee">
+        <%=render "dashboard/sidebar" %>
+        <div id="trans" class="main_side">
+            <div id="top_header">
+                <div class="left_blk">
+                    <h1>Transactions</h1>
+                    <div class="img">
+                        <img src="<%= asset_path("icon-trans.svg")%>" alt="">
+                    </div>
+                </div>
+                <div class="side">
+                    <button type="button" class="btn bell_btn">
+                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
+                        <span>2</span>
+                    </button>
+                </div>
+            </div>
+            <div class="inner_blk">
+                <div class="top">
+                    <button type="button" class="btn date_btn">
+                        <span>From:</span>Jan 2020
+                        <img src="<%= asset_path("icon-arrow-down.svg")%>" alt="">
+                    </button>
+                    <button type="button" class="btn date_btn">
+                        <span>To:</span>Aug 2020
+                        <img src="<%= asset_path("icon-arrow-down.svg")%>" alt="">
+                    </button>
+                    <div class="form_blk input mb-0">
+                        <img src="<%= asset_path("icon-search.svg")%>" alt="">
+                        <input type="text" class="input" placeholder="Search">
+                    </div>
+                    <button type="button" class="site_btn round csv_btn">
+                        <img src="<%= asset_path("icon-csv.svg")%>" alt="">
+                        Export CSV
+                    </button>
+                </div>
+                <div id="table_blk">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 30rem">User</th>
+                                <th style="width: 10rem">Cost</th>
+                                <th style="width: 25rem">Payment Method</th>
+                                <th style="width: 12.5rem">Date Processed</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user_detail">
+                                        <div class="img pop_btn" data-popup="trans_profile">
+                                            <img src="<%= asset_path("trans-3.png")%>" alt="">
+                                        </div>
+                                        <div class="txt">
+                                            <h6>Jane Austen</h6>
+                                            <p>jane@gmail.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$10</td>
+                                <td>Apple Pay</td>
+                                <td>23 Aug, 2020</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user_detail">
+                                        <div class="img">
+                                            <img src="<%= asset_path("trans-1.jpg")%>" alt="">
+                                        </div>
+                                        <div class="txt">
+                                            <h6>Sapiens Taylor</h6>
+                                            <p>sapiens@gmail.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$10</td>
+                                <td>Apple Pay</td>
+                                <td>22 Aug, 2020</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user_detail">
+                                        <div class="img">
+                                            <img src="<%= asset_path("trans-2.png")%>" alt="">
+                                        </div>
+                                        <div class="txt">
+                                            <h6>Anna Kendrick Cook</h6>
+                                            <p>ana093@gmail.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$5</td>
+                                <td>PayPal</td>
+                                <td>21 Aug, 2020</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user_detail">
+                                        <div class="img">
+                                            <img src="<%= asset_path("trans-3.png")%>" alt="">
+                                        </div>
+                                        <div class="txt">
+                                            <h6>Jane Austen</h6>
+                                            <p>jane@gmail.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$10</td>
+                                <td>Apple Pay</td>
+                                <td>23 Aug, 2020</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user_detail">
+                                        <div class="img">
+                                            <img src="<%= asset_path("trans-1.jpg")%>" alt="">
+                                        </div>
+                                        <div class="txt">
+                                            <h6>Jane Austen</h6>
+                                            <p>jane@gmail.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$10</td>
+                                <td>Apple Pay</td>
+                                <td>23 Aug, 2020</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user_detail">
+                                        <div class="img">
+                                            <img src="<%= asset_path("trans-1.jpg")%>" alt="">
+                                        </div>
+                                        <div class="txt">
+                                            <h6>Jane Austen</h6>
+                                            <p>jane@gmail.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$10</td>
+                                <td>Apple Pay</td>
+                                <td>23 Aug, 2020</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user_detail">
+                                        <div class="img">
+                                            <img src="<%= asset_path("trans-1.jpg")%>" alt="">
+                                        </div>
+                                        <div class="txt">
+                                            <h6>Jane Austen</h6>
+                                            <p>jane@gmail.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$10</td>
+                                <td>Apple Pay</td>
+                                <td>23 Aug, 2020</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="paginate_sec">
+                    <p>Showing 1 to 7 of 23 entries</p>
+                    <ul class="pagination">
+                        <li class="me-4">
+                            <a href="#" aria-label="Previous">
+                                <img src="<%= asset_path("left_small_arrow.svg")%>" aria-hidden="true" alt="icon">
+                                Previous
+                            </a>
+                        </li>
+                        <li class="active"><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li class="ms-4">
+                            <a href="#" aria-label="Previous">
+                                Next
+                                <img src="<%= asset_path("right_small_arrow.svg")%>" aria-hidden="true" alt="icon">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="popup" data-popup="trans_profile" id="trans_modal">
+                <div class="table_dv">
+                    <div class="table_cell">
+                        <div class="contain">
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <div class="_inner">
+                                        <button type="button" class="x_btn"></button>
+                                        <div class="top_blk">
+                                            <h4>Profile Transactions</h4>
+                                            <div class="profile">
+                                                <img src="<%= asset_path("trans-profile.png")%>" alt="">
+                                            </div>
+                                            <h5>Mr Astronut</h5>
+                                            <p>iammemer@memee.com</p>
+                                        </div>
+                                        <div class="outter">
+                                            <h5>Transactions</h5>
+                                            <div class="table_blk">
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 13rem">Date</th>
+                                                            <th style="width: 10rem">Time</th>
+                                                            <th style="width: 25rem"></th>
+                                                            <th style="width: 20rem;">Transaction</th>
+                                                            <th>Amount</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>11/09/2022</td>
+                                                            <td>11:00 PM</td>
+                                                            <td></td>
+                                                            <td>Button</td>
+                                                            <td>$10</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>11/09/2022</td>
+                                                            <td>11:00 PM</td>
+                                                            <td></td>
+                                                            <td>Profile Background</td>
+                                                            <td>$10</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>11/09/2022</td>
+                                                            <td>11:00 PM</td>
+                                                            <td></td>
+                                                            <td>Gift Card</td>
+                                                            <td>$10</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>11/09/2022</td>
+                                                            <td>11:00 PM</td>
+                                                            <td></td>
+                                                            <td>Gift Card</td>
+                                                            <td>$10</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>11/09/2022</td>
+                                                            <td>11:00 PM</td>
+                                                            <td></td>
+                                                            <td>Buttons</td>
+                                                            <td>$10</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>11/09/2022</td>
+                                                            <td>11:00 PM</td>
+                                                            <td></td>
+                                                            <td>Fonts</td>
+                                                            <td>$10</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

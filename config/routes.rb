@@ -3,6 +3,20 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "dashboard#dashboard"
+  get '/welcome', to: "dashboard#welcome"
+  get '/signin', to: "dashboard#signin"
+  get '/signup', to: "dashboard#signup"
+  get '/forgot-password', to: "dashboard#forgot_password"
+  get '/reset-password', to: "dashboard#reset_password"
+  get '/verification', to: "dashboard#verification"
+  get '/admin-profile', to: "dashboard#admin_profile"
+  get '/tournament', to: "dashboard#tournament"
+  get '/tournament-banner', to: "dashboard#tournament_banner"
+  get '/winner-detail', to: "dashboard#winner_detail"
+  get '/user-list', to: "dashboard#user_list"
+  get '/gift-rewards', to: "dashboard#gift_rewards"
+  get '/transactions', to: "dashboard#transactions"
+  get '/support', to: "dashboard#support"
   namespace :api do
     namespace :v1 do
       resources :users do
