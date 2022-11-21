@@ -20,15 +20,16 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   end
 
   def tournament_winner
-    @check=[]
-    @tournament_posts=@tournament.posts.each do|post|
-      @check.push([post.likes.count,post.id])
-      @result=@check.each_with_index.max
+    @result=[]
+    @tournament_posts=Like.joins(:post).where(post: { tournament_banner_id: @tournament.id, tournament_meme:true }).group(:post_id).count(:post_id).sort_by(&:last).to_h
+    @tournament_posts=@tournament_posts.each do |k, v|
+      if v == @tournament_posts.values.max
+        @result.push(Post.find(k))
+      end
     end
-    render json: { post:  Post.find(@result[0][1]),
-                   likes: (@result[0][0]),
-                   user: Post.find(@result[0][1]).user.username,
-                   message: "winner" }, status: :ok
+    if @result.present?
+
+    end
   end
 
   def enroll_in_tournament
@@ -63,7 +64,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   def like_unlike_a_tournament_post
     if @tournament.posts.find_by(id: params[:post_id]).present?
       if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
-        response = TournamentLikeService.new(params[:post_id], @current_user.id).create_for_tournament
+        response = TournamentLikeService.new(params[:post_id], @current_user.id).create_fofr_tournament
         render json: { like: response[0], message: response[1],coin:response[2],check: response[3]}, status: :ok
       else
         render json: { message: "User is not enrolled in this tournament" }, status: :not_found

@@ -11,6 +11,7 @@ class Api::V1::LikesController < Api::V1::ApiController
       like = @subject.likes.new(post_id: params[:post_id], comment_id: params[:comment_id], user_id: @current_user.id, is_liked: true)
       if like.save
         render json: {
+          type_data: like,
           user: @current_user.username,
           liked: @type ,
           description: @subject.description,
@@ -57,6 +58,7 @@ class Api::V1::LikesController < Api::V1::ApiController
     return unless like
     like.destroy
     render json: {
+      type_data: like,
       user: @current_user.username,
       unliked: type,
       description: @subject.description,
@@ -67,7 +69,7 @@ class Api::V1::LikesController < Api::V1::ApiController
   def is_judged
     if Like.find_by(post_id: params[:post_id], is_judged: true).present?
       return render json: {
-        message: 'This post belogs to tournament'
+        message: 'This post belongs to tournament'
       }, status: :unprocessable_entity
     end
   end

@@ -9,6 +9,7 @@ json.tournament_posts do
     json.likes post.likes.where(is_liked: true).count
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.post_judged_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present?
+    json.is_liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false
     json.post_status post.likes.each do |like|
       json.status like.status
     end
