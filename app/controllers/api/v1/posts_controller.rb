@@ -5,7 +5,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   def index
     @posts = @current_user.posts.by_recently_created(20)
     if @posts.present?
-      # render index, status: :ok
+
     else
       render json: { message: "No posts for this particular user" }, status: :not_found
     end
@@ -54,6 +54,10 @@ class Api::V1::PostsController < Api::V1::ApiController
     else
       render json: { message: "Tag not found " }, status: :not_found
     end
+  end
+
+  def following_posts
+    @following=@current_user.followers.where(is_following: true)
   end
 
   private

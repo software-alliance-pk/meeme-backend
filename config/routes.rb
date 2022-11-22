@@ -25,6 +25,8 @@ Rails.application.routes.draw do
         collection do
           put :update_posts
           get :explore
+          get :following_posts
+
         end
       end
       resources :comments do

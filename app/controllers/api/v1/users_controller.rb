@@ -19,6 +19,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     @posts = Post.where(tournament_meme: false).order('updated_at DESC')
   end
 
+
   def open_profile
     @profile = User.find_by(id: params[:id])
     return render json: { message: "User not found" }, status: :not_found unless @profile
