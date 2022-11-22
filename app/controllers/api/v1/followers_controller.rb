@@ -2,7 +2,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
   before_action :authorize_request
   before_action :not_following_himself, except: %i[index show_pending_requests]
   before_action :already_following, except: %i[index show_pending_requests update_follower]
-  before_action :find_user, except: %i[index show_pending_requests]
+  before_action :find_user, except: %i[index show_pending_requests show_people]
 
   # GET /users
   def index
@@ -54,6 +54,13 @@ class Api::V1::FollowersController < Api::V1::ApiController
     else
       render json: { message: "The don't follow each other" }, status: :not_found
     end
+  end
+
+  def show_people
+    users=@current_user.followers.where(is_following: false).pluck(:follower_user_id)
+    users=users.push(@current_user.id)
+    users=User.where.not(id: users)
+    render json: { people_count: users.count, people_not_added: users }, status: :ok if users.present?
   end
 
   private

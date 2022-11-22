@@ -14,7 +14,6 @@ Rails.application.routes.draw do
           get :open_profile
           get :open_current_user
           get :open_some_other_user
-
         end
         get '/*a', to: 'application#not_found'
       end
@@ -49,6 +48,8 @@ Rails.application.routes.draw do
           put :update_follower
           get :show_pending_requests
           post :send_a_follow_request_to_user
+          get :show_people
+
         end
       end
       resources :tournament_banners do
