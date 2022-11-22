@@ -26,6 +26,8 @@ Rails.application.routes.draw do
           put :update_posts
           get :explore
           get :following_posts
+          get :recent_posts
+          get :trending_posts
 
         end
       end

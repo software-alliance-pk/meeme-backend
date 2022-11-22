@@ -57,8 +57,17 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def following_posts
-    @following=@current_user.followers.where(is_following: true)
+    @following=@current_user.followers.where(is_following: true).pluck(:follower_user_id)
+    @following=User.where(id: @following)
   end
+  def recent_posts
+    @recent_posts = Post.where(tournament_meme: false).by_recently_created(20)
+  end
+
+  def trending_posts
+    debugger
+  end
+
 
   private
 

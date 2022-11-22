@@ -8,7 +8,7 @@ class Api::V1::LikesController < Api::V1::ApiController
     if already_liked?(@type)
       dislike(@type)
     else
-      like = @subject.likes.new(post_id: params[:post_id], comment_id: params[:comment_id], user_id: @current_user.id, is_liked: true)
+      like = @subject.likes.new(post_id: params[:post_id], comment_id: params[:comment_id], user_id: @current_user.id, is_liked: true,status:1)
       if like.save
         render json: {
           type_data: like,
@@ -56,6 +56,7 @@ class Api::V1::LikesController < Api::V1::ApiController
       like = Like.find_by(comment_id: params[:comment_id], user_id: @current_user.id)
     end
     return unless like
+    like.update( is_liked: false, status:2)
     like.destroy
     render json: {
       type_data: like,
