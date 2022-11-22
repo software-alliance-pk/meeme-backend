@@ -56,6 +56,11 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   end
 
+  def tags
+    @tags=ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    render json:{tags: @tags}, status: :ok if @tags.present?
+  end
+
   def following_posts
     @following=@current_user.followers.where(is_following: true).pluck(:follower_user_id)
     @following=User.where(id: @following)

@@ -1,4 +1,4 @@
-json.all_tags @tags
+json.all_tags params[:tag]
 json.post_count @posts.count
 json.posts do
   json.(@posts) do |post|

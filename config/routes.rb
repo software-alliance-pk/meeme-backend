@@ -28,6 +28,7 @@ Rails.application.routes.draw do
           get :following_posts
           get :recent_posts
           get :trending_posts
+          get :tags
 
         end
       end
