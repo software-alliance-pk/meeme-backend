@@ -1,5 +1,5 @@
 json.following_count @following.count
-json.posts do
+json.following_posts do
   json.(@following) do |user|
     json.user_id user.id
     json.username user.username

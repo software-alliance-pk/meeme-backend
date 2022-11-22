@@ -1,7 +1,5 @@
-json.tag params[:tag]
-json.post_count @posts.count
-json.explore_posts do
-  json.(@posts) do |post|
+json.trending_posts do
+  json.(@trending_posts) do |post|
     json.user_id post.user.id
     json.username post.user.username
     json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''

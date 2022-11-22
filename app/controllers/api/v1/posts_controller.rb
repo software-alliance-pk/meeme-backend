@@ -70,7 +70,11 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def trending_posts
-    debugger
+    @likes=Like.where(status: 1, is_liked:true, is_judged: false).joins(:post).where(post: {tournament_meme: false}).group(:post_id).count(:post_id).sort_by(&:last).reverse.to_h
+    @trending_posts=Post.where(id: @likes.keys).reverse
+    if @trending_posts
+
+    end
   end
 
 
