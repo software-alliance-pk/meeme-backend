@@ -22,6 +22,9 @@ class DashboardController < ApplicationController
   def verification
   end
 
+  def notifications
+  end
+
   def admin_profile
   end
 
@@ -41,6 +44,30 @@ class DashboardController < ApplicationController
   end
 
   def transactions
+  end
+
+  def faqs
+  end
+
+  def faqs_edit
+  end
+
+  def popup
+  end
+
+  def popup_edit
+  end
+
+  def privacy
+  end
+
+  def privacy_edit
+  end
+
+  def terms
+  end
+
+  def terms_edit
   end
 
   def support

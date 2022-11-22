@@ -69,21 +69,21 @@ $cross_circle: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www
 		font-display: swap;
 		src: append(
 			$src,
-			font-url(quote($path + "." + $ext)) format(quote($format))
+			url(quote($path + "." + $ext)) format(quote($format))
 		);
 	}
 }
 
 @include font-face(
 	"Product Sans",
-	"/../fonts/ProductSansRegular",
+	"../fonts/ProductSansRegular",
 	woff,
 	"woff",
 	400
 );
 @include font-face(
 	"Product Sans",
-	"/../fonts/ProductSansBold",
+	"../fonts/ProductSansBold",
 	woff,
 	"woff",
 	700
