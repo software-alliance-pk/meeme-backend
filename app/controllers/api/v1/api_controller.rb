@@ -1,5 +1,4 @@
 class Api::V1::ApiController < ActionController::API
-
   def render_error_messages(object)
     render json: {
       message: object.errors.messages.map { |msg, desc|
