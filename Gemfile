@@ -76,4 +76,3 @@ gem 'bcrypt'
 gem 'dotenv-rails'
 gem 'cloudinary'
 gem 'sass-rails'
-
