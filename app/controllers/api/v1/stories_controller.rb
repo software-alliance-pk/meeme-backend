@@ -50,8 +50,7 @@ class Api::V1::StoriesController < Api::V1::ApiController
   private
 
   def find_story
-    @story = Story.find(params[:id])
-    rescue
+    @story = Story.find_by(id: params[:story_id].to_i)
     unless (@story.present?)
       return render json: { message: 'Story Not found' }, status: :not_found
     end

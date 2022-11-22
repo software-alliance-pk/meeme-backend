@@ -9,13 +9,14 @@ class StoryLikeService
     if already_liked?
       if @result == true
         like = Like.find_by(story_id: @story_id, user_id: @current_user_id)
+        like.update(is_liked: false, status: 2)
         return unless like
         like.destroy
         message = "UnlLiked"
         [like, message]
       end
     else
-      like = Like.new(story_id: @story_id, user_id: @current_user_id, is_liked: true)
+      like = Like.new(story_id: @story_id, user_id: @current_user_id, is_liked: true,status: 1)
       like.save
       message = "Liked"
     end
