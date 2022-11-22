@@ -88,6 +88,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   end
 
   def judge
+    @milstone_check=false
     @today_date = Time.zone.now.end_of_day.to_datetime
     @tournament_end_date = @tournament.end_date.strftime("%a, %d %b %Y").to_datetime
     @tournament_start_date = @tournament.start_date.strftime("%a, %d %b %Y").to_datetime

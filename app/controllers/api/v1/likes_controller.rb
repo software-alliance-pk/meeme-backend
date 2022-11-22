@@ -16,7 +16,7 @@ class Api::V1::LikesController < Api::V1::ApiController
           liked: @type ,
           description: @subject.description,
           likes_count: @subject.likes.where(is_liked: true).count,
-          post_like_status: @subject.likes.last.is_liked}, status: :ok
+          post_like_status: like.is_liked}, status: :ok
       end
     end
   end

@@ -4,7 +4,7 @@ class Api::V1::StoriesController < Api::V1::ApiController
   before_action :find_valid_user, only: :destroy
 
   def index
-    @story = @current_user.stories.recently_created
+    @story = Story.recently_created
     if @story.present?
     else
       return render json: { message: 'No stories found for this user' }, status: :not_found
