@@ -8,7 +8,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
                    tournament_banner_image: @tournament.tournament_banner_photo.attached? ? @tournament.tournament_banner_photo.blob.url : '',
                    tournament_users_count: @tournament.tournament_users.count,
                    tournament_posts_count: @tournament.posts.count,
-                    is_current_user_enrolled: @tournament.users.find_by(id: @current_user.id).present?
+                   is_current_user_enrolled: @tournament.users.find_by(id: @current_user.id).present?
     }, status: :ok
   end
 
@@ -20,9 +20,9 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   end
 
   def tournament_winner
-    @result=[]
-    @tournament_posts=Like.joins(:post).where(post: { tournament_banner_id: @tournament.id, tournament_meme:true }).group(:post_id).count(:post_id).sort_by(&:last).to_h
-    @tournament_posts=@tournament_posts.each do |k, v|
+    @result = []
+    @tournament_posts = Like.joins(:post).where(post: { tournament_banner_id: @tournament.id, tournament_meme: true }).group(:post_id).count(:post_id).sort_by(&:last).to_h
+    @tournament_posts = @tournament_posts.each do |k, v|
       if v == @tournament_posts.values.max
         @result.push(Post.find(k))
       end
@@ -64,8 +64,8 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   def like_unlike_a_tournament_post
     if @tournament.posts.find_by(id: params[:post_id]).present?
       if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
-        response = TournamentLikeService.new(params[:post_id], @current_user.id).create_fofr_tournament
-        render json: { like: response[0], message: response[1],coin:response[2],check: response[3]}, status: :ok
+        response = TournamentLikeService.new(params[:post_id], @current_user.id).create_for_tournament
+        render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
       else
         render json: { message: "User is not enrolled in this tournament" }, status: :not_found
       end
@@ -78,7 +78,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     if @tournament.posts.find_by(id: params[:post_id]).present?
       if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
         response = TournamentLikeService.new(params[:post_id], @current_user.id).dislike_for_tournament
-        render json: { like: response[0], message: response[1],coin:response[2] ,check: response[3]}, status: :ok
+        render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
       else
         render json: { message: "User is not enrolled in this tournament" }, status: :not_found
       end
@@ -87,13 +87,25 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     end
   end
 
+  def judge
+    @today_date = Time.zone.now.end_of_day.to_datetime
+    @tournament_end_date = @tournament.end_date.strftime("%a, %d %b %Y").to_datetime
+    @tournament_start_date = @tournament.start_date.strftime("%a, %d %b %Y").to_datetime
+    @difference = (@tournament_end_date - @tournament_start_date).to_i
+    if (@tournament_end_date == @today_date) | @tournament.enable == false
+      return render json: { message: "Tournament Ended" }, status: :ok
+    else
+      @posts_judged = Like.where(created_at: @tournament_start_date..@tournament_end_date, is_judged: true, user_id: @current_user.id).where.not(post_id: nil) if present?
+    end
+  end
+
   def show_tournament_rules
-    @tournament=@tournament.tournament_banner_rule
-    return render json: { rules: @tournament }, status: :ok if @tournament
+    @tournament_rule = @tournament.tournament_banner_rule
+      return render json: { rules: @tournament_rule }, status: :ok if @tournament_rule
   end
 
   def show_tournament_prices
-    @tournament=@tournament.ranking_price
+    @tournament = @tournament.ranking_price
     return render json: { rules: @tournament }, status: :ok if @tournament
   end
 
@@ -107,7 +119,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
 
   #
   def post_params
-    params.permit(:id, :tag_list,:description, :post_image, :created_at, :updated_at).merge(user_id: @current_user.id, tournament_meme: true, tournament_banner_id: @tournament.id)
+    params.permit(:id, :tag_list, :description, :post_image, :created_at, :updated_at).merge(user_id: @current_user.id, tournament_meme: true, tournament_banner_id: @tournament.id)
   end
 
   def tournament_entry_params
