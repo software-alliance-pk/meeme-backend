@@ -13,9 +13,10 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   end
 
   def tournament_posts
-    if @tournament.present?
+    @tournament_posts=@tournament.posts.paginate(page: params[:page], per_page: 25)
+    if @tournament_posts.present?
     else
-      render json: { message: "No posts for this tournament yet" }, status: :not_found
+      # render json: { message: "No posts for this tournament yet" }, status: :not_found
     end
   end
 

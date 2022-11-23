@@ -4,10 +4,10 @@ class Api::V1::StoriesController < Api::V1::ApiController
   before_action :find_valid_user, only: :destroy
 
   def index
-    @story = Story.recently_created
+    @story = Story.recently_created.paginate(page: params[:page], per_page: 25)
     if @story.present?
     else
-      return render json: { message: 'No stories found for this user' }, status: :not_found
+      # return render json: { message: 'No stories found for this user' }, status: :not_found
     end
   end
 
@@ -40,10 +40,10 @@ class Api::V1::StoriesController < Api::V1::ApiController
   end
 
   def show_story_comments
-    @story_comment=@story.comments
+    @story_comment=@story.comments.paginate(page: params[:page], per_page: 25)
     if @story_comment.present?
     else
-      render json: { message: "No comments has been made yet" }, status: :not_found
+      # render json: { message: "No comments has been made yet" }, status: :not_found
     end
   end
 

@@ -1,8 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[create forgot_password reset_user_password]
   before_action :find_user, except: %i[create index update_user all_posts open_current_user]
-  include Pagy::Backend
-  require 'pagy/extras/metadata'
 
   # GET /users
   def index
@@ -18,7 +16,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def all_posts
-    @posts = Post.where(tournament_meme: false).order('updated_at DESC')
+    @posts = Post.where(tournament_meme: false).order('updated_at DESC').paginate(page: params[:page], per_page: 25)
   end
 
 

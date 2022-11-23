@@ -6,20 +6,22 @@ class Api::V1::FollowersController < Api::V1::ApiController
 
   # GET /users
   def index
-    @user_followers = @current_user.followers.where(is_following: true)
+    @user_followers = @current_user.followers.where(is_following: true).paginate(page: params[:page], per_page: 25)
     if @user_followers.present?
       render json: { followers_count: @user_followers.count, followers: @user_followers }, status: :ok
     else
-      render json: { message: "User has no followers" }, status: :not_found
+      # render json: { message: "User has no followers" }, status: :not_found
+      render json: { followers: @user_followers  }, status: :not_found
     end
   end
 
   def show_pending_requests
-    @user_followers = @current_user.followers.where(is_following: false)
+    @user_followers = @current_user.followers.where(is_following: false).paginate(page: params[:page], per_page: 25)
     if @user_followers.present?
       render json: { pending_followers_count: @user_followers.count, followers: @user_followers }, status: :ok
     else
-      render json: { message: "User has no followers" }, status: :not_found
+      # render json: { message: "User has no followers" }, status: :not_found
+      render json: { followers: @user_followers  }, status: :not_found
     end
   end
 
@@ -59,8 +61,12 @@ class Api::V1::FollowersController < Api::V1::ApiController
   def show_people
     users=@current_user.followers.where(is_following: false).pluck(:follower_user_id)
     users=users.push(@current_user.id)
-    users=User.where.not(id: users)
-    render json: { people_count: users.count, people_not_added: users }, status: :ok if users.present?
+    users=User.where.not(id: users).paginate(page: params[:page], per_page: 25)
+    if users.present?
+      render json: { people_count: users.count, people_not_added: users }, status: :ok
+    else
+      render json: { people_count: users.count, people_not_added: users }, status: :ok
+    end
   end
 
   private

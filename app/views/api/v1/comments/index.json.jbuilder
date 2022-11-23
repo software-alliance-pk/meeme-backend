@@ -6,7 +6,7 @@ json.comments do
     json.comment_time  comment.created_at
     json.user comment.user.username
     json.user_image comment.user.profile_image.attached? ? comment.user.profile_image.blob.url : ''
-    json.comment_like_status comment.likes.present? ? true : false
+    json.user_comment_like_status comment.likes.where(user_id: @current_user.id).present? ? true : false
     json.comment_like_count comment.likes.count
     json.child_comment comment.comments do |child_comment|
       json.id child_comment.id
