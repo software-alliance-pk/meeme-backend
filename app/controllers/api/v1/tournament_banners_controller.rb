@@ -97,7 +97,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     if (@tournament_end_date == @today_date) | @tournament.enable == false
       return render json: { message: "Tournament Ended" }, status: :ok
     else
-      @posts_judged = Like.where(created_at: @tournament_start_date..@tournament_end_date, is_judged: true, user_id: @current_user.id).where.not(post_id: nil) if present?
+      @posts_judged = Like.where(created_at: (@tournament_start_date).beginning_of_day..(@tournament_end_date).end_of_day, is_judged: true, user_id: @current_user.id).where.not(post_id: nil) if present?
     end
   end
 
