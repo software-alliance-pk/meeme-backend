@@ -1,5 +1,6 @@
 class Api::V1::CommentsController < Api::V1::ApiController
   before_action :authorize_request
+  before_action :find_post,only: [:create]
   before_action :find_comment, only: [:show, :update_comments, :destroy,:create_child_comment]
   before_action :find_child_comment, only: [:child_comments, :child_comment_destroy]
 
@@ -99,7 +100,13 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   private
-
+  def find_post
+    @post=Post.find_by(id: params[:post_id]).present?
+    if @post
+    else
+      return render json: { message: ' Post Not found' }, status: :not_found
+    end
+  end
   def find_comment
     if Post.find_by(id: params[:post_id]).present?
       if Post.find_by(id: params[:post_id]).comments.find_by(id: params[:comment_id]).present?
