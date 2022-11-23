@@ -59,7 +59,8 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def tags
-    @tags=ActsAsTaggableOn::Tag.all.pluck(:name).paginate(page: params[:page], per_page: 25).uniq
+    @tags=ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    @tags=@tags.paginate(page: params[:page], per_page: 25)
     render json:{tags: @tags}, status: :ok if @tags.present?
   end
 
