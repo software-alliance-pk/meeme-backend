@@ -46,15 +46,16 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def explore
     @tags=ActsAsTaggableOn::Tag.all.pluck(:name).uniq
-    if params[:tag]
+    if params[:tag]=="#"
+      @posts=Post.where(tournament_meme: false)
+      # render json: { message: "Tag not found" }, status: :not_found
+    else
       @posts = Post.tagged_with(params[:tag])
       if @posts.present?
       else
-        @posts=Post.all.paginate(page: params[:page], per_page: 25)
-        # render json: { message: "No Post found against this tag " }, status: :not_found
+        # @posts=Post.all.paginate(page: params[:page], per_page: 25)
+        render json: { message: "No Post found against this tag " }, status: :not_found
       end
-    else
-      render json: { message: "Tag not found " }, status: :not_found
     end
   end
 
