@@ -5,7 +5,7 @@ json.profile do
   json.following  Follower.where(is_following: true, follower_user_id: @current_user.id).count
   json.badges  []
   json.all_post_count @current_user.posts.count
-  json.post_count @current_user.posts.where(tournament_meme:false).count
+  json.user_post_count @current_user.posts.where(tournament_meme:false).count
   json.profile_posts @current_user.posts.where(tournament_meme: false).each do |post|
     json.post_description post.description
     json.post_time post.created_at
