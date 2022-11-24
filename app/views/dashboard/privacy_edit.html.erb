@@ -1,0 +1,72 @@
+<main>
+    <section id="memee">
+        <%=render "dashboard/sidebar" %>
+        <div id="guide" class="main_side">
+            <div id="top_header">
+                <div class="left_blk">
+                    <h1>Guidelines</h1>
+                    <div class="img">
+                        <img src="<%= asset_path("icon-guide.svg")%>" alt="">
+                    </div>
+                </div>
+                <div class="side">
+                    <button type="button" class="btn bell_btn">
+                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
+                        <span>2</span>
+                    </button>
+                </div>
+            </div>
+            <div class="inner_blk">
+                <div class="wrapper ex">
+                    <nav class="nav_list">
+                        <ul class="list">
+                            <li><a href="terms.php">Terms & Conditions</a></li>
+                            <li class="active"><a href="privacy.php">Privacy Policy</a></li>
+                            <li><a href="faqs.php">FAQs</a></li>
+                            <li><a href="pop-ups.php">Pop Ups</a></li>
+                        </ul>
+                    </nav>
+                    <div class="content_blk edit">
+                        <div class="row mb-5">
+                            <div class="col-9">
+                                <img src="<%= asset_path("guide-edit.png")%>" alt="">
+                            </div>
+                            <div class="col-3">
+                                <div class="btn_blk edit">
+                                    <a href="?" class="site_btn prime_btn round">Save</a>
+                                </div>
+                            </div>
+                        </div>
+                        <form action="">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6 class="mb-4">Description</h6>
+                                    <div class="form_blk">
+                                        <textarea name="" id="" cols="30" rows="20" class="input"
+                                            placeholder="Start typing here...."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="history">
+                        <h5>History</h5>
+                        <ul class="htry_list">
+                            <li>
+                                <p>Term &amp; Conditions - Updated!</p>
+                                <p class="time">09/12/2021</p>
+                                <hr>
+                            </li>
+                            <li>
+                                <p>Term &amp; Conditions - Updated!</p>
+                                <p class="time">09/12/2021</p>
+                                <hr>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

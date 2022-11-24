@@ -1,0 +1,173 @@
+<main>
+    <section id="memee">
+        <%=render "dashboard/sidebar" %>
+        <div id="notify" class="main_side">
+            <div id="top_header">
+                <div class="left_blk">
+                    <h1>Push Notifications</h1>
+                    <div class="img d-flex">
+                        <img src="<%= asset_path("icon-beep.svg")%>" alt="" class="align-self-center">
+                    </div>
+                </div>
+                <div class="side">
+                    <button type="button" class="btn bell_btn">
+                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
+                        <span>2</span>
+                    </button>
+                </div>
+            </div>
+            <div class="outter">
+                <div class="left_blk">
+                    <div class="top">
+                        <h6>Choose where to send</h6>
+                        <button type="button" class="btn caldr_btn">
+                            <img src="<%= asset_path("icon-caldr-white.svg")%>" alt="">
+                        </button>
+                    </div>
+                    <form action="">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="check_blk">
+                                    <input type="checkbox" name="send_all" id="send_all">
+                                    <label for="send_all">Send to all users</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form_blk">
+                                    <input type="text" name="" id="" class="input"
+                                        placeholder="Push Notification Title">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form_blk">
+                                    <input type="text" name="" id="" class="input" placeholder="Link (Optional)">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form_blk">
+                                    <textarea class="input" rows="10" placeholder="Start typing here....."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn_blk">
+                            <button type="button" class="site_btn prime_btn round px pop_btn"
+                                data-popup="notify_confirm">Send Now</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="right_blk">
+                    <h5 class="title">History</h5>
+                    <div class="list_outter">
+                        <ul class="list">
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/19/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/18/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/17/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/16/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/15/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/14/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/13/2022</p>
+                                    <p class="txt">Notification was manually sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/19/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/18/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/17/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/16/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/15/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/14/2022</p>
+                                    <p class="txt">Notification was sent</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item">
+                                    <p class="date">10/13/2022</p>
+                                    <p class="txt">Notification was manually sent</p>
+                                </div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="popup" data-popup="notify_confirm" id="notify_confirm">
+            <div class="table_dv">
+                <div class="table_cell">
+                    <div class="contain">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <div class="_inner">
+                                    <h3>Inform Them</h3>
+                                    <p>Are you sure you want to push to notification to all the users?</p>
+                                    <div class="btn_blk">
+                                        <button type="button" class="site_btn prime_btn round">Yes</button>
+                                        <button type="button" class="site_btn no_btn round">No</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

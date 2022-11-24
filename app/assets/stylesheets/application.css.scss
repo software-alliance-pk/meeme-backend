@@ -13,3 +13,9 @@
  *= require_tree .
  *= require_self
  */
+
+// @import "_mixins";
+@import "scss/_reset";
+@import "scss/_main";
+@import "scss/_custom";
+@import "scss/_style";

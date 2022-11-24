@@ -1,0 +1,98 @@
+<main>
+    <section id="memee">
+        <%=render "dashboard/sidebar" %>
+        <div id="admin_profile" class="main_side">
+            <div id="top_header">
+                <div class="left_blk">
+                    <h1>Admin Profile</h1>
+                    <div class="img">
+                        <img src="<%= asset_path("icon-setting.svg")%>" alt="">
+                    </div>
+                </div>
+                <div class="side">
+                    <button type="button" class="btn bell_btn">
+                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
+                        <span>2</span>
+                    </button>
+                </div>
+            </div>
+            <div class="inner_blk">
+                <form action="">
+                    <div class="top">
+                        <div class="profile">
+                            <img src="<%= asset_path("admin-profile.png")%>" alt="">
+                        </div>
+                        <div class="btn_blk">
+                            <button type="button" class="btn round upload_btn">Upload New</button>
+                        </div>
+                    </div>
+                    <div class="wrapper">
+                        <div class="row">
+                            <div class="col-6">
+                                <h6 class="form_label">Your Full Name</h6>
+                                <div class="form_blk">
+                                    <input type="text" class="input" placeholder="John Smith">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="form_label">Email</h6>
+                                <div class="form_blk">
+                                    <input type="email" class="input" placeholder="johnsmith@memee.com">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="form_label">Username</h6>
+                                <div class="form_blk">
+                                    <input type="text" class="input" placeholder="johnsmith_admin">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="form_label">Old Password</h6>
+                                <div class="form_blk">
+                                    <input type="password" class="input" placeholder="Old Password">
+                                </div>
+                            </div>
+                            <h5 class="pass_title">New Password</h5>
+                            <div class="col-6">
+                                <h6 class="form_label">New Password</h6>
+                                <div class="form_blk">
+                                    <input type="password" class="input" placeholder="New Password">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="form_label">Confirm New Password</h6>
+                                <div class="form_blk">
+                                    <input type="password" class="input" placeholder="Confirm New Password">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn_blk">
+                            <button type="button" class="site_btn prime_btn round pop_btn"
+                                data-popup="profile_update">Update
+                                Profile</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="popup" data-popup="profile_update" id="logon_modal">
+            <div class="table_dv">
+                <div class="table_cell">
+                    <div class="contain">
+                        <div class="row justify-content-center">
+                            <div class="col-md-7">
+                                <div class="_inner">
+                                    <button type="button" class="x_btn"></button>
+                                    <div class="success_img">
+                                        <img src="<%= asset_path("signup-confirm.svg")%>" alt="">
+                                    </div>
+                                    <p>Profile successfully updated!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

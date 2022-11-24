@@ -1,0 +1,143 @@
+<main>
+    <section id="memee">
+        <%=render "dashboard/sidebar" %>
+        <div id="tour_banner" class="main_side">
+            <div id="top_header">
+                <div class="left_blk">
+                    <h1>Tournament Banner</h1>
+                    <div class="img">
+                        <img src="<%= asset_path("icon-header.svg")%>" alt="">
+                    </div>
+                </div>
+                <div class="side">
+                    <button type="button" class="btn bell_btn">
+                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
+                        <span>2</span>
+                    </button>
+                </div>
+            </div>
+            <div class="inside">
+                <div class="header">
+                    <h4>Banner Lists</h4>
+                    <div class="btn_blk">
+                        <button class="site_btn pop_btn" data-popup="add_banner">Add Banner</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="item">
+                            <div class="body">
+                                <div class="fig">
+                                    <img src="<%= asset_path("item-pic.svg")%>" alt="">
+                                </div>
+                                <div class="content">
+                                    <span class="f-26">SEASON ONE</span>
+                                    <span class="f-30">APRIL</span>
+                                </div>
+                            </div>
+                            <div class="bottom">
+                                <p>APRIL 2022</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="item">
+                            <div class="body">
+                                <div class="fig">
+                                    <img src="<%= asset_path("item-pic.svg")%>" alt="">
+                                </div>
+                                <div class="content">
+                                    <span class="f-26">SEASON TWO</span>
+                                    <span class="f-30">MAY</span>
+                                </div>
+
+                            </div>
+                            <div class="bottom">
+                                <p>MAY 2022</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="item">
+                            <div class="body">
+                                <div class="fig">
+                                    <img src="<%= asset_path("item-pic.svg")%>" alt="">
+                                </div>
+                                <div class="content">
+                                    <span class="f-26">SEASON THREE</span>
+                                    <span class="f-30">JUNE</span>
+                                </div>
+
+                            </div>
+                            <div class="bottom">
+                                <p>JUNE 2022</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="item">
+                            <div class="body">
+                                <div class="fig">
+                                    <img src="<%= asset_path("item-pic.svg")%>" alt="">
+                                </div>
+                                <div class="content">
+                                    <span class="f-26">SEASON FOUR</span>
+                                    <span class="f-30">JULY</span>
+                                </div>
+
+                            </div>
+                            <div class="bottom">
+                                <p>JULY 2022</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="popup" data-popup="add_banner" id="add_banner">
+                <div class="table_dv">
+                    <div class="table_cell">
+                        <div class="contain">
+                            <div class="_inner">
+                                <button type="button" class="x_btn"></button>
+                                <h4>Add Banner</h4>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="left_blk">
+                                            <form>
+                                                <h6>Banner Title</h6>
+                                                <div class="form_blk">
+                                                    <input type="text" class="input" placeholder="Enter title">
+                                                </div>
+                                                <h6>Date Start</h6>
+                                                <div class="form_blk">
+                                                    <input type="text" class="input" placeholder="Choose date">
+                                                </div>
+                                                <h6>Date End</h6>
+                                                <div class="form_blk">
+                                                    <input type="text" class="input" placeholder="Choose date">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="right_blk">
+                                            <h6>Add image</h6>
+                                            <div class="img_blk">
+                                                <div class="icon">
+                                                    <img src="<%= asset_path("img-icon.svg")%>" alt="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="btn_blk">
+                                        <button class="site_btn">Save Banner</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
