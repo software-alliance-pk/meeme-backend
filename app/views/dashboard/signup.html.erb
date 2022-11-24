@@ -1,0 +1,61 @@
+<main>
+    <section id="logon" style="background-image: url(<%= asset_path("logon-bg.jpg")%>);">
+        <div class="contain">
+            <div class="log_blk">
+                <form action="" method="POST">
+                    <div class="logo">
+                        <img src="<%= asset_path("logo.svg")%>" alt="">
+                    </div>
+                    <div class="txt">
+                        <h1 class="fw_700">Sign up to manage</h1>
+                        <p>Enter your details below</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form_blk">
+                                <input type="text" name="" id="" class="input" placeholder="Full Name">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form_blk">
+                                <input type="text" name="" id="" class="input" placeholder="Admin Username">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form_blk">
+                                <input type="text" name="" id="" class="input" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form_blk">
+                                <input type="password" name="" id="" class="input" placeholder="Password">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn_blk">
+                        <button type="button" class="site_btn prime_btn w-100 pop_btn" data-popup="sign_up">Sign up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="popup" data-popup="sign_up" id="logon_modal">
+            <div class="table_dv">
+                <div class="table_cell">
+                    <div class="contain">
+                        <div class="row justify-content-center">
+                            <div class="col-md-7">
+                                <div class="_inner">
+                                    <button type="button" class="x_btn"></button>
+                                    <div class="success_img">
+                                        <img src="<%= asset_path("signup-confirm.svg")%>" alt="">
+                                    </div>
+                                    <p>Welcome! Your admin accont has been created</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

@@ -1,0 +1,610 @@
+<main>
+    <section id="memee">
+        <%=render "dashboard/sidebar" %>
+        <div id="gift_rewards" class="main_side">
+            <div id="top_header">
+                <div class="left_blk">
+                    <h1>Gift Rewards</h1>
+                    <div class="img">
+                        <img src="<%= asset_path("icon-trans.svg")%>" alt="">
+                    </div>
+                </div>
+                <div class="side">
+                    <button type="button" class="btn bell_btn">
+                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
+                        <span>2</span>
+                    </button>
+                </div>
+            </div>
+            <div class="inner_blk">
+                <ul class="tabs_nav nav">
+                    <li>
+                        <a href="#reward" data-bs-toggle="tab" class="active">Reward</a>
+                    </li>
+                    <li>
+                        <a href="#inventory" data-bs-toggle="tab">Inventory</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="reward" class="tab-pane fade show active">
+                        <div class="top_blk">
+                            <h6>REMAINING STOCKS</h6>
+                            <div class="blks">
+                                <div class="position_blk">
+                                    <p>1st</p>
+                                    <h3>5</h3>
+                                </div>
+                                <div class="position_blk">
+                                    <p>2nd</p>
+                                    <h3>10</h3>
+                                </div>
+                                <div class="position_blk">
+                                    <p>3rd</p>
+                                    <h3>10</h3>
+                                </div>
+                                <button type="button" class="site_btn prime_btn round pop_btn" data-popup="add_gift">Add
+                                    Gift Cards</button>
+                            </div>
+                        </div>
+                        <div id="table_blk">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 23rem">Card Number</th>
+                                        <th style="width: 18rem">Rank</th>
+                                        <th style="width: 20rem">Status</th>
+                                        <th style="width: 26rem">Remaining</th>
+                                        <th>Last Awarded Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            22AW-L8CTA9-4P
+                                        </td>
+                                        <td>1st</td>
+                                        <td>
+                                            <span class="status">On Stock</span>
+                                        </td>
+                                        <td>1</td>
+                                        <td>Pending</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            22AW-L8CTA9-4P
+                                        </td>
+                                        <td>2nd</td>
+                                        <td>
+                                            <span class="status">On Stock</span>
+                                        </td>
+                                        <td>1</td>
+                                        <td>Pending</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            55AW-F45EDT56-1Q
+                                        </td>
+                                        <td>3rd</td>
+                                        <td>
+                                            <span class="status">On Stock</span>
+                                        </td>
+                                        <td>1</td>
+                                        <td>Pending</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            55AW-F45EDT56-1Q
+                                        </td>
+                                        <td>1st</td>
+                                        <td>
+                                            <span class="status done">Awarded</span>
+                                        </td>
+                                        <td>0</td>
+                                        <td>Pending</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            55AW-F45EDT56-1Q
+                                        </td>
+                                        <td>2nd</td>
+                                        <td>
+                                            <span class="status done">Awarded</span>
+                                        </td>
+                                        <td>0</td>
+                                        <td>Pending</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            55AW-F45EDT56-1Q
+                                        </td>
+                                        <td>3rd</td>
+                                        <td>
+                                            <span class="status done">Awarded</span>
+                                        </td>
+                                        <td>0</td>
+                                        <td>Pending</td>
+                                    </tr>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            55AW-F45EDT56-1Q
+                                        </td>
+                                        <td>1st</td>
+                                        <td>
+                                            <span class="status done">Awarded</span>
+                                        </td>
+                                        <td>0</td>
+                                        <td>Pending</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            55AW-F45EDT56-1Q
+                                        </td>
+                                        <td>2nd</td>
+                                        <td>
+                                            <span class="status done">Awarded</span>
+                                        </td>
+                                        <td>0</td>
+                                        <td>Pending</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            55AW-F45EDT56-1Q
+                                        </td>
+                                        <td>3rd</td>
+                                        <td>
+                                            <span class="status done">Awarded</span>
+                                        </td>
+                                        <td>0</td>
+                                        <td>Pending</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="paginate_sec">
+                            <p>Showing 1 to 7 of 23 entries</p>
+                            <ul class="pagination">
+                                <li class="me-4">
+                                    <a href="#" aria-label="Previous">
+                                        <img src="<%= asset_path("left_small_arrow.svg")%>" aria-hidden="true" alt="icon">
+                                        Previous
+                                    </a>
+                                </li>
+                                <li class="active"><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li class="ms-4">
+                                    <a href="#" aria-label="Previous">
+                                        Next
+                                        <img src="<%= asset_path("right_small_arrow.svg")%>" aria-hidden="true" alt="icon">
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="inventory" class="tab-pane fade">
+                        <div class="btn_blk my-4 justify-content-end">
+                            <button type="button" class="site_btn prime_btn round pop_btn" data-popup="add_amazon">Add
+                                Amazon Card</button>
+                        </div>
+                        <div id="table_blk">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20rem">Image</th>
+                                        <th style="width: 19rem">Amount</th>
+                                        <th style="width: 21rem">Gift Card Number</th>
+                                        <th style="width: 14rem">Coin Price</th>
+                                        <th style="width: 18rem">Date Added</th>
+                                        <th style="width: 20rem">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="amazon_card">
+                                                <p>$100</p>
+                                                <div class="img">
+                                                    <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                </div>
+                                                <div class="btn_blk">
+                                                    <button type="button" class="amazon_btn">
+                                                        <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                        00,000
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>$100</td>
+                                        <td>22AW-L8CTA9-4P</td>
+                                        <td>14,000</td>
+                                        <td>April 4, 2022</td>
+                                        <td>
+                                            <div class="btn_blk">
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-edit.svg")%>" alt="">
+                                                </button>
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-delete.svg")%>" alt="">
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="amazon_card">
+                                                <p>$100</p>
+                                                <div class="img">
+                                                    <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                </div>
+                                                <div class="btn_blk">
+                                                    <button type="button" class="amazon_btn">
+                                                        <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                        00,000
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>$100</td>
+                                        <td>22AW-L8CTA9-4P</td>
+                                        <td>14,000</td>
+                                        <td>April 4, 2022</td>
+                                        <td>
+                                            <div class="btn_blk">
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-edit.svg")%>" alt="">
+                                                </button>
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-delete.svg")%>" alt="">
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="amazon_card">
+                                                <p>$100</p>
+                                                <div class="img">
+                                                    <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                </div>
+                                                <div class="btn_blk">
+                                                    <button type="button" class="amazon_btn">
+                                                        <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                        00,000
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>$100</td>
+                                        <td>22AW-L8CTA9-4P</td>
+                                        <td>14,000</td>
+                                        <td>April 4, 2022</td>
+                                        <td>
+                                            <div class="btn_blk">
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-edit.svg")%>" alt="">
+                                                </button>
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-delete.svg")%>" alt="">
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="amazon_card">
+                                                <p>$100</p>
+                                                <div class="img">
+                                                    <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                </div>
+                                                <div class="btn_blk">
+                                                    <button type="button" class="amazon_btn">
+                                                        <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                        00,000
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>$100</td>
+                                        <td>22AW-L8CTA9-4P</td>
+                                        <td>14,000</td>
+                                        <td>April 4, 2022</td>
+                                        <td>
+                                            <div class="btn_blk">
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-edit.svg")%>" alt="">
+                                                </button>
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-delete.svg")%>" alt="">
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="amazon_card">
+                                                <p>$100</p>
+                                                <div class="img">
+                                                    <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                </div>
+                                                <div class="btn_blk">
+                                                    <button type="button" class="amazon_btn">
+                                                        <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                        00,000
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>$100</td>
+                                        <td>22AW-L8CTA9-4P</td>
+                                        <td>14,000</td>
+                                        <td>April 4, 2022</td>
+                                        <td>
+                                            <div class="btn_blk">
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-edit.svg")%>" alt="">
+                                                </button>
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-delete.svg")%>" alt="">
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="amazon_card">
+                                                <p>$100</p>
+                                                <div class="img">
+                                                    <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                </div>
+                                                <div class="btn_blk">
+                                                    <button type="button" class="amazon_btn">
+                                                        <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                        00,000
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>$100</td>
+                                        <td>22AW-L8CTA9-4P</td>
+                                        <td>14,000</td>
+                                        <td>April 4, 2022</td>
+                                        <td>
+                                            <div class="btn_blk">
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-edit.svg")%>" alt="">
+                                                </button>
+                                                <button type="button" class="btn action_btn">
+                                                    <img src="<%= asset_path("icon-delete.svg")%>" alt="">
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="paginate_sec">
+                            <p>Showing 1 to 1 of 1 entries</p>
+                            <ul class="pagination">
+                                <li class="me-4">
+                                    <a href="#" aria-label="Previous">
+                                        <img src="<%= asset_path("left_small_arrow.svg")%>" aria-hidden="true" alt="icon">
+                                        Previous
+                                    </a>
+                                </li>
+                                <li class="active"><a href="#">1</a></li>
+                                <li class="ms-4">
+                                    <a href="#" aria-label="Previous">
+                                        Next
+                                        <img src="<%= asset_path("right_small_arrow.svg")%>" aria-hidden="true" alt="icon">
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="popup" data-popup="add_gift" id="add_gift">
+                <div class="table_dv">
+                    <div class="table_cell">
+                        <div class="contain">
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <div class="_inner">
+                                        <button type="button" class="x_btn"></button>
+                                        <h4>Add Gift Card</h4>
+                                        <form action="">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h6 class="form_label">Rank</h6>
+                                                    <div class="dropdown">
+                                                        <button class="btn drop_btn w-100" data-bs-toggle="dropdown">
+                                                            Select Ranking
+                                                            <img src="<%= asset_path("icon-polygon.svg")%>" alt="">
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li><button type="button">1st Place</button></li>
+                                                            <li><button type="button">2nd Place</button></li>
+                                                            <li><button type="button">3rd Place</button></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h6 class="form_label">Amazon Gift Card Number</h6>
+                                                    <div class="form_blk">
+                                                        <input type="text" class="input" placeholder="2334-LJIJA-90">
+                                                        <div class="img">
+                                                            <img src="<%= asset_path("amazon-card-1.png")%>" alt="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h6 class="form_label">Amount</h6>
+                                                    <div class="dropdown">
+                                                        <button class="btn drop_btn w-100" data-bs-toggle="dropdown">
+                                                            Select Value
+                                                            <img src="<%= asset_path("icon-polygon.svg")%>" alt="">
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li><button type="button">$100</button></li>
+                                                            <li><button type="button">$75</button></li>
+                                                            <li><button type="button">$50</button></li>
+                                                            <li><button type="button">$25</button></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="btn_blk">
+                                                <button type="button" class="site_btn prime_btn round pop_btn"
+                                                    data-popup="gift_confirm">Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="popup" data-popup="gift_confirm" id="gift_confirm">
+                <div class="table_dv">
+                    <div class="table_cell">
+                        <div class="contain">
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <div class="_inner">
+                                        <h3>Confirmation</h3>
+                                        <p>Are you sure you want to add this gift card <strong>2334-LJIJA-90</strong> as 1st
+                                            Place to your
+                                            List?</p>
+                                        <div class="btn_blk">
+                                            <button type="button" class="site_btn prime_btn round">Yes</button>
+                                            <button type="button" class="site_btn no_btn round">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="popup" data-popup="add_amazon" id="add_amazon">
+                <div class="table_dv">
+                    <div class="table_cell">
+                        <div class="contain">
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <div class="_inner">
+                                        <button type="button" class="x_btn"></button>
+                                        <h4>Add Amazon Gift Card</h4>
+                                        <div class="detail_blk">
+                                            <div class="left_blk">
+                                                <form action="">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <h6 class="form_label">Amount</h6>
+                                                            <div class="form_blk">
+                                                                <input type="text" class="input" placeholder="$100">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <h6 class="form_label">Gift Card #</h6>
+                                                            <div class="form_blk">
+                                                                <input type="text" class="input"
+                                                                    placeholder="22AW-L8CTA9-4P">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <h6 class="form_label">Coin Price</h6>
+                                                            <div class="form_blk">
+                                                                <input type="text" class="input" value="14,000">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="btn_blk">
+                                                        <button type="button" class="site_btn prime_btn round">Save
+                                                            Card</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="right_blk">
+                                                <p>Add image</p>
+                                                <div class="cards_list">
+                                                    <div class="amazon_card">
+                                                        <input type="checkbox" class="checkbox">
+                                                        <h5>$100</h5>
+                                                        <div class="img">
+                                                            <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                        </div>
+                                                        <div class="btn_blk">
+                                                            <button type="button" class="amazon_btn">
+                                                                <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                                00,000
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="amazon_card">
+                                                        <input type="checkbox" class="checkbox">
+                                                        <h5>$75</h5>
+                                                        <div class="img">
+                                                            <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                        </div>
+                                                        <div class="btn_blk">
+                                                            <button type="button" class="amazon_btn">
+                                                                <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                                00,000
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="amazon_card">
+                                                        <input type="checkbox" class="checkbox">
+                                                        <h5>$50</h5>
+                                                        <div class="img">
+                                                            <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                        </div>
+                                                        <div class="btn_blk">
+                                                            <button type="button" class="amazon_btn">
+                                                                <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                                00,000
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="amazon_card">
+                                                        <input type="checkbox" class="checkbox">
+                                                        <h5>$20</h5>
+                                                        <div class="img">
+                                                            <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                        </div>
+                                                        <div class="btn_blk">
+                                                            <button type="button" class="amazon_btn">
+                                                                <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                                00,000
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="amazon_card">
+                                                        <input type="checkbox" class="checkbox">
+                                                        <h5>$10</h5>
+                                                        <div class="img">
+                                                            <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                        </div>
+                                                        <div class="btn_blk">
+                                                            <button type="button" class="amazon_btn">
+                                                                <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                                00,000
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

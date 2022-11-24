@@ -1,0 +1,58 @@
+<main>
+    <section id="memee">
+        <%=render "dashboard/sidebar" %>
+        <div id="tour_winner" class="main_side">
+            <div id="top_header">
+                <div class="left_blk">
+                    <h1>Tournament Winner</h1>
+                    <div class="img">
+                        <img src="<%= asset_path("icon-header.svg")%>" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="inner">
+                <div class="inside">
+                    <div class="winner_blk">
+                        <div class="user_blk">
+                            <a href="#" class="icon">
+                                <img src="<%= asset_path("left-arrow.svg")%>" alt="">
+                            </a>
+                            <div class="user">
+                                <div class="img">
+                                    <img src="<%= asset_path("user.svg")%>" alt="">
+                                </div>
+                                <div class="content">
+                                    <h6>Mr Astronut</h6>
+                                    <p>iammemer@memee.com</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="name_blk">
+                            <h4>Memes Posts by Mr Astronut</h4>
+                        </div>
+                        <div class="post_blk" style="background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('<%= asset_path("bg-img.jpg")%>')">
+                            <div class="detail">
+                                <span>Date Posted</span>
+                                <p>January 05, 2022</p>
+                                <div class="bottom">
+                                    <div class="like">
+                                        <div class="icon">
+                                            <img src="<%= asset_path("heart-icon.svg")%>" alt="">
+                                        </div>
+                                        <span>324</span>
+                                    </div>
+                                    <div class="unlike">
+                                        <div class="icon">
+                                            <img src="<%= asset_path("cross-icon.svg")%>" alt="">
+                                        </div>
+                                        <span>12</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

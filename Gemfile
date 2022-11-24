@@ -75,5 +75,7 @@ gem 'jwt'
 gem 'bcrypt'
 gem 'dotenv-rails'
 gem 'cloudinary'
+gem 'sass-rails'
+
 gem 'acts-as-taggable-on'
 gem 'will_paginate'
