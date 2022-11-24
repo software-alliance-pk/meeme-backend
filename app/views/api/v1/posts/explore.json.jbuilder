@@ -1,5 +1,6 @@
+json.tag params[:tag]
 json.post_count @posts.count
-json.posts do
+json.explore_posts do
   json.(@posts) do |post|
     json.user_id post.user.id
     json.username post.user.username

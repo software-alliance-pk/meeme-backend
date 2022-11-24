@@ -1,16 +1,17 @@
 class Api::V1::CommentsController < Api::V1::ApiController
   before_action :authorize_request
+  before_action :find_post,only: [:create]
   before_action :find_comment, only: [:show, :update_comments, :destroy,:create_child_comment]
   before_action :find_child_comment, only: [:child_comments, :child_comment_destroy]
 
   def index
-    @comments = @current_user.posts.find_by(id: params[:post_id])
+    @comments = Post.find_by(id: params[:post_id])
     if @comments.present?
-      @comments = @comments.comments
+      @comments = @comments.comments.where(parent_id: nil).paginate(page: params[:page], per_page: 25)
       if @comments.present?
         # render index, status: :ok
       else
-        render json: { message: "No Comments for this particular post" }, status: :not_found
+        # render json: { message: "No Comments for this particular post" }, status: :not_found
       end
     else
       render json: { message: "Post is not present" }, status: :not_found
@@ -19,10 +20,11 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   def child_comments
+    @child_comment=@child_comment.paginate(page: params[:page], per_page: 25)
     if @child_comment.present?
 
     else
-      render json: { message: "No Child Comments found" }, status: :not_found
+      # render json: { message: "No Child Comments found" }, status: :not_found
     end
 
   end
@@ -88,7 +90,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   def child_comment_destroy
-    @child_comment = @child_comment.find_by(id: params[:id])
+    @child_comment = Comment.find_by(id: params[:comment_id])
     if @child_comment.present?
       @child_comment.destroy
       render json: { message: "Child Comment successfully destroyed" }, status: :ok
@@ -98,11 +100,17 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   private
-
+  def find_post
+    @post=Post.find_by(id: params[:post_id]).present?
+    if @post
+    else
+      return render json: { message: ' Post Not found' }, status: :not_found
+    end
+  end
   def find_comment
-    if @current_user.posts.find_by(id: params[:post_id]).present?
-      if @current_user.posts.find_by(id: params[:post_id]).comments.find_by(id: params[:comment_id]).present?
-        unless (@comment = @current_user.posts.find_by(id: params[:post_id]).comments.find_by(id: params[:comment_id]))
+    if Post.find_by(id: params[:post_id]).present?
+      if Post.find_by(id: params[:post_id]).comments.find_by(id: params[:comment_id]).present?
+        unless (@comment = Post.find_by(id: params[:post_id]).comments.find_by(id: params[:comment_id]))
           return render json: { message: ' Comment Not found' }, status: :not_found
         end
       else
@@ -115,9 +123,9 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   def find_child_comment
-    if @current_user.posts.find_by(id: params[:post_id]).present?
-      if @current_user.posts.find_by(id: params[:post_id]).comments.find_by(id: params[:comment_id]).present?
-        unless (@child_comment = @current_user.posts.find_by(id: params[:post_id]).comments.find_by(id: params[:comment_id]).comments)
+    if Post.find_by(id: params[:post_id]).present?
+      if Post.find_by(id: params[:post_id]).comments.find_by(id: params[:comment_id]).present?
+        unless (@child_comment = Post.find_by(id: params[:post_id]).comments.find_by(id: params[:comment_id]).comments)
           return render json: { message: ' Child Comment Not found' }, status: :not_found
         end
       else

@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[create forgot_password reset_user_password]
-  before_action :find_user, except: %i[create index update_user]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user]
 
   # GET /users
   def index
@@ -8,14 +8,23 @@ class Api::V1::UsersController < Api::V1::ApiController
     render json: @users, status: :ok
   end
 
-  def all_posts
-    @posts = Post.all
+  def open_current_user
+
   end
 
+  def open_some_other_user
+  end
+
+  def all_posts
+    @posts = Post.where(tournament_meme: false).order('updated_at DESC').paginate(page: params[:page], per_page: 25)
+  end
+
+
   def open_profile
-    @profile=User.find_by(id: params[:id])
+    @profile = User.find_by(id: params[:id])
     return render json: { message: "User not found" }, status: :not_found unless @profile
   end
+
   # GET /users/{username}
   def show
     render json: { user: @user,
@@ -87,9 +96,12 @@ class Api::V1::UsersController < Api::V1::ApiController
   private
 
   def find_user
-    @user = User.find_by_email(params[:email])
-  rescue ActiveRecord::RecordNotFound
-    render json: { message: 'User not found' }, status: :not_found
+    #   @user = User.find_by_email(params[:email])
+    # rescue ActiveRecord::RecordNotFound
+    #    render json: { message: 'User not found' }, status: :not_found
+    unless (@user = User.find_by_email(params[:email]) || User.find_by_id(params[:id]))
+      return render json: { message: 'User Not found' }
+    end
   end
 
   def user_params

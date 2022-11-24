@@ -2,15 +2,15 @@ class Api::V1::PostsController < Api::V1::ApiController
   before_action :authorize_request
   before_action :find_post, only: [:show, :update_posts, :destroy]
 
+
   def index
-    @posts = @current_user.posts.by_recently_created(20)
+    @posts = @current_user.posts.by_recently_created(20).paginate(page: params[:page], per_page: 25)
     if @posts.present?
-      # render index, status: :ok
+
     else
       render json: { message: "No posts for this particular user" }, status: :not_found
     end
   end
-
 
   def show
     render json: { post: @current_user.posts.by_recently_created },
@@ -44,6 +44,44 @@ class Api::V1::PostsController < Api::V1::ApiController
     render json: { message: "Post successfully destroyed" }, status: :ok
   end
 
+  def explore
+    @tags=ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    if params[:tag]=="#"
+      @posts=Post.where(tournament_meme: false)
+      # render json: { message: "Tag not found" }, status: :not_found
+    else
+      @posts = Post.tagged_with(params[:tag])
+      if @posts.present?
+      else
+        # @posts=Post.all.paginate(page: params[:page], per_page: 25)
+        render json: { message: "No Post found against this tag " }, status: :not_found
+      end
+    end
+  end
+
+  def tags
+    @tags=ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    # @tags=@tags.paginate(page: params[:page], per_page: 25)
+    render json:{tags: @tags}, status: :ok if @tags.present?
+  end
+
+  def following_posts
+    @following=@current_user.followers.where(is_following: true).pluck(:follower_user_id)
+    @following=User.where(id: @following).paginate(page: params[:page], per_page: 25)
+  end
+  def recent_posts
+    @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).paginate(page: params[:page], per_page: 25)
+  end
+
+  def trending_posts
+    @likes=Like.where(status: 1, is_liked:true, is_judged: false).joins(:post).where(post: {tournament_meme: false}).group(:post_id).count(:post_id).sort_by(&:last).reverse.to_h
+    @trending_posts=Post.where(id: @likes.keys).paginate(page: params[:page], per_page: 25).reverse
+    if @trending_posts
+
+    end
+  end
+
+
   private
 
   def find_post
@@ -53,6 +91,6 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def post_params
-    params.permit(:id, :description, :tags, :post_likes, :post_image, :user_id)
+    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme)
   end
 end
