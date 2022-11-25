@@ -43,6 +43,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def email_validate
+    
     @user = User.find_by_email(params[:email])
     if @user.present?
       return render json: { message: 'Email present',status: true}
