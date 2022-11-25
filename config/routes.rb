@@ -40,7 +40,7 @@ Rails.application.routes.draw do
           get :open_profile
           get :open_current_user
           get :open_some_other_user
-            get :email_validate
+          get :email_validate
         end
         get '/*a', to: 'application#not_found'
       end
