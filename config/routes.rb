@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   # devise_for :admin_users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Define your application routes p  er the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
   # root to: 'home#index'
@@ -40,7 +40,7 @@ Rails.application.routes.draw do
           get :open_profile
           get :open_current_user
           get :open_some_other_user
-          get :email_validate
+          post :email_validate
         end
         get '/*a', to: 'application#not_found'
       end
