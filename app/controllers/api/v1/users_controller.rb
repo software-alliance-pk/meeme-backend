@@ -45,9 +45,9 @@ class Api::V1::UsersController < Api::V1::ApiController
   def email_validate
     @user = User.find_by_email(params[:email])
     if @user.present?
-      return render json: { message: 'Email present', status: true }, status: :found
+      return render json: { message: 'Email present', email_status: true }, status: :ok
     else
-      return render json: { message: 'Email not present', status: false }, status: :not_found
+      return render json: { message: 'Email not present', email_status: false }, status: :not_found
     end
   end
 
