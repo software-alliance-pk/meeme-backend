@@ -50,7 +50,7 @@ Rails.application.routes.draw do
       resources :posts do
         collection do
           put :update_posts
-          get :explore
+          post :explore
           get :following_posts
           get :recent_posts
           get :trending_posts
