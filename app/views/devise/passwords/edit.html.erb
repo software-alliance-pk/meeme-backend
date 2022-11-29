@@ -1,0 +1,69 @@
+<main>
+  <section id="logon" style="background-image: url(<%= asset_path("logon-bg.jpg")%>);">
+    <div class="contain">
+      <div class="log_blk">
+        <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+          <div class="logo">
+            <img src="<%= asset_path("logo.svg")%>" alt="">
+          </div>
+          <div class="txt">
+            <h1 class="fw_700">Reset Password</h1>
+            <p>Enter your new password below</p>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="form_blk">
+                <% if @minimum_password_length %>
+                  <em>(<%= @minimum_password_length %> characters minimum)</em><br />
+                <% end %>
+                <%= f.password_field :password, autofocus: true, autocomplete: "new-password",type:"password", id:"", class:"input", placeholder:"New Password" %>
+<!--                <input type="password" name="" id="" class="input" placeholder="New Password">-->
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form_blk">
+                <%= f.password_field :password_confirmation, autocomplete: "new-password",type:"password",id:"", class:"input", placeholder:"Re-type new password" %>
+<!--                <input type="password" name="" id="" class="input" placeholder="Re-type new password">-->
+              </div>
+            </div>
+<!--            <div class="col-12">-->
+<!--              <div class="form_blk forget_blk">-->
+<!--                <a href="forgot-password.php">Forgot password?</a>-->
+<!--              </div>-->
+<!--            </div>-->
+          </div>
+          <div class="btn_blk">
+            <button><%= f.submit "Change my password",type:"submit" ,class:"site_btn prime_btn w-100" %></button>
+<!--            <button type="submit" class="site_btn prime_btn w-100">Create New Password</button>-->
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</main>
+<!--<h2>Change your password</h2>-->
+
+<%#= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+  <%#= render "devise/shared/error_messages", resource: resource %>
+  <%#= f.hidden_field :reset_password_token %>
+
+<!--  <div class="field">-->
+<!--    <%#= f.label :password, "New password" %><br />-->
+    <%# if @minimum_password_length %>
+<!--      <em>(<%#= @minimum_password_length %> characters minimum)</em><br />-->
+    <%# end %>
+    <%#= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
+<!--  </div>-->
+
+<!--  <div class="field">-->
+<!--    <%#= f.label :password_confirmation, "Confirm new password" %><br />-->
+    <%#= f.password_field :password_confirmation, autocomplete: "new-password" %>
+<!--  </div>-->
+
+<!--  <div class="actions">-->
+    <%#= f.submit "Change my password" %>
+<!--  </div>-->
+<%# end %>
+
+<%= render "devise/shared/links" %>

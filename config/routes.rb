@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  # devise_for :admin_users
+  devise_for :admin_users
   # Define your application routes p  er the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")

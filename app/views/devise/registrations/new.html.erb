@@ -1,0 +1,112 @@
+<main>
+  <section id="logon" style="background-image: url(<%= asset_path("logon-bg.jpg")%>);">
+    <div class="contain">
+      <div class="log_blk">
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+          <div class="logo">
+            <img src="<%= asset_path("logo.svg") %>" alt="">
+          </div>
+          <div class="txt">
+            <h1 class="fw_700">Sign up to manage</h1>
+            <p>Enter your details below</p>
+          </div>
+          <%= render "devise/shared/error_messages", resource: resource %>
+          <div class="row">
+            <div class="col-12">
+              <div class="form_blk">
+                <%= f.text_field :full_name, autofocus: true, autocomplete: "full name", type: "text", id: "", class: "input", placeholder: "Full Name" %>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form_blk">
+                <%= f.text_field :admin_user_name, autofocus: true, autocomplete: "admin full name", type: "text", id: "", class: "input", placeholder: "Admin Full Name" %>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form_blk">
+                <%= f.email_field :email, autofocus: true, autocomplete: "email", type: "text", class: "input", id: "", placeholder: "Email" %>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form_blk">
+                <% if @minimum_password_length %>
+                  <em>(<%= @minimum_password_length %> characters minimum)</em>
+                <% end %><br/>
+                <%= f.password_field :password, autocomplete: "new-password", type: "password", class: "input", id: "", placeholder: "Password" %>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form_blk">
+                <%= f.password_field :password_confirmation, autocomplete: "confirm-password", type: "password", id: "", class: "input", placeholder: "Confirm Password" %>
+              </div>
+            </div>
+          </div>
+          <div class="btn_blk">
+            <%#= f.submit "Sign up",type:"button" ,class:"site_btn prime_btn w-100 pop_btn"  %>
+            <button><%= f.submit "Sign up", type: "button", class: "site_btn prime_btn w-100 pop_btn" %></button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="popup" data-popup="sign_up" id="logon_modal">
+      <div class="table_dv">
+        <div class="table_cell">
+          <div class="contain">
+            <div class="row justify-content-center">
+              <div class="col-md-7">
+                <div class="_inner">
+                  <button type="button" class="x_btn"></button>
+                  <div class="success_img">
+                    <img src="<%= asset_path("signup-confirm.svg") %>" alt="">
+                  </div>
+                  <p>Welcome! Your admin account has been created</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%#= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+<%#= render "devise/shared/error_messages", resource: resource %>
+
+<!--  <div class="field">-->
+<!--    <%#= f.label :email %><br/>-->
+<%#= f.email_field :email, autofocus: true, autocomplete: "email" %>
+<!--  </div>-->
+
+<!--  <div class="field">-->
+<%#= f.label :password %>
+<%# if @minimum_password_length %>
+<!--      <em>(<%#= @minimum_password_length %> characters minimum)</em>-->
+<!--    <%# end %><br/>-->
+<%#= f.password_field :password, autocomplete: "new-password" %>
+<!--  </div>-->
+
+<!--  <div class="field">-->
+<!--    <%#= f.label :password_confirmation %><br/>-->
+<%#= f.password_field :password_confirmation, autocomplete: "new-password" %>
+<!--  </div>-->
+
+<!--  <div class="actions">-->
+<%#= f.submit "Sign up" %>
+<!--  </div>-->
+<%# end %>
+
+<%= render "devise/shared/links" %>
