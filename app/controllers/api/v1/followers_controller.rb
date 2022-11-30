@@ -6,7 +6,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
 
   # GET /users
   def index
-    @user_followers = @current_user.followers.where(is_following: true).paginate(page: params[:page], per_page: 25)
+    @user_followers = @current_user.followers.where(is_following: true,status: "added").paginate(page: params[:page], per_page: 25)
     if @user_followers.present?
       render json: { followers_count: @user_followers.count, followers: @user_followers }, status: :ok
     else
@@ -16,7 +16,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
   end
 
   def show_pending_requests
-    @user_followers = @current_user.followers.where(is_following: false).paginate(page: params[:page], per_page: 25)
+    @user_followers = @current_user.followers.where(is_following: false,status: 'pending').paginate(page: params[:page], per_page: 25)
     if @user_followers.present?
       render json: { pending_followers_count: @user_followers.count, followers: @user_followers }, status: :ok
     else
@@ -26,7 +26,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
   end
 
   def create
-    @follower = Follower.new(user_id: @current_user.id, is_following: true, follower_user_id: params[:follower_user_id])
+    @follower = Follower.new(user_id: @current_user.id, is_following: true, follower_user_id: params[:follower_user_id],status: 'added')
     if @follower.save
       render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} and #{User.find_by(id: @follower.follower_user_id).username} are now friends" }, status: :ok
     else
@@ -35,7 +35,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
   end
 
   def send_a_follow_request_to_user
-    @follower = Follower.new(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id])
+    @follower = Follower.new(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id],status: 'pending')
     if @follower.save
       render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a request to #{User.find_by(id: @follower.follower_user_id).username} " }, status: :ok
     else
@@ -46,11 +46,14 @@ class Api::V1::FollowersController < Api::V1::ApiController
   def update_follower
     @follower = Follower.find_by(user_id: @current_user.id, follower_user_id: params[:follower_user_id])
     if @follower.present?
-      if @follower.is_following.to_s==params[:is_following]
+      if @follower.is_following.to_s==params[:is_following] && @follower.added?
         render json: { message: "User unfriend his follower" }, status: :ok
         @follower.destroy
+      elsif @follower.is_following.to_s==params[:is_following] && @follower.pending?
+        render json: { message: "User removed from pending" }, status: :ok
+        @follower.destroy
       else
-        @follower.update(is_following: true)
+        @follower.update(is_following: true,status: 'added')
         render json: { message: "User added this follower" }, status: :ok
       end
     else
