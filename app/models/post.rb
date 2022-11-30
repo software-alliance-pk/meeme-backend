@@ -1,5 +1,6 @@
 class Post < ApplicationRecord
   scope :by_recently_created, -> (limit) { order(created_at: :desc).limit(limit) }
+  scope :by_recently_updated, -> (limit) { order(updated_at: :desc).limit(limit) }
 
   validates :description, presence:true
 
