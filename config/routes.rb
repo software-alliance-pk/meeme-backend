@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  devise_for :admin_users
+  # Define your application routes p  er the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
-  # 
+  # root to: 'home#index'
   root "dashboard#dashboard"
   get '/dashboard', to: "dashboard#dashboard"
   get '/welcome', to: "dashboard#welcome"
@@ -39,6 +40,7 @@ Rails.application.routes.draw do
           get :open_profile
           get :open_current_user
           get :open_some_other_user
+          post :email_validate
         end
         get '/*a', to: 'application#not_found'
       end
@@ -48,7 +50,7 @@ Rails.application.routes.draw do
       resources :posts do
         collection do
           put :update_posts
-          get :explore
+          post :explore
           get :following_posts
           get :recent_posts
           get :trending_posts

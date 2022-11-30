@@ -26,7 +26,7 @@ class Api::V1::StoriesController < Api::V1::ApiController
   end
 
   def like_dislike_a_story
-    response = StoryLikeService.new(params[:id], @current_user.id).create_for_story
+    response = StoryLikeService.new(@story.id, @current_user.id).create_for_story
     render json: { like: response[0], message: response[1] }, status: :ok if response
   end
 

@@ -1,0 +1,43 @@
+<main>
+  <section id="logon" style="background-image: url(<%= asset_path("logon-bg.jpg")%>);">
+    <div class="contain">
+      <div class="log_blk">
+        <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+          <div class="logo">
+            <img src="<%= asset_path("logo.svg") %>" alt="">
+          </div>
+          <div class="txt">
+            <h1 class="fw_700">Sign in to manage</h1>
+            <p>Enter your details below</p>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="form_blk">
+                <%#= f.label :email %>
+                <%= f.email_field :email, autofocus: true, autocomplete: "Email", type: "text", id: "", class: "input", placeholder: "Email" %>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form_blk">
+<!--                <%#= f.label :password %><br/>-->
+                <%= f.password_field :password, autocomplete: "current-password", type: "password", id: "", class: "input", placeholder: "Password" %>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form_blk forget_blk">
+                <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+                  <%= link_to "Forgot your password?", new_password_path(resource_name) %><br />
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <div class="btn_blk">
+            <button><%= f.submit "Sign in" ,type: "button", class: "site_btn prime_btn w-100"%></button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%#= render "devise/shared/links" %>

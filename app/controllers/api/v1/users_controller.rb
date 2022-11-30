@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
-  before_action :authorize_request, except: %i[create forgot_password reset_user_password]
-  before_action :find_user, except: %i[create index update_user all_posts open_current_user]
+  before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate]
 
   # GET /users
   def index
@@ -39,6 +39,15 @@ class Api::V1::UsersController < Api::V1::ApiController
       render json: { user: @user, profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '', message: 'User created successfully' }, status: :ok
     else
       render_error_messages(@user)
+    end
+  end
+
+  def email_validate
+    @user = User.find_by_email(params[:email])
+    if @user.present?
+      return render json: { message: 'Email present', email_status: true }, status: :ok
+    else
+      return render json: { message: 'Email not present', email_status: false }, status: :not_found
     end
   end
 
@@ -96,9 +105,6 @@ class Api::V1::UsersController < Api::V1::ApiController
   private
 
   def find_user
-    #   @user = User.find_by_email(params[:email])
-    # rescue ActiveRecord::RecordNotFound
-    #    render json: { message: 'User not found' }, status: :not_found
     unless (@user = User.find_by_email(params[:email]) || User.find_by_id(params[:id]))
       return render json: { message: 'User Not found' }
     end
