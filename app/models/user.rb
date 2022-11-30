@@ -1,5 +1,4 @@
 class User < ApplicationRecord
-  after_create :create_wallet
   scope :recently_created, -> (limit) { order(created_at: :desc) }
 
   has_secure_password
@@ -19,10 +18,13 @@ class User < ApplicationRecord
   has_many :tournament_banners, through: :tournament_users
   has_many :followers, dependent: :destroy
   has_many :stories,dependent: :destroy
-  has_one :wallet,dependent: :destroy
+  has_one :wallet, dependent: :destroy
+  has_many :user_cards, dependent: :destroy
 
-  def create_wallet
-    @@user_wallet=Wallet.new(user_id: self.id)
-    @@user_wallet.save
+  def get_wallet
+    return self.wallet if self.wallet.present?
+    tmp_wallet = Wallet.new(user_id: id)
+    tmp_wallet.save
+    tmp_wallet
   end
 end
