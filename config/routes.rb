@@ -107,6 +107,11 @@ Rails.application.routes.draw do
           get :show_story_comments
         end
       end
+      resources :stores do
+        collection do
+        end
+      end
     end
+
   end
 end
