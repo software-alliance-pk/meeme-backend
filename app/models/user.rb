@@ -20,6 +20,7 @@ class User < ApplicationRecord
   has_many :stories,dependent: :destroy
   has_one :wallet, dependent: :destroy
   has_many :user_cards, dependent: :destroy
+  has_many :transactions,dependent: :destroy
 
   def get_wallet
     return self.wallet if self.wallet.present?
@@ -27,4 +28,9 @@ class User < ApplicationRecord
     tmp_wallet.save
     tmp_wallet
   end
+
+  def pending_friend_request
+    Follower.where(status: "pending", follower_user_id: self.id)
+  end
+
 end
