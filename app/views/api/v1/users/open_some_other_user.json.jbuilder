@@ -2,7 +2,8 @@ json.profile do
   json.user @user
   json.user_image @user.profile_image.attached? ? @user.profile_image.blob.url : ''
   json.followers  @user.followers.where(is_following: true).count
-  json.follow_each_other  Follower.where(is_following: true, follower_user_id: @current_user.id).present?
+  json.follow_each_other @current_user.followers.where(follower_user_id: @user.id, is_following: true ).present?  ? true : false
+  json.follow_request_send Follower.where(is_following: false, user_id: @current_user.id,follower_user_id: @user.id, status: 'pending').present?  ? true : false
   json.following  Follower.where(is_following: true, follower_user_id: @user.id).count
   json.badges  []
   json.all_post_count @user.posts.count

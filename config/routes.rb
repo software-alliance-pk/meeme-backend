@@ -41,6 +41,13 @@ Rails.application.routes.draw do
           get :open_current_user
           get :open_some_other_user
           post :email_validate
+          post 'payments/add_user_to_stripe',to: "payments#add_user_to_stripe"
+          post 'payments/add_a_card',to: "payments#add_a_card"
+          get 'payments/fetch_all_card',to: "payments#fetch_all_card"
+          delete 'payments/delete_a_card',to: "payments#delete_a_card"
+          post 'payments/charge_a_customer',to: "payments#charge_a_customer"
+          get 'payments/show_transactions_history',to: "payments#show_transactions_history"
+
         end
         get '/*a', to: 'application#not_found'
       end
@@ -76,6 +83,7 @@ Rails.application.routes.draw do
           get :show_pending_requests
           post :send_a_follow_request_to_user
           get :show_people
+          post :un_follow_user
 
         end
       end
@@ -99,6 +107,11 @@ Rails.application.routes.draw do
           get :show_story_comments
         end
       end
+      resources :stores do
+        collection do
+        end
+      end
     end
+
   end
 end

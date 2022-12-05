@@ -79,3 +79,6 @@ gem 'sass-rails'
 gem 'acts-as-taggable-on'
 gem 'will_paginate'
 gem 'devise'
+gem 'dotenv-rails'
+gem 'stripe'
+
