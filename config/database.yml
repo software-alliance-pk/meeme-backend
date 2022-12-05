@@ -22,8 +22,9 @@ production:
   pool: 5
   adapter: postgresql
   host: localhost
-  username: postgres
-  password: 1234
+  username: deploy
+  password: admin123
+
   database: memee-production
 
 staging:

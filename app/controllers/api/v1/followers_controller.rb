@@ -16,7 +16,6 @@ class Api::V1::FollowersController < Api::V1::ApiController
 
   def show_pending_requests
     @user_followers = @current_user.pending_friend_request.paginate(page: params[:page], per_page: 25)
-
     if @user_followers.present?
     else
       render json: { followers: @user_followers  }, status: :ok
@@ -36,6 +35,9 @@ class Api::V1::FollowersController < Api::V1::ApiController
     @follower= Follower.where(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id],status: 'pending')
     if @follower.present?
       render json: { message: "Request already sent a request"}, status: :ok
+    @follower = Follower.new(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id],status: 'pending')
+    if @follower.save
+      render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a request to #{User.find_by(id: @follower.follower_user_id).username} " }, status: :ok
     else
       @follower = Follower.new(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id],status: 'pending')
       if @follower.save
