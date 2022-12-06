@@ -21,7 +21,7 @@ class User < ApplicationRecord
   has_one :wallet, dependent: :destroy
   has_many :user_cards, dependent: :destroy
   has_many :transactions,dependent: :destroy
-  belongs_to :user_store
+  belongs_to :user_store,optional: true
 
   def get_wallet
     return self.wallet if self.wallet.present?
