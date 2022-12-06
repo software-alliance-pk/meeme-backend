@@ -52,6 +52,7 @@ class Api::V1::PaymentsController < Api::V1::ApiController
   end
 
   def charge_a_customer
+    return render json: {message: 'Invalid Card'}, status: :unauthorized unless @current_user.stripe_id.present?
     if response.present?
       response = StripeService.create_stripe_charge(@current_user, params)
       render json: { charge: response }, status: :ok
