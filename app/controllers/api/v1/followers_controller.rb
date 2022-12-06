@@ -35,16 +35,12 @@ class Api::V1::FollowersController < Api::V1::ApiController
     @follower = Follower.where(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id], status: 'pending')
     if @follower.present?
       render json: { message: "Request already sent a request" }, status: :ok
+    else
       @follower = Follower.new(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id], status: 'pending')
       if @follower.save
         render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a request to #{User.find_by(id: @follower.follower_user_id).username} " }, status: :ok
       else
-        @follower = Follower.new(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id], status: 'pending')
-        if @follower.save
-          render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a request to #{User.find_by(id: @follower.follower_user_id).username} " }, status: :ok
-        else
-          render_error_messages(@follower)
-        end
+        render_error_messages(@follower)
       end
     end
   end
