@@ -92,14 +92,14 @@ class StripeService
   def self.create_stripe_charge(user, params)
     begin
       charge = Stripe::Charge.create({
-                                       amount: params[:amount_to_be_paid].to_i,
+                                       amount: params[:amount_to_be_paid].to_i * 100,
                                        currency: 'usd',
                                        source: params[:card_id],
                                        customer: user.stripe_id,
                                        description: "Amount $#{params[:amount_to_be_paid]} charged for coins",
                                      })
       if charge.present?
-        coins = params[:amount_to_be_paid].to_i/0.00083
+        coins = (params[:amount_to_be_paid].to_i * 100)/0.00083
         user_coin = user.coins
         coins += user_coin
         user.update(coins: coins)
