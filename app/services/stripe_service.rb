@@ -106,7 +106,7 @@ class StripeService
         Transaction.create!({
                               charge_id: charge.id,
                               customer_id:charge.customer,
-                              amount:charge.amount,
+                              amount:charge.amount * 0.01,
                               balance_transaction_id:charge.balance_transaction,
                               card_number:charge.payment_method,
                               brand:charge.source.brand,
