@@ -66,7 +66,7 @@ class Api::V1::PaymentsController < Api::V1::ApiController
     if @history.present?
       render json: { transaction_count: @history.count, total_history: @history }, status: :ok
     else
-      render json: { history: [] }, status: :not_found
+      render json: { history: [] }, status: :ok
     end
   end
 end
