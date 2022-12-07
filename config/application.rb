@@ -18,6 +18,8 @@ module MemeeApp
     #
     # config.time_zone = "Central Time (US & Canada)"
     config.eager_load_paths << Rails.root.join("app/services")
+    config.action_cable.disable_request_forgery_protection = true
+    config.action_cable.url = "/cable"
 
 
   end

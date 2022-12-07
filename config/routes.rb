@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   devise_for :admin_users
+  mount ActionCable.server => "/cable"
+
   # Define your application routes p  er the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
@@ -109,6 +111,16 @@ Rails.application.routes.draw do
       end
       resources :stores do
         collection do
+        end
+      end
+      resources :conversations do
+        collection do
+        end
+      end
+      resources :messages do
+        collection do
+          get :individual_messages
+          post :support
         end
       end
     end
