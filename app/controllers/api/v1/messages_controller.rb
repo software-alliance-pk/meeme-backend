@@ -2,9 +2,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
   before_action :authorize_request
 
   def index
-    @messages=Message.where(sender_id: 1).group_by(&:receiver_id)
+    @messages=Message.where(sender_id: @current_user.id).group_by(&:receiver_id)
     @messages=Hash[@messages.to_a.reverse]
-
     if @messages.present?
     else
       render json: { message: "No message present" }, status: :not_found
