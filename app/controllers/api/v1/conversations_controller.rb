@@ -13,6 +13,7 @@ class Api::V1::ConversationsController < Api::V1::ApiController
     else
       @conversation = Conversation.create!(sender_id: @current_user.id,
                                            receiver_id: params[:receiver_id].to_i)
+      render json: { message: "Conversation Created", conversation: @conversation }, status: :ok
     end
   end
 end
