@@ -1,4 +1,4 @@
-json.message @message
+json.message do
   json.id @message.id
   json.body @message.body
   json.conversation_id @message.conversation_id
@@ -10,3 +10,4 @@ json.message @message
   json.message_image @message.message_image.attached? ? @message.message_image.blob.url : ''
   json.sender_image @message.sender.profile_image.attached? ? @message.sender.profile_image.blob.url : ''
   json.receiver_image @message.receiver.profile_image.attached? ? @message.receiver.profile_image.blob.url : ''
+  end
