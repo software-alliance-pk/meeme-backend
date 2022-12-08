@@ -1,12 +1,12 @@
 json.following_count @following.count
-json.following_posts do
-  json.(@following) do |user|
+# json.following_posts do
+  json.(@following) do |post|
     # -  json.(@following) do |user|
     #   -    json.user_id user.id
     #   -    json.username user.username
     #   -    json.user_image user.profile_image.attached? ? user.profile_image.blob.url : ''
     #   -    json.post_count user.posts.count
-    json.posts user.posts.each do |post|
+#     json.posts user.posts.each do |post|
       json.post post
       json.user_id post.user.id
       json.username post.user.username
@@ -30,5 +30,3 @@ json.following_posts do
         end
       end
     end
-  end
-end
