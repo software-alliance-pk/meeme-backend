@@ -121,6 +121,7 @@ Rails.application.routes.draw do
         collection do
           get :individual_messages
           post :support
+          get :fetch_all_users
         end
       end
     end
