@@ -30,11 +30,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   def create
     @conversation = Conversation.find_by(sender_id: @current_user.id, receiver_id: params[:receiver_id])
     if @conversation.present?
-      @message = @conversation.messages.new(body: params[:body],
-                                            sender_id: @current_user.id,
-                                            user_id: @current_user.id,
-                                            receiver_id: params[:receiver_id],
-                                            message_image: params[:message_image])
+      @message = @conversation.messages.new(message_params)
       @message.save
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -53,6 +49,10 @@ class Api::V1::MessagesController < Api::V1::ApiController
     else
       render json: { message: "No conversation present" }, status: :not_found
     end
+  end
+  private
+  def message_params
+    params.permit(:body,:receiver_id,:message_image).merge(sender_id: @current_user.id,user_id: @current_user.id)
   end
 
 end
