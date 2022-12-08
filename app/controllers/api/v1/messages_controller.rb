@@ -17,7 +17,14 @@ class Api::V1::MessagesController < Api::V1::ApiController
     else
       render json: { message: "No message present" }, status: :not_found
     end
+  end
 
+  def fetch_all_users
+    @users=User.where.not(id: @current_user.id)
+    if @users.present?
+    else
+      render json: { message: "No user present" }, status: :not_found
+    end
   end
 
   def create
