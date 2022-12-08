@@ -10,5 +10,5 @@ json.messages @messages.each_with_index do|index,message|
     json.created_at @messages[index].first&.created_at
     json.message_image @messages[index].first&.message_image&.attached? ? @messages[index].first.message_image.blob.url : ''
     json.sender_image @messages[index].first&.sender&.profile_image&.attached? ? @messages[index].first.sender.profile_image.blob.url : ''
-    json.receiver_image @messages[index].first&.receiver&.profile_image&.attached? ? @messages[index].first.reciever.profile_image.blob.url : ''
+    json.receiver_image @messages[index].first&.receiver&.profile_image&.attached? ? @messages[index].first.receiver.profile_image.blob.url : ''
 end
