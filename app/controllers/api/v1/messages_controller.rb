@@ -12,7 +12,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def individual_messages
-    @messages = (Message.where(sender_id: @current_user.id, receiver_id: params[:receiver_id])+Message.where(sender_id: params[:receiver_id], receiver_id: @current_user.id)).recently_created
+    @messages = (Message.where(sender_id: @current_user.id, receiver_id: params[:receiver_id])+Message.where(sender_id: params[:receiver_id], receiver_id: @current_user.id))
     if @messages.present?
     else
       render json: { message: "No message present" }, status: :not_found
