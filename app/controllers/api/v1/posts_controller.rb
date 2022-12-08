@@ -67,7 +67,7 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def following_posts
     @following=@current_user.followers.where(is_following: true).pluck(:follower_user_id)
-    @following=User.where(id: @following).paginate(page: params[:page], per_page: 25)
+    @following=User.where(id: @following).paginate(page: params[:page], per_page: 25).posts
   end
   def recent_posts
     @recent_posts = Post.where(tournament_meme: false).by_recently_updated(20).paginate(page: params[:page], per_page: 25)
