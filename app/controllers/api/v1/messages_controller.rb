@@ -20,7 +20,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def fetch_all_users
-    @users=User.where("username LIKE ?", "%#{params[:username]}%").all
+    @users=User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
     if @users.present?
     else
       render json: { message: "No user present" }, status: :not_found
