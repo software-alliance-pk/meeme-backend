@@ -2,8 +2,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
   before_action :authorize_request
 
   def index
-    @messages=Message.where(sender_id: @current_user.id).group_by(&:receiver_id)
-    @messages=Hash[@messages.to_a.reverse]
+    @messages = Message.where(sender_id: @current_user.id).group_by(&:receiver_id)
+    @messages = Hash[@messages.to_a.reverse]
     if @messages.present?
     else
       render json: { message: "No message present" }, status: :not_found
@@ -12,7 +12,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def individual_messages
-    @messages = (Message.where(sender_id: @current_user.id, receiver_id: params[:receiver_id])+Message.where(sender_id: params[:receiver_id], receiver_id: @current_user.id))
+    @messages = ((Message.where(sender_id: @current_user.id, receiver_id: params[:receiver_id]) + Message.where(sender_id: params[:receiver_id], receiver_id: @current_user.id)).sort_by &:created_at).reverse
     if @messages.present?
     else
       render json: { message: "No message present" }, status: :not_found
@@ -20,7 +20,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def fetch_all_users
-    @users=User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
+    @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
     if @users.present?
     else
       render json: { message: "No user present" }, status: :not_found
@@ -50,9 +50,11 @@ class Api::V1::MessagesController < Api::V1::ApiController
       render json: { message: "No conversation present" }, status: :not_found
     end
   end
+
   private
+
   def message_params
-    params.permit(:body,:receiver_id,:message_image).merge(sender_id: @current_user.id,user_id: @current_user.id)
+    params.permit(:body, :receiver_id, :message_image).merge(sender_id: @current_user.id, user_id: @current_user.id)
   end
 
 end
