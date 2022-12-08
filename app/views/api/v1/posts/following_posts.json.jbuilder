@@ -1,17 +1,11 @@
 json.following_count @following.count
-json.following_posts do
-  json.(@following) do |user|
-    # -  json.(@following) do |user|
-    #   -    json.user_id user.id
-    #   -    json.username user.username
-    #   -    json.user_image user.profile_image.attached? ? user.profile_image.blob.url : ''
-    #   -    json.post_count user.posts.count
-    json.posts user.posts.each do |post|
+@following.each do |user|
+    json.following_posts user.posts.each do |post|
       json.post post
       json.user_id post.user.id
       json.username post.user.username
-      json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
-      # json.post_count post.user.posts.count
+      json.user_image post.user.profile_image.attached? ? user.profile_image.blob.url : ''
+      json.post_count post.user.posts.count
       json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
       json.liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false
       json.post_likes post.likes.count
@@ -31,4 +25,3 @@ json.following_posts do
       end
     end
   end
-end
