@@ -2,13 +2,17 @@ class Api::V1::MessagesController < Api::V1::ApiController
   before_action :authorize_request
 
   def index
-    @chats=[]
+    @chats = []
     @messages = Message.where(sender_id: @current_user.id).group_by(&:receiver_id)
-    @messages.each do|key,value| @messages.present?
-      @chats<< @messages.values[key-1].last
-    end
-    @chats=@chats.sort_by{|e| e[:created_at]}.reverse
-    if @chats.present?
+    if @messages.present?
+      @messages.each do |key, value|
+        @chats << @messages.values[key - 1].last
+      end
+      @chats = @chats.sort_by { |e| e[:created_at] }.reverse
+      if @chats.present?
+      else
+        render json: { message: "No message present" }, status: :not_found
+      end
     else
       render json: { message: "No message present" }, status: :not_found
     end
