@@ -25,3 +25,4 @@ json.following_count @following.count
       end
     end
   end
+
