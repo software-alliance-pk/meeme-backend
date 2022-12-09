@@ -2,13 +2,16 @@ class Api::V1::MessagesController < Api::V1::ApiController
   before_action :authorize_request
 
   def index
+    @chats=[]
     @messages = Message.where(sender_id: @current_user.id).group_by(&:receiver_id)
-    @messages = Hash[@messages.to_a.reverse]
-    if @messages.present?
+    @messages.each do|key,value|
+      @chats<< @messages.values[key-1].last
+    end
+    @chats=@chats.sort_by{|e| e[:created_at]}.reverse
+    if @chats.present?
     else
       render json: { message: "No message present" }, status: :not_found
     end
-
   end
 
   def individual_messages
@@ -32,6 +35,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
     if @conversation.present?
       @message = @conversation.messages.new(message_params)
       @message.save
+
     else
       render json: { message: "No conversation present" }, status: :not_found
     end
