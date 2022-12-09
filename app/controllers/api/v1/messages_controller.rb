@@ -4,8 +4,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
   def index
     @chats=[]
     @messages = Message.where(sender_id: @current_user.id).group_by(&:receiver_id)
-    @messages.each do|key,value|
-      @chats<< @messages.values[key-1].last if present?
+    @messages.each do|key,value| @messages.present?
+      @chats<< @messages.values[key-1].last
     end
     @chats=@chats.sort_by{|e| e[:created_at]}.reverse
     if @chats.present?
