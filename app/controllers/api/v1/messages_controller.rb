@@ -5,7 +5,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
     @chats=[]
     @messages = Message.where(sender_id: @current_user.id).group_by(&:receiver_id)
     @messages.each do|key,value|
-      @chats<< @messages.values[key-1].last
+      @chats<< @messages.values[key-1].last if present?
     end
     @chats=@chats.sort_by{|e| e[:created_at]}.reverse
     if @chats.present?
