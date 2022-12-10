@@ -75,7 +75,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   private
 
   def message_params
-    params.permit(:body, :receiver_id, :message_image,:admin_user_id).merge(sender_id: @current_user.id, user_id: @current_user.id)
+    params.permit(:body, :receiver_id, :message_image,:admin_user_id,:subject).merge(sender_id: @current_user.id, user_id: @current_user.id)
   end
 
 end
