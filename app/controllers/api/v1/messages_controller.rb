@@ -7,8 +7,21 @@ class Api::V1::MessagesController < Api::V1::ApiController
     @messages.each_with_index do|key,value|
       @chats<< @messages.values[value].last
     end
-    @chats=@chats.sort_by{|e| e[:created_at]}.reverse
+    @chats=@chats.sort_by{|e| e[:created_at]}.reverse.select(&:receiver_id)
     if @chats.present?
+    else
+      render json: { message: "No message present" }, status: :not_found
+    end
+  end
+
+  def all_support_chats
+    @support_chats=[]
+    @messages = Message.where(sender_id: @current_user.id).group_by(&:admin_user_id)
+    @messages.each_with_index do|key,value|
+      @support_chats<< @messages.values[value].last
+    end
+    @support_chats=@support_chats.sort_by{|e| e[:created_at]}.reverse.select(&:admin_user_id)
+    if @support_chats.present?
     else
       render json: { message: "No message present" }, status: :not_found
     end
@@ -21,6 +34,14 @@ class Api::V1::MessagesController < Api::V1::ApiController
       render json: { message: "No message present" }, status: :not_found
     end
   end
+  def individual_admin_messages
+    @messages = ((Message.where(sender_id: @current_user.id, admin_user_id: params[:admin_user_id]) + Message.where(sender_id: params[:admin_user_id], admin_user_id: @current_user.id)).sort_by &:created_at).reverse
+    if @messages.present?
+    else
+      render json: { message: "No message present" }, status: :not_found
+    end
+  end
+
 
   def fetch_all_users
     @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
@@ -41,14 +62,10 @@ class Api::V1::MessagesController < Api::V1::ApiController
     end
   end
 
-  def support
-    @conversation = Conversation.find_by(sender_id: @current_user.id, receiver_id: params[:receiver_id])
+  def support_chat
+    @conversation = Conversation.find_by(sender_id: @current_user.id, admin_user_id: params[:admin_user_id])
     if @conversation.present?
-      @message = @conversation.messages.new(body: params[:body],
-                                            sender_id: @current_user.id,
-                                            user_id: @current_user.id,
-                                            receiver_id: params[:receiver_id],
-                                            message_image: params[:message_image])
+      @message = @conversation.messages.new(message_params)
       @message.save
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -58,7 +75,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   private
 
   def message_params
-    params.permit(:body, :receiver_id, :message_image).merge(sender_id: @current_user.id, user_id: @current_user.id)
+    params.permit(:body, :receiver_id, :message_image,:admin_user_id).merge(sender_id: @current_user.id, user_id: @current_user.id)
   end
 
 end
