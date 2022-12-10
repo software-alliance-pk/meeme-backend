@@ -115,13 +115,16 @@ Rails.application.routes.draw do
       end
       resources :conversations do
         collection do
+          post :create_support_conversation
         end
       end
       resources :messages do
         collection do
           get :individual_messages
-          post :support
+          get :individual_admin_messages
+          post :support_chat
           get :fetch_all_users
+          get :all_support_chats
         end
       end
     end
