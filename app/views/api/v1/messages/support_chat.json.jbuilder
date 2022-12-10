@@ -1,5 +1,6 @@
 json.message do
   json.id @message.id
+  json.subject @message.subject
   json.body @message.body
   json.conversation_id @message.conversation_id
   json.admin_user_id @message.admin_user.id

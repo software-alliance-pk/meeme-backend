@@ -22,6 +22,7 @@ class MessageBroadCastJob < ApplicationJob
       payload = {
         id: message.id,
         body: message.body,
+        subject: message.subject,
         conversation_id: message.conversation_id,
         admin_user_id: message.admin_user_id.present? ? message.admin_user_id : '',
         admin_user_name: message.admin_user.admin_user_name.present? ? message.admin_user.admin_user_name : '',
