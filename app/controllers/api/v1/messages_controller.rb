@@ -5,7 +5,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
     @messages = []
     # @messages = Message.where(sender_id: @current_user.id).group_by(&:receiver_id)
     # @messages = Message.where(receiver_id: @current_user.id) + Message.where(sender_id: @current_user.id)
-    @chats = Conversation.where.not(receiver_id: nil).where("? IN (sender_id, receiver_id)", @current_user.id).order("updated_at DESC")
+    @chats = Conversation.where.not(receiver_id: nil).where("? IN (receiver_id)", @current_user.id).order("updated_at DESC")
     @chats.each do |chat|
       @messages << chat.messages.last if chat.messages.last.present?
     end
@@ -56,7 +56,10 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
   def create
     @conversation = Conversation.find_by(sender_id: @current_user.id, receiver_id: params[:receiver_id])
+    @secondary_conversation = Conversation.find_by(sender_id: params[:receiver_id], receiver_id: @current_user.id )
     if @conversation.present?
+      @secondary_message = @secondary_conversation.messages.new(secondary_message_params)
+      @secondary_message.save
       @message = @conversation.messages.new(message_params)
       @message.save
 
@@ -81,6 +84,9 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
   def message_params
     params.permit(:body, :receiver_id, :message_image, :admin_user_id, :subject, :message_ticket).merge(sender_id: @current_user.id, user_id: @current_user.id)
+  end
+  def secondary_message_params
+    params.permit(:body, :message_image, :admin_user_id, :subject, :message_ticket).merge(receiver_id: @current_user.id, user_id: params[:receiver_id],sender_id: params[:receiver_id])
   end
 
 end
