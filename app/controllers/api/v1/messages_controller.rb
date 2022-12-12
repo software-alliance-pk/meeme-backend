@@ -31,7 +31,9 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def individual_messages
-    @messages = ((Message.where(sender_id: @current_user.id, receiver_id: params[:receiver_id]) + Message.where(sender_id: params[:receiver_id], receiver_id: @current_user.id)).sort_by &:created_at).reverse
+    # @messages = ((Message.where(sender_id: @current_user.id, receiver_id: params[:receiver_id]) + Message.where(sender_id: params[:receiver_id], receiver_id: @current_user.id)).sort_by &:created_at).reverse
+    @messages = (Message.where(sender_id: @current_user.id, receiver_id: params[:receiver_id]).sort_by &:created_at).reverse
+
     if @messages.present?
     else
       render json: { message: "No message present" }, status: :not_found
@@ -39,7 +41,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def individual_admin_messages
-    @messages = ((Message.where(sender_id: @current_user.id, admin_user_id: params[:admin_user_id]) + Message.where(sender_id: params[:admin_user_id], admin_user_id: @current_user.id)).sort_by &:created_at).reverse
+    @messages = ((Message.where(sender_id: @current_user.id, admin_user_id: params[:admin_user_id],message_ticket: params[:message_ticket]) + Message.where(sender_id: params[:admin_user_id], admin_user_id: @current_user.id,message_ticket: params[:message_ticket])).sort_by &:created_at).reverse
     if @messages.present?
     else
       render json: { message: "No message present" }, status: :not_found
@@ -68,13 +70,25 @@ class Api::V1::MessagesController < Api::V1::ApiController
     end
   end
 
-  def support_chat
-    # @conversation = Conversation.find_by(sender_id: @current_user.id, admin_user_id: params[:admin_user_id])
+  def support_ticket
     @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id])
+    @secondary_conversation = Conversation.create!(receiver_id: @current_user.id, admin_user_id: params[:admin_user_id])
     if @conversation.present?
+      @secondary_message = @secondary_conversation.messages.new(secondary_message_params)
+      @secondary_message.save
       @message = @conversation.messages.new(message_params)
       @message.save
       @message.update(message_ticket: SecureRandom.hex(5))
+    else
+      render json: { message: "No conversation present" }, status: :not_found
+    end
+  end
+
+  def support_chat
+    @conversation = Conversation.find_by(sender_id: @current_user.id, admin_user_id: params[:admin_user_id])
+    if @conversation.present?
+      @message = @conversation.messages.new(message_params)
+      @message.save
     else
       render json: { message: "No conversation present" }, status: :not_found
     end
@@ -87,6 +101,10 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
   def secondary_message_params
     params.permit(:body, :message_image, :admin_user_id, :subject, :message_ticket).merge(receiver_id: @current_user.id, user_id: params[:receiver_id],sender_id: params[:receiver_id])
+  end
+
+  def admin_secondary_params
+    params.permit(:body, :message_image, :subject, :message_ticket).merge(receiver_id: @current_user.id, user_id: params[:receiver_id],admin_user_id: params[:admin_user_id])
   end
 
 end
