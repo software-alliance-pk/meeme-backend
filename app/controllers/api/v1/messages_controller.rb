@@ -7,7 +7,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
     # @messages = Message.where(receiver_id: @current_user.id) + Message.where(sender_id: @current_user.id)
     @chats = Conversation.where.not(receiver_id: nil).where("? IN (sender_id, receiver_id)", @current_user.id).order("updated_at DESC")
     @chats.each do |chat|
-      @messages << chat.messages.last
+      @messages << chat.messages.last if chat.messages.last.present?
     end
     @messages = @messages.sort_by { |e| e[:created_at] }.reverse
     if @messages.present?
