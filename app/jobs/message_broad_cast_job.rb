@@ -30,6 +30,7 @@ class MessageBroadCastJob < ApplicationJob
         sender_id: message.sender_id,
         sender_name: message.sender.username,
         created_at: message.created_at,
+        message_ticket: message.message_ticket,
         message_image: message.message_image.attached? ? message.message_image.blob.url : '',
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
       }
