@@ -93,10 +93,13 @@ class Api::V1::UsersController < Api::V1::ApiController
     return render json: { message: 'Password not present' }, status: :unprocessable_entity if params[:password].empty?
 
     return render json: { message: 'Confirm Password not present' }, status: :unprocessable_entity if params[:password_confirmation].empty?
-
+    if @user.updated_at < 1.minute.ago
+      @user.update(otp: nil)
+      return render json: { message: "Otp expired" }, status: :ok
+    end
     if @user.otp == params[:otp]
       if params[:password] == params[:password_confirmation]
-        @user.update(password: params[:password])
+        @user.update(password: params[:password],otp: nil)
         render json: { message: "Password updated" }, status: :ok
       else
         render json: { message: "Passwords don't match" }, status: :not_found
