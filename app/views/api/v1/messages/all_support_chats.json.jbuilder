@@ -1,5 +1,5 @@
-json.messages_count @support_chats.count
-json.messages @support_chats.each do|chat|
+json.messages_count @messages.count
+json.messages @messages.each do|chat|
   json.id chat.id
   json.body chat.body
   json.subject chat.subject
