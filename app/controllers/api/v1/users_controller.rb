@@ -84,12 +84,13 @@ class Api::V1::UsersController < Api::V1::ApiController
     if @user.otp == params[:otp]
       if @user.updated_at < 1.minute.ago
         @user.update(otp: nil)
-        return render json: { message: "Otp expired" }, status: :unprocessable_entity
+        return render json: { message: "Otp expired",user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
       else
-        return render json: { message: "Correct Otp", otp: params[:otp] }, status: :ok
+        @user.update(otp: nil)
+        return render json: { message: "Correct Otp", user_otp: @user.otp, otp: params[:otp] }, status: :ok
       end
     else
-      return render json: { message: "Otp is not valid" }, status: :unprocessable_entity
+      return render json: { message: "Otp is not valid",user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
     end
   end
 
