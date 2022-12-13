@@ -3,6 +3,7 @@ json.messages @support_chats.each do|chat|
   json.id chat.id
   json.body chat.body
   json.subject chat.subject
+  json.message_ticket chat.message_ticket
   json.conversation_id chat&.conversation_id
   json.sender_id chat&.sender_id
   json.sender_name chat&.sender&.username

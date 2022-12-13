@@ -38,6 +38,7 @@ Rails.application.routes.draw do
           put :update_user
           post :forgot_password
           post :reset_user_password
+          post :verify_otp
           get :all_posts
           get :open_profile
           get :open_current_user
