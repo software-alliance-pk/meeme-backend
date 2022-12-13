@@ -2,6 +2,7 @@ json.message do
   json.id @message.id
   json.subject @message.subject
   json.body @message.body
+  json.message_ticket @message.message_ticket
   json.conversation_id @message.conversation_id
   json.admin_user_id @message.admin_user.id
   json.admin_user_name @message.admin_user.admin_user_name.present? ? @message.admin_user.admin_user_name : ''

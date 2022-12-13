@@ -3,6 +3,7 @@ json.message do
   json.body @message.body
   json.conversation_id @message.conversation_id
   json.subject @message.subject
+  json.message_ticket @message.message_ticket
   json.sender_id @message.sender_id
   json.sender_name @message.sender.username
   # json.receiver_id @message.conversation.receiver.id
