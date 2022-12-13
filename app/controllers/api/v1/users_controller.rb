@@ -89,7 +89,7 @@ class Api::V1::UsersController < Api::V1::ApiController
         return render json: { message: "Correct Otp", otp: params[:otp] }, status: :ok
       end
     else
-      return render json: { message: "Wrong Otp" }, status: :unprocessable_entity
+      return render json: { message: "Otp is not valid" }, status: :unprocessable_entity
     end
   end
 
