@@ -2,7 +2,6 @@ class Api::V1::PostsController < Api::V1::ApiController
   before_action :authorize_request
   before_action :find_post, only: [:show, :update_posts, :destroy]
 
-
   def index
     @posts = @current_user.posts.by_recently_created(20).paginate(page: params[:page], per_page: 25)
     if @posts.present?
@@ -45,29 +44,37 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def explore
-    @tags=ActsAsTaggableOn::Tag.all.pluck(:name).uniq
-    if params[:tag]=="#"
-      @posts=Post.where(tournament_meme: false)
-      # render json: { message: "Tag not found" }, status: :not_found
+    # @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
+    if params[:username].empty?
+      @users=[]
+    end
+    if params[:tag].empty?
+      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
+    end
+
+    if params[:tag] == "#"
+      @posts = Post.where(tournament_meme: false)
+      @users=[]
     else
       @posts = Post.tagged_with(params[:tag])
       if @posts.present?
       else
         # @posts=Post.all.paginate(page: params[:page], per_page: 25)
-        render json: { message: "No Post found against this tag " }, status: :not_found
+        # render json: { message: "No Post found against this tag " }, status: :not_found
       end
     end
   end
 
   def other_posts
-    @tags=ActsAsTaggableOn::Tag.all.pluck(:name).uniq
-    @post=Post.find_by(id: params[:post_id])
-    if params[:tag]=="#"
-      @posts=Post.where(tournament_meme: false)
+    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    @post = Post.find_by(id: params[:post_id])
+    if params[:tag] == "#"
+      @posts = Post.where(tournament_meme: false)
       # render json: { message: "Tag not found" }, status: :not_found
     else
       @posts = Post.tagged_with(params[:tag])
-      @posts=@posts.where.not(id: @post.id)
+      @posts = @posts.where.not(id: @post.id)
       if @posts.present?
       else
         # @posts=Post.all.paginate(page: params[:page], per_page: 25)
@@ -76,30 +83,28 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   end
 
-
-
   def tags
-    @tags=ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
     # @tags=@tags.paginate(page: params[:page], per_page: 25)
-    render json:{tags: @tags}, status: :ok if @tags.present?
+    render json: { tags: @tags }, status: :ok if @tags.present?
   end
 
   def following_posts
-    @following=@current_user.followers.where(is_following: true).pluck(:follower_user_id)
-    @following=User.where(id: @following).paginate(page: params[:page], per_page: 25)
+    @following = @current_user.followers.where(is_following: true).pluck(:follower_user_id)
+    @following = User.where(id: @following).paginate(page: params[:page], per_page: 25)
   end
+
   def recent_posts
     @recent_posts = Post.where(tournament_meme: false).by_recently_updated(20).paginate(page: params[:page], per_page: 25)
   end
 
   def trending_posts
-    @likes=Like.where(status: 1, is_liked:true, is_judged: false).joins(:post).where(post: {tournament_meme: false}).group(:post_id).count(:post_id).sort_by(&:last).reverse.to_h
-    @trending_posts=Post.where(id: @likes.keys).paginate(page: params[:page], per_page: 25).reverse
+    @likes = Like.where(status: 1, is_liked: true, is_judged: false).joins(:post).where(post: { tournament_meme: false }).group(:post_id).count(:post_id).sort_by(&:last).reverse.to_h
+    @trending_posts = Post.where(id: @likes.keys).paginate(page: params[:page], per_page: 25).reverse
     if @trending_posts
 
     end
   end
-
 
   private
 
