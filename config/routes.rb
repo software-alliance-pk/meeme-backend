@@ -65,6 +65,7 @@ Rails.application.routes.draw do
           get :recent_posts
           get :trending_posts
           get :tags
+          post :other_posts
 
         end
       end
