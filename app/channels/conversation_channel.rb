@@ -7,9 +7,6 @@ class ConversationChannel < ApplicationCable::Channel
     end
   end
 
-  def receive(data)
-  end
-
   def unsubscribed
     stop_all_streams
   end
