@@ -35,7 +35,7 @@ class MessageBroadCastJob < ApplicationJob
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
       }
       puts payload
-      ActionCable.server.broadcast(build_conversation_id(message.conversation_id), payload)
+      ActionCable.server.broadcast(build_conversation_id(message.conversation_id), payload:payload)
     end
   end
 
