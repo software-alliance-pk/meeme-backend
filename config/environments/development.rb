@@ -74,6 +74,8 @@ Rails.application.configure do
     :authentication       => "plain",
     :enable_starttls_auto => true
   }
+
+  config.action_cable.url = "/cable"
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
