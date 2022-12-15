@@ -44,26 +44,42 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def explore
-    # @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
-    @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
-    if params[:username].empty?
-      @users=[]
-    end
-    if params[:tag].empty?
-      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
-    end
+    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    # @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
 
-    if params[:tag] == "#"
-      @posts = Post.where(tournament_meme: false)
-      @users=[]
-    else
-      @posts = Post.tagged_with(params[:tag])
-      if @posts.present?
+    # if params[:search_bar] == "true"
+      # if params[:username].empty?
+      #   @users=[]
+      # end
+      # if params[:tag].empty?
+      #   @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
+      # end
+      # if params[:tag] == "#"
+      #   @posts = Post.where(tournament_meme: false)
+      #   @users = []
+      # else
+      #   @posts = Post.tagged_with(params[:tag])
+      #   if @posts.present?
+      #   else
+      #     # @posts=Post.all.paginate(page: params[:page], per_page: 25)
+      #     render json: { message: "No Post found against this tag " }, status: :not_found
+      #   end
+      # end
+
+
+    # else
+      if params[:tag] == "#"
+        @posts = Post.where(tournament_meme: false)
+        # @users = []
       else
-        # @posts=Post.all.paginate(page: params[:page], per_page: 25)
-        # render json: { message: "No Post found against this tag " }, status: :not_found
+        @posts = Post.tagged_with(params[:tag])
+        if @posts.present?
+        else
+          # @posts=Post.all.paginate(page: params[:page], per_page: 25)
+          render json: { message: "No Post found against this tag " }, status: :not_found
+        end
       end
-    end
+    # end
   end
 
   def other_posts
