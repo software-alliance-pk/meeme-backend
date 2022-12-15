@@ -54,7 +54,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def create
-    @conversation = Conversation.find_by(sender_id: @current_user.id, receiver_id: params[:receiver_id])  || Conversation.find_by(receiver_id: @current_user.id, sender_id: params[:receiver_id])
+    @conversation = Conversation.find_by(id: params[:conversation_id])
     # @secondary_conversation = Conversation.find_by(sender_id: params[:receiver_id], receiver_id: @current_user.id )
     if @conversation.present?
       # @secondary_message = @secondary_conversation.messages.new(secondary_message_params)
