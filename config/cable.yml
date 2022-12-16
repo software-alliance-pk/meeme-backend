@@ -1,11 +1,10 @@
 development:
   adapter: redis
-  url: redis://localhost:6379/1
+  url: redis://52.66.198.177:6379/1
 
 test:
   adapter: test
 
 production:
   adapter: redis
-  url: redis://localhost:6379
-  channel_prefix: memee_app_production
+  url: redis://52.66.198.177:6379/1

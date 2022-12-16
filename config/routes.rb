@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   devise_for :admin_users
   mount ActionCable.server => "/cable"
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
 
   # Define your application routes p  er the DSL in https://guides.rubyonrails.org/routing.html
 

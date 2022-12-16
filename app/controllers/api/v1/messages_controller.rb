@@ -2,16 +2,17 @@ class Api::V1::MessagesController < Api::V1::ApiController
   before_action :authorize_request
 
   def index
-    @messages = []
-    @chats = Conversation.where.not(receiver_id: nil).where("? IN (receiver_id)", @current_user.id).order("updated_at DESC")
-    @chats.each do |chat|
-      @messages << chat.messages.last if chat.messages.last.present?
-    end
-    @messages = @messages.sort_by { |e| e[:created_at] }.reverse
-    if @messages.present?
-    else
-      render json: { message: "No message present" }, status: :not_found
-    end
+    # @messages = []
+    # @chats = Conversation.where.not(receiver_id: nil).where("? IN (receiver_id)", @current_user.id).order("updated_at DESC")
+    # @chats.each do |chat|
+    #   @messages << chat.messages.last if chat.messages.last.present?
+    # end
+    # @messages = @messages.sort_by { |e| e[:created_at] }.reverse
+    # if @messages.present?
+    # else
+    #   render json: { message: "No message present" }, status: :not_found
+    # end
+    @chats = Conversation.where("receiver_id = (?) or sender_id = (?)",@current_user.id,@current_user.id).order("updated_at DESC")
   end
 
   def all_support_chats
@@ -60,7 +61,9 @@ class Api::V1::MessagesController < Api::V1::ApiController
       # @secondary_message = @secondary_conversation.messages.new(secondary_message_params)
       # @secondary_message.save
       @message = @conversation.messages.new(message_params)
-      @message.save
+      if @message.save
+        ActionCable.server.broadcast("conversation", {title: "message created", body: render_message(@message)})
+      end
     else
       render json: { message: "No conversation present" }, status: :not_found
     end
@@ -105,6 +108,24 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
   def admin_secondary_params
     params.permit(:body, :message_image, :subject, :message_ticket).merge(receiver_id: @current_user.id, user_id: params[:receiver_id], admin_user_id: params[:admin_user_id])
+  end
+
+   def render_message(message)
+    {
+      id: message.id,
+      body: message.body,
+      conversation_id: message.conversation_id,
+      sender_id: message.sender_id,
+      sender_name: message.sender.username,
+      receiver_id: message.conversation.receiver.id.present? ? message.conversation.receiver.id : '',
+      receiver_name: message.conversation.receiver.username,
+      created_at: message.created_at,
+      message_image: message.message_image.attached? ? message.message_image.blob.url : '',
+      sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
+      receiver_image: message.receiver.profile_image.attached? ? message.receiver.profile_image.blob.url : ''
+    }
+    # ActionCable.server.broadcast("conversation_#{message.conversation_id}", {title: "create message", body: payload})
+    # ActionCable.server.broadcast(build_conversation_id(@message.conversation_id), payload.as_json)
   end
 
 end
