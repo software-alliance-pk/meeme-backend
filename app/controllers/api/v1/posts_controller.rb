@@ -19,8 +19,11 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def create
     @post = @current_user.posts.new(post_params)
+    @post.tags_which_duplicate_tag = params[:tag_list]
     if @post.save
-      render json: { user: @post, post_image: @post.post_image.attached? ? @post.post_image.blob.url : '', message: 'Post created successfully' }, status: :ok
+      @tags = @post.tag_list.map { |item| item&.split("dup")&.first}
+      @post.update(duplicate_tags: @tags)
+      render json: { user: @post.attributes.except('tag_list'), post_image: @post.post_image.attached? ? @post.post_image.blob.url : '', message: 'Post created successfully' }, status: :ok
     else
       render_error_messages(@post)
     end
@@ -44,7 +47,8 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def explore
-    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
+    # @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
     # @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
 
     # if params[:search_bar] == "true"
@@ -99,7 +103,8 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def tags
-    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
+    # @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
     # @tags=@tags.paginate(page: params[:page], per_page: 25)
     if @tags.present?
       render json: { tags: @tags }, status: :ok
@@ -113,7 +118,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     @following = User.where(id: @following).paginate(page: params[:page], per_page: 25)
     if @following.present?
     else
-      render json: { following_posts: [],  following_count: @following.count },status: :ok
+      render json: { following_posts: [], following_count: @following.count }, status: :ok
     end
   end
 

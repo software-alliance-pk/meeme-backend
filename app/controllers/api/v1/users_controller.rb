@@ -84,13 +84,13 @@ class Api::V1::UsersController < Api::V1::ApiController
     if @user.otp == params[:otp]
       if @user.updated_at < 1.minute.ago
         @user.update(otp: nil)
-        return render json: { message: "Otp expired",user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
+        return render json: { message: "OTP expired",user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
       else
         @user.update(otp: nil)
-        return render json: { message: "Correct Otp", user_otp: @user.otp, otp: params[:otp] }, status: :ok
+        return render json: { message: "Correct OTP", user_otp: @user.otp, otp: params[:otp] }, status: :ok
       end
     else
-      return render json: { message: "Otp is not valid",user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
+      return render json: { message: "OTP is not valid",user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
     end
   end
 
@@ -114,7 +114,7 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def find_user
     unless (@user = User.find_by_email(params[:email]) || User.find_by_id(params[:id]))
-      return render json: { message: 'User Not found' }
+      return render json: { message: 'User Not found' },status: :not_found
     end
   end
 
