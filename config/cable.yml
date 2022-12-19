@@ -7,4 +7,5 @@ test:
 
 production:
   adapter: redis
-  url: redis://52.66.198.177:6379/1
+  channel_prefix: memee_production
+  url: redis://127.0.0.1:6379
