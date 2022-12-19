@@ -47,7 +47,6 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def explore
-    debugger
     @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
     # @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
     # @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
