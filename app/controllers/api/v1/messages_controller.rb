@@ -2,17 +2,17 @@ class Api::V1::MessagesController < Api::V1::ApiController
   before_action :authorize_request
 
   def index
-    # @messages = []
+    @messages = []
     # @chats = Conversation.where.not(receiver_id: nil).where("? IN (receiver_id)", @current_user.id).order("updated_at DESC")
-    # @chats.each do |chat|
-    #   @messages << chat.messages.last if chat.messages.last.present?
-    # end
-    # @messages = @messages.sort_by { |e| e[:created_at] }.reverse
-    # if @messages.present?
-    # else
-    #   render json: { message: "No message present" }, status: :not_found
-    # end
     @chats = Conversation.where("receiver_id = (?) or sender_id = (?)",@current_user.id,@current_user.id).order("updated_at DESC")
+    @chats.each do |chat|
+      @messages << chat.messages.last if chat.messages.last.present?
+    end
+    @messages = @messages.sort_by { |e| e[:created_at] }.reverse
+    if @messages.present?
+    else
+      render json: { message: "No message present" }, status: :not_found
+    end
   end
 
   def all_support_chats
