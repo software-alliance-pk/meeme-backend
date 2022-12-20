@@ -12,4 +12,5 @@ json.message do
   json.message_image @message.message_image.attached? ? @message.message_image.blob.url : ''
   json.sender_image @message.sender.profile_image.attached? ? @message.sender.profile_image.blob.url : ''
   # json.receiver_image @message.receiver.profile_image.attached? ? @message.receiver.profile_image.blob.url : ''
+  json.status @message.conversation.status
 end
