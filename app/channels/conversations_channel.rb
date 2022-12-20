@@ -1,10 +1,10 @@
 class ConversationsChannel < ApplicationCable::Channel
   def subscribed
-    stream_from "conversation"
-    # if params[:conversation_id].present?
-    # else
-    #   puts "conversation id is missing."
-    # end
+    if params[:conversation_id].present?
+      stream_from "conversation_#{params[:conversation_id]}"
+    else
+      puts "conversation id is missing."
+    end
   end
 
   def unsubscribed

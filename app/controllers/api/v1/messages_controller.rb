@@ -3,7 +3,6 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
   def index
     @messages = []
-    # @chats = Conversation.where.not(receiver_id: nil).where("? IN (receiver_id)", @current_user.id).order("updated_at DESC")
     @chats = Conversation.where("receiver_id = (?) or sender_id = (?)", @current_user.id, @current_user.id).order("updated_at DESC")
     @chats.each do |chat|
       @messages << chat.messages.last if chat.messages.last.present?
@@ -18,7 +17,6 @@ class Api::V1::MessagesController < Api::V1::ApiController
   def all_support_chats
     @messages = []
     @support_chats = Conversation.where(admin_user_id: 1, sender_id: @current_user.id).reverse
-    # @support_chats = Message.where(admin_user_id: 1, sender_id: @current_user.id).reverse
     @support_chats.each do |chat|
       @messages << chat.messages.last if chat.messages.last.present?
     end
@@ -38,7 +36,6 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def individual_admin_messages
-    # @messages = ((Message.where(sender_id: @current_user.id, admin_user_id: params[:admin_user_id],message_ticket: params[:message_ticket]) + Message.where(sender_id: params[:admin_user_id], admin_user_id: @current_user.id,message_ticket: params[:message_ticket])).sort_by &:created_at).reverse
     @messages = ((Message.where(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], message_ticket: params[:message_ticket])).sort_by &:created_at).reverse
     if @messages.present?
     else
@@ -59,7 +56,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
     if @conversation.present?
       @message = @conversation.messages.new(message_params)
       if @message.save
-        ActionCable.server.broadcast("conversation", { title: "message created", body: render_message(@message) })
+        ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -67,15 +64,12 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def support_ticket
-    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id])
-    # @secondary_conversation = Conversation.create!(receiver_id: @current_user.id, admin_user_id: params[:admin_user_id])
+    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id],status: 'pending')
     if @conversation.present?
-      # @secondary_message = @secondary_conversation.messages.new(secondary_message_params)
-      # @secondary_message.save
       @message = @conversation.messages.new(message_params)
       if @message.save
         @message.update(message_ticket: SecureRandom.hex(5))
-        ActionCable.server.broadcast("conversation", { title: "message created", body: render_message(@message) })
+        ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message)})
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -139,6 +133,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
         message_ticket: message.message_ticket,
         message_image: message.message_image.attached? ? message.message_image.blob.url : '',
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
+        ticket_status: message.conversation.status,
       }
     end
   end
