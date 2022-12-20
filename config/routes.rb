@@ -127,7 +127,7 @@ Rails.application.routes.draw do
       resources :messages do
         collection do
           get :individual_messages
-          get :individual_admin_messages
+          post :individual_admin_messages
           post :support_ticket
           post :support_chat
           get :fetch_all_users
