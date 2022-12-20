@@ -56,10 +56,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
   def create
     @conversation = Conversation.find_by(id: params[:conversation_id])
-    # @secondary_conversation = Conversation.find_by(sender_id: params[:receiver_id], receiver_id: @current_user.id )
     if @conversation.present?
-      # @secondary_message = @secondary_conversation.messages.new(secondary_message_params)
-      # @secondary_message.save
       @message = @conversation.messages.new(message_params)
       if @message.save
         ActionCable.server.broadcast("conversation", {title: "message created", body: render_message(@message)})
