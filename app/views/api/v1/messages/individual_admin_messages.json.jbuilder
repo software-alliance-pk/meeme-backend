@@ -12,5 +12,5 @@ json.messages @messages.each do|message|
   json.created_at message.created_at
   json.message_image message.message_image.attached? ? message.message_image.blob.url : ''
   json.sender_image message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : ''
-  json.status message.status
+  json.status message.conversation.status
 end
