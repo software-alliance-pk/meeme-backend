@@ -1,0 +1,236 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+
+<!--<head>-->
+<!--  <title>Tournament Winner — MeMee</title>-->
+<!--  <?php require_once 'includes/site-master.php'; ?>-->
+<!--</head>-->
+
+<!--<body>-->
+<main>
+
+<section id="memee">
+  <%=render "dashboard/sidebar" %>
+  <?php require_once 'includes/sidebar.php'; ?>
+  <div id="tournament_winner" class="main_side">
+    <div id="top_header">
+      <div class="left_blk">
+        <h1>Tournament Winner</h1>
+        <div class="img">
+          <img src="<%= asset_path("medal.svg")%>" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="inner">
+      <div class="top_blk">
+        <form action="" method="POST" class="form_blk m-0">
+          <button type="submit"><img src="<%= asset_path("icon-search.svg")%>" alt=""></button>
+          <input type="text" name="" id="" class="input" placeholder="Search">
+        </form>
+        <div class="btn_blk">
+          <a href="?" class="site_btn prime_btn round">Reward Payout</a>
+        </div>
+      </div>
+      <div id="table_blk">
+        <table>
+          <thead>
+          <tr>
+            <th style="width: 12rem">Rank</th>
+            <th style="width: 19rem">Name</th>
+            <th style="width: 26rem">Email</th>
+            <th style="width: 12rem">Up Vote</th>
+            <th style="width: 14rem">Date Joined</th>
+            <th style="width: 15rem">Reward</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>
+              <div class="rank" style="background-image: url(<%= asset_path("winner_badge_color.svg") %>);">
+                1st
+              </div>
+            </td>
+            <td>Mr Astronut</td>
+            <td>iammemer@memee.com</td>
+            <td>2485</td>
+            <td>Jan 1, 2022</td>
+            <td>
+              <div class="dropdown">
+                <button class="dropdown-toggle chevron" data-bs-toggle="dropdown">
+                  Gift Card
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><button type="button">Disable Account</button></li>
+                  <li><button type="button">Reward</button></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rank" style="background-image: url(<%= asset_path("winner_badge_color.svg") %>);">
+                2nd
+              </div>
+            </td>
+            <td>Mr Astronut</td>
+            <td>iammemer@memee.com</td>
+            <td>2485</td>
+            <td>Jan 1, 2022</td>
+            <td>
+              <div class="dropdown">
+                <button class="dropdown-toggle chevron" data-bs-toggle="dropdown">
+                  Gift Card
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><button type="button">Disable Account</button></li>
+                  <li><button type="button">Reward</button></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rank" style="background-image: url(<%= asset_path("winner_badge_color.svg") %>);">
+                3rd
+              </div>
+            </td>
+            <td>Mr Astronut</td>
+            <td>iammemer@memee.com</td>
+            <td>2485</td>
+            <td>Jan 1, 2022</td>
+            <td>
+              <div class="dropdown">
+                <button class="dropdown-toggle chevron" data-bs-toggle="dropdown">
+                  Gift Card
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><button type="button">Disable Account</button></li>
+                  <li><button type="button">Reward</button></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rank" style="background-image: url(<%= asset_path("winner_badge_gray.svg") %>);">
+                4th
+              </div>
+            </td>
+            <td>Mr Astronut</td>
+            <td>iammemer@memee.com</td>
+            <td>2485</td>
+            <td>Jan 1, 2022</td>
+            <td>
+              <div class="form_blk">
+                <input type="text" class="input" value="11,000">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rank" style="background-image: url(<%= asset_path("winner_badge_gray.svg") %>);">
+                5th
+              </div>
+            </td>
+            <td>Mr Astronut</td>
+            <td>iammemer@memee.com</td>
+            <td>2485</td>
+            <td>Jan 1, 2022</td>
+            <td>
+              <div class="form_blk">
+                <input type="text" class="input" value="11,000">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rank" style="background-image: url(<%= asset_path("winner_badge_gray.svg") %>);">
+                6th
+              </div>
+            </td>
+            <td>Mr Astronut</td>
+            <td>iammemer@memee.com</td>
+            <td>2485</td>
+            <td>Jan 1, 2022</td>
+            <td>
+              <div class="form_blk">
+                <input type="text" class="input" value="11,000">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rank" style="background-image: url(<%= asset_path("winner_badge_gray.svg") %>);">
+                7th
+              </div>
+            </td>
+            <td>Mr Astronut</td>
+            <td>iammemer@memee.com</td>
+            <td>2485</td>
+            <td>Jan 1, 2022</td>
+            <td>
+              <div class="form_blk">
+                <input type="text" class="input" value="11,000">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rank" style="background-image: url(<%= asset_path("winner_badge_gray.svg") %>);">
+                8th
+              </div>
+            </td>
+            <td>Mr Astronut</td>
+            <td>iammemer@memee.com</td>
+            <td>2485</td>
+            <td>Jan 1, 2022</td>
+            <td>
+              <div class="form_blk">
+                <input type="text" class="input" value="11,000">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rank" style="background-image: url(<%= asset_path("winner_badge_gray.svg") %>);">
+                9th
+              </div>
+            </td>
+            <td>Mr Astronut</td>
+            <td>iammemer@memee.com</td>
+            <td>2485</td>
+            <td>Jan 1, 2022</td>
+            <td>
+              <div class="form_blk">
+                <input type="text" class="input" value="11,000">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rank" style="background-image: url(<%= asset_path("winner_badge_gray.svg") %>);">
+                10th
+              </div>
+            </td>
+            <td>Mr Astronut</td>
+            <td>iammemer@memee.com</td>
+            <td>2485</td>
+            <td>Jan 1, 2022</td>
+            <td>
+              <div class="form_blk">
+                <input type="text" class="input" value="11,000">
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script src="assets/js/main.js"></script>
+</body>
+
+</html>

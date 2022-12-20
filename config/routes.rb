@@ -33,6 +33,8 @@ Rails.application.routes.draw do
   get '/terms', to: "dashboard#terms"
   get '/terms-edit', to: "dashboard#terms_edit"
   get '/support', to: "dashboard#support"
+  get '/tournament-winner-list', to: "dashboard#tournament_winner_list"
+
   namespace :api do
     namespace :v1 do
       resources :users do
