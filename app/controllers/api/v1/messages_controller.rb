@@ -69,7 +69,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
       @message = @conversation.messages.new(message_params)
       if @message.save
         @message.update(message_ticket: SecureRandom.hex(5))
-        ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message)})
+        ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
+        # ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message)})
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
