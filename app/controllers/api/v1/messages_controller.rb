@@ -4,6 +4,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   def index
     @messages = []
     @chats = Conversation.where("receiver_id = (?) or sender_id = (?)", @current_user.id, @current_user.id).order("updated_at DESC")
+    @chats=@chats.where(admin_user_id: nil)
     @chats.each do |chat|
       @messages << chat.messages.last if chat.messages.last.present?
     end
