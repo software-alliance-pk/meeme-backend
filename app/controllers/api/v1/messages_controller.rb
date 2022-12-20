@@ -4,7 +4,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   def index
     @messages = []
     @chats = Conversation.where("receiver_id = (?) or sender_id = (?)", @current_user.id, @current_user.id).order("updated_at DESC")
-    @chats=@chats.where(admin_user_id: nil)
+    @chats = @chats.where(admin_user_id: nil)
     @chats.each do |chat|
       @messages << chat.messages.last if chat.messages.last.present?
     end
@@ -65,7 +65,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def support_ticket
-    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id],status: 'pending')
+    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'pending')
     if @conversation.present?
       @message = @conversation.messages.new(message_params)
       if @message.save
@@ -80,12 +80,13 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
   def support_chat
     @conversation = Conversation.find_by(id: params[:conversation_id])
-    # @conversation = Conversation.find_by(sender_id: @current_user.id, admin_user_id: params[:admin_user_id])
     if @conversation.present?
       subject = @conversation.messages.first.slice(:subject, :message_ticket).values
       @message = @conversation.messages.new(message_params)
-      @message.save
-      @message.update(subject: subject[0], message_ticket: subject[1])
+      if @message.save
+        @message.update(subject: subject[0], message_ticket: subject[1])
+        ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
+      end
     else
       render json: { message: "No conversation present" }, status: :not_found
     end
