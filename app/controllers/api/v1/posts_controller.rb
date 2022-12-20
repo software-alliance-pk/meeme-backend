@@ -75,6 +75,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       @posts = Post.where(tournament_meme: false)
       # @users = []
     else
+      
       @posts = Post.tagged_with(params[:tag],:any => true)
       if @posts.present?
       else
