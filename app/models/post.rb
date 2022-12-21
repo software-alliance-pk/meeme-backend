@@ -22,6 +22,7 @@ class Post < ApplicationRecord
 
   def check_act_as_taggable_record
     tag_list = []
+
     dup_arr = self&.tags_which_duplicate_tag&.split(",")
     dup_value = dup_arr.map { |element| element if dup_arr.count(element) > 1 }
     tag_list = dup_arr.map { |element| element unless dup_arr.count(element) > 1 }

@@ -5,7 +5,7 @@ json.tournament_posts do
     json.username post.user.username
     json.id post.id
     json.description post.description
-    json.tag_list post.tag_list
+    json.tag_list post.duplicate_tags
     json.likes post.likes.where(is_liked: true).count
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.post_judged_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present?
