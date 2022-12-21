@@ -6,7 +6,7 @@ class Message < ApplicationRecord
   belongs_to :admin_user, class_name: 'AdminUser', optional: true
   belongs_to :sender, class_name: 'User', optional: true
   has_one_attached :message_image, dependent: :destroy
-  enum subject: [:Nothing_happened, :Abuse, :Payment, :Image, :Profile, :Tournament_winner, :Coins, :Plagarism, :Winner_feedback]
+  enum subject: [:Nothing_Happened, :Abuse, :Payment, :Image, :Profile, :Tournament_Winner, :Coins, :Plagiarism, :Winner_Feedback]
 
   # after_create_commit { MessageBroadCastJob.perform_later(self) }
 end

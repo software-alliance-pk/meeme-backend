@@ -1,6 +1,6 @@
 json.message do
   json.id @message.id
-  json.subject @message.subject
+  json.subject @message.subject.split("_").join(" ")
   json.body @message.body
   json.message_ticket @message.message_ticket
   json.conversation_id @message.conversation_id

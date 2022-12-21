@@ -2,7 +2,7 @@ json.messages_count @messages.count
 json.messages @messages.each do|chat|
   json.id chat.id
   json.body chat.body
-  json.subject chat.subject
+  json.subject chat.subject.split("_").join(" ")
   json.message_ticket chat.message_ticket
   json.conversation_id chat&.conversation_id
   json.sender_id chat&.sender_id

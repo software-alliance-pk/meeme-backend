@@ -65,13 +65,12 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def support_ticket
-    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'pending')
+    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Pending')
     if @conversation.present?
       @message = @conversation.messages.new(message_params)
       if @message.save
         @message.update(message_ticket: SecureRandom.hex(5))
         ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message) })
-        # ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message)})
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -125,7 +124,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
       {
         id: message.id,
         body: message.body,
-        subject: message.subject,
+        subject: message.subject.split("_").join(" "),
         conversation_id: message.conversation_id,
         admin_user_id: message.admin_user_id.present? ? message.admin_user_id : '',
         admin_user_name: message.admin_user.admin_user_name.present? ? message.admin_user.admin_user_name : '',

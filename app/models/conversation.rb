@@ -4,6 +4,6 @@ class Conversation < ApplicationRecord
   belongs_to :receiver, class_name: 'User', optional: true
   belongs_to :sender, class_name: 'User', optional: true
   belongs_to :admin_user, class_name: 'AdminUser', optional: true
-  enum status: ['nothing','pending','resolved']
+  enum status: ['Nothing','Pending','Resolved']
 
 end

@@ -2,7 +2,7 @@ json.message do
   json.id @message.id
   json.body @message.body
   json.conversation_id @message.conversation_id
-  json.subject @message.subject
+  json.subject @message.subject.split("_").join(" ")
   json.message_ticket @message.message_ticket
   json.sender_id @message.sender_id
   json.sender_name @message.sender.username
