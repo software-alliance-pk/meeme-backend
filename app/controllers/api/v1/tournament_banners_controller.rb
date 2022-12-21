@@ -45,8 +45,11 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   def create
     @tournament_post = Post.new(post_params)
     if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
+      @tournament_post.tags_which_duplicate_tag = params[:tag_list]
       if @tournament_post.save
-        render json: { tournament: @tournament_post,
+        @tags = @tournament_post.tag_list.map { |item| item&.split("dup")&.first}
+        @tournament_post.update(duplicate_tags: @tags)
+        render json: { tournament: @tournament_post.attributes.except('tag_list'),
                        tournament_banner_image: @tournament_post.post_image.attached? ? @tournament_post.post_image.blob.url : '',
         }, status: :ok
       else

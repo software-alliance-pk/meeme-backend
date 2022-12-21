@@ -1,7 +1,7 @@
 json.recent_posts do
   json.(@recent_posts) do |post|
-      json.pending_requests @current_user.pending_friend_request.count
-      json.post post
+      json.post post rescue ""
+      json.pending_requests @current_user&.pending_friend_request&.count
       json.username post.user.username
       json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
       json.post_image post.post_image.attached? ? post.post_image.blob.url : ''

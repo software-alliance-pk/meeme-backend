@@ -17,7 +17,8 @@ class StripeService
         user.update(stripe_id: stripe_customer.id)
       end
       stripe_customer
-    rescue
+    rescue Stripe::StripeError => e
+      e.message
     end
   end
 
@@ -32,7 +33,8 @@ class StripeService
                                name: params[:first_name] + ' ' + params["last_name"]
                              },
                            })
-    rescue
+    rescue Stripe::CardError => e
+      e.message
     end
   end
 
@@ -40,14 +42,14 @@ class StripeService
     begin
       customer = find_or_create_customer(user)
       token = create_card_token(params)
+      return token if token.class == String
       card = Stripe::Customer.create_source(
         customer.id,
         { source: token.id,
         },
-
       )
       if card.present?
-        user.user_cards.create!(name: params[:first_name] + ' ' + params["last_name"],
+        user.user_cards.create!(name: params[:first_name] + ' ' + params[:last_name],
                                 country: params[:country],
                                 expiry_month: params[:exp_month],
                                 expiry_year: params[:exp_year],
@@ -60,7 +62,8 @@ class StripeService
         )
       end
       card
-    rescue
+    rescue Stripe::CardError => e
+      e.message
     end
   end
 
@@ -74,7 +77,8 @@ class StripeService
         UserCard.find_by(card_id: params[:card_id]).destroy
       end
       card
-    rescue
+    rescue Stripe::CardError => e
+      e.message
     end
   end
 
@@ -85,7 +89,8 @@ class StripeService
         { object: 'card' },
       )
       cards
-    rescue
+    rescue Stripe::CardError => e
+      e.message
     end
   end
 

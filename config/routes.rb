@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   devise_for :admin_users
   mount ActionCable.server => "/cable"
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
 
   # Define your application routes p  er the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -54,6 +56,8 @@ Rails.application.routes.draw do
   post '/terms', to: "dashboard#terms_edit"
   get '/terms-edit', to: "dashboard#terms_edit"
   get '/support', to: "dashboard#support"
+  get '/tournament-winner-list', to: "dashboard#tournament_winner_list"
+
   namespace :api do
     namespace :v1 do
       resources :users do
@@ -61,6 +65,7 @@ Rails.application.routes.draw do
           put :update_user
           post :forgot_password
           post :reset_user_password
+          post :verify_otp
           get :all_posts
           get :open_profile
           get :open_current_user
@@ -87,6 +92,7 @@ Rails.application.routes.draw do
           get :recent_posts
           get :trending_posts
           get :tags
+          post :other_posts
 
         end
       end
@@ -144,7 +150,7 @@ Rails.application.routes.draw do
       resources :messages do
         collection do
           get :individual_messages
-          get :individual_admin_messages
+          post :individual_admin_messages
           post :support_ticket
           post :support_chat
           get :fetch_all_users

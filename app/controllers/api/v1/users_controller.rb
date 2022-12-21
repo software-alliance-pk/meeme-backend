@@ -1,5 +1,5 @@
 class Api::V1::UsersController < Api::V1::ApiController
-  before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate]
+  before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate verify_otp]
   before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate]
   # GET /users
   def index
@@ -17,7 +17,6 @@ class Api::V1::UsersController < Api::V1::ApiController
   def all_posts
     @posts = Post.where(tournament_meme: false).order('updated_at DESC').paginate(page: params[:page], per_page: 25)
   end
-
 
   def open_profile
     @profile = User.find_by(id: params[:id])
@@ -43,8 +42,6 @@ class Api::V1::UsersController < Api::V1::ApiController
       render_error_messages(@user)
     end
   end
-
-
 
   def email_validate
     @user = User.find_by_email(params[:email])
@@ -83,26 +80,33 @@ class Api::V1::UsersController < Api::V1::ApiController
     end
   end
 
+  def verify_otp
+    if @user.otp == params[:otp]
+      if @user.updated_at < 1.minute.ago
+        @user.update(otp: nil)
+        return render json: { message: "OTP expired",user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
+      else
+        @user.update(otp: nil)
+        return render json: { message: "Correct OTP", user_otp: @user.otp, otp: params[:otp] }, status: :ok
+      end
+    else
+      return render json: { message: "OTP is not valid",user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
+    end
+  end
+
   def reset_user_password
     return render json: { message: 'Email cannot be empty' }, status: :unprocessable_entity if params[:email].empty?
 
     return render json: { message: 'User with Email not found' }, status: :unprocessable_entity unless @user
 
-    return render json: { message: 'OTP not present' }, status: :unprocessable_entity if params[:otp].empty?
-
     return render json: { message: 'Password not present' }, status: :unprocessable_entity if params[:password].empty?
 
     return render json: { message: 'Confirm Password not present' }, status: :unprocessable_entity if params[:password_confirmation].empty?
-
-    if @user.otp == params[:otp]
-      if params[:password] == params[:password_confirmation]
-        @user.update(password: params[:password])
-        render json: { message: "Password updated" }, status: :ok
-      else
-        render json: { message: "Passwords don't match" }, status: :not_found
-      end
+    if params[:password] == params[:password_confirmation]
+      @user.update(password: params[:password], otp: nil)
+      render json: { message: "Password updated" }, status: :ok
     else
-      render json: { message: "Invalid  Otp" }, status: :not_found
+      render json: { message: "Passwords don't match" }, status: :not_found
     end
   end
 
@@ -110,7 +114,7 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def find_user
     unless (@user = User.find_by_email(params[:email]) || User.find_by_id(params[:id]))
-      return render json: { message: 'User Not found' }
+      return render json: { message: 'User Not found' },status: :not_found
     end
   end
 
