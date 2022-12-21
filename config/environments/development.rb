@@ -75,7 +75,10 @@ Rails.application.configure do
     :enable_starttls_auto => true
   }
 
-  config.action_cable.url = "/cable"
+  config.action_cable.url = "wss://fb4a-139-135-32-171.in.ngrok.io/cable"
+  config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
+  config.hosts << /.*\.ngrok\.io/
+  config.web_console.permissions = '139.135.32.171'
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true

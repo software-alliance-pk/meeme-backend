@@ -109,6 +109,9 @@ class DashboardController < ApplicationController
   def winner_detail
   end
 
+  def tournament_winner_list
+
+  end
   def user_list
     @users = User.paginate(page: params[:page ] ,per_page: 10)
     if params[:search]
