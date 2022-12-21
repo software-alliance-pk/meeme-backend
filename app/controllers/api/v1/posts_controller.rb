@@ -36,7 +36,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     else
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first}
       @post.update(post_params)
-      @post.update(duplicate_tags: @tags)
+      @post.update(duplicate_tags: @tags) if @tags.present?
       render json: { post: @post.attributes.except('tag_list'),
                      post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
                      message: "Post Updated" },
