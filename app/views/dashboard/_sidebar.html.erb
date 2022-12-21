@@ -2,7 +2,7 @@
     <div class="inside">
         <div class="logo_blk">
             <div class="logo">
-                <a href="index.php">
+                <a href="/dashboard">
                     <img src="<%= asset_path("logo.svg")%>" alt="">
                 </a>
             </div>
@@ -57,7 +57,8 @@
                         <img src="<%= asset_path("icon-guidelines.svg")%>" alt=""> Guidelines </a>
                 </li>
                 <li>
-                    <%= link_to "Logout" ,destroy_admin_user_session_path, method: :delete %>
+                    <a href="#" class="btn">
+                        <%= link_to "Log out", destroy_admin_user_session_path, method: :delete %></a>
                 </li>
             </ul>
         </div>

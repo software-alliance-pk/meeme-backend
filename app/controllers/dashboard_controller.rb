@@ -228,7 +228,8 @@ class DashboardController < ApplicationController
   end
 
   def privacy
-    @privacy = Privacy.first_or_initialize
+    @privacy = Privacy.first_or_initialize(description: "Privacy Policies")
+    @privacy.save
   end
 
   def privacy_edit
@@ -238,7 +239,8 @@ class DashboardController < ApplicationController
   end
 
   def terms
-    @terms = Term.first_or_initialize
+    @terms = Term.first_or_initialize(description: "Terms and Conditions")
+    @terms.save
   end
 
   def terms_edit
