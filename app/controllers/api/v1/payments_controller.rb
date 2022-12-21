@@ -17,6 +17,7 @@ class Api::V1::PaymentsController < Api::V1::ApiController
       render json: { message: "Card already exits" }, status: :bad_request
     else
       response = StripeService.create_stripe_customer_card(@current_user, params)
+      return render json: { card:[] ,message: response}, status: :unprocessable_entity if response.class == String
       if response.present?
         render json: { card: response }, status: :ok
       else
