@@ -2,7 +2,7 @@
     <section id="memee">
         <%=render "dashboard/sidebar" %>
         <div id="guide" class="main_side">
-            <div id="top_header" >
+            <div id="top_header">
                 <div class="left_blk">
                     <h1>Guidelines</h1>
                     <div class="img">
@@ -20,34 +20,42 @@
                 <div class="wrapper ex">
                     <nav class="nav_list">
                         <ul class="list">
-                            <li class="active"><a href="/terms">Terms & Conditions</a></li>
+                            <li><a href="/terms">Terms & Conditions</a></li>
                             <li><a href="/privacy">Privacy Policy</a></li>
                             <li><a href="/faqs">FAQs</a></li>
-                            <li><a href="/pop-ups">Pop Ups</a></li>
+                            <li class="active"><a href="/pop-ups">Pop Ups</a></li>
                         </ul>
                     </nav>
-                    
-                        <div class="content_blk edit">
-                            <%= form_with(model: @terms, local: true) do |form| %>
-                                <div class="row mb-5">
-                                    <div class="col-9">
-                                    </div>
-                                    <div class="col-3">
+                    <div class="content_blk edit">
+                        <%= form_with(model: @popups,  url: pop_ups_path(@popups), method: :patch, local: true) do |form| %>
+                            <div class="row mb-5">
+                                <div class="col-9">
+                                </div>
+                                <div class="col-3">
                                     <div class="btn_blk edit">
-                                        <%= form.submit "Save" ,class: "site_btn prime_btn round" %>
-                                    </div>
+                                        <%= form.submit "Update", class: "site_btn prime_btn round" %>
                                     </div>
                                 </div>
+                            </div>
+                            <form action="">
                                 <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="mb-4">Pop Ups Title</h6>
+                                        <div class="form_blk">
+                                            <%= form.text_field :title , class: "input", placeholder: "Enter Title Here" %>
+                                        </div>
+                                    </div>
                                     <div class="col-12">
                                         <h6 class="mb-4">Description</h6>
                                         <div class="form_blk">
-                                            <%= form.text_area :description, cols:"30", rows:"20", class: "tinymce", placeholder: "Start typing here...." %>
+                                            <%= form.text_area :description, cols:"30", rows:"20", class: "input", placeholder: "Start typing here...." %>
+                                            <%= form.hidden_field :id, value: @popups.id %>
                                         </div>
                                     </div>
                                 </div>
-                            <% end %>
-                        </div>
+                            </form>
+                        <% end %>
+                    </div>
                     <div class="history">
                         <h5>History</h5>
                         <ul class="htry_list">

@@ -18,19 +18,20 @@
             </div>
             <div class="inside">
                 <div class="top">
-                    <div class="form_blk input round_input ">
-                        <button class="btn">
-                            <img src="<%= asset_path("Search.svg")%>" alt="">
-                        </button>
-                        <input class="input" type="text" name="" id="" placeholder="Search">
-                    </div>
+                    <%= form_tag(user_list_path, method: "get") do %>
+                        <div class="form_blk input round_input ">
+                            <img src= "<%= asset_path("icon-search.svg")%>">
+                            <%= text_field_tag :search, params[:search], class: "input" ,placeholder: "search", value: "" %>
+                            <%= submit_tag "" , type: :image ,:name => nil %>
+                        </div>
+                    <% end %>
                     <div class="btn_blk">
-                        <button class="site_btn round ">
+                        <a href="/user-export.csv"><button class="site_btn round ">
                             <div class="icon">
                                 <img src="<%= asset_path("export.svg")%>" alt="">
                             </div>
                             Export CSV
-                        </button>
+                        </button></a>
                     </div>
                 </div>
                 <div id="table_users">
@@ -40,31 +41,45 @@
                                     <tr>
                                         <th style="width: 15.6rem;"><input type="radio"></th>
                                         <th style="width: 20rem;">Name/Email</th>
-                                        <th style="width: 17rem;">Location</th>
                                         <th style="width: 14.7rem;">Status</th>
                                         <th style="width: 20rem;">Date Joined</th>
                                         <th style="width: 10rem;">Action</th>
                                     </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <% @users.each do |user_details| %>
+                                    <script>
+                                        $(document).on("click", "#user_id_<%= user_details.id %>", function() {
+                                            let user_id = $(this).attr("data-user"); 
+                                            $.ajax({
+                                                    type: "GET",
+                                                    url: "/follower_count",
+                                                    data: {user_id: user_id},
+                                                    success: function(response){
+                                                        document.getElementById("followers").innerHTML = response.followers
+                                                        document.getElementById("following").innerHTML = response.following
+                                                        document.getElementById("posts").innerHTML = response.posts
+                                                    }
+                                                })
+                                        })
+                                    </script>
+                                    <tr>
                                         <td>
                                             <div class="user">
                                                 <input type="radio">
-                                                <button class="pop_btn btn" data-popup="user_profile">
+                                                <button class="pop_btn btn" id="user_id_<%= user_details.id %>" data-user="<%= user_details.id %>" data-popup="user_profile" onclick="open_profile('<%= user_details.email %>')">
                                                     <div class="ellipse">
-                                                        <img src="<%= asset_path("table-profile.svg")%>" alt="">
+                                                        <img src="<%= user_details.profile_image.attached? ? user_details.profile_image.blob.url : asset_path("table-profile.svg")%>" alt="">
                                                     </div>
                                                 </button>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="name">
-                                                <p class="f-16">Jane Austen</p>
-                                                <p class="f-13">jane@gmail.com</p>
+                                                <p class="f-16"><%=user_details.username%></p>
+                                                <p class="f-13" id= "user_mail"><%=user_details.email%></p>
                                             </div>
-                                        </td>
-                                        <td>Washington, USA</td>
+                                        </td>   
                                         <td>
                                             <div class="status">
                                                 <div></div>
@@ -73,7 +88,7 @@
                                         </td>
                                         <td>
                                             <div class="date">
-                                                <span>23 Aug, 2020</span>
+                                                <span><%=user_details.created_at.strftime("%F")%></span>
                                             </div>
                                         </td>
                                         <td>
@@ -91,210 +106,16 @@
 
                                             </div>
                                         </td>
-                                </tr>
-                                <tr>
-                                        <td>
-                                            <div class="user">
-                                                <input type="radio">
-                                                <button class="pop_btn btn" data-popup="user_profile">
-                                                    <div class="ellipse">
-                                                        <img src="<%= asset_path("table-profile.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="name">
-                                                <p class="f-16">Jane Austen</p>
-                                                <p class="f-13">jane@gmail.com</p>
-                                            </div>
-                                        </td>
-                                        <td>Washington, USA</td>
-                                        <td>
-                                            <div class="status">
-                                                <div></div>
-                                                <span class="active">Active</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="date">
-                                                <span>23 Aug, 2020</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <button class="show btn pop_btn" data-popup="btn_post">
-                                                    <div class="ico">
-                                                        <img src="<%= asset_path("Show.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-                                                <button class="hide btn pop_btn" data-popup="btn_disable">
-                                                    <div class="ico">
-                                                        <img src="<%= asset_path("Hide.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                </tr>
-                                <tr>
-                                        <td>
-                                            <div class="user">
-                                                <input type="radio">
-                                                <button class="pop_btn btn" data-popup="user_profile">
-                                                    <div class="ellipse">
-                                                        <img src="<%= asset_path("table-profile.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="name">
-                                                <p class="f-16">Jane Austen</p>
-                                                <p class="f-13">jane@gmail.com</p>
-                                            </div>
-                                        </td>
-                                        <td>Washington, USA</td>
-                                        <td>
-                                            <div class="status">
-                                                <div></div>
-                                                <span class="active">Active</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="date">
-                                                <span>23 Aug, 2020</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <button class="show btn pop_btn" data-popup="btn_post">
-                                                    <div class="ico">
-                                                        <img src="<%= asset_path("Show.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-                                                <button class="hide btn pop_btn" data-popup="btn_disable">
-                                                    <div class="ico">
-                                                        <img src="<%= asset_path("Hide.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                </tr>
-                                <tr>
-                                        <td>
-                                            <div class="user">
-                                                <input type="radio">
-                                                <button class="pop_btn btn" data-popup="user_profile">
-                                                    <div class="ellipse">
-                                                        <img src="<%= asset_path("table-profile.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="name">
-                                                <p class="f-16">Jane Austen</p>
-                                                <p class="f-13">jane@gmail.com</p>
-                                            </div>
-                                        </td>
-                                        <td>Washington, USA</td>
-                                        <td>
-                                            <div class="status">
-                                                <div></div>
-                                                <span class="active">Active</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="date">
-                                                <span>23 Aug, 2020</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="action">
-                                                <button class="show btn pop_btn" data-popup="btn_post">
-                                                    <div class="ico">
-                                                        <img src="<%= asset_path("Show.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-                                                <button class="hide btn pop_btn" data-popup="btn_disable">
-                                                    <div class="ico">
-                                                        <img src="<%= asset_path("Hide.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                </tr>
-                                <tr>
-                                        <td>
-                                            <div class="user">
-                                                <input type="radio">
-                                                <button class="pop_btn btn" data-popup="user_profile">
-                                                    <div class="ellipse">
-                                                        <img src="<%= asset_path("table-profile.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="name">
-                                                <p class="f-16">Jane Austen</p>
-                                                <p class="f-13">jane@gmail.com</p>
-                                            </div>
-                                        </td>
-                                        <td>Washington, USA</td>
-                                        <td>
-                                            <div class="status">
-                                                <div></div>
-                                                <span class="active">Active</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="date">
-                                                <span>23 Aug, 2020</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <!-- <div class="action">
-                                                <button class="show btn pop_btn" data-popup="btn_post">
-                                                    <div class="ico">
-                                                        <img src="<%= asset_path("Show.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-                                                <button class="hide btn pop_btn" data-popup="btn_disable">
-                                                    <div class="ico">
-                                                        <img src="<%= asset_path("Hide.svg")%>" alt="">
-                                                    </div>
-                                                </button>
-
-                                            </div> -->
-                                        </td>
-                                </tr>
-                               
+                                    </tr>
+                                <%end%>
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="paginate_sec">
-                    <p>Showing 1 to 9 of 200 entries</p>
+                    <p><%= page_entries_info @users %></p>
                     <ul class="pagination">
-                        <li class="me-4">
-                            <a href="#" aria-label="Previous">
-                                <img src="<%= asset_path("left_small_arrow.svg")%>" aria-hidden="true" alt="icon">
-                                Previous
-                            </a>
-                        </li>
-                        <li class="active"><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li class="ms-4">
-                            <a href="#" aria-label="Previous">
-                                Next
-                                <img src="<%= asset_path("right_small_arrow.svg")%>" aria-hidden="true" alt="icon">
-                            </a>
-                        </li>
+                        <li class="disabled"> <%= will_paginate(@users,:previous_label => "&laquo;", :next_label => "&raquo;", :class=>"h5 text-white",:outer_window => 1,:inner_window => 0) %></li>
                     </ul>
                 </div>
 
@@ -351,6 +172,7 @@
                 </div>
             </div>
         </div>
+
         <div class="popup" data-popup="user_profile" id="user_modal">
             <div class="table_dv">
                 <div class="table_cell">
@@ -358,14 +180,15 @@
                         <div class="row justify-content-center">
                             <div class="col-12">
                                 <div class="_inner">
-                                    <button type="button" class="x_btn"></button>
+                                    <button type="button" class="x_btn" onclick= "close_profile()"></button>
                                     <div class="top_blk">
                                         <h4>User Profile</h4>
                                         <div class="profile">
                                             <img src="<%= asset_path("user.svg")%>" alt="">
                                         </div>
-                                        <h5>Mr Astronut</h5>
-                                        <p>iammemer@memee.com</p>
+                                        <h5 id="profile_username"></h5>
+                                    
+                                        <p id="profile_email"></p>
                                     </div>
                                     <div class="outter">
                                         <h5>Personal Information</h5>
@@ -378,8 +201,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-11">
-                                                    <p class="mb-4">+123-555-2514</p>
-                                                    <p>“Like to travel and shoot cinematic videos and love to catpure nature”</p>
+                                                    <p class="mb-4" id= "profile_phone"></p>
+                                                    <p id= "profile_bio"></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -394,10 +217,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-10">
-                                                    <p class="mb-4">37</p>
-                                                    <p class="mb-4">283,900</p>
-                                                    <p class="mb-4">488</p>
-
+                                                    <p class="mb-4" id="posts"></p>
+                                                    <p class="mb-4" id= "followers"></p>
+                                                    <p class="mb-4" id= "following"></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -510,3 +332,31 @@
         </div>
     </section>
 </main>
+
+<script>
+    function open_profile(user_email) {
+        document.getElementById("user_modal").style.display = "block";
+        
+        $.ajax({
+            type: "GET",
+            url: "show_user_profile",
+            dataType: "json",
+            success: function(data){
+                data.forEach(function(user){
+                    if(user.email === user_email){
+                        document.getElementById("profile_username").innerHTML = user.username;
+                        document.getElementById("profile_email").innerHTML = user.email;
+                        document.getElementById("profile_phone").innerHTML = user.phone;
+                        document.getElementById("profile_bio").innerHTML = user.bio;
+                    }
+                })
+            },
+        });
+    }
+
+    
+
+    function close_profile(){
+        document.getElementById("user_modal").style.display = "none";
+    }
+</script>

@@ -27,13 +27,13 @@
                         </ul>
                     </nav>
                     <div class="content_blk edit">
-                        <%= form_with(model: @faqs, local: true) do |form| %>
+                        <%= form_with(model: @faqs, url: faqs_path(@faqs), method: :patch, local: true) do |form| %>
                             <div class="row mb-5">
                                 <div class="col-9">
                                 </div>
                                 <div class="col-3">
                                     <div class="btn_blk edit">
-                                        <%= form.submit "Add", class: "site_btn prime_btn round", :onclick => "history()" %>
+                                        <%= form.submit "Update" ,class: "site_btn prime_btn round", :onclick => "history()" %>
                                     </div>
                                 </div>
                             </div>
@@ -49,9 +49,10 @@
                                         <h6 class="mb-4">Description</h6>
                                         <div class="form_blk">
                                             <%= form.text_area :description, cols:"30", rows:"20", class: "input", placeholder: "Start typing here...." %>
+                                            <%= form.hidden_field :id, value: @faqs.id %>
                                         </div>
                                     </div>
-                                </div>
+                                </div> 
                         <% end %>
 
                     </div>

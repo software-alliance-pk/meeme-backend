@@ -8,6 +8,25 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/9pqd4sft8rpk8mzhs6rry236i4ius03un8er8mp2hxlghkva/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+      tinymce.init({
+        selector: '.tinymce',
+        height: 500,
+        menubar: false,
+        branding: false,
+        plugins: [
+          'advlist autolink lists link image charmap print preview anchor',
+          'searchreplace visualblocks code fullscreen',
+          'insertdatetime media table paste code help wordcount'
+        ],
+          toolbar: 'undo redo |bold italic underline | ' +
+          ' alignleft aligncenter alignright alignjustify |' +
+          ' formatselect | bullist numlist outdent indent | ' +
+          ' removeformat'
+      });
+    </script>
   </head>
 
   <body>
