@@ -20,64 +20,32 @@
                 <div class="wrapper ex">
                     <nav class="nav_list">
                         <ul class="list">
-                            <li><a href="terms.php">Terms & Conditions</a></li>
-                            <li><a href="privacy.php">Privacy Policy</a></li>
-                            <li><a href="faqs.php">FAQs</a></li>
-                            <li class="active"><a href="pop-ups.php">Pop Ups</a></li>
+                            <li><a href="/terms">Terms & Conditions</a></li>
+                            <li><a href="/privacy">Privacy Policy</a></li>
+                            <li><a href="/faqs">FAQs</a></li>
+                            <li class="active"><a href="/pop-ups">Pop Ups</a></li>
                         </ul>
                     </nav>
                     <div class="content_blk">
                         <div class="btn_blk justify-content-end mb-5">
-                            <a href="pop-ups-edit.php" class="site_btn prime_btn round">Add More</a>
+                            <a href="/pop-ups-edit" class="site_btn prime_btn round">Add More</a>
                         </div>
                         <ul class="faq_list">
                             <li>
-                                <div class="faq_blk">
-                                    <div class="top">
-                                        <h6 class="mb-0">Rules & Regulation</h6>
-                                        <div class="btn_blk">
-                                            <button type="button" class="btn faq_btn">
-                                                <img src="<%= asset_path("icon-edit.svg")%>" alt="">
-                                            </button>
-                                            <button type="button" class="btn faq_btn">
-                                                <img src="<%= asset_path("icon-delete.svg")%>" alt="">
-                                            </button>
+                                <% @popups.each do |popup| %>
+                                    <div class="faq_blk">
+                                        <div class="top">
+                                            <h6 class="mb-0"><%= popup.title %></h6>
+                                            <div class="btn_blk">
+                                                <%= link_to image_tag("icon-edit.svg"), popup_update_path(popup) %>
+                                                <%= link_to image_tag("icon-delete.svg"), controller: 'dashboard', action: 'popup_destroy', id: popup.id, method: :delete %>
+                                            </div>
+                                        </div>
+                                        <div class="txt">
+                                            <%= popup.description %>
                                         </div>
                                     </div>
-                                    <div class="txt">
-                                        <p>During the tournament all participants are expected to behave
-                                            professionally and should avoid abusive language/gestures/
-                                            question umpires decisions.
-                                        </p>
-                                        <p>The Team Captain is responsible for informing all of the
-                                            teammates about when the team will be playing and on what dates.
-                                        </p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="faq_blk">
-                                    <div class="top">
-                                        <h6 class="mb-0">Judge</h6>
-                                        <div class="btn_blk">
-                                            <button type="button" class="btn faq_btn">
-                                                <img src="<%= asset_path("icon-edit.svg")%>" alt="">
-                                            </button>
-                                            <button type="button" class="btn faq_btn">
-                                                <img src="<%= asset_path("icon-delete.svg")%>" alt="">
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="txt">
-                                        <p>During the tournament all participants are expected to behave
-                                            professionally and should avoid abusive language/gestures/
-                                            question umpires decisions.
-                                        </p>
-                                        <p>The Team Captain is responsible for informing all of the
-                                            teammates about when the team will be playing and on what dates.
-                                        </p>
-                                    </div>
-                                </div>
+                                <% end %>
                             </li>
                         </ul>
 

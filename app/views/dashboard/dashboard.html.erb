@@ -5,14 +5,12 @@
             <div id="top_header">
               <% if admin_user_signed_in? %>
                 Logged in as <strong><%= current_admin_user.email %></strong>.
-                <%= link_to 'Edit profile', edit_admin_user_registration_path, :class => 'navbar-link' %> |
-                <%= link_to "Logout", destroy_admin_user_session_path, method: :delete  %>
               <% else %>
                 <%= link_to "Sign up", new_admin_user_registration_path, :class => 'navbar-link'  %> |
                 <%= link_to "Login", new_admin_user_session_path, :class => 'navbar-link'  %>
               <% end %>
               <div class="left_blk">
-                    <h1>Hi John! </h1>
+                    <h1>Hi <%= current_admin_user.admin_user_name%> </h1>
                     <div class="img">
                         <img src="<%= asset_path("Emoji-hand.svg")%>" alt="">
                     </div>
@@ -49,7 +47,7 @@
                                                     <span>Total Users</span>
                                                 </div>
                                                 <div class="txt">
-                                                    <span>36k</span>
+                                                    <span><%= User.all.count %></span>
                                                     <div class="line_outer">
                                                         <div class="line bg-1"></div>
                                                     </div>
@@ -120,9 +118,9 @@
                                             <img src="<%= asset_path("chart.svg")%>" alt="">
                                         </div>
                                         <span>$6479</span>
-                                        <div class="btn_blk">
+                                        <a href="/transactions" class="btn_blk">
                                             <button class="site_btn">View All Transactions</button>
-                                        </div>
+                                        </a>
                                     </div>
 
                                 </div>
@@ -142,7 +140,7 @@
                                                 <div class="icon">
                                                     <img src="<%= asset_path("earning-icon.svg")%>" alt="">
                                                 </div>
-                                                <h4>172K</h4>
+                                                <h4><%= Post.all.count %></h4>
                                                 <div class="bottom">
                                                     <span>Total Posts</span>
                                                     <div class="ico_blk">
@@ -169,37 +167,20 @@
                                     <div class="all_user">
                                         <div class="top">
                                             <h4 class="">Latest Users</h4>
-                                            <a href="#">See all</a>
+                                            <a href="/user-list">See all</a>
                                         </div>
-                                        <div class="body">
-                                            <div class="users_row">
-                                                <div class="user">
-                                                    <div class="ellipse">
-                                                        <img src="<%= asset_path("ellipse1.svg")%>" alt="">
+                                        <% @user.each do |user| %>
+                                            <div class="body">
+                                                <div class="users_row d-inline-flex">
+                                                    <div class="user p-2">
+                                                        <div class="ellipse">
+                                                            <img src="<%= user.profile_image.attached? ? user_details.profile_image.blob.url : asset_path("table-profile.svg")%>" alt="">
+                                                        </div>
+                                                        <span><%=user.username%></span>
                                                     </div>
-                                                    <span>Jane</span>
                                                 </div>
-                                                <div class="user">
-                                                    <div class="ellipse">
-                                                        <img src="<%= asset_path("color (1).svg")%>" alt="">
-                                                    </div>
-                                                    <span>Sarah</span>
-                                                </div>
-                                                <div class="user">
-                                                    <div class="ellipse">
-                                                        <img src="<%= asset_path("ellipse1.svg")%>" alt="">
-                                                    </div>
-                                                    <span>Jane</span>
-                                                </div>
-                                                <div class="user">
-                                                    <div class="ellipse">
-                                                        <img src="<%= asset_path("color (1).svg")%>" alt="">
-                                                    </div>
-                                                    <span>Sarah</span>
-                                                </div>
-
                                             </div>
-                                        </div>
+                                        <% end %>
                                     </div>
                                 </div>
                             </div>
