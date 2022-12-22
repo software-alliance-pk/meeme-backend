@@ -157,6 +157,11 @@ Rails.application.routes.draw do
           get :all_support_chats
         end
       end
+      resources :badges do
+        collection do
+          get :current_user_badges
+        end
+      end
     end
 
   end

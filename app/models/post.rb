@@ -3,6 +3,7 @@ class Post < ApplicationRecord
   before_create :check_act_as_taggable_record
   scope :by_recently_created, -> (limit) { order(created_at: :desc).limit(limit) }
   scope :by_recently_updated, -> (limit) { order(updated_at: :desc).limit(limit) }
+  after_create_commit { PostBadgeJob.perform_now(self) }
 
   validates :description, presence: true
 
@@ -34,6 +35,5 @@ class Post < ApplicationRecord
     end
     self.tag_list = tag_list.reject(&:blank?)
   end
-
 
 end
