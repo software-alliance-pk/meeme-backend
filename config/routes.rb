@@ -160,6 +160,10 @@ Rails.application.routes.draw do
       resources :badges do
         collection do
           get :current_user_badges
+          get :rarity_1_badges
+          get :rarity_2_badges
+          get :rarity_3_badges
+          get :current_user_locked_badges
         end
       end
     end
