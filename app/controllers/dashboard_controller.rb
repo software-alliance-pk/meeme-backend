@@ -139,6 +139,12 @@ class DashboardController < ApplicationController
   end
 
   def gift_rewards
+    @rewards = GiftReward.all.paginate(page: params[:page ] ,per_page: 10)
+    @amazon_cards = AmazonCard.all.paginate(page: params[:page ] ,per_page: 10)
+  end
+
+  def update_card
+    @card = AmazonCard.find(params[:id])
   end
 
   def transactions

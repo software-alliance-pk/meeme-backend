@@ -33,6 +33,13 @@ Rails.application.routes.draw do
   get '/transaction-export', to: 'dashboard#transaction_export'
   get '/show_user_profile', to: "dashboard#show_user_profile"
   get '/specific_user_transactions', to: "dashboard#specific_user_transactions"
+  get '/inventory', to: "dashboard#gift_rewards", as: "card_inventory"
+  post '/inventory', to: "amazon_card#create_amazon_card"
+  delete '/gift-rewards/:id', to: 'amazon_card#card_destroy'
+  get '/gift-rewards/:id/gift_rewards_update', to: 'dashboard#update_card', as: 'update_card'
+  patch '/gift-rewards', to: "amazon_card#update_card"
+  get '/gift-rewards/:id', to: 'amazon_card#card_destroy'
+  post '/gift-rewards', to: "amazon_card#add_gift_card"
   get '/gift-rewards', to: "dashboard#gift_rewards"
   get '/transactions', to: "dashboard#transactions"
   get '/faqs', to: "dashboard#faqs"

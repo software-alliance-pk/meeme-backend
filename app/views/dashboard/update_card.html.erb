@@ -17,71 +17,16 @@
                 </div>
             </div>
             <div class="inner_blk">
-                <ul class="tabs_nav nav" id="gift">
+                <ul class="tabs_nav nav">
                     <li>
-                        <a href="#reward" data-bs-toggle="tab" class="nav-link active">Reward</a>
+                        <a href="#reward" data-bs-toggle="tab" class="active">Reward</a>
                     </li>
                     <li>
-                        <a href="#inventory" data-bs-toggle="tab" class="nav-link">Inventory</a>
+                        <a href="#inventory" data-bs-toggle="tab">Inventory</a>
                     </li>
                 </ul>
                 <div class="tab-content">
-                    <div id="reward" class="tab-pane fade active show">
-                        <div class="top_blk">
-                            <h6>REMAINING STOCKS</h6>
-                            <div class="blks">
-                                <div class="position_blk">
-                                    <p>1st</p>
-                                    <h3>5</h3>
-                                </div>
-                                <div class="position_blk">
-                                    <p>2nd</p>
-                                    <h3>10</h3>
-                                </div>
-                                <div class="position_blk">
-                                    <p>3rd</p>
-                                    <h3>10</h3>
-                                </div>
-                                <button type="button" class="site_btn prime_btn round pop_btn" data-popup="add_gift" onclick="add_card()">Add
-                                    Gift Cards</button>
-                            </div>
-                        </div>
-                        <div id="table_blk">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th style="width: 23rem">Card Number</th>
-                                        <th style="width: 18rem">Rank</th>
-                                        <th style="width: 20rem">Status</th>
-                                        <th style="width: 26rem">Remaining</th>
-                                        <th>Last Awarded Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% @rewards.each do |reward| %>
-                                        <tr>
-                                            <td>
-                                                <%= reward.card_number %>
-                                            </td>
-                                            <td>
-                                                <%= reward.rank.slice(0, 3) %>
-                                            </td>
-                                            <td>
-                                                <span class="status">On Stock</span>
-                                            </td>
-                                            <td>1</td>
-                                            <td>Pending</td>
-                                        </tr>
-                                    <% end %>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="paginate_sec">
-                            <p><%= page_entries_info @rewards %></p>
-                            <ul class="pagination">
-                                <li class="disabled"> <%= will_paginate(@rewards,:previous_label => "&laquo;", :next_label => "&raquo;", :class=>"h5 text-white",:outer_window => 1,:inner_window => 0) %></li>
-                            </ul>
-                        </div>
+                    <div id="reward" class="tab-pane fade show active">
                     </div>
                     <div id="inventory" class="tab-pane fade">
                         <div class="btn_blk my-4 justify-content-end">
@@ -101,45 +46,25 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% @amazon_cards.each do |card| %>
-                                        <tr>
-                                            <td>
-                                                <div class="amazon_card">
-                                                    <p><%= card.amount %></p>
-                                                    <div class="img">
-                                                        <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
-                                                    </div>
-                                                    <div class="btn_blk">
-                                                        <button type="button" class="amazon_btn">
-                                                            <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                            <%= card.coin_price %>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td><%= card.amount %></td>
-                                            <td><%= card.gift_card_number %></td>
-                                            <td><%= card.coin_price %></td>
-                                            <td><%= card.created_at.strftime("%F") %></td>
-                                            <td>
-                                                <div class="btn_blk">
-                                                    <button type="button" class="btn action_btn">
-                                                        <%= link_to image_tag("icon-edit.svg"), update_card_path(card), amount: card.amount %>
-                                                    </button>
-                                                    <button type="button" class="btn action_btn">
-                                                        <%= link_to image_tag("icon-delete.svg"), controller: 'amazon_card', action: 'card_destroy', id: card.id, method: :delete %>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <% end %>
                                 </tbody>
                             </table>
                         </div>
                         <div class="paginate_sec">
-                            <p><%= page_entries_info @amazon_cards %></p>
+                            <p>Showing 1 to 1 of 1 entries</p>
                             <ul class="pagination">
-                                <li class="disabled"> <%= will_paginate(@amazon_cards,:previous_label => "&laquo;", :next_label => "&raquo;", :class=>"h5 text-white",:outer_window => 1,:inner_window => 0) %></li>
+                                <li class="me-4">
+                                    <a href="#" aria-label="Previous">
+                                        <img src="<%= asset_path("left_small_arrow.svg")%>" aria-hidden="true" alt="icon">
+                                        Previous
+                                    </a>
+                                </li>
+                                <li class="active"><a href="#">1</a></li>
+                                <li class="ms-4">
+                                    <a href="#" aria-label="Previous">
+                                        Next
+                                        <img src="<%= asset_path("right_small_arrow.svg")%>" aria-hidden="true" alt="icon">
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -154,7 +79,7 @@
                                     <div class="_inner">
                                         <button type="button" class="x_btn" onclick="close_card()"></button>
                                         <h4>Add Gift Card</h4>
-                                        <%= form_with(model: @gift_reward, local: true, html: {id: 'form'}) do |f| %>
+                                        <%= form_with(model: @gift_reward, local: true) do |f| %>
                                             <div class="row">
                                                 <div class="col-12">
                                                     <h6 class="form_label">Rank</h6>
@@ -173,11 +98,23 @@
                                                 </div>
                                                 <div class="col-12">
                                                     <h6 class="form_label">Amount</h6>
+                                                    <div class="dropdown">
+                                                        <button class="btn drop_btn w-100" data-bs-toggle="dropdown">
+                                                            Select Value
+                                                            <img src="<%= asset_path("icon-polygon.svg")%>" alt="">
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li><button type="button">$100</button></li>
+                                                            <li><button type="button">$75</button></li>
+                                                            <li><button type="button">$50</button></li>
+                                                            <li><button type="button">$25</button></li>
+                                                        </ul>
+                                                    </div>
                                                     <%= f.select :amount, options_for_select([["Select Value", ""], "$100", "$75", "$50", "$25"]), class: "btn drop_btn w-100" %>
                                                 </div>
                                             </div>
                                             <div class="btn_blk">
-                                                <%= f.submit "Update", name: 'route_to[Add]' , id: "run", class: "site_btn prime_btn round pop_btn" %>
+                                                <%= f.submit "Update", class: "site_btn prime_btn round pop_btn", confirm: "Are you sure you want to add this gift card" %>
                                             </div>
                                         <% end %>
                                     </div>
@@ -199,8 +136,8 @@
                                             Place to your
                                             List?</p>
                                         <div class="btn_blk">
-                                            <button type="button" class="site_btn prime_btn round" onclick="save()">Yes</button>
-                                            <button type="button" class="site_btn no_btn round", onclick="cancel()">No</button>
+                                            <button type="button" class="site_btn prime_btn round">Yes</button>
+                                            <button type="button" class="site_btn no_btn round">No</button>
                                         </div>
                                     </div>
                                 </div>
@@ -220,29 +157,31 @@
                                         <h4>Add Amazon Gift Card</h4>
                                         <div class="detail_blk">
                                             <div class="left_blk">
-                                                <%= form_with(model: @amazon_card, local: true) do |f| %>
+                                                <%= form_with(model: @amazon_card, url: gift_rewards_path(@amazon_card), method: :patch, local: true) do |f| %>
                                                     <div class="row">
+                                                        <% card = AmazonCard.find(params[:id]) %>
                                                         <div class="col-12">
                                                             <h6 class="form_label">Amount</h6>
                                                             <div class="form_blk">
-                                                                <%= f.text_field :amount, class: "input", placeholder: "$100" %>
+                                                                <%= f.text_field :amount, class: "input", value: card.amount %>
                                                             </div>
                                                         </div>
                                                         <div class="col-12">
                                                             <h6 class="form_label">Gift Card #</h6>
                                                             <div class="form_blk">
-                                                                <%= f.text_field :gift_card_number, class: "input", placeholder: "Add gift card number" %>
+                                                                <%= f.text_field :gift_card_number, class: "input", value: card.gift_card_number %>
                                                             </div>
                                                         </div>
                                                         <div class="col-12">
                                                             <h6 class="form_label">Coin Price</h6>
                                                             <div class="form_blk">
-                                                                <%= f.text_field :coin_price, class: "input", placeholder: "Add coin price" %>
+                                                                <%= f.text_field :coin_price, class: "input", value: card.coin_price %>
+                                                                <%= f.hidden_field :id, value: params[:id] %>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="btn_blk">
-                                                        <%= f.submit "Save Card",  class: "site_btn prime_btn round", name: 'route_to[Create]'%>
+                                                        <%= f.submit "Update Card",  class: "site_btn prime_btn round" %>
                                                     </div>
                                                 <% end %>
                                             </div>
@@ -330,45 +269,10 @@
 
 <script>
     $(document).ready(function(){
-        $('a[data-bs-toggle="tab"]').on('show.bs.tab', function(e) {
-            localStorage.setItem('activeTab', $(e.target).attr('href'));
-        });
-        var activeTab = localStorage.getItem('activeTab');
-        if(activeTab){
-            $('#gift a[href="' + activeTab + '"]').tab('show');
-        }
-    });
-    function add_card(){
-        document.getElementById("add_gift").style.display = "block"
-    }
-
-    function close_card(){
-        document.getElementById("add_gift").style.display = "none"
-    }
-
-    function add_amazon_card(){
         document.getElementById("add_amazon").style.display = "block"
-    }
+    })
 
     function close_amazon_card(){
         document.getElementById("add_amazon").style.display = "none"
-    }
-
-    $("#form").on('submit', function(event){
-        event.preventDefault()
-        document.getElementById("gift_confirm").style.display = "block"
-    })
-
-    function save(){
-        var event = jQuery.Event( "submit" );
-        $( "#form" ).first().trigger( event );
-        if ( event.isDefaultPrevented() ) {
-            event.currentTarget.submit();
-            document.getElementById("gift_confirm").style.display = "none"
-        }
-    }
-
-    function cancel(){
-        document.getElementById("gift_confirm").style.display = "none"
     }
 </script>

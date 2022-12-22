@@ -1,0 +1,2 @@
+class AmazonCard < ApplicationRecord
+end
