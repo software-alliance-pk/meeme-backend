@@ -1,6 +1,8 @@
 class Post < ApplicationRecord
   attr_accessor :tags_which_duplicate_tag
   before_create :check_act_as_taggable_record
+  before_update :check_act_as_taggable_record
+
   scope :by_recently_created, -> (limit) { order(created_at: :desc).limit(limit) }
   scope :by_recently_updated, -> (limit) { order(updated_at: :desc).limit(limit) }
 
@@ -22,6 +24,7 @@ class Post < ApplicationRecord
 
   def check_act_as_taggable_record
     tag_list = []
+
     dup_arr = self&.tags_which_duplicate_tag&.split(",")
     dup_value = dup_arr.map { |element| element if dup_arr.count(element) > 1 }
     tag_list = dup_arr.map { |element| element unless dup_arr.count(element) > 1 }

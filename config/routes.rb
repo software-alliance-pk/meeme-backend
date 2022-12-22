@@ -33,6 +33,8 @@ Rails.application.routes.draw do
   get '/terms', to: "dashboard#terms"
   get '/terms-edit', to: "dashboard#terms_edit"
   get '/support', to: "dashboard#support"
+  get '/tournament-winner-list', to: "dashboard#tournament_winner_list"
+
   namespace :api do
     namespace :v1 do
       resources :users do
@@ -125,7 +127,7 @@ Rails.application.routes.draw do
       resources :messages do
         collection do
           get :individual_messages
-          get :individual_admin_messages
+          post :individual_admin_messages
           post :support_ticket
           post :support_chat
           get :fetch_all_users

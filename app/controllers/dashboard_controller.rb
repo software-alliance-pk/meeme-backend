@@ -40,6 +40,9 @@ class DashboardController < ApplicationController
   def winner_detail
   end
 
+  def tournament_winner_list
+
+  end
   def user_list
   end
 
