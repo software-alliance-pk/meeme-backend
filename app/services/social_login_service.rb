@@ -78,8 +78,12 @@ class SocialLoginService
   def create_user(email, provider_id, response)
     if (@user = User.find_by(email: email))
       @user
+      MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
     else
-      @user = User.create(email: email, password: PASSWORD_DIGEST, password_confirmation: PASSWORD_DIGEST, username: response['name'])
+      @user = User.create(email: email, password: PASSWORD_DIGEST,
+                          password_confirmation: PASSWORD_DIGEST,
+                          username: response['name'])
+      MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
     end
   end
 end
