@@ -2,6 +2,8 @@ require 'csv'
 
 class DashboardController < ApplicationController
 
+include Rails.application.routes.url_helpers
+
   def dashboard
     @user = User.order("id DESC").limit(4)
   end
@@ -56,12 +58,13 @@ class DashboardController < ApplicationController
     @tournament_banner = Like.where(is_judged:true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id], tournament_meme: true }).
       group(:post_id).count(:post_id).sort_by(&:last).sort_by(&:last).reverse.to_h
     @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC')
-    @tormnt_participated = Post.where(id: @tournament_banner.keys)
-    if @posts != []
+    if params[:tournament_banner_id].present?
       @banner = TournamentBanner.find(params[:tournament_banner_id])
+      session[:banner] = @banner
+    end
+    if @posts != []
       @banner.end_date.strftime('%b,%d,%y') > Time.now.strftime('%b,%d,%y') ? @status = "ongoing" : @status = "finished"
       @joined = @banner.tournament_users.count
-      @participated = @tormnt_participated.joins(:likes).group("user_id").count
       @posts.each do |post|
         @id << post.user.id
         @name << post.user.username
@@ -69,7 +72,8 @@ class DashboardController < ApplicationController
         @likes << post.likes.where(is_judged: true).like.count
         @dislikes << post.likes.where(is_judged: true).dislike.count
         @created << post.user.tournament_users.first.created_at.strftime('%b,%d,%y')
-        @image << post.post_image.attached? ? post.post_image.blob : ActionController::Base.helpers.image_tag("tr-1.jpg")
+        @participated << post.user.likes.where(tournament_banner_id: params[:tournament_banner_id]).count
+        @image << post.post_image.attached?
       end
       respond_to do |format|
         format.json {render json: {id: @id, name: @name, email: @email, likes: @likes, dislikes: @dislikes, created: @created, image: @image, participated: @participated, status: @status}}
@@ -110,8 +114,8 @@ class DashboardController < ApplicationController
   end
 
   def tournament_winner_list
-
   end
+
   def user_list
     @users = User.paginate(page: params[:page ] ,per_page: 10)
     if params[:search]

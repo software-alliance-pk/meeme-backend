@@ -22,12 +22,12 @@
                     <div class="season_detail">
                         <h4 class="mb-0">Tournament Season</h4>
                         <div class="dropdown">
-                          <%= select_tag  :tournament_title, options_for_select(TournamentBanner.all.reverse.pluck(:title, :id)), class: "btn btn-secondary dropdown-toggle" ,onclick: 'select($(this).val())' %>
+                          <%= select_tag  :tournament_title, options_for_select(TournamentBanner.all.reverse.pluck(:title, :id)), class: "btn btn-secondary test" ,onclick: 'select($(this).val())' %>
                         </div>
                         <p> Participants: <span id = "joined"></span></p>
                     </div>
                     <h4 class="fw_400 mb-0">
-                        <a href="?">Tournament Winners</a>
+                        <a href="/tournament-winner-list" id = "banner_id">Tournament Winners</a>
                     </h4>
                 </div>
                 <div id="table_blk">
@@ -187,11 +187,7 @@
             success: function(response) {
                 var table = $("#table_blk tbody");
                 document.getElementById("joined").innerHTML = 0 + " Joined"
-                table[0].innerHTML = ""
-                var participate = []
-                response.id.forEach(function(i){
-                    participate.push(response.participated[i])
-                })    
+                table[0].innerHTML = ""  
                 var username = response.name
                 var email = response.email
                 var likes = response.likes
@@ -202,7 +198,7 @@
                 table[0].innerHTML = ""
                 var i = 0;
                 username.forEach(function(name){
-                    table.append("<tr><td>"+(i+1)+"</td><td>"+name+"</td><td>"+email[i]+"</td><td>"+likes[i]+"</td><td>"+dislikes[i]+"</td><td>"+created[i]+"</td><td>"+participate[i]+"</td><td>"+'<%= image_tag("tr-1.jpg")%>'+"</td><td>"+status+"</td><td></td></tr>");
+                    table.append("<tr><td>"+(i+1)+"</td><td>"+name+"</td><td>"+email[i]+"</td><td>"+likes[i]+"</td><td>"+dislikes[i]+"</td><td>"+created[i]+"</td><td>"+participated[i]+"</td><td>"+'<%= image_tag("tr-1.jpg")%>'+"</td><td>"+status+"</td><td></td></tr>");
                     i++;
                 })
                 document.getElementById("joined").innerHTML = (i) + " Joined"
