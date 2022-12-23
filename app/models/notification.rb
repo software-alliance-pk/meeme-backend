@@ -17,7 +17,7 @@ class Notification < ApplicationRecord
                 } }
     }
     registration_ids = user.mobile_devices.pluck(:mobile_token)
-    unless user.notifications.first&.disabled?
+    if user.notifications_enabled?
       registration_ids.each do |registration_id|
         puts fcm_client.send(registration_id, options)
       end
