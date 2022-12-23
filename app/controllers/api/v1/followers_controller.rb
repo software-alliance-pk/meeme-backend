@@ -75,7 +75,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
     if @follower.present?
       if @follower.un_followed!
         @follower.destroy
-        render json: { message: "#{User.find_by(id: @follower.follower_user_id).username} has been un-followed" }, status: :ok
+        render json: { message: "#{User.find_by(id: @follower.follower_user_id).username} has been unfollowed" }, status: :ok
       else
         render json: { message: "Could not process the request" }, status: :ok
       end
