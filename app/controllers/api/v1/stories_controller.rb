@@ -22,7 +22,7 @@ class Api::V1::StoriesController < Api::V1::ApiController
 
   def destroy
     @story.destroy
-    render json: { message: "Story successfully destroyed" }, status: :ok
+    render json: { message: "Story successfully deleted" }, status: :ok
   end
 
   def like_dislike_a_story

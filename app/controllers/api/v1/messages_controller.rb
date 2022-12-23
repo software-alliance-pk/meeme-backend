@@ -97,7 +97,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   private
 
   def message_params
-    params.permit(:body, :receiver_id, :message_image, :admin_user_id, :subject, :message_ticket).merge(sender_id: @current_user.id, user_id: @current_user.id)
+    params.permit(:body, :receiver_id, :admin_user_id, :subject, :message_ticket, message_images: []).merge(sender_id: @current_user.id, user_id: @current_user.id)
   end
 
   def secondary_message_params
@@ -119,7 +119,9 @@ class Api::V1::MessagesController < Api::V1::ApiController
         receiver_id: message.conversation.receiver.id.present? ? message.conversation.receiver.id : '',
         receiver_name: message.conversation.receiver.username,
         created_at: message.created_at,
-        message_image: message.message_image.attached? ? message.message_image.blob.url : '',
+        message_images_count:  message.message_images.count,
+        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
+        # message_image: message.message_image.attached? ? message.message_image.blob.url : '',
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
         receiver_image: message.receiver.profile_image.attached? ? message.receiver.profile_image.blob.url : ''
       }
@@ -136,7 +138,9 @@ class Api::V1::MessagesController < Api::V1::ApiController
         sender_name: message.sender.username,
         created_at: message.created_at,
         message_ticket: message.message_ticket,
-        message_image: message.message_image.attached? ? message.message_image.blob.url : '',
+        message_images_count:  message.message_images.count,
+        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
+        # message_image: message.message_image.attached? ? message.message_image.blob.url : '',
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
         ticket_status: message.conversation.status,
       }

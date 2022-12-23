@@ -10,7 +10,11 @@ json.messages @messages.each do|message|
   json.admin_user_id message.admin_user.id
   json.admin_user_name message.admin_user.admin_user_name.present? ? message.admin_user.admin_user_name : ''
   json.created_at message.created_at
-  json.message_image message.message_image.attached? ? message.message_image.blob.url : ''
+  json.message_images_count message.message_images.count
+  json.message_images message.message_images.each do |message_image|
+    json.message_image message_image.present? ? message_image.blob.url : ''
+  end
+  # json.message_image message.message_image.attached? ? message.message_image.blob.url : ''
   json.sender_image message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : ''
   json.status message.conversation.status
 end
