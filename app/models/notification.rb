@@ -1,12 +1,12 @@
 class Notification < ApplicationRecord
-  after_create :create_push_notification
+  # after_create :create_push_notification
   enum status: { un_read: 0, read: 1 }
   enum alert: { enabled: 0, disabled: 1 }
   belongs_to :user, optional: true
   belongs_to :conversation, optional: true
   belongs_to :message, optional: true
 
-  def create_push_notification
+  def self.create_push_notification
     require 'fcm'
     fcm_client = FCM.new(ENV['FIREBASE_SERVER_KEY'])
     puts (ENV['FIREBASE_SERVER_KEY'])
