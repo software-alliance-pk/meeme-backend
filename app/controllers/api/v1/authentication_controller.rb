@@ -9,7 +9,7 @@ class Api::V1::AuthenticationController < Api::V1::ApiController
     if @user&.authenticate(params[:password])
       MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
       @notification = Notification.create(body: 'You have successfully signed in to the MEMEE App', user_id: @user.id)
-      @notification.create_push_notification
+      Notification.create_push_notification(@notification)
       token = JsonWebTokenService.encode(user_id: @user.id)
       time = Time.now + 24.hours.to_i
       @user.verification_tokens.create(token: token)
