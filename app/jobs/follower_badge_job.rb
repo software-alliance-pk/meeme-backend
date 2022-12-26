@@ -2,7 +2,6 @@ class FollowerBadgeJob < ApplicationJob
   queue_as :default
 
   def perform(message)
-    debugger
     if message.user.followers.added.count == 100000
       @badge = Badge.find_by(title: "I Love My Community Badge")
       @awarded_badge = UserBadge.create!(user_id: message.user_id, badge_id: @badge.id)
