@@ -3,11 +3,11 @@ class SocialLoginService
   PASSWORD_DIGEST = SecureRandom.hex(10)
   APPLE_PEM_URL = 'https://appleid.apple.com/auth/keys'
 
-  def initialize(provider, token, type, fcm_token)
+  def initialize(provider, token, type, mobile_token)
     @token = token
     @provider = provider.downcase
     @type = type
-    @fcm_token = fcm_token
+    @fcm_token = mobile_token
   end
 
   def social_login
@@ -26,12 +26,12 @@ class SocialLoginService
     return JSON.parse(response.body) if response.code != '200'
 
     json_response = JSON.parse(response.body)
-    user = create_user(json_response['email'], json_response['sub'], json_response)
+    create_user(json_response['email'], json_response['sub'], json_response)
 
-    profile_image=  user.profile_image.attached? ? user.profile_image.blob.url : ''
-    token = JsonWebTokenService.encode(user_id: user.id)
-    user.verification_tokens.create(token: token,user_id: user.id)
-    [user, token, profile_image]
+    profile_image=  @user.profile_image.attached? ? @user.profile_image.blob.url : ''
+    token = JsonWebTokenService.encode(user_id: @user.id)
+    @user.verification_tokens.create(token: token,user_id: @user.id)
+    [@user, token, profile_image]
   end
 
   def facebook_signup(token)
@@ -40,13 +40,13 @@ class SocialLoginService
     return JSON.parse(response.body) if response.code != '200'
 
     json_response = JSON.parse(response.body)
-    user = create_user(json_response['email'], json_response['sub'], json_response)
+    create_user(json_response['email'], json_response['sub'], json_response)
 
-    profile_image=  user.profile_image.attached? ? user.profile_image.blob.url : ''
-    token = JsonWebTokenService.encode(user_id: user.id)
-    user.verification_tokens.create(token: token,user_id: user.id)
+    profile_image=  @user.profile_image.attached? ? @user.profile_image.blob.url : ''
+    token = JsonWebTokenService.encode(user_id: @user.id)
+    @user.verification_tokens.create(token: token,user_id: @user.id)
 
-    [user, token, profile_image]
+    [@user, token, profile_image]
   end
 
   def apple_signup(token)
@@ -78,12 +78,12 @@ class SocialLoginService
   def create_user(email, provider_id, response)
     if (@user = User.find_by(email: email))
       @user
-      MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
+      MobileDevice.find_or_create_by(mobile_token: @fcm_token, user_id: @user.id)
     else
       @user = User.create(email: email, password: PASSWORD_DIGEST,
                           password_confirmation: PASSWORD_DIGEST,
                           username: response['name'])
-      MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
+      MobileDevice.find_or_create_by(mobile_token: @fcm_token, user_id: @user.id)
     end
   end
 end
