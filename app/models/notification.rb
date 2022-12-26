@@ -9,6 +9,12 @@ class Notification < ApplicationRecord
   def create_push_notification
     require 'fcm'
     fcm_client = FCM.new(ENV['FIREBASE_SERVER_KEY'])
+    puts (ENV['FIREBASE_SERVER_KEY'])
+    puts "----------------------------------------------"
+    puts "----------------------------------------------"
+    puts "----------------------------------------------"
+    puts "----------------------------------------------"
+    puts "----------------------------------------------"
     options = { priority: 'high',
                 data: { notification: self, user_id: self.user_id,
                 notification: { body: self.body,
