@@ -39,7 +39,7 @@ class Api::V1::UsersController < Api::V1::ApiController
                      wallet: @user.get_wallet,
                      message: 'User created successfully' }, status: :ok
       MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
-      Notification.create(body: 'You have successfully signed up for the MEMEE App', user_id: @user.id)
+      Notification.create(title: "Sign Up",body: 'You have successfully signed up for the MEMEE App', user_id: @user.id)
     else
       render_error_messages(@user)
     end

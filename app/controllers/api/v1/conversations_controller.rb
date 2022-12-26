@@ -14,9 +14,9 @@ class Api::V1::ConversationsController < Api::V1::ApiController
                                            sender_id: params[:receiver_id].to_i)
       @conversation = Conversation.create!(sender_id: @current_user.id,
                                            receiver_id: params[:receiver_id].to_i)
-      Notification.create(body: 'Conversation created successfully ',
-                          conversation_id: @conversation.id,
-                          user_id: @current_user.id )
+      # Notification.create(body: 'Conversation created successfully ',
+      #                     conversation_id: @conversation.id,
+      #                     user_id: @current_user.id )
 
       render json: { message: "Conversation Created", conversation: @conversation }, status: :ok
     end
@@ -30,9 +30,9 @@ class Api::V1::ConversationsController < Api::V1::ApiController
     else
       @conversation = Conversation.create!(sender_id: @current_user.id,
                                            admin_user_id: params[:admin_user_id].to_i)
-      Notification.create(body: 'Support Conversation created successfully ',
-                          conversation_id: @conversation.id,
-                          user_id: @current_user.id )
+      # Notification.create(body: 'Support Conversation created successfully ',
+      #                     conversation_id: @conversation.id,
+      #                     user_id: @current_user.id )
       render json: { message: "Conversation Created", conversation: @conversation }, status: :ok
     end
   end

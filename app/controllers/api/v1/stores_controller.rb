@@ -26,6 +26,8 @@ class Api::V1::StoresController < Api::V1::ApiController
 
       if @store.save
         @current_user.update(coins: coins)
+        Notification.create(title: "In App Purchase",body: "#{@store.name} have been bought successfully",
+                            user_id: @current_user.id)
         render json: { store: @store,
                        coins: coins,
                        message: "#{params[:amount].to_i} have been deducted from #{@current_user.username}'s account" }, status: :ok
