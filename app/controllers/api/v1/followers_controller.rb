@@ -38,6 +38,9 @@ class Api::V1::FollowersController < Api::V1::ApiController
     else
       @follower = Follower.new(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id], status: 'pending')
       if @follower.save
+        Notification.create(title:"Follower Request",
+                            body: "Follower request sent successfully to #{User.find_by(id: @follower.follower_user_id).username} by #{@current_user.username}",
+                            follow_request_id: @follower.id, user_id: @current_user.id)
         render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a request to #{User.find_by(id: @follower.follower_user_id).username} " }, status: :ok
       else
         render_error_messages(@follower)
@@ -51,10 +54,18 @@ class Api::V1::FollowersController < Api::V1::ApiController
       if @follower.is_following.to_s == params[:is_following] && @follower.added?
         render json: { message: "User unfriend his follower" }, status: :ok
       elsif @follower.is_following.to_s == params[:is_following] && @follower.pending?
+        # Notification.create(title: "Request Rejected",
+        #                     body: "Follower request has been rejected by #{@current_user.username}",
+        #                     follow_request_id: @follower.id,
+        #                     user_id: params[:follower_user_id])
         @follower.destroy
         render json: { message: "User removed from pending" }, status: :ok
       else
         @follower.update(is_following: true, status: 'added')
+        Notification.create(title: "Request Accepted",
+                            body: "Follower request has been accepted by #{@current_user.username}",
+                            follow_request_id: @follower.id,
+                            user_id: params[:follower_user_id])
         render json: { message: "User added this follower", request: @follower }, status: :ok
       end
     else

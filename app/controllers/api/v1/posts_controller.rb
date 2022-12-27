@@ -30,11 +30,14 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def update_posts
+    @post.tags_which_duplicate_tag = params[:tag_list]
     unless @post.update(post_params)
       render_error_messages(@post)
     else
+      @tags = @post.tag_list.map { |item| item&.split("dup")&.first}
       @post.update(post_params)
-      render json: { post: @post,
+      @post.update(duplicate_tags: @tags) if @tags.present?
+      render json: { post: @post.attributes.except('tag_list'),
                      post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
                      message: "Post Updated" },
              status: :ok
@@ -144,6 +147,6 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def post_params
-    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme)
+    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme,:duplicate_tags)
   end
 end

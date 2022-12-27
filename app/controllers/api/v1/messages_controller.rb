@@ -58,6 +58,11 @@ class Api::V1::MessagesController < Api::V1::ApiController
       @message = @conversation.messages.new(message_params)
       if @message.save
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
+        Notification.create(title:"Message from #{@message.sender.username}",
+                            body: @message.body,
+                            conversation_id: @conversation.id,
+                            user_id: @message.receiver_id,
+                            message_id: @message.id)
       end
     else
       render json: { message: "No conversation present" }, status: :not_found

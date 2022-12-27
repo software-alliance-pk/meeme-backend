@@ -4,7 +4,7 @@ json.posts do
     json.user_id post.user.id
     json.username post.user.username
     json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
-    json.post post
+    json.post post.attributes.except('tag_list')
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false
     json.post_likes post.likes.count

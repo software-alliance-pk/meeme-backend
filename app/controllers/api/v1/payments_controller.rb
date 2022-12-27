@@ -56,7 +56,9 @@ class Api::V1::PaymentsController < Api::V1::ApiController
     return render json: {message: 'Invalid Card'}, status: :unauthorized unless @current_user.stripe_id.present?
     if response.present?
       response = StripeService.create_stripe_charge(@current_user, params)
-      render json: { charge: response,coins: @current_user.coins }, status: :ok
+      Notification.create(title: "In App Purchase",body: "You have bought coins successfully of amount #{params[:amount_to_be_paid]}",
+                          user_id: @current_user.id)
+      render json: { charge: response, coins: @current_user.coins }, status: :ok
     else
       render json: { charge: [], message: "Cannot be charged" }, status: :not_found
     end
