@@ -67,9 +67,9 @@
                                         <td>
                                             <div class="user">
                                                 <input type="radio">
-                                                <button class="pop_btn btn" id="user_id_<%= user_details.id %>" data-user="<%= user_details.id %>" data-popup="user_profile" onclick="open_profile('<%= user_details.email %>')">
+                                                <button class="pop_btn btn" id="user_id_<%= user_details.id %>" data-user="<%= user_details.id %>" data-popup="user_profile" onclick="open_profile('<%= user_details.email %>', <%= session[:id] = user_details.id %>)">
                                                     <div class="ellipse">
-                                                        <img src="<%= user_details.profile_image.attached? ? user_details.profile_image.blob.url : asset_path("table-profile.svg")%>" alt="">
+                                                        <img src="<%= user_details.profile_image.attached? ? user_details.profile_image.blob.url : asset_path("user.png")%>" alt="">
                                                     </div>
                                                 </button>
                                             </div>
@@ -184,7 +184,7 @@
                                     <div class="top_blk">
                                         <h4>User Profile</h4>
                                         <div class="profile">
-                                            <img src="<%= asset_path("user.svg")%>" alt="">
+                                            <img src="" alt="" id="image">
                                         </div>
                                         <h5 id="profile_username"></h5>
                                     
@@ -295,7 +295,6 @@
                                                         </div>
                                                         <span>Most Wins</span>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
@@ -334,20 +333,21 @@
 </main>
 
 <script>
-    function open_profile(user_email) {
+    function open_profile(user_email, id) {
         document.getElementById("user_modal").style.display = "block";
-        
         $.ajax({
             type: "GET",
             url: "show_user_profile",
+            data: { id: id},
             dataType: "json",
             success: function(data){
-                data.forEach(function(user){
+                data.user.forEach(function(user){
                     if(user.email === user_email){
                         document.getElementById("profile_username").innerHTML = user.username;
                         document.getElementById("profile_email").innerHTML = user.email;
                         document.getElementById("profile_phone").innerHTML = user.phone;
                         document.getElementById("profile_bio").innerHTML = user.bio;
+                        document.getElementById("image").src = data.image
                     }
                 })
             },

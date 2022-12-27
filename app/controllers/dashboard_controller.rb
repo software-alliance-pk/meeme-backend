@@ -45,11 +45,13 @@ include Rails.application.routes.url_helpers
 
   def admin_profile
     if params[:password] == ""
-      current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name], email: params[:email])
+      current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
     elsif params[:password] != nil && params[:password] != params[:password_confirmation]
       redirect_to admin_profile_path
     elsif params[:password] != nil && params[:password] == params[:password_confirmation]
-      current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name], email: params[:email], password: params[:password])
+      current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name], password: params[:password])
+    end
+    if current_admin_user.update(admin_user_params)
     end
   end
 
@@ -57,7 +59,7 @@ include Rails.application.routes.url_helpers
     @id, @name, @email, @likes, @dislikes, @created, @image, @participated = [], [], [], [], [], [], [], []
     @tournament_banner = Like.where(is_judged:true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id], tournament_meme: true }).
       group(:post_id).count(:post_id).sort_by(&:last).sort_by(&:last).reverse.to_h
-    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC')
+    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page ] ,per_page: 10)
     if params[:tournament_banner_id].present?
       @banner = TournamentBanner.find(params[:tournament_banner_id])
       session[:banner] = @banner
@@ -73,7 +75,11 @@ include Rails.application.routes.url_helpers
         @dislikes << post.likes.where(is_judged: true).dislike.count
         @created << post.user.tournament_users.first.created_at.strftime('%b,%d,%y')
         @participated << post.user.likes.where(tournament_banner_id: params[:tournament_banner_id]).count
-        @image << post.post_image.attached?
+        if post.post_image.attached?
+          @image << url_for(post.post_image)
+        else
+          @image << ActionController::Base.helpers.asset_path('tr-1.jpg')
+        end
       end
       respond_to do |format|
         format.json {render json: {id: @id, name: @name, email: @email, likes: @likes, dislikes: @dislikes, created: @created, image: @image, participated: @participated, status: @status}}
@@ -114,8 +120,21 @@ include Rails.application.routes.url_helpers
   end
 
   def tournament_winner_list
+    if params[:username].present?
+      @user = User.find_by(username: params[:username])
+      @user_image = @user.profile_image.attached? ? url_for(@user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
+      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"])
+      @post_image = @post[0].post_image.attached? ? url_for(@post[0].post_image) : ActionController::Base.helpers.asset_path('bg-img.jpg')
+      respond_to do |format|
+        format.json {render json: {user_image: @user_image, post_image: @post_image}}
+      end
+    end
   end
 
+  def winner_reward
+
+  end
+  
   def user_list
     @users = User.paginate(page: params[:page ] ,per_page: 10)
     if params[:search]
@@ -137,8 +156,10 @@ include Rails.application.routes.url_helpers
 
   def show_user_profile
     @user = User.all
+    @specific_user = User.find(params[:id])
+    @image = @specific_user.profile_image.attached? ? url_for(@specific_user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
     respond_to do |format|
-      format.json {render json: @user}
+      format.json {render json: {user: @user , image: @image}}
     end
   end
 
@@ -154,6 +175,12 @@ include Rails.application.routes.url_helpers
   def transactions
     if params[:search]
       @transactions_list = Transaction.search(params[:search]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
+    elsif params[:start_date].present? && params[:end_date].present?
+      @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
+    elsif params[:start_date].present? && params[:end_date] = ""
+      @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
+    elsif params[:start_date] = "" && params[:end_date].present?
+      @transactions_list = Transaction.end_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
     else
       @transactions_list = Transaction.order("id DESC").paginate(page: params[:page ] ,per_page: 10)
     end
@@ -171,8 +198,10 @@ include Rails.application.routes.url_helpers
 
   def specific_user_transactions
     @transactions = User.find(params[:user_id]).transactions
+    @specific_user = User.find(params[:user_id])
+    @image = @specific_user.profile_image.attached? ? url_for(@specific_user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
     respond_to do |format|
-      format.json {render json: @transactions}
+      format.json {render json: {transaction: @transactions, image: @image}}
     end
   end
 

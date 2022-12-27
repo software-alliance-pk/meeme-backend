@@ -57,14 +57,13 @@
                         <img src="<%= asset_path("icon-guidelines.svg")%>" alt=""> Guidelines </a>
                 </li>
                 <li>
-                    <a href="#" class="btn">
-                        <%= link_to "Log out", destroy_admin_user_session_path, method: :delete %></a>
+                    <%= link_to "Log out", destroy_admin_user_session_path, method: :delete %>
                 </li>
             </ul>
         </div>
         <div class="btm_blk">
             <div class="img">
-                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
+                <img src="<%= current_admin_user.admin_profile_image.attached? ? current_admin_user.admin_profile_image.blob.url : asset_path("john-smith.jpg")%>" alt="">
             </div>
             <div class="content">
                 <div class="txt">

@@ -158,8 +158,12 @@
                                             <div class="row">
                                                 <div class="col-12">
                                                     <h6 class="form_label">Rank</h6>
-                                                    <div class="dropdown">
-                                                        <%= f.select :rank, options_for_select([["Select Ranking", ""], "1st Place", "2nd Place", "3rd Place"]), class: "btn btn-primary dropdown-toggle", style: "min-width: 100;" %>
+                                                    <div class = "btn btn-secondary w-100 h-75 rounded-pill">
+                                                        <select class="btn btn-secondary w-100 h-100 rounded-pill" name="rank">
+                                                            <li><option>1st Place</option></li>
+                                                            <li><option>2nd Place</option></li>
+                                                            <li><option>3rd Place</option></li>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -173,7 +177,14 @@
                                                 </div>
                                                 <div class="col-12">
                                                     <h6 class="form_label">Amount</h6>
-                                                    <%= f.select :amount, options_for_select([["Select Value", ""], "$100", "$75", "$50", "$25"]), class: "btn drop_btn w-100" %>
+                                                    <div class = "btn btn-secondary w-100 h-75 rounded-pill">
+                                                        <select class="btn btn-secondary w-100 h-100 rounded-pill" name="amount">
+                                                            <li><option>$100</option></li>
+                                                            <li><option>$75</option></li>
+                                                            <li><option>$50</option></li>
+                                                            <li><option>$25</option></li>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="btn_blk">
