@@ -3,7 +3,7 @@ class NotificationController < ApplicationController
         @notification = Notification.new(notification_params)
         if params[:send_all].present? && params[:send_all] == "on" && params[:send_date] == ""
             @notification.save
-        else
+        elsif params[:send_all].present? && params[:send_all] == "on" && params[:send_date] != ""
             @now = Time.now.strftime("%F") 
             @date = params[:send_date]
             @days = (@date.to_date - @now.to_date).to_i
