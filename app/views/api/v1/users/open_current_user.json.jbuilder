@@ -1,7 +1,7 @@
 json.profile do
   json.user @current_user
   json.user_image @current_user.profile_image.attached? ? @current_user.profile_image.blob.url : ''
-  json.follower  @current_user.followers.where(is_following: true,status: 'added').count
+  json.followers  @current_user.followers.where(is_following: true,status: 'added').count
   json.following  Follower.where(is_following: false, user_id: @current_user.id,status: 'pending').count + @current_user.followers.where(is_following: true,status: 'added').count
   json.badges  []
   json.all_post_count @current_user.posts.count
