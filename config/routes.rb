@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get '/follower_count', to: "dashboard#follower_count"
   get '/verification', to: "dashboard#verification"
   get '/notifications', to: "dashboard#notifications"
+  post '/notifications', to: "notification#create_notification"
   get '/admin-profile', to: "dashboard#admin_profile"
   patch '/admin-profile', to: "dashboard#admin_profile"
   post '/admin-profile', to: "dashboard#admin_profile"
