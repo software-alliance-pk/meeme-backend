@@ -23,7 +23,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     if @post.save
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first}
       @post.update(duplicate_tags: @tags)
-      render json: { user: @post.attributes.except('tag_list'), post_image: @post.post_image.attached? ? @post.post_image.blob.url : '', message: 'Post created successfully' }, status: :ok
+      render json: { user: @post.attributes.except('tag_list'), post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',post_type: @post.post_image.content_type, message: 'Post created successfully' }, status: :ok
     else
       render_error_messages(@post)
     end
@@ -39,6 +39,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       @post.update(duplicate_tags: @tags) if @tags.present?
       render json: { post: @post.attributes.except('tag_list'),
                      post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
+                     post_type: @post.post_image.content_type,
                      message: "Post Updated" },
              status: :ok
     end
@@ -46,7 +47,7 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def destroy
     @post.destroy
-    render json: { message: "Post successfully destroyed" }, status: :ok
+    render json: { message: "Post successfully deleted" }, status: :ok
   end
 
   def explore

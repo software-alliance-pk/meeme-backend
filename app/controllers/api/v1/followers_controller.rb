@@ -38,10 +38,12 @@ class Api::V1::FollowersController < Api::V1::ApiController
     else
       @follower = Follower.new(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id], status: 'pending')
       if @follower.save
-        Notification.create(title:"Follower Request",
-                            body: "Follower request sent successfully to #{User.find_by(id: @follower.follower_user_id).username} by #{@current_user.username}",
-                            follow_request_id: @follower.id, user_id: @current_user.id)
-        render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a request to #{User.find_by(id: @follower.follower_user_id).username} " }, status: :ok
+        Notification.create(title: "Friend Request",
+                            body: "#{@current_user.username} follows you",
+                            follow_request_id: @follower.id,
+                            user_id: params[:follower_user_id])
+        
+        render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.follower_user_id).username} " }, status: :ok
       else
         render_error_messages(@follower)
       end
@@ -78,7 +80,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
     if @follower.present?
       if @follower.un_followed!
         @follower.destroy
-        render json: { message: "User un-followed" }, status: :ok
+        render json: { message: "#{User.find_by(id: @follower.follower_user_id).username} has been unfollowed" }, status: :ok
       else
         render json: { message: "Could not process the request" }, status: :ok
       end
