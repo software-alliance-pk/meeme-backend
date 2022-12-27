@@ -20,68 +20,30 @@
                 <div class="wrapper ex">
                     <nav class="nav_list">
                         <ul class="list">
-                            <li><a href="terms.php">Terms & Conditions</a></li>
-                            <li class="active"><a href="privacy.php">Privacy Policy</a></li>
-                            <li><a href="faqs.php">FAQs</a></li>
-                            <li><a href="pop-ups.php">Pop Ups</a></li>
+                            <li><a href="/terms">Terms & Conditions</a></li>
+                            <li class="active"><a href="/privacy">Privacy Policy</a></li>
+                            <li><a href="/faqs">FAQs</a></li>
+                            <li><a href="/pop-ups">Pop Ups</a></li>
                         </ul>
                     </nav>
                     <div class="content_blk">
                         <div class="btn_blk justify-content-end mb-5">
-                            <a href="privacy-edit.php" class="site_btn prime_btn round">Update</a>
+                            <a href="/privacy-edit" class="site_btn prime_btn round">Update</a>
                         </div>
-                        <h6>Rules and Regulations</h6>
+                        <h6>Privacy and Policies</h6>
                         <div class="rules">
-                            <p>
-                                During the tournament all participants are expected to behave
-                                professionally and should avoid abusive language/gestures/
-                                question umpires decisions.
-                            </p>
-                            <p>
-                                The Team Captain is responsible for informing all of the
-                                teammates about when the team will be playing and on what dates.
-                            </p>
-                            <p>
-                                During the tournament all participants are expected to behave
-                                professionally and should avoid abusive language/gestures/
-                                question umpires decisions.
-                            </p>
-                            <p>
-                                The Team Captain is responsible for informing all of the
-                                teammates about when the team will be playing and on what dates.
-                            </p>
-                            <p>
-                                During the tournament all participants are expected to behave
-                                professionally and should avoid abusive language/gestures/
-                                question umpires decisions.
-                            </p>
-                            <p>
-                                The Team Captain is responsible for informing all of the
-                                teammates about when the team will be playing and on what dates.
-                            </p>
-                            <p>
-                                During the tournament all participants are expected to behave
-                                professionally and should avoid abusive language/gestures/
-                                question umpires decisions.
-                            </p>
-                            <p>
-                                The Team Captain is responsible for informing all of the
-                                teammates about when the team will be playing and on what dates.
-                            </p>
+                            <%= @privacy.description.html_safe %>
                         </div>
                     </div>
                     <div class="history">
                         <h5>History</h5>
                         <ul class="htry_list">
                             <li>
-                                <p>Term &amp; Conditions - Updated!</p>
-                                <p class="time">09/12/2021</p>
-                                <hr>
-                            </li>
-                            <li>
-                                <p>Term &amp; Conditions - Updated!</p>
-                                <p class="time">09/12/2021</p>
-                                <hr>
+                                <% if Privacy.first.updated_at != Privacy.first.created_at? %>
+                                    <p>Privacy &amp; Policy - Updated!</p>
+                                    <p class="time"><%= Privacy.first.updated_at.strftime("%F") %></p>
+                                    <hr>
+                                <% end %>
                             </li>
                         </ul>
                     </div>

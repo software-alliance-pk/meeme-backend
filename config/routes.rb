@@ -8,32 +8,63 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root to: 'home#index'
-  root "dashboard#dashboard"
+  root "dashboard#homepage"
   get '/dashboard', to: "dashboard#dashboard"
   get '/welcome', to: "dashboard#welcome"
   get '/signin', to: "dashboard#signin"
   get '/signup', to: "dashboard#signup"
   get '/forgot-password', to: "dashboard#forgot_password"
   get '/reset-password', to: "dashboard#reset_password"
+  get '/follower_count', to: "dashboard#follower_count"
   get '/verification', to: "dashboard#verification"
   get '/notifications', to: "dashboard#notifications"
   get '/admin-profile', to: "dashboard#admin_profile"
+  patch '/admin-profile', to: "dashboard#admin_profile"
+  post '/admin-profile', to: "dashboard#admin_profile"
   get '/tournament', to: "dashboard#tournament"
+  get '/tournament-users', to: "dashboard#tournament_users"
   get '/tournament-banner', to: "dashboard#tournament_banner"
+  post '/tournament-banner' , to: "dashboard#tournament_banner_create"
+  delete 'tournament-banner/:id', to: 'dashboard#tournament_banner_destroy'
+  get 'tournament-banner/:id', to: 'dashboard#tournament_banner_destroy'
   get '/winner-detail', to: "dashboard#winner_detail"
   get '/user-list', to: "dashboard#user_list"
+  get '/user-export', to: 'dashboard#user_export'
+  get '/transaction-export', to: 'dashboard#transaction_export'
+  get '/show_user_profile', to: "dashboard#show_user_profile"
+  get '/specific_user_transactions', to: "dashboard#specific_user_transactions"
+  get '/inventory', to: "dashboard#gift_rewards", as: "card_inventory"
+  post '/inventory', to: "amazon_card#create_amazon_card"
+  delete '/gift-rewards/:id', to: 'amazon_card#card_destroy'
+  get '/gift-rewards/:id/gift_rewards_update', to: 'dashboard#update_card', as: 'update_card'
+  patch '/gift-rewards', to: "amazon_card#update_card"
+  get '/gift-rewards/:id', to: 'amazon_card#card_destroy'
+  post '/gift-rewards', to: "amazon_card#add_gift_card"
   get '/gift-rewards', to: "dashboard#gift_rewards"
   get '/transactions', to: "dashboard#transactions"
   get '/faqs', to: "dashboard#faqs"
   get '/faqs-edit', to: "dashboard#faqs_edit"
-  get '/popup', to: "dashboard#popup"
-  get '/popup-edit', to: "dashboard#popup_edit"
+  post '/faqs-edit', to: "dashboard#faq_create"
+  delete 'faqs/:id', to: 'dashboard#faq_destroy'
+  get 'faqs/:id', to: 'dashboard#faq_destroy'
+  get 'faqs/:id/faq-update', to: 'dashboard#faq_update', as: 'faq_update'
+  patch '/faqs', to: "dashboard#faq_update"
+  get '/pop-ups', to: "dashboard#popup"
+  get '/pop-ups-edit', to: "dashboard#popup_edit"
+  post '/pop-ups-edit', to: "dashboard#popup_create"
+  delete 'pop-ups/:id', to: 'dashboard#popup_destroy'
+  get 'pop-ups/:id', to: 'dashboard#popup_destroy'
+  get 'pop-ups/:id/popup-update', to: 'dashboard#popup_update', as: 'popup_update'
+  patch '/pop-ups', to: "dashboard#popup_update"
   get '/privacy', to: "dashboard#privacy"
+  post '/privacy', to: "dashboard#privacy_edit"
   get '/privacy-edit', to: "dashboard#privacy_edit"
   get '/terms', to: "dashboard#terms"
+  post '/terms', to: "dashboard#terms_edit"
   get '/terms-edit', to: "dashboard#terms_edit"
   get '/support', to: "dashboard#support"
   get '/tournament-winner-list', to: "dashboard#tournament_winner_list"
+  get '/winner-reward', to: "dashboard#winner_reward"
 
   namespace :api do
     namespace :v1 do
