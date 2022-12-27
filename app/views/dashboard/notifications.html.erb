@@ -18,13 +18,13 @@
             </div>
             <div class="outter">
                 <div class="left_blk">
-                    <div class="top">
-                        <h6>Choose where to send</h6>
-                        <button type="button" class="btn caldr_btn">
-                            <img src="<%= asset_path("icon-caldr-white.svg")%>" alt="">
-                        </button>
-                    </div>
-                    <form action="">
+                    <%= form_with(model: @notification, local: true) do |form| %>
+                        <div class="top">
+                            <h6>Choose where to send</h6>
+                            <div class="caldr_btn">
+                                <input type="date" name="send_date" class="btn btn-light rounded" style="width: 80%; height: 80%"></input>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-12">
                                 <div class="check_blk">
@@ -34,115 +34,41 @@
                             </div>
                             <div class="col-12">
                                 <div class="form_blk">
-                                    <input type="text" name="" id="" class="input"
+                                    <input type="text" name="title" id="title" class="input"
                                         placeholder="Push Notification Title">
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form_blk">
-                                    <input type="text" name="" id="" class="input" placeholder="Link (Optional)">
+                                    <input type="text" name="body" id="body" class="input" placeholder="Link (Optional)">
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form_blk">
-                                    <textarea class="input" rows="10" placeholder="Start typing here....."></textarea>
+                                    <textarea class="input" name="body" rows="10" placeholder="Start typing here....."></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="btn_blk">
-                            <button type="button" class="site_btn prime_btn round px pop_btn"
+                            <button type="submit" class="site_btn prime_btn round px pop_btn"
                                 data-popup="notify_confirm">Send Now</button>
                         </div>
-                    </form>
+                    <% end %>
                 </div>
                 <div class="right_blk">
                     <h5 class="title">History</h5>
                     <div class="list_outter">
                         <ul class="list">
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/19/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/18/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/17/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/16/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/15/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/14/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/13/2022</p>
-                                    <p class="txt">Notification was manually sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/19/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/18/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/17/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/16/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/15/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/14/2022</p>
-                                    <p class="txt">Notification was sent</p>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <p class="date">10/13/2022</p>
-                                    <p class="txt">Notification was manually sent</p>
-                                </div>
-                            </li>
+                            <% if Notification.any? %>
+                                <% Notification.all.limit(100).each do |history| %>
+                                    <li>
+                                        <div class="item">
+                                            <p class="date"><%= history.created_at.strftime("%F") %></p>
+                                            <p class="txt">Notification was sent</p>
+                                        </div>
+                                    </li>
+                                <% end %>
+                            <% end %>
                         </ul>
 
                     </div>

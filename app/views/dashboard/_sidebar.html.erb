@@ -2,24 +2,24 @@
     <div class="inside">
         <div class="logo_blk">
             <div class="logo">
-                <a href="index.php">
+                <a href="/dashboard">
                     <img src="<%= asset_path("logo.svg")%>" alt="">
                 </a>
             </div>
         </div>
-        <div class="list_blk">
+        <div class="list_blk" id="overview">
             <p class="title">Overview</p>
             <ul>
                 <li>
-                    <a href="dashboard.php">
+                    <a href="/dashboard" class="btn">
                         <img src="<%= asset_path("icon-dashboard.svg")%>" alt=""> Dashboard </a>
                 </li>
                 <li>
-                    <a href="?">
+                    <a href="/user-list" class="btn">
                         <img src="<%= asset_path("icon-users.svg")%>" alt=""> Users </a>
                 </li>
                 <li>
-                    <a href="?">
+                    <a href="/transactions" class="btn">
                         <img src="<%= asset_path("icon-transactions.svg")%>" alt=""> Transactions </a>
                 </li>
             </ul>
@@ -28,19 +28,15 @@
             <p class="title">Tournament</p>
             <ul>
                 <li>
-                    <a href="?" class="active">
+                    <a href="/tournament" class="btn" >
                         <img src="<%= asset_path("icon-tournaments.svg")%>" alt=""> Tournaments </a>
                 </li>
                 <li>
-                    <a href="?">
-                        <img src="<%= asset_path("icon-win-fb.svg")%>" alt=""> Winners Feedback </a>
-                </li>
-                <li>
-                    <a href="?">
+                    <a href="/tournament-banner" class="btn">
                         <img src="<%= asset_path("icon-tbanner.svg")%>" alt=""> Tournament Banner </a>
                 </li>
                 <li>
-                    <a href="?">
+                    <a href="/gift-rewards" class="btn">
                         <img src="<%= asset_path("icon-gift-rewards.svg")%>" alt=""> Gift Rewards </a>
                 </li>
             </ul>
@@ -49,33 +45,46 @@
             <p class="title">Settings</p>
             <ul>
                 <li>
-                    <a href="?">
+                    <a href="/notifications" class="btn">
                         <img src="<%= asset_path("icon-notification.svg")%>" alt=""> Push Notification </a>
                 </li>
                 <li>
-                    <a href="?">
+                    <a href="/support" class="btn">
                         <img src="<%= asset_path("icon-support.svg")%>" alt=""> Support </a>
                 </li>
                 <li>
-                    <a href="?">
+                    <a href="/terms" class="btn">
                         <img src="<%= asset_path("icon-guidelines.svg")%>" alt=""> Guidelines </a>
+                </li>
+                <li>
+                    <%= link_to "Log out", destroy_admin_user_session_path, method: :delete %>
                 </li>
             </ul>
         </div>
         <div class="btm_blk">
             <div class="img">
-                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
+                <img src="<%= current_admin_user.admin_profile_image.attached? ? current_admin_user.admin_profile_image.blob.url : asset_path("john-smith.jpg")%>" alt="">
             </div>
             <div class="content">
                 <div class="txt">
-                    <h6>John Smith</h6>
+                    <h6><%=current_admin_user.full_name%></h6>
                     <p>Admin</p>
                 </div>
-                <button type="button" class="btn up_btn">
-                    <img src="<%= asset_path("icon-up-down.svg")%>" alt="">
-                </button>
+                <%= link_to image_tag("icon-up-down.svg"), admin_profile_path, class: "btn up_btn" %>
             </div>
         </div>
     </div>
 </aside>
 <!-- sidebar -->
+
+<script>
+    $(document).ready(function () {
+        var url = window.location;
+        var element = $('ul li .btn').filter(function() {
+            return this.href == url || url.href.indexOf(this.href) == 1;
+        }).addClass('active').parent().parent().addClass('in').parent();
+        if (element.is('li')) {
+            element.addClass('active');
+        }
+    });
+</script>

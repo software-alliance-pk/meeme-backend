@@ -2,7 +2,7 @@
     <section id="memee">
         <%=render "dashboard/sidebar" %>
         <div id="guide" class="main_side">
-            <div id="top_header">
+            <div id="top_header" >
                 <div class="left_blk">
                     <h1>Guidelines</h1>
                     <div class="img">
@@ -20,36 +20,34 @@
                 <div class="wrapper ex">
                     <nav class="nav_list">
                         <ul class="list">
-                            <li class="active"><a href="terms.php">Terms & Conditions</a></li>
-                            <li><a href="privacy.php">Privacy Policy</a></li>
-                            <li><a href="faqs.php">FAQs</a></li>
-                            <li><a href="pop-ups.php">Pop Ups</a></li>
+                            <li class="active"><a href="/terms">Terms & Conditions</a></li>
+                            <li><a href="/privacy">Privacy Policy</a></li>
+                            <li><a href="/faqs">FAQs</a></li>
+                            <li><a href="/pop-ups">Pop Ups</a></li>
                         </ul>
                     </nav>
-                    <div class="content_blk edit">
-                        <div class="row mb-5">
-                            <div class="col-9">
-                                <img src="<%= asset_path("guide-edit.png")%>" alt="">
-                            </div>
-                            <div class="col-3">
-                                <div class="btn_blk edit">
-                                    <a href="?" class="site_btn prime_btn round">Save</a>
-                                </div>
-                            </div>
-                        </div>
-                        <form action="">
-                            <div class="row">
-                                <div class="col-12">
-                                    <h6 class="mb-4">Description</h6>
-                                    <div class="form_blk">
-                                        <textarea name="" id="" cols="30" rows="20" class="input"
-                                            placeholder="Start typing here...."></textarea>
+                    
+                        <div class="content_blk edit">
+                            <%= form_with(model: @terms, local: true) do |form| %>
+                                <div class="row mb-5">
+                                    <div class="col-9">
+                                    </div>
+                                    <div class="col-3">
+                                    <div class="btn_blk edit">
+                                        <%= form.submit "Save" ,class: "site_btn prime_btn round" %>
+                                    </div>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
-
-                    </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="mb-4">Description</h6>
+                                        <div class="form_blk">
+                                            <%= form.text_area :description, cols:"30", rows:"20", class: "tinymce", placeholder: "Start typing here...." %>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% end %>
+                        </div>
                     <div class="history">
                         <h5>History</h5>
                         <ul class="htry_list">

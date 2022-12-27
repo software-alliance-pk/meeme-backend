@@ -20,55 +20,46 @@
                 <div class="wrapper ex">
                     <nav class="nav_list">
                         <ul class="list">
-                            <li><a href="terms.php">Terms & Conditions</a></li>
-                            <li><a href="privacy.php">Privacy Policy</a></li>
-                            <li class="active"><a href="faqs.php">FAQs</a></li>
-                            <li><a href="pop-ups.php">Pop Ups</a></li>
+                            <li><a href="/terms">Terms & Conditions</a></li>
+                            <li><a href="/privacy">Privacy Policy</a></li>
+                            <li class="active"><a href="/faqs">FAQs</a></li>
+                            <li><a href="/pop-ups">Pop Ups</a></li>
                         </ul>
                     </nav>
                     <div class="content_blk edit">
-                        <div class="row mb-5">
-                            <div class="col-9">
-                                <img src="<%= asset_path("guide-edit.png")%>" alt="">
-                            </div>
-                            <div class="col-3">
-                                <div class="btn_blk edit">
-                                    <a href="faqs.php" class="site_btn prime_btn round">Add</a>
+                        <%= form_with(model: @faqs, local: true) do |form| %>
+                            <div class="row mb-5">
+                                <div class="col-9">
                                 </div>
-                            </div>
-                        </div>
-                        <form action="">
-                            <div class="row">
-                                <div class="col-12">
-                                    <h6 class="mb-4">FAQ Title</h6>
-                                    <div class="form_blk">
-                                        <input type="text" class="input" placeholder="Enter Title Here">
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <h6 class="mb-4">Description</h6>
-                                    <div class="form_blk">
-                                        <textarea name="" id="" cols="30" rows="20" class="input"
-                                            placeholder="Start typing here...."></textarea>
+                                <div class="col-3">
+                                    <div class="btn_blk edit">
+                                        <%= form.submit "Add", class: "site_btn prime_btn round", :onclick => "history()" %>
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                            
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="mb-4">FAQ Title</h6>
+                                        <div class="form_blk">
+                                            <%= form.text_field :title , class: "input", id: "title" ,placeholder: "Enter Title Here" %>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <h6 class="mb-4">Description</h6>
+                                        <div class="form_blk">
+                                            <%= form.text_area :description, cols:"30", rows:"20", class: "input", placeholder: "Start typing here...." %>
+                                        </div>
+                                    </div>
+                                </div>
+                        <% end %>
 
                     </div>
                     <div class="history">
                         <h5>History</h5>
                         <ul class="htry_list">
-                            <li>
-                                <p>Term &amp; Conditions - Updated!</p>
-                                <p class="time">09/12/2021</p>
-                                <hr>
-                            </li>
-                            <li>
-                                <p>Term &amp; Conditions - Updated!</p>
-                                <p class="time">09/12/2021</p>
-                                <hr>
-                            </li>
+                            <p id="created"></p>
+                            <p id="faq_title"></p>
                         </ul>
                     </div>
                 </div>
@@ -76,3 +67,11 @@
         </div>
     </section>
 </main>
+
+<script>
+    function history(){
+        var title = document.getElementById("title").value
+        document.getElementById("created").innerHTML = "New Faq Created"
+        document.getElementById("created").innerHTML = title
+    }
+</script>
