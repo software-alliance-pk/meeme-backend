@@ -54,14 +54,16 @@ class Api::V1::FollowersController < Api::V1::ApiController
       if @follower.is_following.to_s == params[:is_following] && @follower.added?
         render json: { message: "User unfriend his follower" }, status: :ok
       elsif @follower.is_following.to_s == params[:is_following] && @follower.pending?
-        Notification.create(body: "Follower request has been rejected by #{@current_user.username}",
-                            follow_request_id: @follower.id,
-                            user_id: params[:follower_user_id])
+        # Notification.create(title: "Request Rejected",
+        #                     body: "Follower request has been rejected by #{@current_user.username}",
+        #                     follow_request_id: @follower.id,
+        #                     user_id: params[:follower_user_id])
         @follower.destroy
         render json: { message: "User removed from pending" }, status: :ok
       else
         @follower.update(is_following: true, status: 'added')
-        Notification.create(body: "Follower request has been accepted by #{@current_user.username}",
+        Notification.create(title: "Request Accepted",
+                            body: "Follower request has been accepted by #{@current_user.username}",
                             follow_request_id: @follower.id,
                             user_id: params[:follower_user_id])
         render json: { message: "User added this follower", request: @follower }, status: :ok
