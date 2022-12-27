@@ -20,6 +20,14 @@ class Notification < ApplicationRecord
     unless user.notifications.first&.disabled?
       registration_ids.each do |registration_id|
         puts fcm_client.send(registration_id, options)
+        puts "------------------------------------------"
+        puts "------------------------------------------"
+        puts "------------------------------------------"
+        puts "------------------------------------------"
+        puts "------------------------------------------"
+
+
+
       end
     end
   end
