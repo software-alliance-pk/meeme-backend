@@ -6,7 +6,8 @@ class Api::V1::FollowersController < Api::V1::ApiController
 
   # GET /users
   def index
-    @user_followers = @current_user.followers.where(is_following: true, status: "added").paginate(page: params[:page], per_page: 25)
+    @user_followers = @current_user.followings.paginate(page: params[:page], per_page: 25)
+    # @user_followers = @current_user.followers.where(is_following: true, status: "added").paginate(page: params[:page], per_page: 25)
     if @user_followers.present?
       render json: { followers_count: @user_followers.count, followers: @user_followers }, status: :ok
     else
@@ -15,7 +16,9 @@ class Api::V1::FollowersController < Api::V1::ApiController
   end
 
   def show_pending_requests
-    @user_followers = @current_user.pending_friend_request.paginate(page: params[:page], per_page: 25)
+    # @user_followers = @current_user.pending_friend_request.paginate(page: params[:page], per_page: 25)
+    @user_followers = @current_user.followers.pending.paginate(page: params[:page], per_page: 25)
+
     if @user_followers.present?
     else
       render json: { followers: @user_followers }, status: :ok
@@ -33,12 +36,12 @@ class Api::V1::FollowersController < Api::V1::ApiController
   end
 
   def send_a_follow_request_to_user
-    @secondary_follower = Follower.where(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
+    # @secondary_follower = Follower.where(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
     @follower = Follower.where(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id], status: 'pending')
     if @follower.present?
       render json: { message: "Request already sent a request" }, status: :ok
     else
-      @follower = Follower.new(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id], status: 'pending')
+      @follower = Follower.new(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
       if @follower.save
         Notification.create(title: "Friend Request",
                             body: "#{@current_user.username} follows you",
@@ -46,7 +49,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
                             user_id: params[:follower_user_id])
         
         render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.follower_user_id).username} " }, status: :ok
-        @secondary_follower = Follower.create!(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
+        # @secondary_follower = Follower.create!(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
       else
         render_error_messages(@follower)
       end
@@ -54,8 +57,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
   end
 
   def update_follower
-    @secondary_follower=Follower.find_by(follower_user_id: params[:follower_user_id], user_id: @current_user.id)
-    @follower = Follower.find_by(user_id: params[:follower_user_id], follower_user_id: @current_user.id)
+    @follower = Follower.find_by(follower_user_id: params[:follower_user_id], user_id: @current_user.id)
     if @follower.present?
       if @follower.is_following.to_s == params[:is_following] && @follower.added?
         render json: { message: "User unfriend his follower" }, status: :ok
@@ -65,11 +67,12 @@ class Api::V1::FollowersController < Api::V1::ApiController
         #                     follow_request_id: @follower.id,
         #                     user_id: params[:follower_user_id])
         @follower.destroy
-        @secondary_follower.destroy
+        # @secondary_follower.destroy
         render json: { message: "User removed from pending" }, status: :ok
       else
         @follower.update(is_following: true, status: 'added')
-        @secondary_follower.update(is_following: true, status: 'added')
+        Follower.create(is_following:true,user_id: params[:follower_user_id],follower_user_id:@current_user.id,status: "added")
+        # @secondary_follower.update(is_following: true, status: 'added')
         Notification.create(title: "Request Accepted",
                             body: "Follower request has been accepted by #{@current_user.username}",
                             follow_request_id: @follower.id,
