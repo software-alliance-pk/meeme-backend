@@ -2,8 +2,10 @@ json.profile do
   json.user @user
   json.user_image @user.profile_image.attached? ? @user.profile_image.blob.url : ''
   if @current_user.id==@user.id
-    json.following  Follower.where(is_following: true,status: 'added',user_id:  @user.id).count
-    json.followers  Follower.where(is_following: false, user_id: @user.id,status: 'pending').count + Follower.where(is_following: true,status: 'added',user_id:  @user.id).count
+    json.followers  @current_user.followers.added.count
+    json.following  @current_user.followers.pending.count + @current_user.followers.added.count
+    # json.following  Follower.where(is_following: true,status: 'added',user_id:  @user.id).count | Follower.where(is_following: true,status: 'added',follower_user_id: @user.id).count
+    # json.followers  Follower.where(is_following: false, user_id: @user.id,status: 'pending').count + Follower.where(is_following: true,status: 'added',user_id:  @user.id).count
 
   else
     json.following  Follower.where(is_following: true,status: 'added',follower_user_id:  @user.id).count
