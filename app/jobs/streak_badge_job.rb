@@ -2,7 +2,6 @@ class StreakBadgeJob < ApplicationJob
   queue_as :default
 
   def perform(message)
-    debugger
     @result.include? false
     @result = []
     @today_date = Time.zone.now.end_of_day.to_datetime
@@ -11,9 +10,8 @@ class StreakBadgeJob < ApplicationJob
       @result << status
       case num
       when 7
-        if @result.include? false
-        else
-          @badge = Badge.find_by(title: "Novice Aficionado Badge")
+        if @result.exclude? false
+          @badge = Badge.find_by(title: "Judgment Level 1 Badge")
           @awarded_badge = UserBadge.create!(user_id: message.user_id, badge_id: @badge.id)
           puts "Congratulations #{message.user.username} . You have been awarded #{@badge.title}"
           puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
@@ -21,27 +19,25 @@ class StreakBadgeJob < ApplicationJob
           puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
         end
       when 30
-        if @result.include? false
-        else
-          @badge = Badge.find_by(title: "Novice Aficionado Badge")
+        if @result.exclude? false
+          @badge = Badge.find_by(title: "Judgment Level 2 Badge")
           @awarded_badge = UserBadge.create!(user_id: message.user_id, badge_id: @badge.id)
           puts "Congratulations #{message.user.username} . You have been awarded #{@badge.title}"
           puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
           puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
           puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
         end
-      end
       when 30
-      if @result.include? false
+        if @result.exclude? false
+          @badge = Badge.find_by(title: "Judgment Level 3 Badge")
+          @awarded_badge = UserBadge.create!(user_id: message.user_id, badge_id: @badge.id)
+          puts "Congratulations #{message.user.username} . You have been awarded #{@badge.title}"
+          puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+          puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+          puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+        end
       else
-        @badge = Badge.find_by(title: "Novice Aficionado Badge")
-        @awarded_badge = UserBadge.create!(user_id: message.user_id, badge_id: @badge.id)
-        puts "Congratulations #{message.user.username} . You have been awarded #{@badge.title}"
-        puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
-        puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
-        puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+
       end
     end
-
   end
-end
