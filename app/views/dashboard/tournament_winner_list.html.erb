@@ -81,7 +81,7 @@
                     <ul class="dropdown-menu dropdown-menu-end">
                       <li><button type="button">Disable Account</button></li>
                       <li><button type="button" onclick="open_tormnt_modal('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0].likes.count%>',
-                                                        '<%= tournament_user.user.created_at.strftime('%F') %>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0].likes.where(status: "dislike").count%>', '<%= tournament_user.user.id %>')">Reward</button></li>
+                                                        '<%= tournament_user.user.created_at.strftime('%F') %>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0].likes.where(status: "dislike").count%>') ; image('<%=tournament_user.user.username%>')">Reward</button></li>
                     </ul>
                   </div>
                 </td>
@@ -91,17 +91,8 @@
         </table>
       </div>
     </div>
-    <div id="tour_winner" class="main_side popup">
-      <div id="top_header">
-          <div class="left_blk">
-              <h1>Tournament Winner</h1>
-              <div class="img">
-                  <img src="<%= asset_path("icon-header.svg")%>" alt="">
-              </div>
-          </div>
-      </div>
+    <div class="popup w-75" style="margin-left: 281px; margin-top: 50px" data-popup="trans_profile" id="tour_winner">
       <div class="inner">
-
           <div class="inside">
               <div class="winner_blk">
                   <div class="user_blk">
@@ -178,25 +169,25 @@
                                             <div class="col-12">
                                                 <h6 class="form_label">Gift Card #</h6>
                                                 <div class="form_blk">
-                                                    <input type="text" name="gift_card_number" class="input" placeholder="Enter Card Number">
+                                                    <input type="text" id="gift_card_number" class="input" placeholder="Enter Card Number">
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <h6 class="form_label">Coin</h6>
                                                 <div class="form_blk">
-                                                    <input type="text" name="coins" class="input" placeholder="Enter Coins">
-                                                    <input type="text" name="id" id="user_id" hidden></input>
+                                                    <input type="text" id="coins" class="input" placeholder="Enter Coins">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="btn_blk">
-                                            <%= submit_tag "Send", class: "site_btn prime_btn round w-100" %>
-                                        </div>
                                     <% end %>
+                                    </br></br>
+                                    <div class="btn_blk">
+                                      <button class="site_btn prime_btn round w-100" onclick= "get_user_name()">Send</button>
+                                    </div>
                                 </div>
                                 <div class="right_blk">
                                     <div class="img">
-                                        <img src="<%= asset_path("tormnt-modal.jpg")%>" alt="">
+                                        <img src="" alt="" id="image">
                                     </div>
                                     <div class="vote_blk">
                                         <span class="vote" id="user_likes">
@@ -249,14 +240,39 @@
     document.getElementById("tour_winner").style.display="none"
   }
 
-  function open_tormnt_modal(name, email, likes, created, dislike, user_id){
+  function open_tormnt_modal(name, email, likes, created, dislike){
     document.getElementById("tormnt_modal").style.display="block"
     document.getElementById("tournament_user_name").innerHTML= name
     document.getElementById("tournament_user_email").innerHTML= email
     document.getElementById("tournament_user_joined").innerHTML= created
     document.getElementById("user_likes").innerHTML= likes
     document.getElementById("user_dislikes").innerHTML= dislike
-    document.getElementById("user_id").innerHTML= user_id
+  }
+
+  function image(name){
+    var banner_id = '<%= session[:banner]["id"] %>'
+    $.ajax({
+      type: "GET",
+      url: "post-images",
+      data: {banner_id: banner_id, name: name},
+      success: function(response) {
+        document.getElementById("image").src = response.image
+      }
+    })
+  }
+
+  function get_user_name(){
+    var name = document.getElementById("tournament_user_name").innerHTML
+    var card_number = document.getElementById("gift_card_number").value
+    var coins = document.getElementById("coins").value
+    $.ajax({
+      type: "GET",
+      url: "winner-reward",
+      data: {name: name, card_number: card_number, coins: coins},
+      success: function() {
+        document.getElementById("tormnt_modal").style.display="none"
+      }
+    })
   }
 
   function close_tormnt_modal(){

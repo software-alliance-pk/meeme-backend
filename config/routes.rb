@@ -64,8 +64,15 @@ Rails.application.routes.draw do
   post '/terms', to: "dashboard#terms_edit"
   get '/terms-edit', to: "dashboard#terms_edit"
   get '/support', to: "dashboard#support"
+  post '/support', to: "support#create_message"
+  get '/conversation', to: "support#show_chat"
+  get '/conversations', to: "dashboard#support"
+  get '/conversation-image', to: "support#get_profile_image"
+  get '/completed', to: "support#issue_resolved"
+  get '/admin-user-image', to: "support#admin_user_images"
   get '/tournament-winner-list', to: "dashboard#tournament_winner_list"
   get '/winner-reward', to: "dashboard#winner_reward"
+  get '/post-images', to: "dashboard#post_images"
 
   namespace :api do
     namespace :v1 do
