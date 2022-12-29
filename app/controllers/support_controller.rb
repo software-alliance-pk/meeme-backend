@@ -56,6 +56,6 @@ class SupportController < ApplicationController
 
     private
     def message_params
-        params.permit(:body, :receiver_id, :message_image, :admin_user_id, :subject, :message_ticket)
+        params.permit(:body, :receiver_id, :admin_user_id, :subject, :message_ticket, message_images: [])
     end
 end

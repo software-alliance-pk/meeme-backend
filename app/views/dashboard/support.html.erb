@@ -21,13 +21,15 @@
                     <%= form_tag(conversations_path, method: "get", html: {id: 'form'}) do %>
                         <select class="btn btn-secondary rounded-pill" name="subject" onchange="submit()" style="width: 100%; height: 50px">
                             <li><option>Select Subject</option></li>
-                            <li><option>Abuse <span class="dot"></span></option></li>
+                            <li><option>Nothing_Happened</option></li>
+                            <li><option>Abuse</span></option></li>
                             <li><option>Payment</option></li>
                             <li><option>Image</option></li>
                             <li><option>Profile</option></li>
-                            <li><option>Tournament Winner</option></li>
+                            <li><option>Tournament_Winner</option></li>
                             <li><option>Coins</option></li>
                             <li><option>Plagiarism</option></li>
+                            <li><option>Winner_Feedback</option></li>
                         </select>
                     <% end %>
                     </br></br>
@@ -74,10 +76,10 @@
                         <div class="chat_blk memee" id="admin_div">
                         </div>
                     </div>
-                    <%= form_with(model: @support, method: :post) do %>
+                    <%= form_tag(support_path, method: :post) do %>
                         <div class="form_inside">
                             <button class="ico_btn"><img src="<%= asset_path("icon-clip.svg")%>" alt=""></button>
-                            <input type="file" id="file-btn" name="message_image" hidden></input>
+                            <input type="file" id="file-btn" name="message_images" hidden></input>
                             <label for="file-btn" class="ico_btn"><img src="<%= asset_path("icon-image.svg")%>" alt=""></label>
                             <input type="text" class="input" name ="body" id="body" placeholder="Write your message here">
                             <input name="conversation_id" id="conversation_id" hidden></input>
@@ -96,9 +98,11 @@
 
 <script>
     $("#clicked").click()
-    $("#chat_list").animate({ scrollTop: 20000000 }, "slow");
+    $("#clicked").addClass("active")
 
     function open_conversation(sender_id, conversation_id, name, email){
+        $("#clicked").removeClass("active")
+        $("#chat_list").animate({ scrollTop: 20000000 }, "slow");
         document.getElementById("conversation_id").value = conversation_id
         document.getElementById("admin_id").value = '<%= current_admin_user.id %>'
         document.getElementById("receiver_id").value = sender_id
