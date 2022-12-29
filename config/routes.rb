@@ -102,6 +102,7 @@ Rails.application.routes.draw do
           get :trending_posts
           get :tags
           post :other_posts
+          post :user_search_tag
 
         end
       end

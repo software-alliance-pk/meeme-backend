@@ -21,9 +21,9 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post = @current_user.posts.new(post_params)
     @post.tags_which_duplicate_tag = params[:tag_list]
     if @post.save
-      @tags = @post.tag_list.map { |item| item&.split("dup")&.first}
+      @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
       @post.update(duplicate_tags: @tags)
-      render json: { user: @post.attributes.except('tag_list'), post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',post_type: @post.post_image.content_type, message: 'Post created successfully' }, status: :ok
+      render json: { user: @post.attributes.except('tag_list'), post_image: @post.post_image.attached? ? @post.post_image.blob.url : '', post_type: @post.post_image.content_type, message: 'Post created successfully' }, status: :ok
     else
       render_error_messages(@post)
     end
@@ -34,7 +34,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     unless @post.update(post_params)
       render_error_messages(@post)
     else
-      @tags = @post.tag_list.map { |item| item&.split("dup")&.first}
+      @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
       @post.update(post_params)
       @post.update(duplicate_tags: @tags) if @tags.present?
       render json: { post: @post.attributes.except('tag_list'),
@@ -52,42 +52,38 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def explore
     @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
-    # @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
-    # @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
-
-    # if params[:search_bar] == "true"
-    # if params[:username].empty?
-    #   @users=[]
-    # end
-    # if params[:tag].empty?
-    #   @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
-    # end
-    # if params[:tag] == "#"
-    #   @posts = Post.where(tournament_meme: false)
-    #   @users = []
-    # else
-    #   @posts = Post.tagged_with(params[:tag])
-    #   if @posts.present?
-    #   else
-    #     # @posts=Post.all.paginate(page: params[:page], per_page: 25)
-    #     render json: { message: "No Post found against this tag " }, status: :not_found
-    #   end
-    # end
-
-    # else
     if params[:tag] == ""
       @posts = Post.where(tournament_meme: false)
-      # @users = []
     else
-      
-      @posts = Post.tagged_with(params[:tag],:any => true)
+      @posts = Post.tagged_with(params[:tag], :any => true)
       if @posts.present?
       else
         # @posts=Post.all.paginate(page: params[:page], per_page: 25)
         render json: { message: "No Post found against this tag " }, status: :not_found
       end
     end
-    # end
+  end
+
+  def user_search_tag
+    @posts = []
+    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
+    if params[:tag].empty?
+      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
+      if @users.present?
+      end
+    elsif params[:tag] == "#"
+      @posts = Post.where(tournament_meme: false)
+      @users = []
+
+    else
+      @posts = Post.tagged_with(params[:tag], :any => true)
+      if @posts.present?
+      else
+        # @posts=Post.all.paginate(page: params[:page], per_page: 25)
+        render json: { message: "No Post found against this tag " }, status: :not_found
+      end
+    end
+
   end
 
   def other_posts
@@ -148,6 +144,6 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def post_params
-    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme,:duplicate_tags)
+    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags)
   end
 end
