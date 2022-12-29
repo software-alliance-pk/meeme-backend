@@ -37,7 +37,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
 
   def send_a_follow_request_to_user
     # @secondary_follower = Follower.where(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
-    @follower = Follower.where(user_id: @current_user.id, is_following: false, follower_user_id: params[:follower_user_id], status: 'pending')
+    @follower = Follower.where(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
     if @follower.present?
       render json: { message: "Request already sent a request" }, status: :ok
     else
@@ -48,7 +48,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
                             follow_request_id: @follower.id,
                             user_id: params[:follower_user_id])
         
-        render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.follower_user_id).username} " }, status: :ok
+        render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.user_id).username} " }, status: :ok
         # @secondary_follower = Follower.create!(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
       else
         render_error_messages(@follower)
