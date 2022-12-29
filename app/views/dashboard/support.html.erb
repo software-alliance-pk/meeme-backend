@@ -22,7 +22,7 @@
                         <select class="btn btn-secondary rounded-pill" name="subject" onchange="submit()" style="width: 100%; height: 50px">
                             <li><option>Select Subject</option></li>
                             <li><option>Nothing_Happened</option></li>
-                            <li><option>Abuse</span></option></li>
+                            <li><option>Abuse</option></li>
                             <li><option>Payment</option></li>
                             <li><option>Image</option></li>
                             <li><option>Profile</option></li>
@@ -182,11 +182,11 @@
     }
 
     function completed(){
-        var username = document.getElementById("name").innerHTML
+        var message_ticket = document.getElementById("num_id").innerHTML
         $.ajax({
             type: "GET",
             url: "completed",
-            data: {name: username},
+            data: {message_ticket: message_ticket},
             success: function (response) {
                 document.getElementById("profile_image").src = response.image
             }

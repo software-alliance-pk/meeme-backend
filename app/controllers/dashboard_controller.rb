@@ -310,7 +310,7 @@ include Rails.application.routes.url_helpers
       @message = Message.subjects[params[:subject]]
       @conversation = Conversation.includes(:messages).where("messages.subject = ?", @message).group("conversations.id", "messages.id").order("messages.created_at DESC")
     else
-      @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC")
+      @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC").where.not(admin_user_id: nil)
     end
   end
 

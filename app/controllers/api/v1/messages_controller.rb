@@ -37,7 +37,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def individual_admin_messages
-    @messages = ((Message.where(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], message_ticket: params[:message_ticket])).sort_by &:created_at).reverse
+    @messages =   Message.where(sender_id: @current_user.id,message_ticket: params[:message_ticket]).first.conversation_id
+    @messages= Conversation.find_by(id: @messages).messages.reverse
     if @messages.present?
     else
       render json: { message: "No message present" }, status: :not_found
