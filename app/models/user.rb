@@ -19,6 +19,7 @@ class User < ApplicationRecord
   has_many :tournament_users
   has_many :tournament_banners, through: :tournament_users
   has_many :followers, dependent: :destroy
+  has_many :followings,class_name: "Follower",foreign_key: :follower_user_id
   has_many :stories,dependent: :destroy
   has_one :wallet, dependent: :destroy
   has_many :user_cards, dependent: :destroy
