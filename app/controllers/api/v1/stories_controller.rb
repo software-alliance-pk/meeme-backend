@@ -4,7 +4,8 @@ class Api::V1::StoriesController < Api::V1::ApiController
   before_action :find_valid_user, only: :destroy
 
   def index
-    @story = Story.recently_created.paginate(page: params[:page], per_page: 25)
+    @story= Story.all.reverse.pluck(:user_id).uniq
+    # @story = Story.recently_created.paginate(page: params[:page], per_page: 25)
     if @story.present?
     else
       # return render json: { message: 'No stories found for this user' }, status: :not_found
