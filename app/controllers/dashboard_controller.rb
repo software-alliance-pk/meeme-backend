@@ -132,7 +132,21 @@ include Rails.application.routes.url_helpers
   end
 
   def winner_reward
+    @user = User.find_by(username: params[:name])
+    @user.update(coins: @user.coins + params[:coins].to_i)
+    redirect_to tournament_winner_list_path
+  end
 
+  def post_images
+    @user = User.find_by(username: params[:name])
+    if @user.posts.where(tournament_banner_id: params[:banner_id], tournament_meme: true)[0].post_image.attached?
+      @image = url_for(@user.posts.where(tournament_banner_id: params[:banner_id], tournament_meme: true)[0].post_image)
+    else
+      @image = ActionController::Base.helpers.asset_path('tr-1.jpg')
+    end
+    respond_to do |format|
+      format.json {render json: {image: @image}}
+    end
   end
   
   def user_list
@@ -292,6 +306,12 @@ include Rails.application.routes.url_helpers
   end
 
   def support
+    if params[:subject].present?
+      @message = Message.subjects[params[:subject]]
+      @conversation = Conversation.includes(:messages).where("messages.subject = ?", @message).group("conversations.id", "messages.id").order("messages.created_at DESC")
+    else
+      @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC")
+    end
   end
 
   def follower_count

@@ -18,210 +18,183 @@
             </div>
             <div class="inside">
                 <div class="person_side">
-                    <div class="dropdown form_blk">
-                        <button type="button" class="dropdown-toggle site_btn chevron w-100" data-bs-toggle="dropdown">Select Subject</button>
-                        <ul class="dropdown-menu w-100">
-                            <li><button type="button">Abuse <span class="dot"></span></button></li>
-                            <li><button type="button">Payment</button></li>
-                            <li><button type="button">Image <span class="dot"></span></button></li>
-                            <li><button type="button">Profile</button></li>
-                            <li><button type="button">Tournament Winner <span class="dot"></span></button></li>
-                            <li><button type="button">Coins <span class="dot"></span></button></li>
-                            <li><button type="button">Plagiarism</button></li>
-                            <li><button type="button">Winner’s Feedback</button></li>
-                        </ul>
-                    </div>
+                    <%= form_tag(conversations_path, method: "get", html: {id: 'form'}) do %>
+                        <select class="btn btn-secondary rounded-pill" name="subject" onchange="submit()" style="width: 100%; height: 50px">
+                            <li><option>Select Subject</option></li>
+                            <li><option>Nothing_Happened</option></li>
+                            <li><option>Abuse</span></option></li>
+                            <li><option>Payment</option></li>
+                            <li><option>Image</option></li>
+                            <li><option>Profile</option></li>
+                            <li><option>Tournament_Winner</option></li>
+                            <li><option>Coins</option></li>
+                            <li><option>Plagiarism</option></li>
+                            <li><option>Winner_Feedback</option></li>
+                        </select>
+                    <% end %>
+                    </br></br>
                     <div class="user_list">
-                        <div class="user_blk active">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
-                            </div>
-                            <div class="inr">
-                                <div class="title">
-                                    <h5>John Kristen</h5>
-                                    <span class="time">5 mins ago</span>
+                        <% if @conversation.present? %>
+                            <% @conversation.each do |conversation| %>
+                                <div class="user_blk" id="clicked" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.username %>'); get_post('<%= conversation.sender.username %>')">
+                                    <div class="ico fill round">
+                                        <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png")%>" alt="">
+                                    </div>
+                                    <div class="inr">
+                                        <div class="title">
+                                            <h5><%= conversation.sender.username %></h5>
+                                            <span class="time"><%= conversation.created_at.strftime("%F") %></span>
+                                        </div>
+                                        <div class="txt">
+                                            <p><%= conversation.messages.last.body %></p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="txt">
-                                    <p>I want my reward via lorem ipsum</p>
-                                    <div class="num">2</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="user_blk">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
-                            </div>
-                            <div class="inr">
-                                <div class="title">
-                                    <h5>John Kristen</h5>
-                                    <span class="time">5 mins ago</span>
-                                </div>
-                                <div class="txt">
-                                    <p>I want my reward via lorem ipsum</p>
-                                    <div class="num">2</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="user_blk">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
-                            </div>
-                            <div class="inr">
-                                <div class="title">
-                                    <h5>John Kristen</h5>
-                                    <span class="time">5 mins ago</span>
-                                </div>
-                                <div class="txt">
-                                    <p>I want my reward via lorem ipsum</p>
-                                    <div class="num">2</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="user_blk">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
-                            </div>
-                            <div class="inr">
-                                <div class="title">
-                                    <h5>John Kristen</h5>
-                                    <span class="time">5 mins ago</span>
-                                </div>
-                                <div class="txt">
-                                    <p>I want my reward via lorem ipsum</p>
-                                    <div class="num">2</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="user_blk">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
-                            </div>
-                            <div class="inr">
-                                <div class="title">
-                                    <h5>John Kristen</h5>
-                                    <span class="time">5 mins ago</span>
-                                </div>
-                                <div class="txt">
-                                    <p>I want my reward via lorem ipsum</p>
-                                    <div class="num">2</div>
-                                </div>
-                            </div>
-                        </div>
+                            <% end %>  
+                        <% end %> 
                     </div>
                 </div>
                 <div class="chat_side">
                     <div class="top_head_blk">
                         <div class="user_blk">
                             <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
+                                <img src="" alt="" id = "profile_image">
                             </div>
                             <div class="inr">
-                                <h5>John Kristen</h5>
-                                <div class="email">johnkristen@gmail.com</div>
+                                <h5 id="name"></h5>
+                                <div id="email"></div>
                             </div>
                             <div class="r_blk">
-                                <div class="status"><input type="radio" name="" id=""> Complete</div>
-                                <div class="num_id">902r55u39573957</div>
+                                <div class="status"><input type="radio" name="is_complete" id="is_complete" onchange="completed()"> Complete</div>
+                                <div class="num_id" id="num_id"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="chat_list">
-                        <div class="chat_blk">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
-                            </div>
-                            <div class="txt">
-                                <p>I would to report an abuse</p>
-                            </div>
+                    <div class="chat_list" id = "chat_list">
+                        <div class="chat_blk" id = "chat_blk">
                         </div>
-                        <div class="chat_blk memee">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("memee_icon.png")%>" alt="">
-                            </div>
-                            <div class="txt">
-                                <p>Hi, John,</p>
-                                <p>May I know what is the concern all about?</p>
-                            </div>
-                        </div>
-                        <div class="chat_blk">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
-                            </div>
-                            <div class="txt">
-                                <p>I would to report an abuse</p>
-                            </div>
-                        </div>
-                        <div class="chat_blk memee">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("memee_icon.png")%>" alt="">
-                            </div>
-                            <div class="txt">
-                                <p>Hi, John,</p>
-                                <p>May I know what is the concern all about?</p>
-                            </div>
-                        </div>
-                        <div class="chat_blk">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
-                            </div>
-                            <div class="txt">
-                                <p>I would to report an abuse</p>
-                            </div>
-                        </div>
-                        <div class="chat_blk memee">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("memee_icon.png")%>" alt="">
-                            </div>
-                            <div class="txt">
-                                <p>Hi, John,</p>
-                                <p>May I know what is the concern all about?</p>
-                            </div>
-                        </div>
-                        <div class="chat_blk">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
-                            </div>
-                            <div class="txt">
-                                <p>I would to report an abuse</p>
-                            </div>
-                        </div>
-                        <div class="chat_blk memee">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("memee_icon.png")%>" alt="">
-                            </div>
-                            <div class="txt">
-                                <p>Hi, John,</p>
-                                <p>May I know what is the concern all about?</p>
-                            </div>
-                        </div>
-                        <div class="chat_blk">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
-                            </div>
-                            <div class="txt">
-                                <p>I would to report an abuse</p>
-                            </div>
-                        </div>
-                        <div class="chat_blk memee">
-                            <div class="ico fill round">
-                                <img src="<%= asset_path("memee_icon.png")%>" alt="">
-                            </div>
-                            <div class="txt">
-                                <p>Hi, John,</p>
-                                <p>May I know what is the concern all about?</p>
-                            </div>
+                        <div class="chat_blk memee" id="admin_div">
                         </div>
                     </div>
-                    <form action="" method="POST">
+                    <%= form_tag(support_path, method: :post) do %>
                         <div class="form_inside">
-                            <button type="button" class="ico_btn"><img src="<%= asset_path("icon-clip.svg")%>" alt=""></button>
-                            <button type="button" class="ico_btn"><img src="<%= asset_path("icon-image.svg")%>" alt=""></button>
-                            <input type="text" class="input" placeholder="Write your message here">
+                            <button class="ico_btn"><img src="<%= asset_path("icon-clip.svg")%>" alt=""></button>
+                            <input type="file" id="file-btn" name="message_images" hidden></input>
+                            <label for="file-btn" class="ico_btn"><img src="<%= asset_path("icon-image.svg")%>" alt=""></label>
+                            <input type="text" class="input" name ="body" id="body" placeholder="Write your message here">
+                            <input name="conversation_id" id="conversation_id" hidden></input>
+                            <input name="receiver_id" id="receiver_id" hidden></input>
+                            <input name="user_id" id="user_id" hidden></input>
+                            <input name="subject" id="subject" hidden></input>
+                            <input name="admin_user_id" id="admin_id" hidden></input>
                             <button type="submit" class="send_btn"><img src="<%= asset_path("icon-send.svg")%>" alt=""></button>
                         </div>
-                    </form>
+                    <% end %>
                 </div>
             </div>
         </div>
     </section>
 </main>
+
+<script>
+    $("#clicked").click()
+    $("#clicked").addClass("active")
+
+    function open_conversation(sender_id, conversation_id, name, email){
+        $("#clicked").removeClass("active")
+        $("#chat_list").animate({ scrollTop: 20000000 }, "slow");
+        document.getElementById("conversation_id").value = conversation_id
+        document.getElementById("admin_id").value = '<%= current_admin_user.id %>'
+        document.getElementById("receiver_id").value = sender_id
+        document.getElementById("user_id").value = sender_id
+        var admin_id = '<%= current_admin_user.id %>'
+        $("#chat_list").empty()
+        $.ajax({
+            type: "GET",
+            url: "conversation",
+            data: {conversation_id: conversation_id, name: name, admin_id: admin_id},
+            success: function (response) {
+                var messages = response.messages
+                if(response.conversation.status === "Resolved"){
+                    document.getElementById("is_complete").checked = true
+                }else{
+                    document.getElementById("is_complete").checked = false
+                }
+                document.getElementById("name").innerHTML = name
+                document.getElementById("email").innerHTML = email
+                messages.forEach(function(message){
+                    message_design(message, response.user_image, response.admin_image)
+                })
+            }
+        })
+    }
+
+    function get_image(name){
+        $.ajax({
+            type: "GET",
+            url: "conversation-image",
+            data: {name: name},
+            success: function (response) {
+                document.getElementById("profile_image").src = response.image
+            }
+        })
+    }
+
+    function get_post(name){
+
+    }
+
+    function message_design(message, user_image, admin_image){
+        var topDiv = document.getElementById("chat_list")
+        var admindiv = document.getElementById("admin_div")
+        if(message.sender_id !== null){
+            document.getElementById("num_id").innerHTML = message.message_ticket
+            var message_div = document.createElement("div")
+            message_div.setAttribute('class', 'chat_blk')
+            var div = document.createElement("div")
+            div.setAttribute('class', 'ico fill round')
+            var img = document.createElement("img");
+            img.src = user_image
+            div.appendChild(img)
+            var div1 = document.createElement("div")
+            div1.setAttribute('class', 'txt')
+            var p = document.createElement("p")
+            div1.appendChild(p.appendChild(document.createTextNode(message.body)))
+            message_div.appendChild(div)
+            message_div.appendChild(div1)
+            topDiv.appendChild(message_div)
+        }else{
+            var message_div = document.createElement("div")
+            message_div.setAttribute('class', 'chat_blk memee')
+            var div = document.createElement("div")
+            div.setAttribute('class', 'ico fill round')
+            var img = document.createElement("img");
+            img.src = admin_image
+            div.appendChild(img)
+            var div1 = document.createElement("div")
+            div1.setAttribute('class', 'txt')
+            var p = document.createElement("p")
+            div1.appendChild(p.appendChild(document.createTextNode(message.body)))
+            message_div.appendChild(div)
+            message_div.appendChild(div1)
+            topDiv.appendChild(message_div)
+        }
+    }
+
+    function completed(){
+        var username = document.getElementById("name").innerHTML
+        $.ajax({
+            type: "GET",
+            url: "completed",
+            data: {name: username},
+            success: function (response) {
+                document.getElementById("profile_image").src = response.image
+            }
+        })
+    }
+
+    function set_value(){
+        document.getElementById("abuse").value = 'Abuse'
+        $("#form").submit()
+    }
+</script>
