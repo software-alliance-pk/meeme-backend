@@ -41,3 +41,4 @@ class StreakBadgeJob < ApplicationJob
       end
     end
   end
+end

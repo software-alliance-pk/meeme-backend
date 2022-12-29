@@ -4,6 +4,7 @@ class FollowerBadgeJob < ApplicationJob
   def perform(message)
     if message.user.followers.added.count == 100000
       @badge = Badge.find_by(title: "I Love My Community Badge")
+
       @awarded_badge = UserBadge.create!(user_id: message.user_id, badge_id: @badge.id)
       puts "Congratulations #{message.user.username} . You have been awarded #{@badge.title}"
       puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
