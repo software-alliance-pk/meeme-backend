@@ -5,11 +5,13 @@ class Post < ApplicationRecord
 
   scope :by_recently_created, -> (limit) { order(created_at: :desc).limit(limit) }
   scope :by_recently_updated, -> (limit) { order(updated_at: :desc).limit(limit) }
+  after_create_commit { PostBadgeJob.perform_now(self) }
 
   validates :description, presence: true
 
   belongs_to :user
   has_one_attached :post_image, dependent: :destroy
+  has_one :post_image_attached,class_name: 'ActiveStorage::Attachment',as: :record
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
   belongs_to :tournament_banner, optional: true
@@ -36,6 +38,5 @@ class Post < ApplicationRecord
     end
     self.tag_list = tag_list.reject(&:blank?)
   end
-
 
 end
