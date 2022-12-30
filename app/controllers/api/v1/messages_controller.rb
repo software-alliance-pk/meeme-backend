@@ -37,7 +37,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def individual_admin_messages
-    @messages = ((Message.where(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], message_ticket: params[:message_ticket])).sort_by &:created_at).reverse
+    @messages =   Message.where(sender_id: @current_user.id,message_ticket: params[:message_ticket]).first.conversation_id
+    @messages= Conversation.find_by(id: @messages).messages.reverse
     if @messages.present?
     else
       render json: { message: "No message present" }, status: :not_found
@@ -58,6 +59,11 @@ class Api::V1::MessagesController < Api::V1::ApiController
       @message = @conversation.messages.new(message_params)
       if @message.save
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
+        Notification.create(title:"Message from #{@message.sender.username}",
+                            body: @message.body,
+                            conversation_id: @conversation.id,
+                            user_id: @message.receiver_id,
+                            message_id: @message.id)
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -94,7 +100,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   private
 
   def message_params
-    params.permit(:body, :receiver_id, :message_image, :admin_user_id, :subject, :message_ticket).merge(sender_id: @current_user.id, user_id: @current_user.id)
+    params.permit(:body, :receiver_id, :admin_user_id, :subject, :message_ticket, message_images: []).merge(sender_id: @current_user.id, user_id: @current_user.id)
   end
 
   def secondary_message_params
@@ -116,7 +122,9 @@ class Api::V1::MessagesController < Api::V1::ApiController
         receiver_id: message.conversation.receiver.id.present? ? message.conversation.receiver.id : '',
         receiver_name: message.conversation.receiver.username,
         created_at: message.created_at,
-        message_image: message.message_image.attached? ? message.message_image.blob.url : '',
+        message_images_count:  message.message_images.count,
+        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
+        # message_image: message.message_image.attached? ? message.message_image.blob.url : '',
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
         receiver_image: message.receiver.profile_image.attached? ? message.receiver.profile_image.blob.url : ''
       }
@@ -133,7 +141,9 @@ class Api::V1::MessagesController < Api::V1::ApiController
         sender_name: message.sender.username,
         created_at: message.created_at,
         message_ticket: message.message_ticket,
-        message_image: message.message_image.attached? ? message.message_image.blob.url : '',
+        message_images_count:  message.message_images.count,
+        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
+        # message_image: message.message_image.attached? ? message.message_image.blob.url : '',
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
         ticket_status: message.conversation.status,
       }

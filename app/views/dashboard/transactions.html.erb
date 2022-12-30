@@ -17,13 +17,18 @@
                 </div>
             </div>
             <div class="inner_blk">
-                <div class="top">
-                    <button type="button" class="btn date_btn">
-                        <span></span><input type="date" class="btn date_btn" id="from"></input>
-                    </button>
-                    <button type="button" class="btn date_btn">
-                        <span></span><input type="date" id="to" class="btn date_btn"></input>
-                    </button>
+                <div class="top d-flex flex-row">
+                    <%= form_tag(transactions_path, method: "get") do %>
+                        <div class="btn date_btn p-3 d-inline-block">
+                            <span>From: </span>
+                            <input type="date" name="start_date" class="btn date_btn d-inline-block" style="margin-top: -11px"></input>
+                        </div>
+                        <div class="btn date_btn p-3 d-inline-block">
+                            <span>To: </span>
+                            <input type="date" name="end_date" class="btn date_btn d-inline-block"  style="margin-top: -11px"></input>
+                        </div>
+                        <%= submit_tag "" , type: :image ,:name => nil %>
+                    <% end %>
                     <%= form_tag(transactions_path, method: "get") do %>
                         <div class="form_blk input mb-0">
                             <img src= "<%= asset_path("icon-search.svg")%>">
@@ -53,7 +58,7 @@
                                     <td>
                                         <div class="user_detail">
                                             <div class="img pop_btn" data-popup="trans_profile"  onclick="open_transaction_details('<%= transaction_details.user.username %>', '<%= transaction_details.user.email %>', '<%= transaction_details.user_id %>')">
-                                                <img src="<%= transaction_details.user.profile_image.attached? ? transaction_details.user.profile_image.blob.url : asset_path("trans-profile.png")%>" alt="">
+                                                <img src="<%= transaction_details.user.profile_image.attached? ? transaction_details.user.profile_image.blob.url : asset_path("user.png")%>" alt="">
                                             </div>
                                             <div class="txt">
                                                 <h6><%= transaction_details.user.username %></h6>
@@ -88,7 +93,7 @@
                                         <div class="top_blk">
                                             <h4>Profile Transactions</h4>
                                             <div class="profile">
-                                                <img src="<%= asset_path("trans-profile.png")%>" alt="">
+                                                <img src="" alt="" id="image">
                                             </div>
                                             <h5 id= "trans_name_user"></h5>
                                             <p id= "trans_email_user"></p>
@@ -141,9 +146,10 @@
             success: function(response){
                 var table = $("#table tbody");
                 table[0].innerHTML = ""
-                response.forEach(function(data){
+                response.transaction.forEach(function(data){
                     table.append("<tr><td>"+data.created_at.slice(0, 10)+"</td><td>"+data.created_at.slice(11, 16)+"</td><td></td><td>"+data.brand+"</td><td>"+data.amount+"</td></tr>");
                 })
+                document.getElementById("image").src = response.image
             },
         });
     }

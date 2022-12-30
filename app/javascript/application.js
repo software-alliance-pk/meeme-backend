@@ -2,6 +2,8 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "./channels"
+import "./channels/bootsrap_jquery"
 //= require jquery3
+//= require channels/bootstrap.bundle.min.js
 
 

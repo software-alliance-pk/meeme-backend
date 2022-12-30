@@ -174,7 +174,7 @@
                                                 <div class="users_row d-inline-flex">
                                                     <div class="user p-2">
                                                         <div class="ellipse">
-                                                            <img src="<%= user.profile_image.attached? ? user_details.profile_image.blob.url : asset_path("table-profile.svg")%>" alt="">
+                                                            <img src="<%= user.profile_image.attached? ? user.profile_image.blob.url : asset_path("table-profile.svg")%>" alt="">
                                                         </div>
                                                         <span><%=user.username%></span>
                                                     </div>

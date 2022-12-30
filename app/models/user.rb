@@ -1,5 +1,7 @@
 class User < ApplicationRecord
   scope :recently_created, -> (limit) { order(created_at: :desc) }
+  enum push_notifications: { enabled: 0,
+                             disabled: 1 }, _prefix: :notifications
 
   has_secure_password
   # mount_uploader :avatar, AvatarUploader
@@ -17,6 +19,7 @@ class User < ApplicationRecord
   has_many :tournament_users
   has_many :tournament_banners, through: :tournament_users
   has_many :followers, dependent: :destroy
+  has_many :followings,class_name: "Follower",foreign_key: :follower_user_id
   has_many :stories,dependent: :destroy
   has_one :wallet, dependent: :destroy
   has_many :user_cards, dependent: :destroy
@@ -24,7 +27,10 @@ class User < ApplicationRecord
   belongs_to :user_store,optional: true
   has_many :user_badges
   has_many :badges,through: :user_badges
-
+  # has_many :messages
+  # has_many :messages_as_sender, foreign_key: "sender_id", class_name: "Message"
+  has_many :mobile_devices, dependent: :destroy
+  has_many :notifications, dependent: :destroy
 
   def get_wallet
     return self.wallet if self.wallet.present?

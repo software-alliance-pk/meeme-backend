@@ -2,7 +2,7 @@
     <div class="inside">
         <div class="logo_blk">
             <div class="logo">
-                <a href="index.php">
+                <a href="/dashboard">
                     <img src="<%= asset_path("logo.svg")%>" alt="">
                 </a>
             </div>
@@ -57,13 +57,13 @@
                         <img src="<%= asset_path("icon-guidelines.svg")%>" alt=""> Guidelines </a>
                 </li>
                 <li>
-                    <%= link_to "Logout" ,destroy_admin_user_session_path, method: :delete %>
+                    <%= link_to "Log out", destroy_admin_user_session_path, method: :delete %>
                 </li>
             </ul>
         </div>
         <div class="btm_blk">
             <div class="img">
-                <img src="<%= asset_path("john-smith.jpg")%>" alt="">
+                <img src="<%= current_admin_user.admin_profile_image.attached? ? current_admin_user.admin_profile_image.blob.url : asset_path("john-smith.jpg")%>" alt="">
             </div>
             <div class="content">
                 <div class="txt">
@@ -81,7 +81,7 @@
     $(document).ready(function () {
         var url = window.location;
         var element = $('ul li .btn').filter(function() {
-            return this.href == url || url.href.indexOf(this.href) == 0;
+            return this.href == url || url.href.indexOf(this.href) == 1;
         }).addClass('active').parent().parent().addClass('in').parent();
         if (element.is('li')) {
             element.addClass('active');
