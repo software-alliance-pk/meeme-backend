@@ -13,7 +13,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   end
 
   def tournament_posts
-    @tournament_posts=@tournament.posts.paginate(page: params[:page], per_page: 25)
+    @tournament_posts = @tournament.posts.paginate(page: params[:page], per_page: 25)
     if @tournament_posts.present?
     else
       # render json: { message: "No posts for this tournament yet" }, status: :not_found
@@ -33,6 +33,28 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     end
   end
 
+  def top_10_positions
+    @username = []
+    @post_like = []
+    @all_user={}
+    @tournament_posts = Like.joins(:post).where(post: { tournament_banner_id: @tournament.id, tournament_meme: true }).group(:post_id).count(:post_id).sort_by(&:last).to_h
+    @tournament_posts = @tournament_posts.group_by { |k, v| v }
+    @tournament_posts.keys.each do |key|
+      key_value = @tournament_posts[key]
+      key_value.each do |row, col|
+        @username << Post.find(row).user.username
+        # @post_like << Post.find(row).likes.like.count
+      end
+      @all_user[key] = @username
+      @username = []
+      @post_like = []
+    end
+    @all_user=@all_user.to_a.reverse
+    # x=@all_user.each_with_index.map{|a,index| "#{a[1]} is at position #{index+1}"}
+    render json: {tournament_name: @tournament.title,username_with_position: @all_user.each_with_index.map{|a,index| "#{a[1]} is at position #{index+1}" }}
+
+  end
+
   def enroll_in_tournament
     @tournament_user = @tournament.tournament_users.new(tournament_entry_params)
     if @tournament_user.save
@@ -47,7 +69,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
       @tournament_post.tags_which_duplicate_tag = params[:tag_list]
       if @tournament_post.save
-        @tags = @tournament_post.tag_list.map { |item| item&.split("dup")&.first}
+        @tags = @tournament_post.tag_list.map { |item| item&.split("dup")&.first }
         @tournament_post.update(duplicate_tags: @tags)
         render json: { tournament: @tournament_post.attributes.except('tag_list'),
                        tournament_banner_image: @tournament_post.post_image.attached? ? @tournament_post.post_image.blob.url : '',
@@ -92,7 +114,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   end
 
   def judge
-    @milstone_check=false
+    @milstone_check = false
     @today_date = Time.zone.now.end_of_day.to_datetime
     @tournament_end_date = @tournament.end_date.strftime("%a, %d %b %Y").to_datetime
     @tournament_start_date = @tournament.start_date.strftime("%a, %d %b %Y").to_datetime
@@ -106,7 +128,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
 
   def show_tournament_rules
     @tournament_rule = @tournament.tournament_banner_rule
-      return render json: { rules: @tournament_rule }, status: :ok if @tournament_rule
+    return render json: { rules: @tournament_rule }, status: :ok if @tournament_rule
   end
 
   def show_tournament_prices

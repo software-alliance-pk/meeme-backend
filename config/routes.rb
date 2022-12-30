@@ -146,6 +146,7 @@ Rails.application.routes.draw do
           get :show_tournament_prices
           get :tournament_winner
           get :judge
+          get :top_10_positions
         end
       end
       resources :stories do
