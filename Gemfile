@@ -25,6 +25,7 @@ gem "stimulus-rails"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
+gem 'fcm'
 
 # Use Redis adapter to run Action Cable in production
 
@@ -83,3 +84,5 @@ gem 'stripe'
 gem 'jquery-rails'
 gem 'sidekiq', '~> 6.4.1'
 gem 'redis', '~> 4.2.0'
+gem 'whenever', require: false
+

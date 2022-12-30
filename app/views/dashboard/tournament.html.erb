@@ -21,17 +21,17 @@
                 <div class="top">
                     <div class="season_detail">
                         <h4 class="mb-0">Tournament Season</h4>
-                        <div class="dropdown" id="pag">
-                          <%= select_tag  :tournament_title, options_for_select(TournamentBanner.all.reverse.pluck(:title, :id)), class: "btn btn-secondary dropdown-toggle" ,onclick: 'select($(this).val())' %>
+                        <div class="dropdown btn btn-secondary ms-3 rounded-pill">
+                          <%= select_tag  :tournament_title, options_for_select(TournamentBanner.all.reverse.pluck(:title, :id)), class: "btn btn-secondary" ,onclick: 'select($(this).val())' %>
                         </div>
-                        <p> Participants: <span id = "joined"></span></p>
+                        <p class="ms-3"> Participants: <span id = "joined"></span></p>
                     </div>
                     <h4 class="fw_400 mb-0">
-                        <a href="?">Tournament Winners</a>
+                        <a href="/tournament-winner-list" id = "banner_id">Tournament Winners</a>
                     </h4>
                 </div>
                 <div id="table_blk">
-                    <table>
+                    <table id="tournament_table">
                         <thead>
                             <tr>
                                 <th style="width: 6rem">Rank</th>
@@ -85,6 +85,9 @@
                     </table>
                 </div>
                 <div class="paginate_sec">
+                    <% if @posts.present? %>
+                        <p><%= page_entries_info @posts %></p>
+                    <% end %>
                 </div>
             </div>
         </div>
@@ -185,11 +188,9 @@
             url: "tournament",
             data: { tournament_banner_id: val},
             success: function(response) {
+                var table = $("#table_blk tbody");
                 document.getElementById("joined").innerHTML = 0 + " Joined"
-                var participate = []
-                response.id.forEach(function(i){
-                    participate.push(response.participated[i])
-                })    
+                table[0].innerHTML = ""  
                 var username = response.name
                 var email = response.email
                 var likes = response.likes
@@ -197,16 +198,38 @@
                 var created = response.created
                 var participated = response.participated
                 var status = response.status
-                var table = $("#table_blk tbody");
+                var image = response.image
                 table[0].innerHTML = ""
                 var i = 0;
                 username.forEach(function(name){
-                    table.append("<tr><td>"+(i+1)+"</td><td>"+name+"</td><td>"+email[i]+"</td><td>"+likes[i]+"</td><td>"+dislikes[i]+"</td><td>"+created[i]+"</td><td>"+participate[i]+"</td><td>"+'<%= image_tag("tr-1.jpg")%>'+"</td><td>"+status+"</td><td></td></tr>");
+                    table.append("<tr><td></td><td>"+name+"</td><td>"+email[i]+"</td><td>"+likes[i]+"</td><td>"+dislikes[i]+"</td><td>"+created[i]+"</td><td>"+participated[i]+"</td><td></td><td>"+status+"</td><td></td></tr>");
+                    add_ranks(i)
+                    add_image(image[i], i)
                     i++;
                 })
                 document.getElementById("joined").innerHTML = (i) + " Joined"
-                $( ".paginate_sec" ).load(window.location.href + " .paginate_sec" );
             }
         });
+    }
+
+    function add_image(image, i){
+        var col = document.getElementById("tournament_table").rows[i+1].cells[7];
+        var img = document.createElement('img');
+        img.src = image;
+        col.appendChild(img);
+    }
+
+    function add_ranks(i){
+        var col = document.getElementById("tournament_table").rows[i+1].cells[0];
+        var span = document.createElement('span');
+        span.innerHTML = i + 1
+        if(i < 4){
+            span.classList.add("win");
+        } else if(i < 10){
+            span.classList.add("win", "win_5")
+        } else{
+            span.classList.add("win", "win_10")
+        }
+        col.appendChild(span)
     }
 </script>

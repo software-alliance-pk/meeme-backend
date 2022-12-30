@@ -37,7 +37,7 @@
                             <div class="col-6">
                                 <h6 class="form_label">Email</h6>
                                 <div class="form_blk">
-                                    <%= f.email_field :email, class: "input", value: current_admin_user.email %>
+                                    <%= f.email_field :email, disabled: true ,class: "input",value: current_admin_user.email %>
                                 </div>
                             </div>
                             <div class="col-6">
@@ -81,7 +81,7 @@
                         <div class="row justify-content-center">
                             <div class="col-md-7">
                                 <div class="_inner">
-                                    <button type="button" class="x_btn"></button>
+                                    <button type="button" class="x_btn" onclick="close_dialog()"></button>
                                     <div class="success_img">
                                         <img src="<%= asset_path("signup-confirm.svg")%>" alt="">
                                     </div>
@@ -95,3 +95,13 @@
         </div>
     </section>
 </main>
+
+<script>
+    function open_dialog(){
+        document.getElementById("logon_modal").style.display = "block"
+    }
+
+    function close_dialog(){
+        document.getElementById("logon_modal").style.display = "none"
+    }
+</script>

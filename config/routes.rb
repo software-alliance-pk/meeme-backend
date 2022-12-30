@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get '/follower_count', to: "dashboard#follower_count"
   get '/verification', to: "dashboard#verification"
   get '/notifications', to: "dashboard#notifications"
+  post '/notifications', to: "notification#create_notification"
   get '/admin-profile', to: "dashboard#admin_profile"
   patch '/admin-profile', to: "dashboard#admin_profile"
   post '/admin-profile', to: "dashboard#admin_profile"
@@ -33,6 +34,13 @@ Rails.application.routes.draw do
   get '/transaction-export', to: 'dashboard#transaction_export'
   get '/show_user_profile', to: "dashboard#show_user_profile"
   get '/specific_user_transactions', to: "dashboard#specific_user_transactions"
+  get '/inventory', to: "dashboard#gift_rewards", as: "card_inventory"
+  post '/inventory', to: "amazon_card#create_amazon_card"
+  delete '/gift-rewards/:id', to: 'amazon_card#card_destroy'
+  get '/gift-rewards/:id/gift_rewards_update', to: 'dashboard#update_card', as: 'update_card'
+  patch '/gift-rewards', to: "amazon_card#update_card"
+  get '/gift-rewards/:id', to: 'amazon_card#card_destroy'
+  post '/gift-rewards', to: "amazon_card#add_gift_card"
   get '/gift-rewards', to: "dashboard#gift_rewards"
   get '/transactions', to: "dashboard#transactions"
   get '/faqs', to: "dashboard#faqs"
@@ -56,7 +64,15 @@ Rails.application.routes.draw do
   post '/terms', to: "dashboard#terms_edit"
   get '/terms-edit', to: "dashboard#terms_edit"
   get '/support', to: "dashboard#support"
+  post '/support', to: "support#create_message"
+  get '/conversation', to: "support#show_chat"
+  get '/conversations', to: "dashboard#support"
+  get '/conversation-image', to: "support#get_profile_image"
+  get '/completed', to: "support#issue_resolved"
+  get '/admin-user-image', to: "support#admin_user_images"
   get '/tournament-winner-list', to: "dashboard#tournament_winner_list"
+  get '/winner-reward', to: "dashboard#winner_reward"
+  get '/post-images', to: "dashboard#post_images"
 
   namespace :api do
     namespace :v1 do
@@ -93,6 +109,7 @@ Rails.application.routes.draw do
           get :trending_posts
           get :tags
           post :other_posts
+          post :user_search_tag
 
         end
       end
