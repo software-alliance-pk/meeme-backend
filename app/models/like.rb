@@ -10,7 +10,7 @@ class Like <ApplicationRecord
   def ignore_streak
     if self.story_id.present? || self.comment_id.present?
     else
-      after_create_commit  { StreakBadgeJob.perform_now(self) }
+       StreakBadgeJob.perform_now(self)
     end
   end
 end

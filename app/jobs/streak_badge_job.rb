@@ -2,7 +2,6 @@ class StreakBadgeJob < ApplicationJob
   queue_as :default
 
   def perform(message)
-    @result.include? false
     @result = []
     @today_date = Time.zone.now.end_of_day.to_datetime
     60.times do |num|
