@@ -40,7 +40,8 @@ class SupportController < ApplicationController
                                 body: @message.body,
                                 conversation_id: @conversation.id,
                                 user_id: params[:user_id],
-                                message_id: @message.id)
+                                message_id: @message.id,
+                                notification_type: 'admin_message')
           end
           redirect_to support_path
         else

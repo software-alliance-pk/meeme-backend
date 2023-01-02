@@ -63,7 +63,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             body: @message.body,
                             conversation_id: @conversation.id,
                             user_id: @message.receiver_id,
-                            message_id: @message.id)
+                            message_id: @message.id,
+                            notification_type: 'message')
       end
     else
       render json: { message: "No conversation present" }, status: :not_found

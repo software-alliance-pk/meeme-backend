@@ -46,7 +46,8 @@ class Api::V1::FollowersController < Api::V1::ApiController
         Notification.create(title: "Friend Request",
                             body: "#{@current_user.username} wants to follows you",
                             follow_request_id: @follower.id,
-                            user_id: params[:follower_user_id])
+                            user_id: params[:follower_user_id],
+                            notification_type: 'request_send')
         
         render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.user_id).username} " }, status: :ok
         # @secondary_follower = Follower.create!(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
@@ -76,7 +77,8 @@ class Api::V1::FollowersController < Api::V1::ApiController
         Notification.create(title: "Request Accepted",
                             body: "Follower request has been accepted by #{@current_user.username}",
                             follow_request_id: @follower.id,
-                            user_id: params[:follower_user_id])
+                            user_id: params[:follower_user_id],
+                            notification_type: 'request_accepted')
         render json: { message: "User added this follower", request: @follower }, status: :ok
       end
     else
