@@ -14,8 +14,11 @@ class Notification < ApplicationRecord
                 notification: { body: self.body,
                                 title: self.title,
                                 user_id: self.user_id,
-                                notification_type: self.notification_type
+
                 },
+                data: {
+                  notification_type: self.notification_type
+                }
 
     }
     if self.send_all == true && self.send_date == ""
@@ -42,7 +45,7 @@ class Notification < ApplicationRecord
         puts "----------------------------------------------"
         puts "----------------------------------------------"
         puts "----------------------------------------------"
-
+        debugger
       end
     end
   end
