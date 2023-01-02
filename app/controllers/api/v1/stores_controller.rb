@@ -5,10 +5,9 @@ class Api::V1::StoresController < Api::V1::ApiController
   def index
     @store = UserStore.where(user_id: @current_user.id)
     if @store.present?
-      render json: {items_bought: @store.count , store: @store, }, status: :ok
-
+      render json: {items_bought: @store.count , store: @store,tournament: TournamentBanner.find_by(enable: true).title }, status: :ok
     else
-      render json: { message: "No Items bought by this user" }, status: :not_found
+      render json: { message: "No Items bought by this user" ,tournament: TournamentBanner.find_by(enable: true).title }, status: :not_found
     end
 
   end
