@@ -7,12 +7,12 @@
 
 
 set :output, "./log/cron.log"
-every 1.minutes do
-  runner "Story.delete_after_24_hours"
-end
+# every 1.minutes do
+#   runner "Story.delete_after_24_hours"
+# end
 
 every 1.minutes do
-  runner "puts 'Task is running'"
-  runner 'puts Rails.env'
+  runner "Story.deleted_story"
 end
+
 
