@@ -48,7 +48,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
                             follow_request_id: @follower.id,
                             user_id: params[:follower_user_id],
                             notification_type: 'request_send')
-        
+
         render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.user_id).username} " }, status: :ok
         # @secondary_follower = Follower.create!(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
       else
@@ -72,7 +72,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
         render json: { message: "User removed from pending" }, status: :ok
       else
         @follower.update(is_following: true, status: 'added')
-        Follower.create(is_following:true,user_id: params[:follower_user_id],follower_user_id:@current_user.id,status: "added")
+        Follower.create(is_following: true, user_id: params[:follower_user_id], follower_user_id: @current_user.id, status: "added")
         # @secondary_follower.update(is_following: true, status: 'added')
         Notification.create(title: "Request Accepted",
                             body: "Follower request has been accepted by #{@current_user.username}",
@@ -94,6 +94,13 @@ class Api::V1::FollowersController < Api::V1::ApiController
         @follower.destroy
         @secondary_follower.destroy
         render json: { message: "#{User.find_by(id: @follower.follower_user_id).username} has been unfollowed" }, status: :ok
+      else
+        render json: { message: "Could not process the request" }, status: :ok
+      end
+    elsif @secondary_follower.present?
+      if @secondary_follower.un_followed!
+        @secondary_follower.destroy
+        render json: { message: "#{User.find_by(id: @secondary_follower.user_id).username} has been unfollowed" }, status: :ok
       else
         render json: { message: "Could not process the request" }, status: :ok
       end
