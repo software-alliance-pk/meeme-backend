@@ -10,4 +10,9 @@ class Story < ApplicationRecord
     @stories.destroy_all
     puts "Stories after 24 hours have been deleted successfully "
   end
+
+  def self.deleted_story
+    @stories=Story.last.destroy
+    puts "Latest Story destroyed "
+  end
 end
