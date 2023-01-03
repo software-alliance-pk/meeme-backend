@@ -7,6 +7,4 @@ class TournamentBanner < ApplicationRecord
   has_one :ranking_price,dependent: :destroy
   has_one :tournament_banner_rule,dependent: :destroy
 
-  after_create_commit { PostBadgeJob.perform_now(self) }
-
 end
