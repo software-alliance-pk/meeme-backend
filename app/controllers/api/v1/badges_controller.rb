@@ -5,7 +5,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     @badges = Badge.all
     if @badges.present?
     else
-      render json: { badges: [] }, status: :not_found
+      render json: { badges: [] }, status: :ok
     end
   end
 
@@ -23,7 +23,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     @badges = @current_user.badges.uniq
     if @badges.present?
     else
-      render json: { badges: [] }, status: :not_found
+      render json: { badges: [] }, status: :ok
     end
   end
 
@@ -32,7 +32,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     @locked_badges=Badge.where.not(id: @user_badges).uniq
     if @locked_badges.present?
     else
-      render json: { badges: [] }, status: :not_found
+      render json: { badges: [] }, status: :ok
     end
   end
 
@@ -40,7 +40,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     @badges = Badge.all.Rarity1
     if @badges.present?
     else
-      render json: { badges: [] }, status: :not_found
+      render json: { badges: [] }, status: :ok
     end
   end
 
@@ -48,7 +48,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     @badges = Badge.all.Rarity2
     if @badges.present?
     else
-      render json: { badges: [] }, status: :not_found
+      render json: { badges: [] }, status: :ok
     end
   end
 
@@ -56,7 +56,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     @badges = Badge.all.Rarity3
     if @badges.present?
     else
-      render json: { badges: [] }, status: :not_found
+      render json: { badges: [] }, status: :ok
     end
   end
 
@@ -64,7 +64,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     @badges=Badge.where("LOWER (title) LIKE ?","%#{params[:title].downcase}%").all
     if @badges.present?
     else
-      render json: { badges: [] }, status: :not_found
+      render json: { badges: [] }, status: :ok
     end
   end
 
