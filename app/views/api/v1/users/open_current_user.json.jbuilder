@@ -3,7 +3,8 @@ json.profile do
   json.user_image @current_user.profile_image.attached? ? @current_user.profile_image.blob.url : ''
   json.followers  @current_user.followers.count
   json.following  @current_user.followings.count
-  json.badges  []
+  json.badges_count  @current_user.badges.count
+  json.badges  @current_user.badges
   json.all_post_count @current_user.posts.count
   json.user_post_count @current_user.posts.where(tournament_meme:false).count
   json.profile_posts @current_user.posts.where(tournament_meme: false).each do |post|
