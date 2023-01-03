@@ -60,6 +60,14 @@ class Api::V1::BadgesController < Api::V1::ApiController
     end
   end
 
+  def badge_rarity_search
+    @badges=Badge.where("LOWER (title) LIKE ?","%#{params[:title].downcase}%").all
+    if @badges.present?
+    else
+      render json: { badges: [] }, status: :not_found
+    end
+  end
+
   private
 
   def badge_params

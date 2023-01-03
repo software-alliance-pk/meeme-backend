@@ -74,6 +74,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
         render json: { tournament: @tournament_post.attributes.except('tag_list'),
                        tournament_banner_image: @tournament_post.post_image.attached? ? @tournament_post.post_image.blob.url : '',
         }, status: :ok
+        PostBadgeJob.perform_now(@tournament_post)
       else
         render_error_messages(@tournament_post)
       end

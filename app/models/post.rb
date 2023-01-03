@@ -17,6 +17,7 @@ class Post < ApplicationRecord
   belongs_to :tournament_banner, optional: true
 
   acts_as_taggable_on :tags
+  after_create_commit { PostBadgeJob.perform_now(self) }
 
   def period_count_array
     from = self.created_at.beginning_of_day.beginning_of_day
