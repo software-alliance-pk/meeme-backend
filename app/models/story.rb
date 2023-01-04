@@ -6,13 +6,17 @@ class Story < ApplicationRecord
   has_many :comments, dependent: :destroy
 
   def self.delete_after_24_hours
-    @stories=Story.where("DATE(created_at) = ?", Date.today-1)
+    @stories = Story.where("DATE(created_at) = ?", Date.today - 1)
     @stories.destroy_all
     puts "Stories after 24 hours have been deleted successfully "
   end
 
   def self.deleted_story
-    @stories=Story.last.destroy
-    puts "Latest Story destroyed "
+    @stories = Story.last
+    if @stories.present?
+      @stories = Story.last.destroy
+      puts "Latest Story destroyed "
+    end
+      puts "Out of loop "
   end
 end
