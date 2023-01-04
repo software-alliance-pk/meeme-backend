@@ -184,6 +184,7 @@ Rails.application.routes.draw do
           get :rarity_3_badges
           get :current_user_locked_badges
           get :badge_rarity_search
+          post :all_badges
         end
       end
     end

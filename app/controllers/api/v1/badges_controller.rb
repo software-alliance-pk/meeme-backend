@@ -9,6 +9,22 @@ class Api::V1::BadgesController < Api::V1::ApiController
     end
   end
 
+  def all_badges
+    if params[:key].to_i == 0
+      @badges = Badge.all
+    elsif params[:key].to_i == 1
+      @badges = Badge.all.Rarity1
+    elsif params[:key].to_i == 2
+      @badges = Badge.all.Rarity2
+    elsif params[:key].to_i == 3
+      @badges = Badge.all.Rarity3
+    end
+    if @badges.present?
+    else
+      render json: { badges: [] }, status: :ok
+    end
+  end
+
   def create
     @badge = Badge.create(badge_params)
     if @badge.save
@@ -29,7 +45,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
 
   def current_user_locked_badges
     @user_badges = @current_user.badges.pluck(:id)
-    @locked_badges=Badge.where.not(id: @user_badges).uniq
+    @locked_badges = Badge.where.not(id: @user_badges).uniq
     if @locked_badges.present?
     else
       render json: { badges: [] }, status: :ok
@@ -61,7 +77,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
   end
 
   def badge_rarity_search
-    @badges=Badge.where("LOWER (title) LIKE ?","%#{params[:title].downcase}%").all
+    @badges = Badge.where("LOWER (title) LIKE ?", "%#{params[:title].downcase}%").all
     if @badges.present?
     else
       render json: { badges: [] }, status: :ok
