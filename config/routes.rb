@@ -110,6 +110,7 @@ Rails.application.routes.draw do
           get :tags
           post :other_posts
           post :user_search_tag
+          post :share_post
 
         end
       end
