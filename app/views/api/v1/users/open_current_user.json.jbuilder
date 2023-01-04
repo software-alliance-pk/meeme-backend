@@ -13,6 +13,7 @@ json.profile do
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.post_likes post.likes.like.count
     json.post_dislikes post.likes.dislike.count
+    json.post_share_count post.share_count
   end
   json.tournament_posts_count @current_user.posts.where(tournament_meme: true).count
   json.tournament_posts @current_user.posts.where(tournament_meme: true).each do |post|
@@ -21,6 +22,8 @@ json.profile do
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.post_likes post.likes.like.count
     json.post_dislikes post.likes.dislike.count
+    json.post_share_count post.share_count
+
   end
 
 end

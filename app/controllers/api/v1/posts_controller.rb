@@ -135,6 +135,17 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   end
 
+  def share_post
+    @share_post= Post.find_by(id: params[:post_id])
+    if @share_post.tournament_meme==true
+      render json: { message: 'Tournament Posts cannot be shared',post: [], share_count: @share_post.share_count }, status: :ok
+    else
+      count=@share_post.share_count+1
+      @share_post.update_columns(share_count: count)
+      render json: { message: 'Tournament Posts Shared',post: @share_post, share_count: @share_post.share_count }, status: :ok
+    end
+  end
+
   private
 
   def find_post
@@ -144,6 +155,6 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def post_params
-    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags)
+    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags,:share_count)
   end
 end
