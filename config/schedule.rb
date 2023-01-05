@@ -9,10 +9,8 @@ set :output, "./log/cron.log"
 #   runner "Story.delete_after_24_hours"
 # end
 
-every 1.minutes do
-  # runner "Story.deleted_story"
-  rake "story_delete:story_check"
-
+every 1.minute do
+  rake story_delete:story_check
 end
 
 
