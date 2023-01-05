@@ -4,13 +4,13 @@
 # crontab -r clean crontab
 
 
+set :env_path, ''
+env :PATH, @env_path if @env_path.present?
+
 set :output, "./log/cron.log"
-# every 1.minutes do
-#   runner "Story.delete_after_24_hours"
-# end
 
 every 1.minute do
-  rake "story_delete:story_check"
+  rake 'story_delete:story_check'
 end
 
 
