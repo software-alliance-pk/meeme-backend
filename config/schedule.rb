@@ -10,7 +10,7 @@ set :output, "./log/cron.log"
 # end
 
 every 1.minute do
-  rake story_delete:story_check
+  rake "story_delete:story_check"
 end
 
 
