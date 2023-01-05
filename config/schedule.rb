@@ -4,8 +4,8 @@
 # crontab -r clean crontab
 
 
-set :env_path, ''
-env :PATH, @env_path if @env_path.present?
+set :env_path, '/home/ubuntu/.rbenv/shims/ruby'
+# env :PATH, @env_path if @env_path.present?
 
 set :output, "./log/cron.log"
 
