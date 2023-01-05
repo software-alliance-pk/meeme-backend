@@ -124,7 +124,8 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def recent_posts
-    @recent_posts = Post.where(tournament_meme: false).by_recently_updated(20).paginate(page: params[:page], per_page: 25)
+    @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).paginate(page: params[:page], per_page: 25).shuffle
+    # @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).shuffle[0..20].paginate(page: params[:page], per_page: 25)
   end
 
   def trending_posts
