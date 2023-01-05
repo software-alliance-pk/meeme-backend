@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   mount ActionCable.server => "/cable"
   require 'sidekiq/web'
   mount Sidekiq::Web => '/sidekiq'
+  match "/delayed_job" => DelayedJobWeb, :anchor => false, :via => [:get, :post]
 
   # Define your application routes p  er the DSL in https://guides.rubyonrails.org/routing.html
 
