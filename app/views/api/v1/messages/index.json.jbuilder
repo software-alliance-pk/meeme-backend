@@ -5,8 +5,10 @@ json.messages @messages.each do |record|
     json.conversation_id record.conversation_id
     json.sender_id record&.sender_id
     json.sender_name record&.sender&.username
+    json.sender_active_status record&.sender&.status
     json.receiver_id record&.receiver&.id
     json.receiver_name record&.receiver&.username
+    json.receiver_active_status record&.receiver&.status
     json.created_at record.created_at
     json.message_images_count record.message_images.count
     json.message_images record.message_images.each do |message_image|

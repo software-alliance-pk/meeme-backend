@@ -9,6 +9,7 @@ json.message do
   json.admin_user_email @message.admin_user.email
   json.sender_id @message.sender_id
   json.sender_name @message.sender.username
+  json.sender_active_status @message.sender.status
   json.created_at @message.created_at
   json.message_ticket @message.message_ticket
   json.message_images_count @message.message_images.count

@@ -14,6 +14,8 @@ json.messages @messages.each do |message|
   end
   json.sender_id message.sender_id
   json.sender_name message.sender.present? ? message.sender.username : ''
+  json.sender_active_status message.sender.status
+
   if message.sender.present?
     json.sender_image message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : ''
   else
@@ -22,6 +24,8 @@ json.messages @messages.each do |message|
 
   json.receiver_id message.receiver_id
   json.receiver_name message.receiver.present? ? message.receiver.username : ''
+  json.receiver_active_status message.receiver.status
+
   if message.receiver.present?
     json.receiver_image message.receiver.profile_image.attached? ? message.receiver.profile_image.blob.url : ''
   else

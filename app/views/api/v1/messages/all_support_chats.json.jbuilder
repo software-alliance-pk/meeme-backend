@@ -7,6 +7,7 @@ json.messages @messages.each do|chat|
   json.conversation_id chat&.conversation_id
   json.sender_id chat&.sender_id
   json.sender_name chat&.sender&.username
+  json.sender_active_status chat&.sender&.status
   json.admin_user_id chat&.admin_user&.id
   json.admin_user_name chat&.admin_user&.admin_user_name
   json.created_at chat.created_at
