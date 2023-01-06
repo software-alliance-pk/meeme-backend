@@ -87,6 +87,7 @@ gem 'redis', '~> 4.2.0'
 gem 'whenever', require: false
 gem 'delayed_job_active_record'
 gem "delayed_job_web"
+gem 'daemons'
 
 
 
