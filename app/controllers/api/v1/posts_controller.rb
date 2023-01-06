@@ -13,7 +13,6 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def show
     render json: { post: @current_user.posts.by_recently_created },
-           # post_image: @post.post_image.attached? ? @post.post_image.blob.url : '' },
            status: :ok
   end
 
@@ -79,7 +78,6 @@ class Api::V1::PostsController < Api::V1::ApiController
       @posts = Post.tagged_with(params[:tag], :any => true)
       if @posts.present?
       else
-        # @posts=Post.all.paginate(page: params[:page], per_page: 25)
         render json: { message: "No Post found against this tag " }, status: :not_found
       end
     end
@@ -91,13 +89,11 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post = Post.find_by(id: params[:post_id])
     if params[:tag] == "#"
       @posts = Post.where(tournament_meme: false)
-      # render json: { message: "Tag not found" }, status: :not_found
     else
       @posts = Post.tagged_with(params[:tag])
       @posts = @posts.where.not(id: @post.id)
       if @posts.present?
       else
-        # @posts=Post.all.paginate(page: params[:page], per_page: 25)
         render json: { message: "No Post found against this tag " }, status: :not_found
       end
     end
@@ -105,8 +101,6 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def tags
     @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
-    # @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
-    # @tags=@tags.paginate(page: params[:page], per_page: 25)
     if @tags.present?
       render json: { tags: @tags }, status: :ok
     else
@@ -125,7 +119,6 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def recent_posts
     @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).paginate(page: params[:page], per_page: 25).shuffle
-    # @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).shuffle[0..20].paginate(page: params[:page], per_page: 25)
   end
 
   def trending_posts

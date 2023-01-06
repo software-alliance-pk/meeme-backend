@@ -8,7 +8,7 @@ class Story < ApplicationRecord
   has_many :comments, dependent: :destroy
 
   def destroy_the_story_after_24_hrs
-    job_will_run_at =  self.created_at + 24.hours
+    job_will_run_at =  self.created_at + 10.minutes
     Delayed::Job.enqueue(DeleteStoryJob.new(self.id),{run_at: job_will_run_at})
   end
 end

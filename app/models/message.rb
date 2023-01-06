@@ -8,5 +8,4 @@ class Message < ApplicationRecord
   has_many_attached :message_images, dependent: :destroy
   enum subject: [:Nothing_Happened, :Abuse, :Payment, :Image, :Profile, :Tournament_Winner, :Coins, :Plagiarism, :Winner_Feedback]
 
-  # after_create_commit { MessageBroadCastJob.perform_later(self) }
 end

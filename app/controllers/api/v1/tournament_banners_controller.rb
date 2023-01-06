@@ -16,7 +16,6 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     @tournament_posts = @tournament.posts.paginate(page: params[:page], per_page: 25)
     if @tournament_posts.present?
     else
-      # render json: { message: "No posts for this tournament yet" }, status: :not_found
     end
   end
 
@@ -43,14 +42,12 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
       key_value = @tournament_posts[key]
       key_value.each do |row, col|
         @username << Post.find(row).user.username
-        # @post_like << Post.find(row).likes.like.count
       end
       @all_user[key] = @username
       @username = []
       @post_like = []
     end
     @all_user=@all_user.to_a.reverse
-    # x=@all_user.each_with_index.map{|a,index| "#{a[1]} is at position #{index+1}"}
     render json: {tournament_name: @tournament.title,username_with_position: @all_user.each_with_index.map{|a,index| "#{a[1]} is at position #{index+1}" }}
 
   end

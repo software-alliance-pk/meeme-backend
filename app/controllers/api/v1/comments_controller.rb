@@ -9,9 +9,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     if @comments.present?
       @comments = @comments.comments.where(parent_id: nil).paginate(page: params[:page], per_page: 25)
       if @comments.present?
-        # render index, status: :ok
       else
-        # render json: { message: "No Comments for this particular post" }, status: :not_found
       end
     else
       render json: { message: "Post is not present" }, status: :not_found
@@ -24,7 +22,6 @@ class Api::V1::CommentsController < Api::V1::ApiController
     if @child_comment.present?
 
     else
-      # render json: { message: "No Child Comments found" }, status: :not_found
     end
 
   end

@@ -8,7 +8,6 @@ class Api::V1::StoriesController < Api::V1::ApiController
     # @story = Story.recently_created.paginate(page: params[:page], per_page: 25)
     if @story.present?
     else
-      # return render json: { message: 'No stories found for this user' }, status: :not_found
     end
   end
 
@@ -44,7 +43,6 @@ class Api::V1::StoriesController < Api::V1::ApiController
     @story_comment=@story.comments.paginate(page: params[:page], per_page: 25)
     if @story_comment.present?
     else
-      # render json: { message: "No comments has been made yet" }, status: :not_found
     end
   end
 
