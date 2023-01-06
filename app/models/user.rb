@@ -27,8 +27,6 @@ class User < ApplicationRecord
   belongs_to :user_store,optional: true
   has_many :user_badges
   has_many :badges,through: :user_badges
-  # has_many :messages
-  # has_many :messages_as_sender, foreign_key: "sender_id", class_name: "Message"
   has_many :mobile_devices, dependent: :destroy
   has_many :notifications, dependent: :destroy
 

@@ -74,7 +74,7 @@ end
 gem 'jwt'
 gem 'bcrypt'
 gem 'dotenv-rails'
-gem 'cloudinary'
+# gem 'cloudinary'
 gem 'sass-rails'
 gem 'acts-as-taggable-on'
 gem 'will_paginate'
@@ -88,6 +88,6 @@ gem 'whenever', require: false
 gem 'delayed_job_active_record'
 gem "delayed_job_web"
 gem 'daemons'
-
+gem 'aws-sdk-s3'
 
 
