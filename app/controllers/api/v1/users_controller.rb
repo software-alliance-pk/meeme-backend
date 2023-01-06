@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate verify_otp]
-  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change]
   # GET /users
   def index
     @users = User.all
@@ -89,13 +89,23 @@ class Api::V1::UsersController < Api::V1::ApiController
     if @user.otp == params[:otp]
       if @user.updated_at < 1.minute.ago
         @user.update(otp: nil)
-        return render json: { message: "OTP expired",user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
+        return render json: { message: "OTP expired", user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
       else
         @user.update(otp: nil)
         return render json: { message: "Correct OTP", user_otp: @user.otp, otp: params[:otp] }, status: :ok
       end
     else
-      return render json: { message: "OTP is not valid",user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
+      return render json: { message: "OTP is not valid", user_otp: @user.otp, otp: params[:otp] }, status: :unprocessable_entity
+    end
+  end
+
+  def active_status_change
+    if @current_user.status == false
+      @current_user.update(status: true)
+      render json: { message: "Active Status Changed", user_status: @current_user.status }, status: :ok
+    else
+      @current_user.update(status: false)
+      render json: { message: "Active Status Changed", user_status: @current_user.status }, status: :ok
     end
   end
 
@@ -119,12 +129,12 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def find_user
     unless (@user = User.find_by_email(params[:email]) || User.find_by_id(params[:id]))
-      return render json: { message: 'User Not found' },status: :not_found
+      return render json: { message: 'User Not found' }, status: :not_found
     end
   end
 
   def user_params
-    params.permit(:username, :email, :phone, :bio, :password, :password_confirmation, :profile_image
+    params.permit(:username, :email, :phone, :bio, :password, :password_confirmation, :profile_image, :status
     )
   end
 end

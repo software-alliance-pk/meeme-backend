@@ -13,6 +13,7 @@ class Api::V1::AuthenticationController < Api::V1::ApiController
       token = JsonWebTokenService.encode(user_id: @user.id)
       time = Time.now + 24.hours.to_i
       @user.verification_tokens.create(token: token)
+      @user.update(status: true)
       render json: { token: token,
                      expiry: time.strftime("%m-%d-%Y %H:%M"),
                      user: @user,
@@ -29,7 +30,8 @@ class Api::V1::AuthenticationController < Api::V1::ApiController
     verification_token = @current_user.verification_tokens.find_by_token(token)
     if verification_token
       @current_user.verification_tokens.find_by_token(token).destroy
-      render json: { message: 'Successfully Signed Out' }, status: :ok
+      @current_user.update(status: false)
+      render json: { message: 'Successfully Signed Out' ,active: @current_user.status}, status: :ok
     else
       return render json: { message: 'Verification Token Not Found' }, status: :not_found
     end

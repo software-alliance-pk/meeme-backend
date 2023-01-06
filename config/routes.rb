@@ -94,6 +94,7 @@ Rails.application.routes.draw do
           delete 'payments/delete_a_card',to: "payments#delete_a_card"
           post 'payments/charge_a_customer',to: "payments#charge_a_customer"
           get 'payments/show_transactions_history',to: "payments#show_transactions_history"
+          get :active_status_change
 
         end
         get '/*a', to: 'application#not_found'
