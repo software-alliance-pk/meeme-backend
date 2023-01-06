@@ -100,11 +100,12 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def active_status_change
-    if @current_user.status == false
-      @current_user.update(status: true)
-      render json: { message: "Active Status Changed", user_status: @current_user.status }, status: :ok
-    else
+    if params[:status]=="false"
       @current_user.update(status: false)
+      render json: { message: "Active Status Changed", user_status: @current_user.status }, status: :ok
+    end
+    if params[:status]=="true"
+      @current_user.update(status: true)
       render json: { message: "Active Status Changed", user_status: @current_user.status }, status: :ok
     end
   end
