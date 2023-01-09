@@ -118,7 +118,10 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def recent_posts
-    @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).paginate(page: params[:page], per_page: 25).shuffle
+    @today_post = Post.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
+    @random_posts = Post.where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).paginate(page: params[:page], per_page: 25).shuffle
+    @recent_posts = @today_post + @random_posts
+    # @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).paginate(page: params[:page], per_page: 25).shuffle
   end
 
   def trending_posts
@@ -130,13 +133,13 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def share_post
-    @share_post= Post.find_by(id: params[:post_id])
-    if @share_post.tournament_meme==true
-      render json: { message: 'Tournament Posts cannot be shared',post: [], share_count: @share_post.share_count }, status: :ok
+    @share_post = Post.find_by(id: params[:post_id])
+    if @share_post.tournament_meme == true
+      render json: { message: 'Tournament Posts cannot be shared', post: [], share_count: @share_post.share_count }, status: :ok
     else
-      count=@share_post.share_count+1
+      count = @share_post.share_count + 1
       @share_post.update_columns(share_count: count)
-      render json: { message: 'Tournament Posts Shared',post: @share_post, share_count: @share_post.share_count }, status: :ok
+      render json: { message: 'Tournament Posts Shared', post: @share_post, share_count: @share_post.share_count }, status: :ok
     end
   end
 
@@ -149,6 +152,6 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def post_params
-    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags,:share_count)
+    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags, :share_count)
   end
 end
