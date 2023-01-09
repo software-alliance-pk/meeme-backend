@@ -3,7 +3,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   before_action :find_post, only: [:show, :update_posts, :destroy]
 
   def index
-    @posts = @current_user.posts.by_recently_created(20).paginate(page: params[:page], per_page: 25)
+    @posts = @current_user.posts.by_recently_created(20).paginate(page: params[:page], per_page: 25).shuffle
     if @posts.present?
 
     else
