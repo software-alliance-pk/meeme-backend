@@ -11,13 +11,13 @@ class Api::V1::BadgesController < Api::V1::ApiController
 
   def all_badges
     if params[:key].to_i == 0
-      @badges = Badge.all
+      @badges = Badge.all.limit(5)
     elsif params[:key].to_i == 1
-      @badges = Badge.all.Rarity1
+      @badges = Badge.all.Rarity1.limit(5)
     elsif params[:key].to_i == 2
-      @badges = Badge.all.Rarity2
+      @badges = Badge.all.Rarity2.limit(5)
     elsif params[:key].to_i == 3
-      @badges = Badge.all.Rarity3
+      @badges = Badge.all.Rarity3.limit(5)
     end
     if @badges.present?
     else
@@ -45,7 +45,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
 
   def current_user_locked_badges
     @user_badges = @current_user.badges.pluck(:id)
-    @locked_badges = Badge.where.not(id: @user_badges).uniq
+    @locked_badges = Badge.where.not(id: @user_badges).limit(5).uniq
     if @locked_badges.present?
     else
       render json: { badges: [] }, status: :ok
