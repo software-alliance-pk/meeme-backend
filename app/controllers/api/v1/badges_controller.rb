@@ -35,6 +35,17 @@ class Api::V1::BadgesController < Api::V1::ApiController
     end
   end
 
+  def update_badge
+    @badge = Badge.find_by(id: params[:id])
+    if @badge.present?
+      @badge.update(badge_params)
+      render json: { badge: @badge,
+                     badge_image: @badge.badge_image.attached? ? @badge.badge_image.blob.url : "" }, status: :ok
+    else
+      render_error_messages(@badge)
+    end
+  end
+
   def current_user_badges
     @badges = @current_user.badges.uniq
     if @badges.present?

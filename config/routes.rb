@@ -187,6 +187,7 @@ Rails.application.routes.draw do
           get :current_user_locked_badges
           get :badge_rarity_search
           post :all_badges
+          put :update_badge
         end
       end
     end
