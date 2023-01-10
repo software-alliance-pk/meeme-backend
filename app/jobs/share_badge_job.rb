@@ -1,7 +1,8 @@
 class ShareBadgeJob < ApplicationJob
   queue_as :default
   def perform(message)
-    @badge = Badge.find_by(title: "Sharing Is Caring")
+    @badge = Badge.find_by(title: "Sharing Is Caring Badge")
+    
     @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
     if @check.present?
       puts "#{User.find_by(id: message.user_id).username} has already been awarded #{@badge.title}"
