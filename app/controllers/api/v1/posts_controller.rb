@@ -134,14 +134,19 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def share_post
     @share_post = Post.find_by(id: params[:post_id])
-    if @share_post.tournament_meme == true
-      render json: { message: 'Tournament Posts cannot be shared', post: [], share_count: @share_post.share_count }, status: :ok
+    if @share_post.present?
+      if @share_post.tournament_meme == true
+        render json: { message: 'Tournament Posts cannot be shared', post: [], share_count: @share_post.share_count }, status: :ok
+      else
+        count = @share_post.share_count + 1
+        @share_post.update_columns(share_count: count)
+        render json: { message: 'Tournament Posts Shared', post: @share_post, share_count: @share_post.share_count }, status: :ok
+        ShareBadgeJob.perform_now(@share_post)
+      end
     else
-      count = @share_post.share_count + 1
-      @share_post.update_columns(share_count: count)
-      render json: { message: 'Tournament Posts Shared', post: @share_post, share_count: @share_post.share_count }, status: :ok
-      ShareBadgeJob.perform_now(@share_post)
+      render json: { message: 'Post not found' }, status: :not_found
     end
+
   end
 
   private
