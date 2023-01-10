@@ -140,8 +140,8 @@ class Api::V1::PostsController < Api::V1::ApiController
       else
         count = @share_post.share_count + 1
         @share_post.update_columns(share_count: count)
-        render json: { message: 'Tournament Posts Shared', post: @share_post, share_count: @share_post.share_count }, status: :ok
         ShareBadgeJob.perform_now(@share_post)
+        render json: { message: 'Tournament Posts Shared', post: @share_post, share_count: @share_post.share_count }, status: :ok
       end
     else
       render json: { message: 'Post not found' }, status: :not_found
