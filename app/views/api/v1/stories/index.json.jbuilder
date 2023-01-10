@@ -1,6 +1,6 @@
 json.user_stories_count @story.count
   json.user_stories @story.each do |story_user|
-    json.stories Story.where(user_id: story_user).recently_created.each do |story|
+    json.stories Story.where(user_id: story_user).recently_created.paginate(page: params[:page], per_page: 25).each do |story|
         json.id story.id
         json.user_id story.user_id
         json.username story.user.username
