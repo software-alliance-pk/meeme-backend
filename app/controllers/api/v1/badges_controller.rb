@@ -48,6 +48,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
 
   def current_user_badges
     @badges = @current_user.badges.uniq
+    debugger
     if @badges.present?
     else
       render json: { badges: [] }, status: :ok
