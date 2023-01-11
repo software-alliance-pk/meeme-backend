@@ -80,6 +80,12 @@ Rails.application.configure do
   config.hosts << /.*\.ngrok\.io/
   config.web_console.permissions = '139.135.32.171'
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  Rails.application.config.active_storage.content_types_allowed_inline += [
+    "audio/mp3",
+    "audio/mp4",
+    "audio/mpeg",
+    "video/mp4"
+  ] 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
 

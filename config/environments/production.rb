@@ -104,4 +104,10 @@ Rails.application.configure do
   }
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+  Rails.application.config.active_storage.content_types_allowed_inline += [
+    "audio/mp3",
+    "audio/mp4",
+    "audio/mpeg",
+    "video/mp4"
+  ]
 end
