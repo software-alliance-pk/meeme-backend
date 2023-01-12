@@ -1,62 +1,70 @@
 <main>
-    <section id="memee">
-        <%=render "dashboard/sidebar" %>
-        <div id="guide" class="main_side">
-            <div id="top_header">
-                <div class="left_blk">
-                    <h1>Guidelines</h1>
-                    <div class="img">
-                        <img src="<%= asset_path("icon-guide.svg")%>" alt="">
-                    </div>
-                </div>
-                <div class="side">
-                    <button type="button" class="btn bell_btn">
-                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
-                        <span>2</span>
-                    </button>
-                </div>
-            </div>
-            <div class="inner_blk">
-                <div class="wrapper ex">
-                    <nav class="nav_list">
-                        <ul class="list">
-                            <li><a href="/terms">Terms & Conditions</a></li>
-                            <li><a href="/privacy">Privacy Policy</a></li>
-                            <li class="active"><a href="/faqs">FAQs</a></li>
-                            <li><a href="/pop-ups">Pop Ups</a></li>
-                        </ul>
-                    </nav>
-                    <div class="content_blk">
-                        <div class="btn_blk mb-5">
-                            <a href="/faqs-edit" class="site_btn prime_btn round">Add More</a>
-                        </div>
-                        <ul class="faq_list">
-                            <li>
-                                <% @faqs.each do |faq| %>
-                                    <div class="faq_blk">
-                                        <div class="top">
-                                            <h6 class="mb-0"><%= faq.title %></h6>
-                                            <div class="btn_blk">
-                                                <%= link_to image_tag("icon-edit.svg"), faq_update_path(faq) %>
-                                                <%= link_to image_tag("icon-delete.svg"), controller: 'dashboard', action: 'faq_destroy', id: faq.id, method: :delete %>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <%= faq.description %>
-                                        </div>
-                                    </div>
-                                <% end %>
-                            </li>
-                        </ul>
-
-                    </div>
-                    <div class="history">
-                        <h5>History</h5>
-                        <ul class="htry_list">
-                        </ul>
-                    </div>
-                </div>
-            </div>
+  <section id="memee">
+    <%=render "dashboard/sidebar" %>
+    <div id="guide" class="main_side">
+      <div id="top_header">
+        <div class="left_blk">
+          <h1>Guidelines</h1>
+          <div class="img">
+            <img src="<%= asset_path("icon-guide.svg")%>" alt="">
+          </div>
         </div>
-    </section>
+        <div class="side">
+          <%=render "dashboard/notification_panel" %>
+        </div>
+      </div>
+      <div class="inner_blk">
+        <div class="wrapper ex">
+          <nav class="nav_list">
+            <ul class="list">
+              <li><a href="/terms">Terms & Conditions</a></li>
+              <li><a href="/privacy">Privacy Policy</a></li>
+              <li class="active"><a href="/faqs">FAQs</a></li>
+              <li><a href="/pop-ups">Pop Ups</a></li>
+            </ul>
+          </nav>
+          <div class="content_blk">
+            <div class="btn_blk mb-5">
+              <a href="/faqs-edit" class="site_btn prime_btn round">Add More</a>
+            </div>
+            <ul class="faq_list">
+              <li>
+                <% @faqs.each do |faq| %>
+                  <div class="faq_blk">
+                    <div class="top">
+                      <h6 class="mb-0"><%= faq.title %></h6>
+                      <div class="btn_blk">
+                        <%= link_to image_tag("icon-edit.svg"), faq_update_path(faq) %>
+                        <%= link_to image_tag("icon-delete.svg"), controller: 'dashboard', action: 'faq_destroy', id: faq.id, method: :delete %>
+                      </div>
+                    </div>
+                    <div class="txt">
+                      <%= faq.description %>
+                    </div>
+                  </div>
+                <% end %>
+              </li>
+            </ul>
+
+          </div>
+          <div class="history">
+            <h5>History</h5>
+            <ul class="htry_list">
+              <% Faq.all.reverse.each do |faq| %>
+                <% if faq.created_at == faq.updated_at %>
+                  <p>Faq - Created <%= faq.title %>!</p>
+                  <p class="time"><%= faq.created_at.strftime("%F") %></p>
+                  <hr>
+                <% else %>
+                  <p>Faq - Updated <%= faq.title %>!</p>
+                  <p class="time"><%= faq.updated_at.strftime("%F") %></p>
+                  <hr>
+                <% end %>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>

@@ -1,0 +1,40 @@
+.trans_blk{
+  background: #313032;
+  border-radius: 2.8rem;
+  height: 5.6rem;
+  display: flex;
+  align-items: center;
+  max-width: 20rem;
+  gap: 1rem;
+  padding: 0 1rem
+}
+.trans_blk span {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 2rem;
+  color: #FEBB59;
+  min-width: 4rem;
+}
+.trans_blk input {
+  flex: 1 1 0%;
+  width: 100%;
+  height: 4.6rem;
+  background: transparent;
+  outline: transparent;
+  border: 0;
+  color: #9E9E9E;
+}
+#user_list .inside #table_users .table__blk table tbody tr td .user .ellipse{
+  border-radius: 75%;
+  overflow: hidden;
+  > img{
+    object-fit: cover;
+    height: 100%;
+  }
+}
+#trans #table_blk table tbody tr td .user_detail .img{
+  >img{
+    height: 100%;
+    object-fit: cover;
+  }
+}

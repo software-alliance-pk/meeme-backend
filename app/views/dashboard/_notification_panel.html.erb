@@ -1,0 +1,54 @@
+<div class="dropdown" id="notify_dropdown">
+  <% notification = Notification.where(title: "Sign In Memee") %>
+  <button type="button" class="btn bell_btn" data-bs-toggle="dropdown">
+    <img src="<%= asset_path("icon-bell.svg") %>" alt="">
+    <% if notification.present? %>
+      <% count = notification.where(status: 0).count %>
+      <% if count > 0 %>
+        <span><%= count %></span>
+      <% end %>
+    <% end %>
+  </button>
+  <div class="dropdown-menu">
+    <h4>Recent Notification</h4>
+    <ul class="list">
+      <% if notification.present? %>
+        <% notification.each do |notify| %>
+          <% user = User.find(notify.user_id) %>
+          <li>
+            <div class="item" style='background-color: <%= notify.status == "un_read" ? "#3a3b3c" : "transparent" %>' onclick="change_status('<%= notify.id %>')">
+              <div class="detail_blk">
+                <div class="img_blk">
+                  <div class="img" style="height: 100%">
+                    <img src="<%= user.profile_image.attached? ? user.profile_image.blob.url : asset_path("john-smith.jpg") %>" alt="">
+                  </div>
+                  <span class="icon">
+                    <img src="<%= asset_path("icon-chat.svg") %>" alt="">
+                  </span>
+                </div>
+                <div class="txt">
+                  <h6><%= user.username %></h6>
+                  <p><%= notify.title %></p>
+                </div>
+              </div>
+              <p class="time"><%= Time.now.hour - notify.created_at.hour %>h</p>
+            </div>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+</div>
+
+<script>
+    function change_status(id) {
+        $.ajax({
+            type: "GET",
+            url: "notifications",
+            data: {id: id},
+            success: function (response) {
+                location.reload()
+            }
+        })
+    }
+</script>

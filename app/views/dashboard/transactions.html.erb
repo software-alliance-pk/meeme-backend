@@ -1,137 +1,138 @@
 <main>
-    <section id="memee">
-        <%=render "dashboard/sidebar" %>
-        <div id="trans" class="main_side">
-            <div id="top_header">
-                <div class="left_blk">
-                    <h1>Transactions</h1>
-                    <div class="img">
-                        <img src="<%= asset_path("icon-trans.svg")%>" alt="">
-                    </div>
-                </div>
-                <div class="side">
-                    <button type="button" class="btn bell_btn">
-                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
-                        <span>2</span>
-                    </button>
-                </div>
-            </div>
-            <div class="inner_blk">
-                <div class="top d-flex flex-row">
-                    <%= form_tag(transactions_path, method: "get") do %>
-                        <div class="btn date_btn p-3 d-inline-block">
-                            <span>From: </span>
-                            <input type="date" name="start_date" class="btn date_btn d-inline-block" style="margin-top: -11px"></input>
-                        </div>
-                        <div class="btn date_btn p-3 d-inline-block">
-                            <span>To: </span>
-                            <input type="date" name="end_date" class="btn date_btn d-inline-block"  style="margin-top: -11px"></input>
-                        </div>
-                        <%= submit_tag "" , type: :image ,:name => nil %>
-                    <% end %>
-                    <%= form_tag(transactions_path, method: "get") do %>
-                        <div class="form_blk input mb-0">
-                            <img src= "<%= asset_path("icon-search.svg")%>">
-                            <%= text_field_tag :search, params[:search], class: "input" ,placeholder: "search", value: "" %>
-                            <%= submit_tag "" , type: :image ,:name => nil %>
-                        </div>
-                    <% end %>
-                    <a href= "/transaction-export.csv"><button type="button" class="site_btn round csv_btn">
-                        <img src="<%= asset_path("icon-csv.svg")%>" alt="">
-                        Export CSV
-                    </button></a>
-                </div>
-                <div id="table_blk">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 30rem">User</th>
-                                <th style="width: 10rem">Cost</th>
-                                <th style="width: 25rem">Payment Method</th>
-                                <th style="width: 12.5rem">Date Processed</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% @transactions_list.each do |transaction_details| %>
-                                <tr>
-                                    <td>
-                                        <div class="user_detail">
-                                            <div class="img pop_btn" data-popup="trans_profile"  onclick="open_transaction_details('<%= transaction_details.user.username %>', '<%= transaction_details.user.email %>', '<%= transaction_details.user_id %>')">
-                                                <img src="<%= transaction_details.user.profile_image.attached? ? transaction_details.user.profile_image.blob.url : asset_path("user.png")%>" alt="">
-                                            </div>
-                                            <div class="txt">
-                                                <h6><%= transaction_details.user.username %></h6>
-                                                <p><%= transaction_details.user.email %></p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><%= transaction_details.amount %></td>
-                                    <td><%= transaction_details.brand %></td>
-                                    <td><%= transaction_details.created_at.strftime("%F") %></td>
-                                    <td></td>
-                                </tr>
-                            <% end %>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="paginate_sec">
-                    <p><%= page_entries_info @transactions_list %></p>
-                    <ul class="pagination">
-                        <li class="disabled"> <%= will_paginate(@transactions_list ,:previous_label => "&laquo;", :next_label => "&raquo;", :class=>"h5 text-white",:outer_window => 1,:inner_window => 0) %></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="popup" data-popup="trans_profile" id="trans_modal">
-                <div class="table_dv">
-                    <div class="table_cell">
-                        <div class="contain">
-                            <div class="row justify-content-center">
-                                <div class="col-12">
-                                    <div class="_inner">
-                                        <button type="button" class="x_btn" onclick= "close_transaction_details()"></button>
-                                        <div class="top_blk">
-                                            <h4>Profile Transactions</h4>
-                                            <div class="profile">
-                                                <img src="" alt="" id="image">
-                                            </div>
-                                            <h5 id= "trans_name_user"></h5>
-                                            <p id= "trans_email_user"></p>
-                                        </div>
-                                        <div class="outter">
-                                            <h5>Transactions</h5>
-                                            <div class="table_blk" id="table">
-                                                <table>
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width: 13rem">Date</th>
-                                                            <th style="width: 10rem">Time</th>
-                                                            <th style="width: 25rem"></th>
-                                                            <th style="width: 20rem;">Transaction</th>
-                                                            <th>Amount</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td id= "date"></td>
-                                                            <td id= "time"></td>
-                                                            <td></td>
-                                                            <td id="brand"></td>
-                                                            <td id="amount"></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <section id="memee">
+    <%=render "dashboard/sidebar" %>
+    <div id="trans" class="main_side">
+      <div id="top_header">
+        <div class="left_blk">
+          <h1>Transactions</h1>
+          <div class="img">
+            <img src="<%= asset_path("icon-trans.svg")%>" alt="">
+          </div>
         </div>
-    </section>
+        <div class="side">
+          <%=render "dashboard/notification_panel" %>
+        </div>
+      </div>
+      <div class="inner_blk">
+        <div class="top gap-3">
+          <%= form_tag(transactions_path, method: "get") do %>
+            <div class="d-flex gap-3">
+              <div class="trans_blk">
+                <span>From: </span>
+                <input type="date" name="start_date"></input>
+              </div>
+              <div class="trans_blk">
+                <span>To: </span>
+                <input type="date" name="end_date"></input>
+              </div>
+            </div>
+            <%= submit_tag "", hidden: true ,:name => nil %>
+          <% end %>
+          <% search_value = "" %>
+          <%= form_tag(transactions_path, method: "get") do %>
+            <div class="form_blk input mb-0">
+              <img src= "<%= asset_path("icon-search.svg")%>">
+              <%= text_field_tag :search, params[:search], class: "input" ,placeholder: "search", value: "" %>
+              <% search_value = params[:search] %>
+              <%= submit_tag "" , type: :image ,:name => nil %>
+            </div>
+          <% end %>
+          <a href= "/transaction-export.csv?search=<%= search_value %>" class="ms-auto d-block"><button type="button" class="site_btn round csv_btn">
+            <img src="<%= asset_path("icon-csv.svg")%>" alt="">
+            Export CSV
+          </button></a>
+        </div>
+        <div id="table_blk">
+          <table>
+            <thead>
+            <tr>
+              <th style="width: 30rem">User</th>
+              <th style="width: 10rem">Cost</th>
+              <th style="width: 25rem">Payment Method</th>
+              <th style="width: 12.5rem">Date Processed</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @transactions_list.each do |transaction_details| %>
+              <tr>
+                <td>
+                  <div class="user_detail">
+                    <div class="img pop_btn" data-popup="trans_profile"  onclick="open_transaction_details('<%= transaction_details.user.username %>', '<%= transaction_details.user.email %>', '<%= transaction_details.user_id %>')">
+                      <img src="<%= transaction_details.user.profile_image.attached? ? transaction_details.user.profile_image.blob.url : asset_path("user.png")%>" alt="">
+                    </div>
+                    <div class="txt">
+                      <h6><%= transaction_details.user.username %></h6>
+                      <p><%= transaction_details.user.email %></p>
+                    </div>
+                  </div>
+                </td>
+                <td><%= transaction_details.amount %></td>
+                <td><%= transaction_details.brand %></td>
+                <td><%= transaction_details.created_at.strftime("%F") %></td>
+                <td></td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="paginate_sec">
+          <p><%= page_entries_info @transactions_list %></p>
+          <ul class="digg_pagination mt-2">
+            <li class="disabled"> <%= will_paginate(@transactions_list ,:previous_label => "&laquo;", :next_label =>"&raquo;", :outer_window => 1,:inner_window => 0) %></li>
+          </ul>
+        </div>
+      </div>
+      <div class="popup" data-popup="trans_profile" id="trans_modal">
+        <div class="table_dv">
+          <div class="table_cell">
+            <div class="contain">
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <div class="_inner">
+                    <button type="button" class="x_btn" onclick= "close_transaction_details()"></button>
+                    <div class="top_blk">
+                      <h4>Profile Transactions</h4>
+                      <div>
+                        <img src="" alt="" id="image" style="width: 100px;height: 100px;-webkit-border-radius: 100px;-webkit-background-clip: padding-box;-moz-border-radius: 100px;-moz-background-clip: padding;border-radius: 100px;background-clip: padding-box;margin: 7px 0 0 5px;float: left;">
+                      </div>
+                      <h5 id= "trans_name_user"></h5>
+                      <p id= "trans_email_user"></p>
+                    </div>
+                    <div class="outter">
+                      <h5>Transactions</h5>
+                      <div class="table_blk" id="table">
+                        <table>
+                          <thead>
+                          <tr>
+                            <th style="width: 13rem">Date</th>
+                            <th style="width: 10rem">Time</th>
+                            <th style="width: 25rem"></th>
+                            <th style="width: 20rem;">Transaction</th>
+                            <th>Amount</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr>
+                            <td id= "date"></td>
+                            <td id= "time"></td>
+                            <td></td>
+                            <td id="brand"></td>
+                            <td id="amount"></td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <script>

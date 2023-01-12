@@ -4,6 +4,7 @@ class DashboardController < ApplicationController
 
   include Rails.application.routes.url_helpers
 
+  # include DailyCoinHelper
   def dashboard
     @user = User.order("id DESC").limit(4)
   end
@@ -41,6 +42,10 @@ class DashboardController < ApplicationController
   end
 
   def notifications
+    if params[:id].present?
+      @notify = Notification.find(params[:id])
+      @notify.update(status: 1)
+    end
   end
 
   def admin_profile
@@ -148,7 +153,11 @@ class DashboardController < ApplicationController
   end
 
   def user_export
-    @all_user = User.all
+    if params[:search]
+      @all_user = User.search(params[:search]).order("created_at DESC")
+    else
+      @all_user = User.all
+    end
     respond_to do |format|
       format.csv do
         response.headers['Content-Type'] = 'text/csv'
@@ -159,12 +168,49 @@ class DashboardController < ApplicationController
 
   def show_user_profile
     @user = User.all
+    @badge_title, @badge_images = [], []
     @specific_user = User.find(params[:id])
     @image = @specific_user.profile_image.attached? ? url_for(@specific_user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
+    @badges = @specific_user.user_badges
+    @badges.each do |user_badge|
+      @badge_title << user_badge.badge.title
+      if user_badge.badge.badge_image.attached?
+        @badge_images << url_for(user_badge.badge.badge_image)
+      else
+        @badge_images << ActionController::Base.helpers.asset_path('user.png')
+      end
+    end
     respond_to do |format|
-      format.json { render json: { user: @user, image: @image } }
+      format.json {render json: {user: @user , image: @image, title: @badge_title, badge_images: @badge_images}}
     end
   end
+
+  def user_disable
+    if params[:id].present?
+      @user = User.find(params[:id])
+      if @user.status == true
+        @user.update(status: false, disabled: true)
+      else
+        @user.update(disabled: true)
+      end
+    end
+  end
+
+  def set_coins
+    @daily_coins = DailyCoin.first_or_initialize(daily_coins_reward: "50")
+    @daily_coins.save
+    if params[:daily_coins_reward].present?
+      @daily_coins.update(daily_coins_reward: params[:daily_coins_reward])
+      redirect_to dashboard_path
+    end
+  end
+
+  # def user_enable
+  #   if params[:id].present?
+  #     @user = User.find(params[:id])
+  #     @user.update(disabled: false)
+  #   end
+  # end
 
   def gift_rewards
     @rewards = GiftReward.all.paginate(page: params[:page], per_page: 10)
@@ -177,11 +223,11 @@ class DashboardController < ApplicationController
 
   def transactions
     if params[:search]
-      @transactions_list = Transaction.search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
-    elsif params[:start_date].present? && params[:end_date].present?
-      @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
-    elsif params[:start_date].present? && params[:end_date] = ""
-      @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
+      @transactions_list = Transaction.search(params[:search]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
+    elsif params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
+      @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
+    elsif params[:start_date].present? && params[:end_date] = ""  && params[:start_date] != "false"
+      @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
     elsif params[:start_date] = "" && params[:end_date].present?
       @transactions_list = Transaction.end_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     else
@@ -190,7 +236,11 @@ class DashboardController < ApplicationController
   end
 
   def transaction_export
-    @transactions_list = Transaction.all
+    if params[:search]
+      @transactions_list = Transaction.search(params[:search]).order("created_at DESC")
+    else
+      @transactions_list = Transaction.order("id DESC")
+    end
     respond_to do |format|
       format.csv do
         response.headers['Content-Type'] = 'text/csv'

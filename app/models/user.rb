@@ -42,7 +42,7 @@ class User < ApplicationRecord
   end
 
   def self.search(search)
-    where("username LIKE ?", "%#{search}%")
+    where("lower(username) LIKE ?", "%#{search.downcase}%")
   end
 
   def self.to_csv

@@ -34,6 +34,8 @@ Rails.application.routes.draw do
   get '/user-export', to: 'dashboard#user_export'
   get '/transaction-export', to: 'dashboard#transaction_export'
   get '/show_user_profile', to: "dashboard#show_user_profile"
+  get '/user_disable', to: "dashboard#user_disable"
+  # get '/user_enable', to: "dashboard#user_enable"
   get '/specific_user_transactions', to: "dashboard#specific_user_transactions"
   get '/inventory', to: "dashboard#gift_rewards", as: "card_inventory"
   post '/inventory', to: "amazon_card#create_amazon_card"
@@ -74,6 +76,7 @@ Rails.application.routes.draw do
   get '/tournament-winner-list', to: "dashboard#tournament_winner_list"
   get '/winner-reward', to: "dashboard#winner_reward"
   get '/post-images', to: "dashboard#post_images"
+  get '/set_coins', to: "dashboard#set_coins"
 
   namespace :api do
     namespace :v1 do
@@ -112,7 +115,6 @@ Rails.application.routes.draw do
           get :tags
           post :other_posts
           post :user_search_tag
-          post :share_post
 
         end
       end
@@ -149,7 +151,6 @@ Rails.application.routes.draw do
           get :show_tournament_prices
           get :tournament_winner
           get :judge
-          get :top_10_positions
         end
       end
       resources :stories do
@@ -176,18 +177,6 @@ Rails.application.routes.draw do
           post :support_chat
           get :fetch_all_users
           get :all_support_chats
-        end
-      end
-      resources :badges do
-        collection do
-          get :current_user_badges
-          get :rarity_1_badges
-          get :rarity_2_badges
-          get :rarity_3_badges
-          get :current_user_locked_badges
-          get :badge_rarity_search
-          post :all_badges
-          put :update_badge
         end
       end
     end

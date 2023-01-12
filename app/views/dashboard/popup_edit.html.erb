@@ -1,77 +1,62 @@
 <main>
-    <section id="memee">
-        <%=render "dashboard/sidebar" %>
-        <div id="guide" class="main_side">
-            <div id="top_header">
-                <div class="left_blk">
-                    <h1>Guidelines</h1>
-                    <div class="img">
-                        <img src="<%= asset_path("icon-guide.svg")%>" alt="">
-                    </div>
-                </div>
-                <div class="side">
-                    <button type="button" class="btn bell_btn">
-                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
-                        <span>2</span>
-                    </button>
-                </div>
-            </div>
-            <div class="inner_blk">
-                <div class="wrapper ex">
-                    <nav class="nav_list">
-                        <ul class="list">
-                            <li><a href="/terms">Terms & Conditions</a></li>
-                            <li><a href="/privacy">Privacy Policy</a></li>
-                            <li><a href="/faqs">FAQs</a></li>
-                            <li class="active"><a href="/pop-ups">Pop Ups</a></li>
-                        </ul>
-                    </nav>
-                    <div class="content_blk edit">
-                        <%= form_with(model: @popups, local: true) do |form| %>
-                            <div class="row mb-5">
-                                <div class="col-9">
-                                </div>
-                                <div class="col-3">
-                                    <div class="btn_blk edit">
-                                        <%= form.submit "Add", class: "site_btn prime_btn round" %>
-                                    </div>
-                                </div>
-                            </div>
-                            <form action="">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <h6 class="mb-4">Pop Ups Title</h6>
-                                        <div class="form_blk">
-                                            <%= form.text_field :title , class: "input", placeholder: "Enter Title Here" %>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <h6 class="mb-4">Description</h6>
-                                        <div class="form_blk">
-                                            <%= form.text_area :description, cols:"30", rows:"20", class: "input", placeholder: "Start typing here...." %>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        <% end %>
-                    </div>
-                    <div class="history">
-                        <h5>History</h5>
-                        <ul class="htry_list">
-                            <li>
-                                <p>Term &amp; Conditions - Updated!</p>
-                                <p class="time">09/12/2021</p>
-                                <hr>
-                            </li>
-                            <li>
-                                <p>Term &amp; Conditions - Updated!</p>
-                                <p class="time">09/12/2021</p>
-                                <hr>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+  <section id="memee">
+    <%=render "dashboard/sidebar" %>
+    <div id="guide" class="main_side">
+      <div id="top_header">
+        <div class="left_blk">
+          <h1>Guidelines</h1>
+          <div class="img">
+            <img src="<%= asset_path("icon-guide.svg")%>" alt="">
+          </div>
         </div>
-    </section>
+        <div class="side">
+          <%=render "dashboard/notification_panel" %>
+        </div>
+      </div>
+      <div class="inner_blk">
+        <div class="wrapper ex">
+          <nav class="nav_list">
+            <ul class="list">
+              <li><a href="/terms">Terms & Conditions</a></li>
+              <li><a href="/privacy">Privacy Policy</a></li>
+              <li><a href="/faqs">FAQs</a></li>
+              <li class="active"><a href="/pop-ups">Pop Ups</a></li>
+            </ul>
+          </nav>
+          <div class="content_blk edit">
+            <%= form_with(model: @popups, local: true) do |form| %>
+              <div class="row mb-5">
+                <div class="col-9">
+                </div>
+                <div class="col-3">
+                  <div class="btn_blk edit">
+                    <%= form.submit "Add", class: "site_btn prime_btn round" %>
+                  </div>
+                </div>
+              </div>
+              <form action="">
+                <div class="row">
+                  <div class="col-12">
+                    <h6 class="mb-4">Pop Ups Title</h6>
+                    <div class="form_blk">
+                      <%= form.text_field :title , class: "input", placeholder: "Enter Title Here" %>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <h6 class="mb-4">Description</h6>
+                    <div class="form_blk">
+                      <%= form.text_area :description, cols:"30", rows:"20", class: "input", placeholder: "Start typing here...." %>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            <% end %>
+          </div>
+          <div class="history">
+            <h5>History</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
