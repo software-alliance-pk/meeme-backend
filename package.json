@@ -1,8 +1,13 @@
 {
   "dependencies": {
+    "@rails/actioncable": "^7.0.4",
     "bootstrap": "^5.2.3",
+    "bootstrap-sass": "^3.3.7",
+    "chart.js": "^4.1.1",
+    "chartkick": "^4.2.0",
+    "controllers": "^0.0.2",
     "jquery": "^3.6.3",
     "popper.js": "^1.16.1",
-    "bootstrap-sass": "^3.3.7"
+    "type": "commonjs"
   }
 }

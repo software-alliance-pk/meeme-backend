@@ -1,91 +1,88 @@
 <main>
-    <section id="memee">
-        <%=render "dashboard/sidebar" %>
-        <div id="tour_banner" class="main_side">
-            <div id="top_header">
-                <div class="left_blk">
-                    <h1>Tournament Banner</h1>
-                    <div class="img">
-                        <img src="<%= asset_path("icon-header.svg")%>" alt="">
-                    </div>
-                </div>
-                <div class="side">
-                    <button type="button" class="btn bell_btn">
-                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
-                        <span>2</span>
-                    </button>
-                </div>
-            </div>
-            <div class="inside">
-                <div class="header">
-                    <h4>Banner Lists</h4>
-                    <div class="btn_blk">
-                        <button class="site_btn pop_btn" data-popup="add_banner" onclick = "open_banner()" >Add Banner</button>
-                    </div>
-                </div>
-                <div class="row">
-                    <% @tournament_banner.each do |tournament_banner| %>
-                        <div class="col-3">
-                            <div class="item">
-                                <div class="body">
-                                <%= link_to "Delete", controller: 'dashboard', action: 'tournament_banner_destroy', id: tournament_banner.id, method: :delete %>
-                                    <div class="fig">
-                                        <img src="<%= tournament_banner.tournament_banner_photo.attached? ? tournament_banner.tournament_banner_photo.blob.url : asset_path("item-pic.svg")%>" alt="">
-                                    </div>
-                                    <div class="content">
-                                        <span class="f-26"><%=tournament_banner.title.present? ? tournament_banner.title: "No title"%></span>
-                                        <span class="f-30"><%=tournament_banner.start_date.present? ? tournament_banner.start_date.strftime("%b"): "No start date added"%></span>
-                                    </div>
-                                </div>
-                                <div class="bottom">
-                                    <p><%=tournament_banner.start_date.present? ? tournament_banner.start_date.strftime("%b,%Y"): "No date added" %></p>
-                                </div>
-                            </div>
-                        </div>
-                    <%end %>
-                </div>
-            </div>
-            <div class="popup" data-popup="add_banner" id="add_banner">
-                <div class="table_dv">
-                    <div class="table_cell">
-                        <div class="contain">
-                            <div class="_inner">
-                                <button type="button" class="x_btn" onclick= "close_banner()"></button>
-                                <h4>Add Banner</h4>
-                                <div class="row">
-                                    <div class="col-9">
-                                        <div class="left_blk">
-                                            <%= form_with(model: @banner, local: true) do |form| %>
-                                                <h6>Banner Title</h6>
-                                                <div class="form_blk">
-                                                    <%= form.text_field :title, class: "input", placeholder: "Enter title" %>
-                                                </div>
-                                                <h6>Date Start</h6>
-                                                <div class="form_blk">
-                                                    <%= form.date_field :start_date,  class: "input"%>
-                                                </div>
-                                                <h6>Date End</h6>
-                                                <div class="form_blk">
-                                                    <%= form.date_field :end_date,  class: "input" %>
-                                                </div>
-                                                <div class="right_blk">
-                                                    <h6>Add image</h6>
-                                                    <%= form.file_field :tournament_banner_photo%>
-                                                </div>
-                                                <div class="btn_blk">
-                                                    <%= form.submit "Save Banner", class: "site_btn" %>
-                                                </div>
-                                            <% end %>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <section id="memee">
+    <%=render "dashboard/sidebar" %>
+    <div id="tour_banner" class="main_side">
+      <div id="top_header">
+        <div class="left_blk">
+          <h1>Tournament Banner</h1>
+          <div class="img">
+            <img src="<%= asset_path("icon-header.svg")%>" alt="">
+          </div>
         </div>
-    </section>
+        <div class="side">
+          <%=render "dashboard/notification_panel" %>
+        </div>
+      </div>
+      <div class="inside">
+        <div class="header">
+          <h4>Banner Lists</h4>
+          <div class="btn_blk">
+            <button class="site_btn pop_btn" data-popup="add_banner" onclick = "open_banner()" >Add Banner</button>
+          </div>
+        </div>
+        <div class="row">
+          <% @tournament_banner.each do |tournament_banner| %>
+            <div class="col-3">
+              <div class="item">
+                <div class="body">
+                  <%= link_to "Delete", controller: 'dashboard', action: 'tournament_banner_destroy', id: tournament_banner.id, method: :delete %>
+                  <div class="fig">
+                    <img src="<%= tournament_banner.tournament_banner_photo.attached? ? tournament_banner.tournament_banner_photo.blob.url : asset_path("item-pic.svg")%>" alt="">
+                  </div>
+                  <div class="content">
+                    <span class="f-26"><%=tournament_banner.title.present? ? tournament_banner.title: "No title"%></span>
+                    <span class="f-30"><%=tournament_banner.start_date.present? ? tournament_banner.start_date.strftime("%b"): "No start date added"%></span>
+                  </div>
+                </div>
+                <div class="bottom">
+                  <p><%=tournament_banner.start_date.present? ? tournament_banner.start_date.strftime("%b,%Y"): "No date added" %></p>
+                </div>
+              </div>
+            </div>
+          <%end %>
+        </div>
+      </div>
+      <div class="popup" data-popup="add_banner" id="add_banner">
+        <div class="table_dv">
+          <div class="table_cell">
+            <div class="contain">
+              <div class="_inner">
+                <button type="button" class="x_btn" onclick= "close_banner()"></button>
+                <h4>Add Banner</h4>
+                <div class="row">
+                  <div class="col-9">
+                    <div class="left_blk">
+                      <%= form_with(model: @banner, local: true) do |form| %>
+                        <h6>Banner Title</h6>
+                        <div class="form_blk">
+                          <%= form.text_field :title, class: "input", placeholder: "Enter title" %>
+                        </div>
+                        <h6>Date Start</h6>
+                        <div class="form_blk">
+                          <%= form.date_field :start_date,  class: "input"%>
+                        </div>
+                        <h6>Date End</h6>
+                        <div class="form_blk">
+                          <%= form.date_field :end_date,  class: "input" %>
+                        </div>
+                        <div class="right_blk">
+                          <h6>Add image</h6>
+                          <%= form.file_field :tournament_banner_photo%>
+                        </div>
+                        <div class="btn_blk">
+                          <%= form.submit "Save Banner", class: "site_btn" %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <script>

@@ -1,72 +1,70 @@
 <main>
-    <section id="memee">
-        <%=render "dashboard/sidebar" %>
-        <div id="guide" class="main_side">
-            <div id="top_header">
-                <div class="left_blk">
-                    <h1>Guidelines</h1>
-                    <div class="img">
-                        <img src="<%= asset_path("icon-guide.svg")%>" alt="">
-                    </div>
-                </div>
-                <div class="side">
-                    <button type="button" class="btn bell_btn">
-                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
-                        <span>2</span>
-                    </button>
-                </div>
-            </div>
-            <div class="inner_blk">
-                <div class="wrapper ex">
-                    <nav class="nav_list">
-                        <ul class="list">
-                            <li><a href="/terms">Terms & Conditions</a></li>
-                            <li><a href="/privacy">Privacy Policy</a></li>
-                            <li><a href="/faqs">FAQs</a></li>
-                            <li class="active"><a href="/pop-ups">Pop Ups</a></li>
-                        </ul>
-                    </nav>
-                    <div class="content_blk">
-                        <div class="btn_blk justify-content-end mb-5">
-                            <a href="/pop-ups-edit" class="site_btn prime_btn round">Add More</a>
-                        </div>
-                        <ul class="faq_list">
-                            <li>
-                                <% @popups.each do |popup| %>
-                                    <div class="faq_blk">
-                                        <div class="top">
-                                            <h6 class="mb-0"><%= popup.title %></h6>
-                                            <div class="btn_blk">
-                                                <%= link_to image_tag("icon-edit.svg"), popup_update_path(popup) %>
-                                                <%= link_to image_tag("icon-delete.svg"), controller: 'dashboard', action: 'popup_destroy', id: popup.id, method: :delete %>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <%= popup.description %>
-                                        </div>
-                                    </div>
-                                <% end %>
-                            </li>
-                        </ul>
-
-                    </div>
-                    <div class="history">
-                        <h5>History</h5>
-                        <ul class="htry_list">
-                            <li>
-                                <p>Term &amp; Conditions - Updated!</p>
-                                <p class="time">09/12/2021</p>
-                                <hr>
-                            </li>
-                            <li>
-                                <p>Term &amp; Conditions - Updated!</p>
-                                <p class="time">09/12/2021</p>
-                                <hr>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+  <section id="memee">
+    <%=render "dashboard/sidebar" %>
+    <div id="guide" class="main_side">
+      <div id="top_header">
+        <div class="left_blk">
+          <h1>Guidelines</h1>
+          <div class="img">
+            <img src="<%= asset_path("icon-guide.svg")%>" alt="">
+          </div>
         </div>
-    </section>
+        <div class="side">
+          <%=render "dashboard/notification_panel" %>
+        </div>
+      </div>
+      <div class="inner_blk">
+        <div class="wrapper ex">
+          <nav class="nav_list">
+            <ul class="list">
+              <li><a href="/terms">Terms & Conditions</a></li>
+              <li><a href="/privacy">Privacy Policy</a></li>
+              <li><a href="/faqs">FAQs</a></li>
+              <li class="active"><a href="/pop-ups">Pop Ups</a></li>
+            </ul>
+          </nav>
+          <div class="content_blk">
+            <div class="btn_blk justify-content-end mb-5">
+              <a href="/pop-ups-edit" class="site_btn prime_btn round">Add More</a>
+            </div>
+            <ul class="faq_list">
+              <li>
+                <% @popups.each do |popup| %>
+                  <div class="faq_blk">
+                    <div class="top">
+                      <h6 class="mb-0"><%= popup.title %></h6>
+                      <div class="btn_blk">
+                        <%= link_to image_tag("icon-edit.svg"), popup_update_path(popup) %>
+                        <%= link_to image_tag("icon-delete.svg"), controller: 'dashboard', action: 'popup_destroy', id: popup.id, method: :delete %>
+                      </div>
+                    </div>
+                    <div class="txt">
+                      <%= popup.description %>
+                    </div>
+                  </div>
+                <% end %>
+              </li>
+            </ul>
+
+          </div>
+          <div class="history">
+            <h5>History</h5>
+            <ul class="htry_list">
+              <% Popup.all.reverse.each do |pop| %>
+                <% if pop.created_at == pop.updated_at %>
+                  <p>Faq - Created <%= pop.title %>!</p>
+                  <p class="time"><%= pop.created_at.strftime("%F") %></p>
+                  <hr>
+                <% else %>
+                  <p>Faq - Updated <%= pop.title %>!</p>
+                  <p class="time"><%= pop.updated_at.strftime("%F") %></p>
+                  <hr>
+                <% end %>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>

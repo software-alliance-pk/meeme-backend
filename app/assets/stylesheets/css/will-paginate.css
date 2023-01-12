@@ -1,0 +1,71 @@
+.pagination {
+    background: transparent;
+    cursor: default;
+    height: 22px;
+}
+.pagination a, .pagination span,.pagination em {
+    padding: 0.2em 0.5em;
+    float: left;
+    margin-right: 1px;
+    width: 4.8rem;
+    min-width: 4.8rem;
+    height: 4.8rem;
+    border-radius: 1rem;
+    background: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+/*.disabled {*/
+/*    display: none;*/
+/*}*/
+.pagination .current {
+    font-style: normal;
+    color: white;
+    border: 0;
+    background: #5B5A5E !important;
+    font-size: 2.4rem;
+    line-height: 2rem;
+    width: 4.8rem;
+    min-width: 4.8rem;
+    height: 4.8rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    margin-left: 1rem;
+}
+.pagination a {
+    text-decoration: none;
+    color: #fff;
+    border:0;
+    font-weight: 400;
+    font-size: 2rem;
+    line-height: 2rem;
+    width: 4.8rem;
+    min-width: 4.8rem;
+    height: 4.8rem;
+    border-radius: 1rem;
+    background: #000000;
+    margin-left: 1rem;
+}
+.pagination .previous_page,.pagination .next_page{
+    background: transparent !important;
+}
+/*.pagination a:hover, :focus{*/
+/*    color: #000033;*/
+/*    border-color: #000033;*/
+/*}*/
+/*.page_info {*/
+/*    background: #2e6ab1;*/
+/*    color: white;*/
+/*    padding: 0.4em 0.6em;*/
+/*    width: 22em;*/
+/*    margin-bottom: 0.3em;*/
+/*    text-align: center;*/
+
+/*}*/
+/*.page_info b {*/
+/*    color: #000033;*/
+/*    background: #2e6ab1;*/
+/*    padding: 0.1em 0.25em;*/
+/*}*/

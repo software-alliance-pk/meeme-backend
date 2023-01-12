@@ -6,21 +6,26 @@ class Api::V1::AuthenticationController < Api::V1::ApiController
     @user = User.find_by_email(params[:email])
 
     return render json: { message: "User not found" }, status: :not_found unless @user
-    if @user&.authenticate(params[:password])
-      MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
-      # Notification.create(title: "Sign In Memee",body: "#{@user.username} have successfully signed in to the MEMEE App", user_id: @user.id)
-      # Notification.create_push_notification(@notification)
-      token = JsonWebTokenService.encode(user_id: @user.id)
-      time = Time.now + 24.hours.to_i
-      @user.verification_tokens.create(token: token)
-      render json: { token: token,
-                     expiry: time.strftime("%m-%d-%Y %H:%M"),
-                     user: @user,
-                     profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
-                     message: "Successfully Logged In" },
-             status: :ok
+    if @user.disabled == false
+      if @user&.authenticate(params[:password])
+        MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
+        # Notification.create(title: "Sign In Memee", body: "#{@user.username} have successfully signed in to the MEMEE App", user_id: @user.id)
+        # Notification.create_push_notification(@notification)
+        token = JsonWebTokenService.encode(user_id: @user.id)
+        time = Time.now + 24.hours.to_i
+        @user.verification_tokens.create(token: token)
+        @user.update(status: true)
+        render json: { token: token,
+                       expiry: time.strftime("%m-%d-%Y %H:%M"),
+                       user: @user,
+                       profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
+                       message: "Successfully Logged In" },
+               status: :ok
+      else
+        render json: { message: 'Invalid Password' }, status: :unauthorized
+      end
     else
-      render json: { message: 'Invalid Password' }, status: :unauthorized
+      render json: { message: 'Your account has been disabled' }, status: :unauthorized
     end
   end
 

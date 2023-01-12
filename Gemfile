@@ -85,6 +85,8 @@ gem 'jquery-rails'
 gem 'sidekiq', '~> 6.4.1'
 gem 'redis', '~> 4.2.0'
 gem 'whenever', require: false
+gem 'chartkick'
+gem 'groupdate'
 gem 'delayed_job_active_record'
 gem "delayed_job_web"
 gem 'daemons'

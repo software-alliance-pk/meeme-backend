@@ -1,99 +1,96 @@
 <main>
-    <section id="memee">
-        <%=render "dashboard/sidebar" %>
-        <div id="admin_profile" class="main_side">
-            <div id="top_header">
-                <div class="left_blk">
-                    <h1>Admin Profile</h1>
-                    <div class="img">
-                        <img src="<%= asset_path("icon-setting.svg")%>" alt="">
-                    </div>
-                </div>
-                <div class="side">
-                    <button type="button" class="btn bell_btn">
-                        <img src="<%= asset_path("icon-bell.svg")%>" alt="">
-                        <span>2</span>
-                    </button>
-                </div>
-            </div>
-            <div class="inner_blk">
-                <%= form_with(local: true) do |f| %>
-                    <div class="top">
-                        <div class="profile">
-                            <img src="<%= current_admin_user.admin_profile_image.attached? ? current_admin_user.admin_profile_image.blob.url : asset_path("admin-profile.png")%>" alt="">
-                        </div>
-                        <div class="btn_blk">
-                            <%= f.file_field :admin_profile_image, class: "form-control" %>
-                        </div>
-                    </div>
-                    <div class="wrapper">
-                        <div class="row">
-                            <div class="col-6">
-                                <h6 class="form_label">Your Full Name</h6>
-                                <div class="form_blk">
-                                    <%= f.text_field :full_name, class: "input", value: current_admin_user.full_name %>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <h6 class="form_label">Email</h6>
-                                <div class="form_blk">
-                                    <%= f.email_field :email, disabled: true ,class: "input",value: current_admin_user.email %>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <h6 class="form_label">Username</h6>
-                                <div class="form_blk">
-                                    <%= f.text_field :admin_user_name, class: "input", value: current_admin_user.admin_user_name %>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <h6 class="form_label">Old Password</h6>
-                                <div class="form_blk">
-                                    <%= f.password_field :password, class: "input", placeholder: "Old Password" %>
-                                </div>
-                            </div>
-                            <h5 class="pass_title">New Password</h5>
-                            <div class="col-6">
-                                <h6 class="form_label">New Password</h6>
-                                <div class="form_blk">
-                                    <%= f.password_field :password, class: "input", placeholder: "New Password" %>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <h6 class="form_label">Confirm New Password</h6>
-                                <div class="form_blk">
-                                    <%= f.password_field :password_confirmation, class: "input", placeholder: "Confirm New Password" %>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="btn_blk">
-                            <%= f.submit "Update Profile",
-                                class: "site_btn prime_btn round pop_btn"%>
-                        </div>
-                    </div>
-                <%end%>
-            </div>
+  <section id="memee">
+    <%=render "dashboard/sidebar" %>
+    <div id="admin_profile" class="main_side">
+      <div id="top_header">
+        <div class="left_blk">
+          <h1>Admin Profile</h1>
+          <div class="img">
+            <img src="<%= asset_path("icon-setting.svg")%>" alt="">
+          </div>
         </div>
-        <div class="popup" data-popup="profile_update" id="logon_modal">
-            <div class="table_dv">
-                <div class="table_cell">
-                    <div class="contain">
-                        <div class="row justify-content-center">
-                            <div class="col-md-7">
-                                <div class="_inner">
-                                    <button type="button" class="x_btn" onclick="close_dialog()"></button>
-                                    <div class="success_img">
-                                        <img src="<%= asset_path("signup-confirm.svg")%>" alt="">
-                                    </div>
-                                    <p>Profile successfully updated!</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="side">
+          <%=render "dashboard/notification_panel" %>
         </div>
-    </section>
+      </div>
+      <div class="inner_blk">
+        <%= form_with(local: true) do |f| %>
+          <div class="top">
+            <div class="profile">
+              <img src="<%= current_admin_user.admin_profile_image.attached? ? current_admin_user.admin_profile_image.blob.url : asset_path("admin-profile.png")%>" alt="">
+            </div>
+            <div class="btn_blk">
+              <%= f.file_field :admin_profile_image, class: "form-control" %>
+            </div>
+          </div>
+          <div class="wrapper">
+            <div class="row">
+              <div class="col-6">
+                <h6 class="form_label">Your Full Name</h6>
+                <div class="form_blk">
+                  <%= f.text_field :full_name, class: "input", value: current_admin_user.full_name %>
+                </div>
+              </div>
+              <div class="col-6">
+                <h6 class="form_label">Email</h6>
+                <div class="form_blk">
+                  <%= f.email_field :email, disabled: true ,class: "input",value: current_admin_user.email %>
+                </div>
+              </div>
+              <div class="col-6">
+                <h6 class="form_label">Username</h6>
+                <div class="form_blk">
+                  <%= f.text_field :admin_user_name, class: "input", value: current_admin_user.admin_user_name %>
+                </div>
+              </div>
+              <div class="col-6">
+                <h6 class="form_label">Old Password</h6>
+                <div class="form_blk">
+                  <%= f.password_field :password, class: "input", placeholder: "Old Password" %>
+                </div>
+              </div>
+              <h5 class="pass_title">New Password</h5>
+              <div class="col-6">
+                <h6 class="form_label">New Password</h6>
+                <div class="form_blk">
+                  <%= f.password_field :password, class: "input", placeholder: "New Password" %>
+                </div>
+              </div>
+              <div class="col-6">
+                <h6 class="form_label">Confirm New Password</h6>
+                <div class="form_blk">
+                  <%= f.password_field :password_confirmation, class: "input", placeholder: "Confirm New Password" %>
+                </div>
+              </div>
+            </div>
+            <div class="btn_blk">
+              <%= f.submit "Update Profile",
+                           class: "site_btn prime_btn round pop_btn", onclick: "open_dialog()"%>
+            </div>
+          </div>
+        <%end%>
+      </div>
+    </div>
+    <div class="popup" data-popup="profile_update" id="logon_modal">
+      <div class="table_dv">
+        <div class="table_cell">
+          <div class="contain">
+            <div class="row justify-content-center">
+              <div class="col-md-7">
+                <div class="_inner">
+                  <button type="button" class="x_btn" onclick="close_dialog()"></button>
+                  <div class="success_img">
+                    <img src="<%= asset_path("signup-confirm.svg")%>" alt="">
+                  </div>
+                  <p>Profile successfully updated!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <script>
