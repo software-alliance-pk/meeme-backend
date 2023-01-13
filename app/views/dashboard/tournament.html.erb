@@ -9,17 +9,19 @@
             <img src="<%= asset_path("icon-header.svg")%>" alt="">
           </div>
         </div>
-        <div class="side">
+        <div class="d-flex align-items-center">
+          <a href="/tournament-banner" class="site_btn prime_btn round px me-3">
+            Add Banners
+          </a>
           <%=render "dashboard/notification_panel" %>
-          <a href="/tournament-banner"><button type="button" class="site_btn prime_btn round px">Add Banners</button></a>
         </div>
       </div>
       <div class="inner_blk">
         <div class="top">
           <div class="season_detail">
             <h4 class="mb-0">Tournament Season</h4>
-            <div class="dropdown btn btn-secondary ms-3 rounded-pill">
-              <%= select_tag  :tournament_title, options_for_select(TournamentBanner.all.reverse.pluck(:title, :id)), class: "btn btn-secondary" ,onclick: 'select($(this).val())' %>
+            <div class="form_blk">
+              <%= select_tag  :tournament_title, options_for_select(TournamentBanner.all.reverse.pluck(:title, :id)), class: "input" ,onclick: 'select($(this).val())' %>
             </div>
             <p class="ms-3"> Participants: <span id = "joined"></span></p>
           </div>
@@ -203,12 +205,14 @@
                 var image = response.image
                 table[0].innerHTML = ""
                 var i = 0;
-                username.forEach(function(name){
-                    table.append("<tr><td></td><td>"+name+"</td><td>"+email[i]+"</td><td>"+likes[i]+"</td><td>"+dislikes[i]+"</td><td>"+created[i]+"</td><td>"+participated[i]+"</td><td></td><td>"+status+"</td><td></td></tr>");
-                    add_ranks(i)
-                    add_image(image[i], i)
-                    i++;
-                })
+                if (username !== undefined){
+                    username.forEach(function (name) {
+                        table.append("<tr><td></td><td>" + name + "</td><td>" + email[i] + "</td><td>" + likes[i] + "</td><td>" + dislikes[i] + "</td><td>" + created[i] + "</td><td>" + participated[i] + "</td><td></td><td>" + status + "</td><td></td></tr>");
+                        add_ranks(i)
+                        add_image(image[i], i)
+                        i++;
+                    })
+                }
                 document.getElementById("joined").innerHTML = (i) + " Joined"
                 $('#paginate_sec').empty()
                 $(document).ready (function () {

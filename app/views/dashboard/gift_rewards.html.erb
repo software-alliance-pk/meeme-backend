@@ -24,25 +24,25 @@
                 </ul>
                 <div class="tab-content">
                     <div id="reward" class="tab-pane fade active show">
-                        <div class="top_blk">
-                            <h6>REMAINING STOCKS</h6>
-                            <div class="blks">
-                                <div class="position_blk">
-                                    <p>1st</p>
-                                    <h3>5</h3>
-                                </div>
-                                <div class="position_blk">
-                                    <p>2nd</p>
-                                    <h3>10</h3>
-                                </div>
-                                <div class="position_blk">
-                                    <p>3rd</p>
-                                    <h3>10</h3>
-                                </div>
-                                <button type="button" class="site_btn prime_btn round pop_btn" data-popup="add_gift" onclick="add_card()">Add
-                                    Gift Cards</button>
-                            </div>
+                      <div class="top_blk">
+                        <h6>REMAINING STOCKS</h6>
+                        <div class="blks">
+                          <div class="position_blk">
+                            <p>1st</p>
+                            <h3><%= @rewards.where("rank = ?", "1st Place").count %></h3>
+                          </div>
+                          <div class="position_blk">
+                            <p>2nd</p>
+                            <h3><%= @rewards.where("rank = ?", "2nd Place").count %></h3>
+                          </div>
+                          <div class="position_blk">
+                            <p>3rd</p>
+                            <h3><%= @rewards.where("rank = ?", "3rd Place").count %></h3>
+                          </div>
+                          <button type="button" class="site_btn prime_btn round pop_btn" data-popup="add_gift" onclick="add_card()">Add
+                            Gift Cards</button>
                         </div>
+                      </div>
                         <div id="table_blk">
                             <table>
                                 <thead>
@@ -155,8 +155,8 @@
                                             <div class="row">
                                                 <div class="col-12">
                                                     <h6 class="form_label">Rank</h6>
-                                                    <div class = "btn btn-secondary w-100 h-75 rounded-pill">
-                                                        <select class="btn btn-secondary w-100 h-100 rounded-pill" name="rank">
+                                                    <div class = "form_blk">
+                                                        <select class="input" name="rank">
                                                             <li><option>1st Place</option></li>
                                                             <li><option>2nd Place</option></li>
                                                             <li><option>3rd Place</option></li>
@@ -174,8 +174,8 @@
                                                 </div>
                                                 <div class="col-12">
                                                     <h6 class="form_label">Amount</h6>
-                                                    <div class = "btn btn-secondary w-100 h-75 rounded-pill">
-                                                        <select class="btn btn-secondary w-100 h-100 rounded-pill" name="amount">
+                                                    <div class = "form_blk">
+                                                        <select class="input" name="amount">
                                                             <li><option>$100</option></li>
                                                             <li><option>$75</option></li>
                                                             <li><option>$50</option></li>

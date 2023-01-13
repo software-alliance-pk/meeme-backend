@@ -38,3 +38,102 @@
     object-fit: cover;
   }
 }
+
+#tormnt #top_header #notify_dropdown{
+  .dropdown-menu{
+    min-width: 43.5rem;
+  }
+}
+#add_gift form .form_blk select.input{
+  color: #9b9b9b!important;
+  background: unset;
+  background-color: #313032 !important;
+  background-image: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="100px" height="100px" fill="%23000" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;"><polygon points="80.7,20 50,50.7 19.3,20 4.7,34.7 50,80 95.3,34.7 "/></svg>');
+  background-repeat: no-repeat;
+  background-size: 1.4rem;
+  background-position: right 2rem center;
+  padding-right: 4rem !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+#support{
+  form{
+    .form_blk{
+      select.input{
+        background: unset;
+        background-color: #211c23 !important;
+        background-image: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="100px" height="100px" fill="%23000" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;"><polygon points="80.7,20 50,50.7 19.3,20 4.7,34.7 50,80 95.3,34.7 "/></svg>');
+        background-repeat: no-repeat;
+        background-size: 1.4rem;
+        background-position: right 2rem center;
+        padding-right: 4rem !important;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        height: 6rem;
+        color: var(--light);
+        font-weight: 400;
+        font-size: 1.6rem;
+        border: 0.1rem solid #454545;
+        border-radius: 2rem;      }
+    }
+  }
+}
+
+#tormnt .top .season_detail{
+  gap: 1rem;
+  .form_blk{
+    margin-bottom: 0;
+    select.input{
+      color: #d8d8d8;
+      height: 5rem;
+      padding: 1.3rem 2rem;
+      background: unset;
+      border-radius: 2.5rem;
+      font-size: 1.8rem;
+      line-height: 2.4rem;
+      box-shadow: none;
+      border: 0 !important;
+      background-color: #313032 !important;
+      background-image: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="100px" height="100px" fill="%23000" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;"><polygon points="80.7,20 50,50.7 19.3,20 4.7,34.7 50,80 95.3,34.7 "/></svg>');
+      background-repeat: no-repeat;
+      background-size: 1.4rem;
+      background-position: right 2rem center;
+      padding-right: 4rem !important;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+  }
+  p{
+    color: #636363;
+    font-size: 2rem;
+    line-height: 2.4rem;
+    span{
+      color: var(--light);
+    }
+  }
+}
+
+#notify {
+  .left_blk {
+    .top {
+      input[type="date"] {
+        font-size: 0;
+        display: block !important;
+        &::-webkit-calendar-picker-indicator {
+          color: rgba(0, 0, 0, 0);
+          opacity: 1;
+          display: block;
+          background: url("icon-caldr-white.svg") no-repeat;
+          width: 20px;
+          height: 20px;
+          margin-right: 0.5rem;
+          border-width: thin;
+        }
+      }
+    }
+  }
+}
