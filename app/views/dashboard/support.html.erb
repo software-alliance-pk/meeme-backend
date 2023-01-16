@@ -165,18 +165,28 @@
             img.src = user_image
             div.appendChild(img)
             var div1 = document.createElement("div")
-            if (images === ""){
+            if (images[0] === ""){
                 div1.setAttribute('class', 'txt')
                 var p = document.createElement("p")
                 p.setAttribute("class", "bottom")
                 div1.appendChild(p.appendChild(document.createTextNode(message.body)))
             }else{
                 div1.setAttribute('class', 'txt w-50 h-50')
-                var image_div = document.createElement("div")
-                var message_img = document.createElement("img");
-                message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
-                message_img.src = images
-                image_div.appendChild(message_img)
+                if(images.length === 1) {
+                    var image_div = document.createElement("div")
+                    var message_img = document.createElement("img");
+                    message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
+                    message_img.src = images
+                    image_div.appendChild(message_img)
+                }else{
+                    var image_div = document.createElement("div")
+                    images.forEach(function (image){
+                        var message_img = document.createElement("img");
+                        message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end mb-1')
+                        message_img.src = image
+                        image_div.appendChild(message_img)
+                    })
+                }
                 div1.appendChild(image_div)
                 var p_div = document.createElement("div")
                 var p = document.createElement("p")
@@ -195,17 +205,27 @@
             img.src = admin_image
             div.appendChild(img)
             var div1 = document.createElement("div")
-            if (images === ""){
+            if (images[0] === ""){
                 div1.setAttribute('class', 'txt')
                 var p = document.createElement("p")
                 div1.appendChild(p.appendChild(document.createTextNode(message.body)))
             }else{
                 div1.setAttribute('class', 'txt w-50 h-50')
-                var image_div = document.createElement("div")
-                var message_img = document.createElement("img");
-                message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
-                message_img.src = images
-                image_div.appendChild(message_img)
+                if(images.length === 1) {
+                    var image_div = document.createElement("div")
+                    var message_img = document.createElement("img");
+                    message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
+                    message_img.src = images
+                    image_div.appendChild(message_img)
+                }else{
+                    var image_div = document.createElement("div")
+                    images.forEach(function (image){
+                        var message_img = document.createElement("img");
+                        message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end mb-1')
+                        message_img.src = image
+                        image_div.appendChild(message_img)
+                    })
+                }
                 div1.appendChild(image_div)
                 var p_div = document.createElement("div")
                 var p = document.createElement("p")

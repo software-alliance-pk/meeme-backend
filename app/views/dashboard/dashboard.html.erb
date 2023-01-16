@@ -226,7 +226,7 @@
               <h4>Daily Coin Reward For Judging</h4>
               <form action="/set_coins">
                 <div class="btn_blk">
-                  <input class="site_btn bg_dark round" name="daily_coins_reward">
+                  <input class="site_btn bg_dark round" name="daily_coins_reward" value = <%= DailyCoin.first.daily_coins_reward if DailyCoin.first.present? %>>
                   </input>
                 </div>
                 <div class="btn_blk">
