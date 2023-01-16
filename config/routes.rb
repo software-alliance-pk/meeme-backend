@@ -26,7 +26,7 @@ Rails.application.routes.draw do
   get '/tournament', to: "dashboard#tournament"
   get '/tournament-users', to: "dashboard#tournament_users"
   get '/tournament-banner', to: "dashboard#tournament_banner"
-  post '/tournament-banner' , to: "dashboard#tournament_banner_create"
+  post '/tournament-banner', to: "dashboard#tournament_banner_create"
   delete 'tournament-banner/:id', to: 'dashboard#tournament_banner_destroy'
   get 'tournament-banner/:id', to: 'dashboard#tournament_banner_destroy'
   get '/winner-detail', to: "dashboard#winner_detail"
@@ -91,13 +91,14 @@ Rails.application.routes.draw do
           get :open_current_user
           get :open_some_other_user
           post :email_validate
-          post 'payments/add_user_to_stripe',to: "payments#add_user_to_stripe"
-          post 'payments/add_a_card',to: "payments#add_a_card"
-          get 'payments/fetch_all_card',to: "payments#fetch_all_card"
-          delete 'payments/delete_a_card',to: "payments#delete_a_card"
-          post 'payments/charge_a_customer',to: "payments#charge_a_customer"
-          get 'payments/show_transactions_history',to: "payments#show_transactions_history"
+          post 'payments/add_user_to_stripe', to: "payments#add_user_to_stripe"
+          post 'payments/add_a_card', to: "payments#add_a_card"
+          get 'payments/fetch_all_card', to: "payments#fetch_all_card"
+          delete 'payments/delete_a_card', to: "payments#delete_a_card"
+          post 'payments/charge_a_customer', to: "payments#charge_a_customer"
+          get 'payments/show_transactions_history', to: "payments#show_transactions_history"
           post :active_status_change
+          post :notification_settings
 
         end
         get '/*a', to: 'application#not_found'
@@ -115,6 +116,7 @@ Rails.application.routes.draw do
           get :tags
           post :other_posts
           post :user_search_tag
+          post :share_post
 
         end
       end
@@ -151,6 +153,8 @@ Rails.application.routes.draw do
           get :show_tournament_prices
           get :tournament_winner
           get :judge
+          get :top_10_positions
+
         end
       end
       resources :stories do
@@ -179,6 +183,19 @@ Rails.application.routes.draw do
           get :all_support_chats
         end
       end
+      resources :badges do
+        collection do
+          get :current_user_badges
+          get :rarity_1_badges
+          get :rarity_2_badges
+          get :rarity_3_badges
+          get :current_user_locked_badges
+          get :badge_rarity_search
+          post :all_badges
+          put :update_badge
+        end
+      end
+
     end
 
   end
