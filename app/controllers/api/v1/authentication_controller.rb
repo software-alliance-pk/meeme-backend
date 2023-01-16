@@ -12,11 +12,11 @@ class Api::V1::AuthenticationController < Api::V1::ApiController
         # Notification.create(title: "Sign In Memee", body: "#{@user.username} have successfully signed in to the MEMEE App", user_id: @user.id)
         # Notification.create_push_notification(@notification)
         token = JsonWebTokenService.encode(user_id: @user.id)
-        time = Time.now + 24.hours.to_i
+        # time = Time.now + 24.hours.to_i
         @user.verification_tokens.create(token: token)
         @user.update(status: true)
         render json: { token: token,
-                       expiry: time.strftime("%m-%d-%Y %H:%M"),
+                       # expiry: time.strftime("%m-%d-%Y %H:%M"),
                        user: @user,
                        profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
                        message: "Successfully Logged In" },

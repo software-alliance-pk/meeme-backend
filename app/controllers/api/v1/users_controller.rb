@@ -128,15 +128,15 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def notification_settings
     if params[:notification_alert] == ""
-      render json: { notification: @current_user.push_notifications }, status: :ok
+      render json: { notification: @current_user.notifications_enabled? }, status: :ok
     end
     if params[:notification_alert] == true.to_s
       @current_user.notifications_enabled!
-      render json: { message: "Notifications On", notification: @current_user.push_notifications }, status: :ok
+      render json: { message: "Notifications On", notification: @current_user.notifications_enabled? }, status: :ok
     end
     if params[:notification_alert] == false.to_s
       @current_user.notifications_disabled!
-      render json: { message: "Notifications Off", notification: @current_user.push_notifications }, status: :ok
+      render json: { message: "Notifications Off", notification: @current_user.notifications_enabled? }, status: :ok
     end
   end
 
