@@ -17,7 +17,7 @@
         <%= form_with(local: true) do |f| %>
           <div class="top">
             <div class="profile">
-              <img src="<%= current_admin_user.admin_profile_image.attached? ? current_admin_user.admin_profile_image.blob.url : asset_path("admin-profile.png")%>" alt="">
+              <img src="<%= current_admin_user.admin_profile_image.attached? ? current_admin_user.admin_profile_image.blob.url : asset_path("admin-profile.png")%>" alt="" style="object-fit: cover; height: 100%">
             </div>
             <div class="btn_blk">
               <%= f.file_field :admin_profile_image, class: "form-control" %>
