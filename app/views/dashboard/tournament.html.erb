@@ -16,7 +16,7 @@
           <%=render "dashboard/notification_panel" %>
         </div>
       </div>
-      <div class="inner_blk">
+      <div class="inner_blk tornment">
         <div class="top">
           <div class="season_detail">
             <h4 class="mb-0">Tournament Season</h4>
@@ -83,16 +83,9 @@
             </tbody>
           </table>
         </div>
-        <% if @posts.present? %>
-          <div class="paginate_sec">
-            <p><%= page_entries_info @posts %></p>
-            <ul class="pagination">
-              <li class="disabled"> <%= will_paginate(@posts, :previous_label => "&laquo;", :next_label => "&raquo;", :class => "h5 text-white", :outer_window => 1, :inner_window => 0) %></li>
-            </ul>
-          </div>
-        <% end %>
         <div id="paginate_sec" class="float-end pagination" style= "color: white;font-size: 20px; padding-right: 20px;font-weight: 600">
         </div>
+        <p id="entries"></p>
       </div>
     </div>
     <div class="popup" data-popup="trans_profile" id="tormnt_modal">
@@ -215,9 +208,11 @@
                 }
                 document.getElementById("joined").innerHTML = (i) + " Joined"
                 $('#paginate_sec').empty()
+                $("#paginate_sec").attr('style', "margin-top: 20px")
                 $(document).ready (function () {
                     var rowsShown = 10;
                     var rowsTotal = $('#tournament_table tbody tr').length;
+                    $("#entries").html("Displaying " + rowsShown + " from total " + rowsTotal)
                     var numPages = rowsTotal/rowsShown;
                     for (i = 0;i < numPages;i++) {
                         var pageNum = i + 1;
@@ -226,11 +221,14 @@
                     $('#tournament_table tbody tr').hide();
                     $('#tournament_table tbody tr').slice (0, rowsShown).show();
                     $('#paginate_sec a:first').addClass('active');
+                    $('#paginate_sec a:first').attr("style", "background-color: #5B5A5E !important")
                     $('#paginate_sec a').addClass('text-white');
                     $("#paginate_sec a").css("padding-right", "7px");
                     $('#paginate_sec a').bind('click', function() {
                         $('#paginate_sec a').removeClass('active');
+                        $('#paginate_sec a').attr("style", "background-color: black");
                         $(this).addClass('active');
+                        $(this).attr("style", "background-color: #5B5A5E !important")
                         var currPage = $(this).attr('rel');
                         var startItem = currPage * rowsShown;
                         var endItem = startItem + rowsShown;

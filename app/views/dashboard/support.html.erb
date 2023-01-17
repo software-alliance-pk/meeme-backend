@@ -35,8 +35,7 @@
           <div class="user_list">
             <%= first_conversation = '' %>
             <% if @conversation.present? %>
-              <% @conversation.each_with_index  do |conversation,index| %>
-                <% first_conversation = conversation if index == 0 %>
+              <% @conversation.each  do |conversation| %>
                 <div class="user_blk" id="clicked" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.username %>'); get_post('<%= conversation.sender.username %>')">
                   <div class="ico fill round">
                     <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png")%>" alt="">
@@ -44,7 +43,11 @@
                   <div class="inr">
                     <div class="title">
                       <h5><%= conversation.sender.username %></h5>
-                      <span class="time"><%= conversation.created_at.strftime("%F") %></span>
+                      <% if conversation.messages.first.present? %>
+                        <% time = Time.now.to_datetime %>
+                        <% created = conversation.messages.first.created_at.to_datetime %>
+                        <span class="time"><%= ((time - created) * 24 * 60).to_i %> mins ago</span>
+                      <% end %>
                     </div>
                     <div class="txt">
                       <p><%= conversation.messages.first.body if conversation.messages.first.present? %></p>
@@ -202,6 +205,7 @@
             var div = document.createElement("div")
             div.setAttribute('class', 'ico fill round')
             var img = document.createElement("img");
+            img.setAttribute("style", "border-radius: 50%; object-fit: cover")
             img.src = admin_image
             div.appendChild(img)
             var div1 = document.createElement("div")

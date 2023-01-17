@@ -1,5 +1,5 @@
 <div class="dropdown" id="notify_dropdown">
-  <% notification = Notification.where(title: "Sign In Memee") %>
+  <% notification = Notification.where(notification_type: 'admin_message') %>
   <button type="button" class="btn bell_btn" data-bs-toggle="dropdown">
     <img src="<%= asset_path("icon-bell.svg") %>" alt="">
     <% if notification.present? %>
@@ -22,16 +22,15 @@
                   <div class="img" style="height: 100%">
                     <img src="<%= user.profile_image.attached? ? user.profile_image.blob.url : asset_path("john-smith.jpg") %>" alt="">
                   </div>
-                  <span class="icon">
-                    <img src="<%= asset_path("icon-chat.svg") %>" alt="">
-                  </span>
                 </div>
                 <div class="txt">
                   <h6><%= user.username %></h6>
                   <p><%= notify.title %></p>
                 </div>
               </div>
-              <p class="time"><%= Time.now.hour - notify.created_at.hour %>h</p>
+              <% time = Time.now.to_datetime %>
+              <% created = notify.created_at.to_datetime %>
+              <p class="time"><%= ((time - created) * 24 * 60).to_i %>m</p>
             </div>
           </li>
         <% end %>
