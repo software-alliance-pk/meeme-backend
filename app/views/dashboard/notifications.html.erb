@@ -18,9 +18,7 @@
           <%= form_with(model: @notification, local: true, html: {id: 'form'}) do |form| %>
             <div class="top">
               <h6>Choose where to send</h6>
-              <div class="caldr_btn">
-                <input type="date" name="send_date" class="btn btn-light rounded" style="width: 80%; height: 80%"></input>
-              </div>
+                <input type="date" name="send_date" class="btn caldr_btn"></input>
             </div>
             <div class="row">
               <div class="col-12">
@@ -57,7 +55,7 @@
           <div class="list_outter">
             <ul class="list">
               <% if Notification.any? %>
-                <% Notification.all.reverse.each do |history| %>
+                <% Notification.where(send_all: true).reverse.each do |history| %>
                   <li>
                     <div class="item">
                       <p class="date"><%= history.created_at.strftime("%F") %></p>

@@ -78,7 +78,7 @@
         </div>
         <div class="paginate_sec">
           <p><%= page_entries_info @transactions_list %></p>
-          <ul class="digg_pagination mt-2">
+          <ul class="pagination">
             <li class="disabled"> <%= will_paginate(@transactions_list ,:previous_label => "&laquo;", :next_label =>"&raquo;", :outer_window => 1,:inner_window => 0) %></li>
           </ul>
         </div>

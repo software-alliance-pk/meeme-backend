@@ -16,8 +16,8 @@
       <div class="inside">
         <div class="person_side">
           <%= form_tag(conversations_path, method: "get", html: {id: 'form'}) do %>
-            <div class="btn btn-secondary rounded-pill w-100">
-              <select class="btn btn-secondary rounded-pill" name="subject" onchange="submit()" style="width: 100%; height: 50px">
+            <div class="form_blk">
+              <select class="input" name="subject" onchange="submit()" style="width: 100%; height: 50px">
                 <li><option>Select Subject</option></li>
                 <li><option class="dropdown-divider">Nothing_Happened</option></li>
                 <li><option>Abuse</option></li>
@@ -35,8 +35,7 @@
           <div class="user_list">
             <%= first_conversation = '' %>
             <% if @conversation.present? %>
-              <% @conversation.each_with_index  do |conversation,index| %>
-                <% first_conversation = conversation if index == 0 %>
+              <% @conversation.each  do |conversation| %>
                 <div class="user_blk" id="clicked" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.username %>'); get_post('<%= conversation.sender.username %>')">
                   <div class="ico fill round">
                     <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png")%>" alt="">
@@ -44,7 +43,11 @@
                   <div class="inr">
                     <div class="title">
                       <h5><%= conversation.sender.username %></h5>
-                      <span class="time"><%= conversation.created_at.strftime("%F") %></span>
+                      <% if conversation.messages.first.present? %>
+                        <% time = Time.now.to_datetime %>
+                        <% created = conversation.messages.first.created_at.to_datetime %>
+                        <span class="time"><%= ((time - created) * 24 * 60).to_i %> mins ago</span>
+                      <% end %>
                     </div>
                     <div class="txt">
                       <p><%= conversation.messages.first.body if conversation.messages.first.present? %></p>
@@ -165,18 +168,28 @@
             img.src = user_image
             div.appendChild(img)
             var div1 = document.createElement("div")
-            if (images === ""){
+            if (images[0] === ""){
                 div1.setAttribute('class', 'txt')
                 var p = document.createElement("p")
                 p.setAttribute("class", "bottom")
                 div1.appendChild(p.appendChild(document.createTextNode(message.body)))
             }else{
                 div1.setAttribute('class', 'txt w-50 h-50')
-                var image_div = document.createElement("div")
-                var message_img = document.createElement("img");
-                message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
-                message_img.src = images
-                image_div.appendChild(message_img)
+                if(images.length === 1) {
+                    var image_div = document.createElement("div")
+                    var message_img = document.createElement("img");
+                    message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
+                    message_img.src = images
+                    image_div.appendChild(message_img)
+                }else{
+                    var image_div = document.createElement("div")
+                    images.forEach(function (image){
+                        var message_img = document.createElement("img");
+                        message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end mb-1')
+                        message_img.src = image
+                        image_div.appendChild(message_img)
+                    })
+                }
                 div1.appendChild(image_div)
                 var p_div = document.createElement("div")
                 var p = document.createElement("p")
@@ -192,20 +205,31 @@
             var div = document.createElement("div")
             div.setAttribute('class', 'ico fill round')
             var img = document.createElement("img");
+            img.setAttribute("style", "border-radius: 50%; object-fit: cover")
             img.src = admin_image
             div.appendChild(img)
             var div1 = document.createElement("div")
-            if (images === ""){
+            if (images[0] === ""){
                 div1.setAttribute('class', 'txt')
                 var p = document.createElement("p")
                 div1.appendChild(p.appendChild(document.createTextNode(message.body)))
             }else{
                 div1.setAttribute('class', 'txt w-50 h-50')
-                var image_div = document.createElement("div")
-                var message_img = document.createElement("img");
-                message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
-                message_img.src = images
-                image_div.appendChild(message_img)
+                if(images.length === 1) {
+                    var image_div = document.createElement("div")
+                    var message_img = document.createElement("img");
+                    message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
+                    message_img.src = images
+                    image_div.appendChild(message_img)
+                }else{
+                    var image_div = document.createElement("div")
+                    images.forEach(function (image){
+                        var message_img = document.createElement("img");
+                        message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end mb-1')
+                        message_img.src = image
+                        image_div.appendChild(message_img)
+                    })
+                }
                 div1.appendChild(image_div)
                 var p_div = document.createElement("div")
                 var p = document.createElement("p")

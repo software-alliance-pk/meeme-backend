@@ -19,8 +19,11 @@ class TournamentLikeService
     else
       like = Like.new(post_id: @post_id, user_id: @current_user_id, is_liked: true,is_judged: true,status: 1)
       like.save
-      # daily_coins = DailyCoin.first.daily_coins_reward.to_i
-      coins = +50
+      daily_coins = 50
+      if DailyCoin.first.present?
+        daily_coins = DailyCoin.first.daily_coins_reward.to_i
+      end
+      coins = +daily_coins
       user_coin = User.find(@current_user_id).coins
       coins += user_coin
       User.find(@current_user_id).update(coins: coins)
@@ -44,8 +47,11 @@ class TournamentLikeService
     else
       like = Like.new(post_id: @post_id, user_id: @current_user_id, is_liked: false,is_judged: true,status: 2)
       like.save
-      # daily_coins = DailyCoin.first.daily_coins_reward.to_i
-      coins = +50
+      daily_coins = 50
+      if DailyCoin.first.present?
+        daily_coins = DailyCoin.first.daily_coins_reward.to_i
+      end
+      coins = +daily_coins
       user_coin = User.find(@current_user_id).coins
       coins += user_coin
       User.find(@current_user_id).update(coins: coins)
