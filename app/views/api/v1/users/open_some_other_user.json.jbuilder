@@ -12,7 +12,11 @@ json.profile do
   json.follow_each_other Follower.where(user_id: @current_user.id,is_following: true, follower_user_id: @user.id,status: 'added').present?
   json.follow_request_send Follower.where(is_following: false, user_id: @user.id,follower_user_id: @current_user.id, status: 'pending').present?  ? true : false
   json.badges_count  @user.badges.count
-  json.badges  @user.badges
+  json.badges  @user.badges.all.each do |badge|
+    json.title badge.title
+    json.rarity badge.rarity
+    json.badge_image badge.badge_image.attached? ? badge.badge_image.blob.url : ''
+  end
   json.all_post_count @user.posts.count
   json.profile_posts @user.posts.each do |post|
     json.post_description post.description

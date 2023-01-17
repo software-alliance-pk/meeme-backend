@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate verify_otp]
-  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings]
   # GET /users
   def index
     @users = User.all
@@ -100,11 +100,11 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def active_status_change
-    if params[:status]=="false"
+    if params[:status] == "false"
       @current_user.update(status: false)
       render json: { message: "Active Status Changed", user_status: @current_user.status }, status: :ok
     end
-    if params[:status]=="true"
+    if params[:status] == "true"
       @current_user.update(status: true)
       render json: { message: "Active Status Changed", user_status: @current_user.status }, status: :ok
     end
@@ -123,6 +123,20 @@ class Api::V1::UsersController < Api::V1::ApiController
       render json: { message: "Password updated" }, status: :ok
     else
       render json: { message: "Passwords don't match" }, status: :not_found
+    end
+  end
+
+  def notification_settings
+    if params[:notification_alert] == ""
+      render json: { notification: @current_user.notifications_enabled? }, status: :ok
+    end
+    if params[:notification_alert] == true.to_s
+      @current_user.notifications_enabled!
+      render json: { message: "Notifications On", notification: @current_user.notifications_enabled? }, status: :ok
+    end
+    if params[:notification_alert] == false.to_s
+      @current_user.notifications_disabled!
+      render json: { message: "Notifications Off", notification: @current_user.notifications_enabled? }, status: :ok
     end
   end
 
