@@ -78,6 +78,12 @@ class Api::V1::MessagesController < Api::V1::ApiController
       if @message.save
         @message.update(message_ticket: SecureRandom.hex(5))
         ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message) })
+        Notification.create(title:"#{@message.sender.username} generated a support ticket",
+                            body: @message.body,
+                            conversation_id: @conversation.id,
+                            user_id: @message.sender_id,
+                            message_id: @message.id,
+                            notification_type: 'admin_message')
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -92,6 +98,12 @@ class Api::V1::MessagesController < Api::V1::ApiController
       if @message.save
         @message.update(subject: subject[0], message_ticket: subject[1])
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
+        Notification.create(title:"Message from #{@message.sender.username}",
+                            body: @message.body,
+                            conversation_id: @conversation.id,
+                            user_id: @message.sender_id,
+                            message_id: @message.id,
+                            notification_type: 'admin_message')
       end
     else
       render json: { message: "No conversation present" }, status: :not_found

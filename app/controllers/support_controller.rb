@@ -4,14 +4,17 @@ class SupportController < ApplicationController
         if @conversation.present?
             @messages = @conversation.messages.all
             @image = []
+            @all_images_array = []
             @conversation.messages.each do |message|
                 if message.message_images.attached?
                     message.message_images.blobs.each do |image|
-                        @image << url_for(message.message_images.blobs[0])
+                        @image << url_for(image)
                     end
                 else
                     @image << ""
                 end
+                @all_images_array << @image
+                @image = []
             end
         end
         if params[:name].present?
@@ -21,7 +24,7 @@ class SupportController < ApplicationController
             @admin_image = @admin.admin_profile_image.attached? ? url_for(@admin.admin_profile_image) : ActionController::Base.helpers.asset_path('user.png')
         end
         respond_to do |format|
-            format.json {render json: {messages: @messages, images: @image, user_image: @user_image, admin_image: @admin_image, conversation: @conversation}}
+            format.json {render json: {messages: @messages, images: @all_images_array, user_image: @user_image, admin_image: @admin_image, conversation: @conversation}}
         end
     end
 

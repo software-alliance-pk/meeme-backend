@@ -64,7 +64,7 @@ class DashboardController < ApplicationController
     @id, @name, @email, @likes, @dislikes, @created, @image, @participated = [], [], [], [], [], [], [], []
     @tournament_banner = Like.where(is_judged: true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id], tournament_meme: true }).
       group(:post_id).count(:post_id).sort_by(&:last).sort_by(&:last).reverse.to_h
-    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
+    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC')
     if params[:tournament_banner_id].present?
       @banner = TournamentBanner.find(params[:tournament_banner_id])
       session[:banner] = @banner
@@ -205,12 +205,12 @@ class DashboardController < ApplicationController
     end
   end
 
-  # def user_enable
-  #   if params[:id].present?
-  #     @user = User.find(params[:id])
-  #     @user.update(disabled: false)
-  #   end
-  # end
+  def user_enable
+    if params[:id].present?
+      @user = User.find(params[:id])
+      @user.update(disabled: false)
+    end
+  end
 
   def gift_rewards
     @rewards = GiftReward.all.paginate(page: params[:page], per_page: 10)
@@ -226,9 +226,9 @@ class DashboardController < ApplicationController
       @transactions_list = Transaction.search(params[:search]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
     elsif params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
       @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
-    elsif params[:start_date].present? && params[:end_date] = ""  && params[:start_date] != "false"
+    elsif params[:start_date].present? && params[:end_date] == ""  && params[:start_date] != "false"
       @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
-    elsif params[:start_date] = "" && params[:end_date].present?
+    elsif params[:start_date] == "" && params[:end_date].present?
       @transactions_list = Transaction.end_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     else
       @transactions_list = Transaction.order("id DESC").paginate(page: params[:page], per_page: 10)

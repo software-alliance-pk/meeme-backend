@@ -195,18 +195,20 @@
                       <h4 class="">Latest Users</h4>
                       <a href="/user-list">See all</a>
                     </div>
-                    <% @user.each do |user| %>
+
                       <div class="body d-inline-flex">
-                        <div class="users_row">
-                          <div class="user p-1">
-                            <div>
-                              <img src="<%= user.profile_image.attached? ? user.profile_image.blob.url : asset_path("user.png")%>" alt="" style="width: 53px;height: 53px;-webkit-border-radius: 53px;-webkit-background-clip: padding-box;-moz-border-radius: 53px;-moz-background-clip: padding;border-radius: 53px;background-clip: padding-box;margin: 7px 0 0 5px;float: left;">
+                        <div class="users_row gap-2 align-items-start">
+                          <% @user.each do |user| %>
+                          <div class="user d-flex flex-column align-items-center">
+                            <div class="ellipse overflow-hidden">
+                              <img src="<%= user.profile_image.attached? ? user.profile_image.blob.url : asset_path("user.png")%>" alt="" style="object-fit: cover">
                             </div>
                             <span><%=user.username%></span>
                           </div>
+                          <% end %>
                         </div>
                       </div>
-                    <% end %>
+
                   </div>
                 </div>
               </div>
@@ -224,7 +226,7 @@
               <h4>Daily Coin Reward For Judging</h4>
               <form action="/set_coins">
                 <div class="btn_blk">
-                  <input class="site_btn bg_dark round" name="daily_coins_reward">
+                  <input class="site_btn bg_dark round" name="daily_coins_reward" value = <%= DailyCoin.first.daily_coins_reward if DailyCoin.first.present? %>>
                   </input>
                 </div>
                 <div class="btn_blk">
