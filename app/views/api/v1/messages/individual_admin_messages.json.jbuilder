@@ -14,7 +14,7 @@ json.messages @messages.each do |message|
   end
   json.sender_id message.sender_id
   json.sender_name message.sender.present? ? message.sender.username : ''
-  json.sender_active_status message.sender.status
+  json.sender_active_status message.sender.status.present? ? message.sender.status : ''
 
   if message.sender.present?
     json.sender_image message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : ''
