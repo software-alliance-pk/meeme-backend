@@ -116,7 +116,10 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     @today_date = Time.zone.now.end_of_day.to_datetime
     @tournament_end_date = @tournament.end_date.strftime("%a, %d %b %Y").to_datetime
     @tournament_start_date = @tournament.start_date.strftime("%a, %d %b %Y").to_datetime
-    @difference = (@tournament_end_date - @tournament_start_date).to_i
+    # @difference = (@tournament_end_date - @tournament_start_date).to_i
+    @tournamnet_days = (@tournament_end_date - @tournament_start_date).to_i
+    @difference = (@today_date - @tournament_start_date).to_i
+
     if (@tournament_end_date == @today_date) | @tournament.enable == false
       return render json: { message: "Tournament Ended" }, status: :ok
     else
