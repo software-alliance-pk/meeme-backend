@@ -50,7 +50,7 @@
             <tbody>
             <% i = 1 %>
             <% abc = page_entries_info @posts %>
-            <% first_record_value =  abc.split("<b>")[1].split("&")[0].to_i if abc.present? %>
+            <% first_record_value =  abc.split("<b>")[1].split("&")[0].to_i unless abc == "No entires found" %>
             <% @posts.each do |post| %>
               <tr>
                 <td>
