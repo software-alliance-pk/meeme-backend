@@ -72,7 +72,7 @@
                   <td onclick="open_details('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0].likes.count%>',
                     '<%= tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0].created_at.strftime('%F') %>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0].likes.where(status: "dislike").count%>')"><%= tournament_user.user.username %></td>
                   <td><%= tournament_user.user.email %></td>
-                  <td><%= tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0].likes.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
+                  <td><%= tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
                   <td><%= tournament_user.created_at.strftime("%F") %></td>
                   <td>
                     <div class="dropdown">
