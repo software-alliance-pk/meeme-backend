@@ -82,7 +82,7 @@ gem 'devise'
 gem 'dotenv-rails'
 gem 'stripe'
 gem 'jquery-rails'
-gem 'sidekiq', '~> 6.4.1'
+gem 'sidekiq', '~> 5.2.5'
 gem 'redis', '~> 4.2.0'
 gem 'whenever', require: false
 gem 'chartkick'
