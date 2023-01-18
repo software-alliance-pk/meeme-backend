@@ -30,7 +30,8 @@
               </div>
               <% time = Time.now.to_datetime %>
               <% created = notify.created_at.to_datetime %>
-              <p class="time"><%= ((time - created) * 24 * 60).to_i %>m</p>
+              <% calculated_time = ((time - created) * 24 * 60).to_i  %>
+              <p class="time"><%= distance_of_time_in_words(0, calculated_time.minutes) %></p>
             </div>
           </li>
         <% end %>

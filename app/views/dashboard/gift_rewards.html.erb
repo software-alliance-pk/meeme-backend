@@ -74,9 +74,9 @@
                             </table>
                         </div>
                         <div class="paginate_sec">
-                            <p><%= page_entries_info @rewards %></p>
+                            <p><%= page_entries_info @rewards , :html => false %></p>
                             <ul class="pagination">
-                                <li class="disabled"> <%= will_paginate(@rewards,:previous_label => "&laquo;", :next_label => "&raquo;", :class=>"h5 text-white",:outer_window => 1,:inner_window => 0) %></li>
+                                <li class="disabled"> <%= will_paginate(@rewards, :class=>"h5 text-white",:outer_window => 1,:inner_window => 0) %></li>
                             </ul>
                         </div>
                     </div>
@@ -102,7 +102,7 @@
                                         <tr>
                                             <td>
                                                 <div class="amazon_card">
-                                                    <p><%= card.amount %></p>
+                                                    <p>$<%= card.amount %></p>
                                                     <div class="img">
                                                         <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
                                                     </div>
@@ -114,10 +114,10 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td><%= card.amount %></td>
+                                            <td>$<%= card.amount %></td>
                                             <td><%= card.gift_card_number %></td>
                                             <td><%= card.coin_price %></td>
-                                            <td><%= card.created_at.strftime("%F") %></td>
+                                            <td><%= card.created_at.strftime("%B %d, %Y") %></td>
                                             <td>
                                                 <div class="btn_blk">
                                                     <button type="button" class="btn action_btn">
@@ -134,9 +134,9 @@
                             </table>
                         </div>
                         <div class="paginate_sec">
-                            <p><%= page_entries_info @amazon_cards %></p>
+                            <p><%= page_entries_info @amazon_cards, :html => false %></p>
                             <ul class="pagination">
-                                <li class="disabled"> <%= will_paginate(@amazon_cards,:previous_label => "&laquo;", :next_label => "&raquo;", :class=>"h5 text-white",:outer_window => 1,:inner_window => 0) %></li>
+                                <li class="disabled"> <%= will_paginate(@amazon_cards, :class=>"h5 text-white",:outer_window => 1,:inner_window => 0) %></li>
                             </ul>
                         </div>
                     </div>
@@ -156,7 +156,7 @@
                                                 <div class="col-12">
                                                     <h6 class="form_label">Rank</h6>
                                                     <div class = "form_blk">
-                                                        <select class="input" name="rank">
+                                                        <select class="input" name="rank" id="place">
                                                             <li><option>1st Place</option></li>
                                                             <li><option>2nd Place</option></li>
                                                             <li><option>3rd Place</option></li>
@@ -166,7 +166,7 @@
                                                 <div class="col-12">
                                                     <h6 class="form_label">Amazon Gift Card Number</h6>
                                                     <div class="form_blk">
-                                                        <%= f.text_field :card_number, class: "input", placeholder: "Card Number" %>
+                                                        <%= f.text_field :card_number, class: "input", id: "number" ,placeholder: "Card Number" %>
                                                         <div class="img">
                                                             <img src="<%= asset_path("amazon-card-1.png")%>" alt="">
                                                         </div>
@@ -203,8 +203,7 @@
                                 <div class="col-12">
                                     <div class="_inner">
                                         <h3>Confirmation</h3>
-                                        <p>Are you sure you want to add this gift card <strong>2334-LJIJA-90</strong> as 1st
-                                            Place to your
+                                        <p>Are you sure you want to add this gift card <strong id="confirm_number"></strong> as <strong id="confirm_place"></strong> to your
                                             List?</p>
                                         <div class="btn_blk">
                                             <button type="button" class="site_btn prime_btn round" onclick="save()">Yes</button>
@@ -226,6 +225,7 @@
                                     <div class="_inner">
                                         <button type="button" class="x_btn" onclick="close_amazon_card()"></button>
                                         <h4>Add Amazon Gift Card</h4>
+                                        <%= @amazon_card.errors.full_messages.first if @amazon_card.present? %>
                                         <div class="detail_blk">
                                             <div class="left_blk">
                                                 <%= form_with(model: @amazon_card, local: true) do |f| %>
@@ -233,7 +233,7 @@
                                                         <div class="col-12">
                                                             <h6 class="form_label">Amount</h6>
                                                             <div class="form_blk">
-                                                                <%= f.text_field :amount, class: "input", placeholder: "$100" %>
+                                                                <%= f.text_field :amount, id: "form_amount" ,class: "input", placeholder: "$100", data: { numeric: true } %>
                                                             </div>
                                                         </div>
                                                         <div class="col-12">
@@ -245,7 +245,7 @@
                                                         <div class="col-12">
                                                             <h6 class="form_label">Coin Price</h6>
                                                             <div class="form_blk">
-                                                                <%= f.text_field :coin_price, class: "input", placeholder: "Add coin price" %>
+                                                                <%= f.text_field :coin_price, id: "form_coins" ,class: "input", placeholder: "Add coin price", data: { numeric: true } %>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -258,67 +258,67 @@
                                                 <p>Add image</p>
                                                 <div class="cards_list">
                                                     <div class="amazon_card">
-                                                        <input type="checkbox" class="checkbox">
-                                                        <h5>$100</h5>
+                                                        <input type="checkbox" class="checkbox" id="checkbox_1" onchange="checkbox(1)">
+                                                        <h5 id="image_amount_1">$100</h5>
                                                         <div class="img">
                                                             <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
                                                         </div>
                                                         <div class="btn_blk">
-                                                            <button type="button" class="amazon_btn">
+                                                            <button type="button" class="amazon_btn" id="image_coin_1">
                                                                 <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                                00,000
+                                                                0
                                                             </button>
                                                         </div>
                                                     </div>
                                                     <div class="amazon_card">
-                                                        <input type="checkbox" class="checkbox">
-                                                        <h5>$75</h5>
+                                                        <input type="checkbox" class="checkbox" id="checkbox_2" onchange="checkbox(2)">
+                                                        <h5 id="image_amount_2">$75</h5>
                                                         <div class="img">
                                                             <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
                                                         </div>
                                                         <div class="btn_blk">
-                                                            <button type="button" class="amazon_btn">
+                                                            <button type="button" class="amazon_btn" id="image_coin_2">
                                                                 <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                                00,000
+                                                                13000
                                                             </button>
                                                         </div>
                                                     </div>
                                                     <div class="amazon_card">
-                                                        <input type="checkbox" class="checkbox">
-                                                        <h5>$50</h5>
+                                                        <input type="checkbox" class="checkbox" id="checkbox_3" onchange="checkbox(3)">
+                                                        <h5 id="image_amount_3">$50</h5>
                                                         <div class="img">
                                                             <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
                                                         </div>
                                                         <div class="btn_blk">
-                                                            <button type="button" class="amazon_btn">
+                                                            <button type="button" class="amazon_btn" id="image_coin_3">
                                                                 <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                                00,000
+                                                              12000
                                                             </button>
                                                         </div>
                                                     </div>
                                                     <div class="amazon_card">
-                                                        <input type="checkbox" class="checkbox">
-                                                        <h5>$20</h5>
+                                                        <input type="checkbox" class="checkbox" id="checkbox_4" onchange="checkbox(4)">
+                                                        <h5 id="image_amount_4">$20</h5>
                                                         <div class="img">
                                                             <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
                                                         </div>
                                                         <div class="btn_blk">
-                                                            <button type="button" class="amazon_btn">
+                                                            <button type="button" class="amazon_btn" id="image_coin_4">
                                                                 <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                                00,000
+                                                                11000
                                                             </button>
                                                         </div>
                                                     </div>
                                                     <div class="amazon_card">
-                                                        <input type="checkbox" class="checkbox">
-                                                        <h5>$10</h5>
+                                                        <input type="checkbox" class="checkbox" id="checkbox_5" onchange="checkbox(5)">
+                                                        <h5 id="image_amount_5">$10</h5>
                                                         <div class="img">
                                                             <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
                                                         </div>
                                                         <div class="btn_blk">
-                                                            <button type="button" class="amazon_btn">
+                                                            <button type="button" class="amazon_btn" id="image_coin_5">
                                                                 <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                                00,000
+                                                                10000
                                                             </button>
                                                         </div>
                                                     </div>
@@ -363,6 +363,10 @@
     }
 
     $("#form").on('submit', function(event){
+        var place = $("#place")[0].value
+        $("#confirm_place")[0].innerText = place
+        var number = $("#number")[0].value
+        $("#confirm_number")[0].innerText = number
         event.preventDefault()
         document.getElementById("gift_confirm").style.display = "block"
     })
@@ -378,5 +382,24 @@
 
     function cancel(){
         document.getElementById("gift_confirm").style.display = "none"
+    }
+
+    function checkbox(id){
+        if(id === 1 && $("#checkbox_1")[0].checked === true){
+            $("#form_amount")[0].value = $("#image_amount_1")[0].innerHTML.slice(1, 4)
+            $("#form_coins")[0].value = $("#image_coin_1")[0].innerText
+        }else if(id === 2 && $("#checkbox_2")[0].checked === true){
+            $("#form_amount")[0].value = $("#image_amount_2")[0].innerHTML.slice(1, 4)
+            $("#form_coins")[0].value = $("#image_coin_2")[0].innerText
+        }else if(id === 3 && $("#checkbox_3")[0].checked === true){
+            $("#form_amount")[0].value = $("#image_amount_3")[0].innerHTML.slice(1, 4)
+            $("#form_coins")[0].value = $("#image_coin_3")[0].innerText
+        }else if(id === 4 && $("#checkbox_4")[0].checked === true){
+            $("#form_amount")[0].value = $("#image_amount_4")[0].innerHTML.slice(1, 4)
+            $("#form_coins")[0].value = $("#image_coin_4")[0].innerText
+        }else if(id === 5 && $("#checkbox_5")[0].checked === true){
+            $("#form_amount")[0].value = $("#image_amount_5")[0].innerHTML.slice(1, 4)
+            $("#form_coins")[0].value = $("#image_coin_5")[0].innerText
+        }
     }
 </script>

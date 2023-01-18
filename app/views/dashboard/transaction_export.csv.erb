@@ -1,4 +1,4 @@
-<% headers = ['Name' ,'Email', 'Amount', 'Payment Method', 'Date Processed'] %>
+<% headers = ['Name' ,'Email', 'Cost', 'Payment Method', 'Date Processed'] %>
 <%= CSV.generate_line headers %>
 <% @transactions_list.each do |transaction| %>
   <%= CSV.generate_line([transaction.user.username, transaction.user.email , transaction['amount'], transaction['brand'], transaction.created_at]) %>

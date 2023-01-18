@@ -32,7 +32,7 @@
           <%= form_tag(transactions_path, method: "get") do %>
             <div class="form_blk input mb-0">
               <img src= "<%= asset_path("icon-search.svg")%>">
-              <%= text_field_tag :search, params[:search], class: "input" ,placeholder: "search", value: "" %>
+              <%= text_field_tag :search, params[:search], class: "input" ,placeholder: "Search", value: "" %>
               <% search_value = params[:search] %>
               <%= submit_tag "" , type: :image ,:name => nil %>
             </div>
@@ -42,7 +42,7 @@
             Export CSV
           </button></a>
         </div>
-        <div id="table_blk">
+        <div id="table_blk" class="trans_table">
           <table>
             <thead>
             <tr>
@@ -77,9 +77,9 @@
           </table>
         </div>
         <div class="paginate_sec">
-          <p><%= page_entries_info @transactions_list %></p>
+          <p><%= page_entries_info @transactions_list, :html => false %></p>
           <ul class="pagination">
-            <li class="disabled"> <%= will_paginate(@transactions_list ,:previous_label => "&laquo;", :next_label =>"&raquo;", :outer_window => 1,:inner_window => 0) %></li>
+            <li class="disabled"> <%= will_paginate(@transactions_list, :outer_window => 1,:inner_window => 0) %></li>
           </ul>
         </div>
       </div>

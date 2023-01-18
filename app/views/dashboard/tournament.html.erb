@@ -21,9 +21,11 @@
           <div class="season_detail">
             <h4 class="mb-0">Tournament Season</h4>
             <div class="form_blk">
-              <%= select_tag  :tournament_title, options_for_select(TournamentBanner.all.reverse.pluck(:title, :id)), class: "input" ,onclick: 'select($(this).val())' %>
+              <%= form_for :post, :url => { :controller => 'dashboard', :action => 'tournament' }, :html => { :method => 'get', class: 'form_blk' } do |f| %>
+                <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onclick: "submit()" %>
+              <% end %>
             </div>
-            <p class="ms-3"> Participants: <span id = "joined"></span></p>
+            <p class="ms-3"> Participants: <span id = "joined"><%= @banner.tournament_users.count if @banner.present? %></span></p>
           </div>
           <h4 class="fw_400 mb-0">
             <a href="/tournament-winner-list" id = "banner_id">Tournament Winners</a>
@@ -32,7 +34,7 @@
         <div id="table_blk">
           <table id="tournament_table">
             <thead>
-            <tr>
+            <tr id = "tr">
               <th style="width: 6rem">Rank</th>
               <th style="width: 15rem">Name</th>
               <th style="width: 22rem">Email</th>
@@ -46,24 +48,38 @@
             </tr>
             </thead>
             <tbody>
-
-            <% @posts.each_with_index do |post,index| %>
+            <% i = 1 %>
+            <% abc = page_entries_info @posts %>
+            <% first_record_value =  abc.split("<b>")[1].split("&")[0].to_i if abc.present? %>
+            <% @posts.each do |post| %>
               <tr>
                 <td>
-                  <div class="win"><%=index+=1%></div>
+                  <% if first_record_value < 4 %>
+                    <div class="win"><%=first_record_value%></div>
+                  <% elsif first_record_value <= 10 %>
+                    <div class="win win_5"><%=first_record_value%></div>
+                  <% else %>
+                    <div class="win win_10"><%=first_record_value%></div>
+                  <% end %>
                 </td>
+                <% first_record_value+=1 %>
                 <td><%=post.user.username %></td>
                 <td><%=post.user.email %></td>
                 <td><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).dislike.count%></td>
-                <td><%=post.created_at.strftime('%b,%d,%y') %></td>
-                <td>23</td>
+                <td><%=post.user.tournament_users.first.created_at.strftime('%B %d,%Y') %></td>
+                <% banner_id = @banner.id if @banner.present? %>
+                <td><%=post.user.likes.where(tournament_banner_id: banner_id).count %></td>
                 <td>
                   <div class="img">
                     <img src="<%= post.post_image.attached? ? post.post_image.blob.url : asset_path("tr-1.jpg")%>" alt="">
                   </div>
                 </td>
-                <td>Ongoing</td>
+                <% if @banner.present? %>
+                  <td><%=  @banner&.end_date&.strftime('%b,%d,%y') > Time.now.strftime('%b,%d,%y') ? "ongoing" : "finished" %></td>
+              <%else %>
+                  <td><%= "finished" %></td>
+              <%end%>
                 <td>
                   <div class="dropdown">
                     <button class="btn drop_btn" data-bs-toggle="dropdown">
@@ -83,9 +99,12 @@
             </tbody>
           </table>
         </div>
-        <div id="paginate_sec" class="float-end pagination" style= "color: white;font-size: 20px; padding-right: 20px;font-weight: 600">
+        <div class="paginate_sec">
+          <p><%= page_entries_info @posts , :html => false %></p>
+          <ul class="pagination">
+            <li class="disabled"> <%= will_paginate(@posts, :class => "h5 text-white", :outer_window => 1, :inner_window => 0) %></li>
+          </ul>
         </div>
-        <p id="entries"></p>
       </div>
     </div>
     <div class="popup" data-popup="trans_profile" id="tormnt_modal">
@@ -177,87 +196,5 @@
 
     function open_trmnt_model(){
         document.getElementById("tormnt_modal").style.display="block"
-    }
-
-    function select(val){
-        $.ajax({
-            type: "Get",
-            url: "tournament",
-            data: { tournament_banner_id: val},
-            success: function(response) {
-                var table = $("#table_blk tbody");
-                document.getElementById("joined").innerHTML = 0 + " Joined"
-                table[0].innerHTML = ""
-                var username = response.name
-                var email = response.email
-                var likes = response.likes
-                var dislikes = response.dislikes
-                var created = response.created
-                var participated = response.participated
-                var status = response.status
-                var image = response.image
-                table[0].innerHTML = ""
-                var i = 0;
-                if (username !== undefined){
-                    username.forEach(function (name) {
-                        table.append("<tr><td></td><td>" + name + "</td><td>" + email[i] + "</td><td>" + likes[i] + "</td><td>" + dislikes[i] + "</td><td>" + created[i] + "</td><td>" + participated[i] + "</td><td></td><td>" + status + "</td><td></td></tr>");
-                        add_ranks(i)
-                        add_image(image[i], i)
-                        i++;
-                    })
-                }
-                document.getElementById("joined").innerHTML = (i) + " Joined"
-                $('#paginate_sec').empty()
-                $("#paginate_sec").attr('style', "margin-top: 20px")
-                $(document).ready (function () {
-                    var rowsShown = 10;
-                    var rowsTotal = $('#tournament_table tbody tr').length;
-                    $("#entries").html("Displaying " + rowsShown + " from total " + rowsTotal)
-                    var numPages = rowsTotal/rowsShown;
-                    for (i = 0;i < numPages;i++) {
-                        var pageNum = i + 1;
-                        $('#paginate_sec').append ('<a href="#" rel="'+i+'">'+pageNum+'</a> ');
-                    }
-                    $('#tournament_table tbody tr').hide();
-                    $('#tournament_table tbody tr').slice (0, rowsShown).show();
-                    $('#paginate_sec a:first').addClass('active');
-                    $('#paginate_sec a:first').attr("style", "background-color: #5B5A5E !important")
-                    $('#paginate_sec a').addClass('text-white');
-                    $("#paginate_sec a").css("padding-right", "7px");
-                    $('#paginate_sec a').bind('click', function() {
-                        $('#paginate_sec a').removeClass('active');
-                        $('#paginate_sec a').attr("style", "background-color: black");
-                        $(this).addClass('active');
-                        $(this).attr("style", "background-color: #5B5A5E !important")
-                        var currPage = $(this).attr('rel');
-                        var startItem = currPage * rowsShown;
-                        var endItem = startItem + rowsShown;
-                        $('#tournament_table tbody tr').css('opacity','0.0').hide().slice(startItem, endItem).
-                        css('display','table-row').animate({opacity:1}, 300);
-                    });
-                });
-            }
-        });
-    }
-
-    function add_image(image, i){
-        var col = document.getElementById("tournament_table").rows[i+1].cells[7];
-        var img = document.createElement('img');
-        img.src = image;
-        col.appendChild(img);
-    }
-
-    function add_ranks(i){
-        var col = document.getElementById("tournament_table").rows[i+1].cells[0];
-        var span = document.createElement('span');
-        span.innerHTML = i + 1
-        if(i < 4){
-            span.classList.add("win");
-        } else if(i < 10){
-            span.classList.add("win", "win_5")
-        } else{
-            span.classList.add("win", "win_10")
-        }
-        col.appendChild(span)
     }
 </script>

@@ -197,13 +197,9 @@
   border: 0 !important;
 }
 
-#memee > .main_side .tornment{
-  padding-bottom: 10rem !important;
-}
-
 #entries{
   color: white;
-  margin-top: 10px;
+  margin-top: 27px;
 }
 
 #support_time{
@@ -215,4 +211,107 @@
   text-align: right;
   text-transform: lowercase;
   color: #FFFFFF;
+}
+
+.time{
+  font-size: 10px;
+}
+
+#admin_profile_upload_label{
+  left: 54.51%;
+  right: 35.76%;
+  top: 31.54%;
+  bottom: 64.55%;
+  border: 1.5px solid #5F5F5F;
+  border-radius: 20px;
+  font-family: 'Gilroy';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+
+  text-align: center;
+
+  color: #FFFFFF;
+}
+#table_users {
+  margin: 0 -4.4rem 0 -4.4rem;
+  table {
+    thead {
+      tr {
+        background-color: #19161e;
+        border-bottom: transparent;
+        th {
+          &:first-child {
+            padding-left: 4rem !important;
+          }
+        }
+      }
+    }
+    tbody {
+      tr {
+        border-bottom: transparent;
+        td {
+          &:first-child {
+            padding-left: 4rem !important;
+          }
+
+        }
+      }
+    }
+  }
+}
+
+
+#table_blk {
+  &.trans_table{
+    margin: 0 -2rem 0 -2.7rem;
+    table {
+      thead {
+        tr {
+          background-color: #19161e;
+          border-bottom: transparent;
+          th {
+            &:first-child {
+              padding-left: 4rem !important;
+            }
+          }
+        }
+      }
+      tbody {
+        tr {
+          td {
+            &:first-child {
+              padding-left: 4rem !important;
+            }
+
+          }
+        }
+      }
+    }
+  }
+}
+
+#admin_profile form .wrapper .form_blk .input{
+  border: 0.1rem solid transparent;
+  &:focus-within {
+    border-color: #FEDD88
+  }
+}
+
+#sidebar .inside .list_blk ul > li > a{
+  &.btn.log_out{
+    > img{
+      filter: brightness(0) saturate(100%) invert(14%) sepia(50%) saturate(7458%) hue-rotate(356deg) brightness(111%) contrast(118%);
+    }
+  }
+}
+
+#user_list .inside .top .round_input input.input,
+#trans .top .form_blk > .input.input{
+  padding-left: 3rem !important;
+}
+
+.trans_blk input, .banner_date {
+  text-transform: uppercase;
 }

@@ -31,3 +31,20 @@
 
 en:
   hello: "Hello world"
+  will_paginate:
+    previous_label: "&#60;       Previous"
+    next_label: "Next  &#62;"
+    page_gap: "&hellip;"
+    page_entries_info:
+      single_page:
+        zero: "No entires found"
+        one: "Showing 1 entry"
+        other: "Showing %{count} entries"
+      single_page_html:
+        zero: "No entires found"
+        one: "Showing 1 entry"
+        other: "Showing <b>all&nbsp;%{count}</b> entries"
+
+      multi_page: "Showing %{from} to %{to} of %{count} entries"
+      multi_page_html: "Showing <b>%{from}&nbsp;to&nbsp;%{to}</b> of <b>%{count}</b> entries"
+

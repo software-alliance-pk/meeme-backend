@@ -31,11 +31,11 @@
                   </div>
                   <div class="content">
                     <span class="f-26"><%=tournament_banner.title.present? ? tournament_banner.title: "No title"%></span>
-                    <span class="f-30"><%=tournament_banner.start_date.present? ? tournament_banner.start_date.strftime("%b"): "No start date added"%></span>
+                    <span class="f-30 banner_date"><%=tournament_banner.start_date.present? ? tournament_banner.start_date.strftime("%b"): "No start date added"%></span>
                   </div>
                 </div>
-                <div class="bottom">
-                  <p><%=tournament_banner.start_date.present? ? tournament_banner.start_date.strftime("%b,%Y"): "No date added" %></p>
+                <div class="bottom banner_date">
+                  <p><%=tournament_banner.start_date.present? ? tournament_banner.start_date.strftime("%B %Y"): "No date added" %></p>
                 </div>
               </div>
             </div>
@@ -49,33 +49,41 @@
               <div class="_inner">
                 <button type="button" class="x_btn" onclick= "close_banner()"></button>
                 <h4>Add Banner</h4>
-                <div class="row">
-                  <div class="col-9">
-                    <div class="left_blk">
-                      <%= form_with(model: @banner, local: true) do |form| %>
+                <%= form_with(model: @banner, local: true) do |form| %>
+                  <div class="row">
+                    <div class="col-6">
+                      <div class="left_blk">
+
                         <h6>Banner Title</h6>
                         <div class="form_blk">
                           <%= form.text_field :title, class: "input", placeholder: "Enter title" %>
                         </div>
                         <h6>Date Start</h6>
                         <div class="form_blk">
-                          <%= form.date_field :start_date,  class: "input"%>
+                          <%= form.date_field :start_date, class: "input banner_date" %>
                         </div>
                         <h6>Date End</h6>
                         <div class="form_blk">
-                          <%= form.date_field :end_date,  class: "input" %>
+                          <%= form.date_field :end_date, class: "input banner_date" %>
                         </div>
-                        <div class="right_blk">
-                          <h6>Add image</h6>
-                          <%= form.file_field :tournament_banner_photo%>
-                        </div>
-                        <div class="btn_blk">
-                          <%= form.submit "Save Banner", class: "site_btn" %>
-                        </div>
-                      <% end %>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="right_blk">
+                        <%= form.file_field :tournament_banner_photo, hidden: true, id: "image_upload"%>
+                        <h6>Add image</h6>
+                        <label class="img_blk" for="image_upload">
+                          <div class="icon">
+                            <img src="<%= asset_path("img-icon.svg") %>" alt="">
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="btn_blk">
+                      <%= form.submit "Save Banner", class: "site_btn" %>
                     </div>
                   </div>
-                </div>
+                <% end %>
               </div>
             </div>
           </div>

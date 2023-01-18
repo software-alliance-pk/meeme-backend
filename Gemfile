@@ -88,6 +88,7 @@ gem 'whenever', require: false
 gem 'chartkick'
 gem 'groupdate'
 gem 'aws-sdk-s3'
+gem 'allow_numeric'
 
 
 

@@ -5,4 +5,5 @@
 // import "./channels/bootsrap_jquery"
 //= require jquery3
 //= require channels/bootstrap.bundle.min.js
+//= require allow_numeric
 
