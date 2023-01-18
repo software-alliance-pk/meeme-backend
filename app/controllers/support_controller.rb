@@ -46,6 +46,7 @@ class SupportController < ApplicationController
             @message = @conversation.messages.new(message_params)
             @message.subject = @subject
             @message.message_ticket = @message_ticket
+            @message.user_id = params[:user_id]
             if @message.save
                 ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
                 Notification.create(title:"Message from #{@message.admin_user.admin_user_name}",
