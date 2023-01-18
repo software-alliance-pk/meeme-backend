@@ -20,7 +20,8 @@
               <img src="<%= current_admin_user.admin_profile_image.attached? ? current_admin_user.admin_profile_image.blob.url : asset_path("admin-profile.png")%>" alt="" style="object-fit: cover; height: 100%">
             </div>
             <div class="btn_blk">
-              <%= f.file_field :admin_profile_image, class: "form-control" %>
+              <%= f.file_field :admin_profile_image, hidden: true , id: "admin_profile_upload"%>
+              <label for="admin_profile_upload" type="button" class="btn round upload_btn d-flex justify-content-center align-items-center">Upload New</label>
             </div>
           </div>
           <div class="wrapper">
@@ -46,7 +47,7 @@
               <div class="col-6">
                 <h6 class="form_label">Old Password</h6>
                 <div class="form_blk">
-                  <%= f.password_field :password, class: "input", placeholder: "Old Password" %>
+                  <%= f.password_field :old_password, class: "input", placeholder: "Old Password" %>
                 </div>
               </div>
               <h5 class="pass_title">New Password</h5>
@@ -65,7 +66,7 @@
             </div>
             <div class="btn_blk">
               <%= f.submit "Update Profile",
-                           class: "site_btn prime_btn round pop_btn", onclick: "open_dialog()"%>
+                           class: "site_btn prime_btn round pop_btn"%>
             </div>
           </div>
         <%end%>
@@ -94,11 +95,18 @@
 </main>
 
 <script>
-    function open_dialog(){
-        document.getElementById("logon_modal").style.display = "block"
-    }
-
-    function close_dialog(){
-        document.getElementById("logon_modal").style.display = "none"
-    }
+  $(document).ready(function() {
+      $.ajax({
+          type: "GET",
+          url: "admin-profile",
+          success: function (response) {
+              if(response === "true"){
+                document.getElementById("logon_modal").style.display = "block"
+              }
+          }
+      })
+  })
+  function close_dialog(){
+      document.getElementById("logon_modal").style.display = "none"
+  }
 </script>

@@ -46,7 +46,8 @@
                       <% if conversation.messages.first.present? %>
                         <% time = Time.now.to_datetime %>
                         <% created = conversation.messages.first.created_at.to_datetime %>
-                        <span class="time"><%= ((time - created) * 24 * 60).to_i %> mins ago</span>
+                        <% calculated_time = ((time - created) * 24 * 60).to_i  %>
+                        <span class="time"><%= distance_of_time_in_words(0, calculated_time.minutes) %></span>
                       <% end %>
                     </div>
                     <div class="txt">
@@ -92,7 +93,6 @@
               <input name="user_id" id="user_id" hidden></input>
               <input name="subject" id="subject" hidden></input>
               <input name="admin_user_id" id="admin_id" hidden></input>
-              <input name="token" value="123456" hidden></input>
               <button type="submit" class="send_btn"><img src="<%= asset_path("icon-send.svg")%>" alt=""></button>
             </div>
           <% end %>

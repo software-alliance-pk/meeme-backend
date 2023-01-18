@@ -70,6 +70,7 @@ GEM
       activerecord (>= 6.0, < 7.1)
     addressable (2.8.1)
       public_suffix (>= 2.0.2, < 6.0)
+    allow_numeric (0.1.0)
     aws-eventstream (1.2.0)
     aws-partitions (1.688.0)
     aws-sdk-core (3.168.4)
@@ -328,6 +329,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts-as-taggable-on
+  allow_numeric
   aws-sdk-s3
   bcrypt
   bootsnap
@@ -368,4 +370,4 @@ RUBY VERSION
    ruby 3.0.0p0
 
 BUNDLED WITH
-   2.3.26
+   2.4.3

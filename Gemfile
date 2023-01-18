@@ -91,5 +91,6 @@ gem 'delayed_job_active_record'
 gem "delayed_job_web"
 gem 'daemons'
 gem 'aws-sdk-s3'
+gem 'allow_numeric'
 
 

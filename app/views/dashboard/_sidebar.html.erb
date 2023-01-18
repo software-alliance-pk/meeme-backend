@@ -11,15 +11,15 @@
             <p class="title">Overview</p>
             <ul>
                 <li>
-                    <a href="/dashboard" class="btn">
+                    <a href="/dashboard" class="btn <%= params[:action] == "dashboard" ? "active" : "" %>">
                         <img src="<%= asset_path("icon-dashboard.svg")%>" alt=""> Dashboard </a>
                 </li>
                 <li>
-                    <a href="/user-list" class="btn">
+                    <a href="/user-list" class="btn <%= params[:action] == "user_list" ? "active" : "" %>">
                         <img src="<%= asset_path("icon-users.svg")%>" alt=""> Users </a>
                 </li>
                 <li>
-                    <a href="/transactions" class="btn">
+                    <a href="/transactions" class="btn <%= params[:action] == "transactions" ? "active" : "" %>">
                         <img src="<%= asset_path("icon-transactions.svg")%>" alt=""> Transactions </a>
                 </li>
             </ul>
@@ -28,15 +28,15 @@
             <p class="title">Tournament</p>
             <ul>
                 <li>
-                    <a href="/tournament" class="btn" >
+                    <a href="/tournament" class="btn <%= params[:action] == "tournament" ? "active" : "" %>" >
                         <img src="<%= asset_path("icon-tournaments.svg")%>" alt=""> Tournaments </a>
                 </li>
                 <li>
-                    <a href="/tournament-banner" class="btn">
+                    <a href="/tournament-banner" class="btn <%= params[:action] == "tournament_banner" ? "active" : "" %>">
                         <img src="<%= asset_path("icon-tbanner.svg")%>" alt=""> Tournament Banner </a>
                 </li>
                 <li>
-                    <a href="/gift-rewards" class="btn">
+                    <a href="/gift-rewards" class="btn <%= params[:action] == "gift_rewards" ? "active" : "" %>">
                         <img src="<%= asset_path("icon-gift-rewards.svg")%>" alt=""> Gift Rewards </a>
                 </li>
             </ul>
@@ -45,20 +45,22 @@
             <p class="title">Settings</p>
             <ul>
                 <li>
-                    <a href="/notifications" class="btn">
+                    <a href="/notifications" class="btn <%= params[:action] == "notifications" ? "active" : "" %>">
                         <img src="<%= asset_path("icon-notification.svg")%>" alt=""> Push Notification </a>
                 </li>
                 <li>
-                    <a href="/support" class="btn">
+                    <a href="/support" class="btn <%= params[:action] == "support" ? "active" : "" %>">
                         <img src="<%= asset_path("icon-support.svg")%>" alt=""> Support </a>
                 </li>
                 <li>
-                    <a href="/terms" class="btn">
+                    <a href="/terms" class="btn <%= params[:action] == "terms" || params[:action] == "privacy" || params[:action] == "faqs" || params[:action] == "popup" ? "active" : "" %>">
                         <img src="<%= asset_path("icon-guidelines.svg")%>" alt=""> Guidelines </a>
                 </li>
-                <li>
-                    <%= link_to "Log out", destroy_admin_user_session_path, method: :delete %>
-                </li>
+              <li>
+                <a rel="nofollow" data-method="delete" href="/admin_users/sign_out" class="btn log_out">
+                  <img src="<%= asset_path("icon-logout.svg")%>" alt="">
+                  Log out</a>
+              </li>
             </ul>
         </div>
         <div class="btm_blk">
@@ -68,7 +70,7 @@
             <div class="content">
                 <div class="txt">
                     <h6><%=current_admin_user.full_name%></h6>
-                    <p>Admin</p>
+                    <p><%=current_admin_user.admin_user_name%></p>
                 </div>
                 <%= link_to image_tag("icon-up-down.svg"), admin_profile_path, class: "btn up_btn" %>
             </div>
@@ -76,15 +78,3 @@
     </div>
 </aside>
 <!-- sidebar -->
-
-<script>
-    $(document).ready(function () {
-        var url = window.location;
-        var element = $('ul li .btn').filter(function() {
-            return this.href == url || url.href.indexOf(this.href) == 1;
-        }).addClass('active').parent().parent().addClass('in').parent();
-        if (element.is('li')) {
-            element.addClass('active');
-        }
-    });
-</script>

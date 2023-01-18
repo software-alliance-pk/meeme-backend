@@ -53,42 +53,22 @@ class DashboardController < ApplicationController
       current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
     elsif params[:password] != nil && params[:password] != params[:password_confirmation]
       redirect_to admin_profile_path
-    elsif params[:password] != nil && params[:password] == params[:password_confirmation]
+    elsif params[:password] != nil && params[:password] == params[:password_confirmation] && current_admin_user.valid_password?(params[:old_password])
       current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name], password: params[:password])
+      @updated = "true"
     end
     if current_admin_user.update(admin_user_params)
     end
   end
 
   def tournament
-    @id, @name, @email, @likes, @dislikes, @created, @image, @participated = [], [], [], [], [], [], [], []
-    @tournament_banner = Like.where(is_judged: true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id], tournament_meme: true }).
+    @tournament_banner_name = params[:tournament_banner_id]
+    @tournament_banner = Like.where(is_judged: true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id , tournament_meme: true }).
       group(:post_id).count(:post_id).sort_by(&:last).sort_by(&:last).reverse.to_h
-    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC')
+    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
     if params[:tournament_banner_id].present?
       @banner = TournamentBanner.find(params[:tournament_banner_id])
       session[:banner] = @banner
-    end
-    if @posts != []
-      @banner.end_date.strftime('%b,%d,%y') > Time.now.strftime('%b,%d,%y') ? @status = "ongoing" : @status = "finished"
-      @joined = @banner.tournament_users.count
-      @posts.each do |post|
-        @id << post.user.id
-        @name << post.user.username
-        @email << post.user.email
-        @likes << post.likes.where(is_judged: true).like.count
-        @dislikes << post.likes.where(is_judged: true).dislike.count
-        @created << post.user.tournament_users.first.created_at.strftime('%b,%d,%y')
-        @participated << post.user.likes.where(tournament_banner_id: params[:tournament_banner_id]).count
-        if post.post_image.attached?
-          @image << url_for(post.post_image)
-        else
-          @image << ActionController::Base.helpers.asset_path('tr-1.jpg')
-        end
-      end
-      respond_to do |format|
-        format.json { render json: { id: @id, name: @name, email: @email, likes: @likes, dislikes: @dislikes, created: @created, image: @image, participated: @participated, status: @status } }
-      end
     end
   end
 
