@@ -14,7 +14,7 @@ class Api::V1::StoriesController < Api::V1::ApiController
   def create
     @story = @current_user.stories.new(story_params)
     if @story.save
-      StoryWorker.perform_in((Time.now + 1.minute), @story.id)
+      StoryWorker.perform_in((Time.now + 5.minute), @story.id)
       render json: @story, status: :ok
     else
       render_error_messages(@story)
