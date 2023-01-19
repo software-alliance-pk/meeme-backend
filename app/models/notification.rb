@@ -2,7 +2,7 @@ class Notification < ApplicationRecord
   after_create :create_push_notification
   enum status: { un_read: 0, read: 1 }
   enum alert: { enabled: 0, disabled: 1 }
-  enum notification_type: { no_type: 0, message: 1, request_send: 2, request_accepted: 3, coin_buy: 4,admin_message: 5, in_app_purchase: 6,sign_up: 7 }
+  enum notification_type: { no_type: 0, message: 1, request_send: 2, request_accepted: 3, coin_buy: 4,admin_message: 5, in_app_purchase: 6,sign_up: 7,comment: 8 }
   belongs_to :user, optional: true
   belongs_to :conversation, optional: true
   belongs_to :message, optional: true
@@ -37,6 +37,7 @@ class Notification < ApplicationRecord
       return
     end
     if notification_type != 'admin_message'
+      debugger
       registration_ids = user.mobile_devices.pluck(:mobile_token)
       if user.notifications_enabled?
         registration_ids.each do |registration_id|
