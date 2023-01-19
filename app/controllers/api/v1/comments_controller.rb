@@ -36,6 +36,10 @@ class Api::V1::CommentsController < Api::V1::ApiController
                                                         user_id: @current_user.id,
                                                         post_id: params[:post_id])
     if @comment.save
+      Notification.create(title: "Comment",
+                          body: "#{@current_user.username} commented on your post",
+                          user_id: @comment.post.user.id,
+                          notification_type: 'comment')
       render json: { comment: @comment }, status: :ok
     else
       render_error_messages(@comment)
@@ -49,6 +53,10 @@ class Api::V1::CommentsController < Api::V1::ApiController
                                                         parent_id: params[:comment_id])
     if @comment.save
       render json: { comment: @comment }, status: :ok
+      Notification.create(title: "Comment",
+                          body: "#{@current_user.username} commented on your post",
+                          user_id: @comment.post.user.id,
+                          notification_type: 'comment')
     else
       render_error_messages(@comment)
     end
