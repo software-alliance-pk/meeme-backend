@@ -137,6 +137,7 @@ Rails.application.routes.draw do
           post :send_a_follow_request_to_user
           get :show_people
           post :un_follow_user
+          get :suggestions
 
         end
       end
@@ -191,6 +192,13 @@ Rails.application.routes.draw do
           get :badge_rarity_search
           post :all_badges
           put :update_badge
+        end
+      end
+
+      resources :notifications do
+        collection do
+          get :user_notifications
+
         end
       end
 

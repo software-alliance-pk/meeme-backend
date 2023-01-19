@@ -76,14 +76,14 @@ $cross_circle: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www
 
 @include font-face(
 	"Product Sans",
-	"../../fonts/ProductSansRegular",
+	"/assets/ProductSansRegular",
 	woff,
 	"woff",
 	400
 );
 @include font-face(
 	"Product Sans",
-	"../../fonts/ProductSansBold",
+	"/assets/ProductSansBold",
 	woff,
 	"woff",
 	700

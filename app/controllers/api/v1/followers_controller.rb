@@ -2,7 +2,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
   before_action :authorize_request
   before_action :not_following_himself, except: %i[index show_pending_requests]
   before_action :already_following, except: %i[index show_pending_requests update_follower un_follow_user]
-  before_action :find_user, except: %i[index show_pending_requests show_people]
+  before_action :find_user, except: %i[index show_pending_requests show_people suggestions]
 
   # GET /users
   def index
@@ -117,6 +117,18 @@ class Api::V1::FollowersController < Api::V1::ApiController
       render json: { people_count: users.count, people_not_added: users }, status: :ok
     else
       render json: { people_count: users.count, people_not_added: users }, status: :ok
+    end
+  end
+
+  def suggestions
+    # followers=@current_user.followers.pluck(:follower_user_id)
+    # followings=@current_user.followings.pluck(:user_id)
+    # excluded << @current_user.id
+    excluded=((@current_user.followers.pluck(:follower_user_id)+@current_user.followings.pluck(:user_id))<< @current_user.id).uniq
+    @users=User.where.not(id: excluded).shuffle.first(5)
+    if @users.present?
+    else
+      return render json: { suggestions: [] }, status: :ok
     end
   end
 
