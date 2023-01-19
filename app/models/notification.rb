@@ -36,9 +36,7 @@ class Notification < ApplicationRecord
       end
       return
     end
-    
     if notification_type != 'admin_message'
-      debugger
       registration_ids = user.mobile_devices.pluck(:mobile_token)
       if user.notifications_enabled?
         registration_ids.each do |registration_id|
