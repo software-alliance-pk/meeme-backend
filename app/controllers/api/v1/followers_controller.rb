@@ -47,7 +47,10 @@ class Api::V1::FollowersController < Api::V1::ApiController
                             body: "#{@current_user.username} wants to follows you",
                             follow_request_id: @follower.id,
                             user_id: params[:follower_user_id],
-                            notification_type: 'request_send')
+                            notification_type: 'request_send',
+                            sender_id: @current_user.id,
+                            sender_name: @current_user.username,
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
 
         render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.user_id).username} " }, status: :ok
         # @secondary_follower = Follower.create!(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
@@ -78,7 +81,10 @@ class Api::V1::FollowersController < Api::V1::ApiController
                             body: "Follower request has been accepted by #{@current_user.username}",
                             follow_request_id: @follower.id,
                             user_id: params[:follower_user_id],
-                            notification_type: 'request_accepted')
+                            notification_type: 'request_accepted',
+                            sender_id: @current_user.id,
+                            sender_name: @current_user.username,
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
         render json: { message: "User added this follower", request: @follower }, status: :ok
       end
     else
