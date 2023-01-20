@@ -160,7 +160,7 @@
                                                         <div class="col-12">
                                                             <h6 class="form_label">Amount</h6>
                                                             <div class="form_blk">
-                                                                <%= f.text_field :amount, class: "input", value: card.amount %>
+                                                                <%= f.text_field :amount, class: "input", id: "form_amount", value: card.amount, data: { numeric: true } %>
                                                             </div>
                                                         </div>
                                                         <div class="col-12">
@@ -172,7 +172,7 @@
                                                         <div class="col-12">
                                                             <h6 class="form_label">Coin Price</h6>
                                                             <div class="form_blk">
-                                                                <%= f.text_field :coin_price, class: "input", value: card.coin_price %>
+                                                                <%= f.text_field :coin_price, class: "input", id: "form_coins" ,value: card.coin_price, data: { numeric: true } %>
                                                                 <%= f.hidden_field :id, value: params[:id] %>
                                                             </div>
                                                         </div>
@@ -182,76 +182,76 @@
                                                     </div>
                                                 <% end %>
                                             </div>
-                                            <div class="right_blk">
-                                                <p>Add image</p>
-                                                <div class="cards_list">
-                                                    <div class="amazon_card">
-                                                        <input type="checkbox" class="checkbox">
-                                                        <h5>$100</h5>
-                                                        <div class="img">
-                                                            <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
-                                                        </div>
-                                                        <div class="btn_blk">
-                                                            <button type="button" class="amazon_btn">
-                                                                <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                                00,000
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="amazon_card">
-                                                        <input type="checkbox" class="checkbox">
-                                                        <h5>$75</h5>
-                                                        <div class="img">
-                                                            <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
-                                                        </div>
-                                                        <div class="btn_blk">
-                                                            <button type="button" class="amazon_btn">
-                                                                <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                                00,000
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="amazon_card">
-                                                        <input type="checkbox" class="checkbox">
-                                                        <h5>$50</h5>
-                                                        <div class="img">
-                                                            <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
-                                                        </div>
-                                                        <div class="btn_blk">
-                                                            <button type="button" class="amazon_btn">
-                                                                <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                                00,000
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="amazon_card">
-                                                        <input type="checkbox" class="checkbox">
-                                                        <h5>$20</h5>
-                                                        <div class="img">
-                                                            <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
-                                                        </div>
-                                                        <div class="btn_blk">
-                                                            <button type="button" class="amazon_btn">
-                                                                <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                                00,000
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="amazon_card">
-                                                        <input type="checkbox" class="checkbox">
-                                                        <h5>$10</h5>
-                                                        <div class="img">
-                                                            <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
-                                                        </div>
-                                                        <div class="btn_blk">
-                                                            <button type="button" class="amazon_btn">
-                                                                <img src="<%= asset_path("icon-coin.svg")%>" alt="">
-                                                                00,000
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                          <div class="right_blk">
+                                            <p>Add image</p>
+                                            <div class="cards_list">
+                                              <div class="amazon_card">
+                                                <input type="checkbox" class="checkbox" id="checkbox_1" onchange="checkbox(1)">
+                                                <h5 id="image_amount_1">$100</h5>
+                                                <div class="img">
+                                                  <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
                                                 </div>
+                                                <div class="btn_blk">
+                                                  <button type="button" class="amazon_btn" id="image_coin_1">
+                                                    <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                    0
+                                                  </button>
+                                                </div>
+                                              </div>
+                                              <div class="amazon_card">
+                                                <input type="checkbox" class="checkbox" id="checkbox_2" onchange="checkbox(2)">
+                                                <h5 id="image_amount_2">$75</h5>
+                                                <div class="img">
+                                                  <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                </div>
+                                                <div class="btn_blk">
+                                                  <button type="button" class="amazon_btn" id="image_coin_2">
+                                                    <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                    13000
+                                                  </button>
+                                                </div>
+                                              </div>
+                                              <div class="amazon_card">
+                                                <input type="checkbox" class="checkbox" id="checkbox_3" onchange="checkbox(3)">
+                                                <h5 id="image_amount_3">$50</h5>
+                                                <div class="img">
+                                                  <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                </div>
+                                                <div class="btn_blk">
+                                                  <button type="button" class="amazon_btn" id="image_coin_3">
+                                                    <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                    12000
+                                                  </button>
+                                                </div>
+                                              </div>
+                                              <div class="amazon_card">
+                                                <input type="checkbox" class="checkbox" id="checkbox_4" onchange="checkbox(4)">
+                                                <h5 id="image_amount_4">$20</h5>
+                                                <div class="img">
+                                                  <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                </div>
+                                                <div class="btn_blk">
+                                                  <button type="button" class="amazon_btn" id="image_coin_4">
+                                                    <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                    11000
+                                                  </button>
+                                                </div>
+                                              </div>
+                                              <div class="amazon_card">
+                                                <input type="checkbox" class="checkbox" id="checkbox_5" onchange="checkbox(5)">
+                                                <h5 id="image_amount_5">$10</h5>
+                                                <div class="img">
+                                                  <img src="<%= asset_path("amazon-logo.svg")%>" alt="">
+                                                </div>
+                                                <div class="btn_blk">
+                                                  <button type="button" class="amazon_btn" id="image_coin_5">
+                                                    <img src="<%= asset_path("icon-coin.svg")%>" alt="">
+                                                    10000
+                                                  </button>
+                                                </div>
+                                              </div>
                                             </div>
+                                          </div>
                                         </div>
                                     </div>
                                 </div>
@@ -271,5 +271,24 @@
 
     function close_amazon_card(){
         document.getElementById("add_amazon").style.display = "none"
+    }
+
+    function checkbox(id){
+        if(id === 1 && $("#checkbox_1")[0].checked === true){
+            $("#form_amount")[0].value = $("#image_amount_1")[0].innerHTML.slice(1, 4)
+            $("#form_coins")[0].value = $("#image_coin_1")[0].innerText
+        }else if(id === 2 && $("#checkbox_2")[0].checked === true){
+            $("#form_amount")[0].value = $("#image_amount_2")[0].innerHTML.slice(1, 4)
+            $("#form_coins")[0].value = $("#image_coin_2")[0].innerText
+        }else if(id === 3 && $("#checkbox_3")[0].checked === true){
+            $("#form_amount")[0].value = $("#image_amount_3")[0].innerHTML.slice(1, 4)
+            $("#form_coins")[0].value = $("#image_coin_3")[0].innerText
+        }else if(id === 4 && $("#checkbox_4")[0].checked === true){
+            $("#form_amount")[0].value = $("#image_amount_4")[0].innerHTML.slice(1, 4)
+            $("#form_coins")[0].value = $("#image_coin_4")[0].innerText
+        }else if(id === 5 && $("#checkbox_5")[0].checked === true){
+            $("#form_amount")[0].value = $("#image_amount_5")[0].innerHTML.slice(1, 4)
+            $("#form_coins")[0].value = $("#image_coin_5")[0].innerText
+        }
     }
 </script>

@@ -67,9 +67,9 @@
                     </div>
                   </div>
                 </td>
-                <td><%= transaction_details.amount %></td>
+                <td>$<%= transaction_details.amount %></td>
                 <td><%= transaction_details.brand %></td>
-                <td><%= transaction_details.created_at.strftime("%F") %></td>
+                <td><%= transaction_details.created_at.strftime("%d %b, %Y") %></td>
                 <td></td>
               </tr>
             <% end %>
@@ -147,8 +147,15 @@
             success: function(response){
                 var table = $("#table tbody");
                 table[0].innerHTML = ""
-                response.transaction.forEach(function(data){
-                    table.append("<tr><td>"+data.created_at.slice(0, 10)+"</td><td>"+data.created_at.slice(11, 16)+"</td><td></td><td>"+data.brand+"</td><td>"+data.amount+"</td></tr>");
+                response.transaction.reverse().forEach(function(data){
+                    var date = data.created_at.split('-').reverse().join('/').slice(0, 2) + data.created_at.split('-').reverse().join('/').slice(16)
+                    var format = ""
+                    if(data.created_at.slice(11, 16).split(':').join('.') > 12){
+                        format = " PM"
+                    }else{
+                        format = " AM"
+                    }
+                    table.append("<tr><td>"+date+"</td><td>"+data.created_at.slice(11, 16) + format +"</td><td></td><td>"+data.brand+"</td><td>"+"$"+ data.amount+"</td></tr>");
                 })
                 document.getElementById("image").src = response.image
             },

@@ -13,7 +13,9 @@ class DashboardController < ApplicationController
   end
 
   def homepage
-    if admin_user_signed_in?
+    if AdminUser.all == []
+      redirect_to welcome_path
+    elsif admin_user_signed_in?
       redirect_to dashboard_path
     else
       redirect_to new_admin_user_session_path
@@ -94,6 +96,10 @@ class DashboardController < ApplicationController
   end
 
   def tournament_winner_list
+    if params[:coins].present? && params[:user_id].present?
+      @user = User.find(params[:user_id])
+      @user.update(coins: @user.coins + params[:coins].to_i)
+    end
     if params[:username].present?
       @user = User.find_by(username: params[:username])
       @user_image = @user.profile_image.attached? ? url_for(@user.profile_image) : ActionController::Base.helpers.asset_path('user.png')

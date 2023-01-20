@@ -4,7 +4,7 @@
     <div id="dashboard" class="main_side">
       <div id="top_header">
         <div class="left_blk">
-          <h1>Hi <%= current_admin_user.admin_user_name%> </h1>
+          <h1>Hi <%= current_admin_user.admin_user_name.upcase_first%> </h1>
           <div class="img">
             <img src="<%= asset_path("Emoji-hand.svg")%>" alt="">
           </div>
@@ -226,7 +226,7 @@
               <h4>Daily Coin Reward For Judging</h4>
               <form action="/set_coins">
                 <div class="btn_blk">
-                  <input class="site_btn bg_dark round" name="daily_coins_reward" value = <%= DailyCoin.first.daily_coins_reward if DailyCoin.first.present? %>>
+                  <input class="site_btn bg_dark round" name="daily_coins_reward" required value = <%= DailyCoin.first.daily_coins_reward if DailyCoin.first.present? %>>
                   </input>
                 </div>
                 <div class="btn_blk">

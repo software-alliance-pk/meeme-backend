@@ -16,6 +16,9 @@
             <div class="col-12">
               <div class="form_blk">
                 <%= f.email_field :email, autofocus: true, autocomplete: "email",type:"text",id:"", class:"input", placeholder:"Email" %>
+                <% if resource.errors[:email].present? %>
+                  <div id="forgot_email_password" style="margin: 5px 0 0 15px; color: red"><%= resource.errors.full_messages_for(:email).first %></div>
+                <% end %>
               </div>
             </div>
           </div>

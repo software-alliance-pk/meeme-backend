@@ -7,10 +7,6 @@
             <img src="<%= asset_path("logo.svg") %>" alt="">
           </div>
           <div class="txt">
-            <%= devise_error_messages! %>
-            <% flash.each do |key, value| %>
-              <div class="flash <%= key %>"><%= value %></div>
-            <% end %>
             <h1 class="fw_700">Sign in to manage</h1>
             <p>Enter your details below</p>
           </div>
@@ -19,18 +15,32 @@
               <div class="form_blk">
                 <%#= f.label :email %>
                 <%= f.email_field :email, autofocus: true, autocomplete: "Email", type: "text", id: "", class: "input", placeholder: "Email" %>
+                <%if params[:admin_user].present?%>
+                  <% if params[:admin_user][:email].blank? %>
+                    <p style="margin: 5px 0 0 15px; color: red">Email can't be blank</p>
+                  <% elsif params[:admin_user][:email] != AdminUser.first.email %>
+                    <p style="margin: 5px 0 0 15px; color: red">Invalid email</p>
+                  <%end%>
+                <%end%>
               </div>
             </div>
             <div class="col-12">
               <div class="form_blk">
                 <!--                <%#= f.label :password %><br/>-->
                 <%= f.password_field :password, autocomplete: "current-password", type: "password", id: "", class: "input", placeholder: "Password" %>
+                <%if params[:admin_user].present?%>
+                  <%if params[:admin_user][:password].blank? %>
+                    <p style="margin: 5px 0 0 15px; color: red">Password can't be blank</p>
+                  <% elsif params[:admin_user][:password] != AdminUser.first.password %>
+                    <p style="margin: 5px 0 0 15px; color: red">Invalid password</p>
+                  <%end%>
+                <%end%>
               </div>
             </div>
             <div class="col-12">
               <div class="form_blk forget_blk">
                 <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-                  <%= link_to "Forgot your password?", new_password_path(resource_name) %><br />
+                  <%= link_to "Forgot password?", new_password_path(resource_name) %><br />
                 <% end %>
               </div>
             </div>
