@@ -25,6 +25,9 @@
             <div class="col-12">
               <div class="form_blk">
                 <%= f.email_field :email, autofocus: true, autocomplete: "email", type: "text", class: "input", id: "", placeholder: "Email" %>
+                <% if resource.errors[:email].present? %>
+                  <div id="email_error" style="margin: 5px 0 0 15px; color: red"><%= resource.errors.full_messages_for(:email).first %></div>
+                <% end %>
               </div>
             </div>
             <div class="col-12">
@@ -33,11 +36,17 @@
                   <em>(<%= @minimum_password_length %> characters minimum)</em>
                 <% end %><br/>
                 <%= f.password_field :password, autocomplete: "new-password", type: "password", class: "input", id: "", placeholder: "Password" %>
+                <% if resource.errors[:password].present? %>
+                  <div id="password_error" style="margin: 5px 0 0 15px; color: red"><%= resource.errors.full_messages_for(:password).first %></div>
+                <% end %>
               </div>
             </div>
             <div class="col-12">
               <div class="form_blk">
                 <%= f.password_field :password_confirmation, autocomplete: "confirm-password", type: "password", id: "", class: "input", placeholder: "Confirm Password" %>
+                <% if resource.errors[:password_confirmation].present? %>
+                  <div id="password_confirmation_error" style="margin: 5px 0 0 15px; color: red"><%= resource.errors.full_messages_for(:password_confirmation).first %></div>
+                <% end %>
               </div>
             </div>
           </div>
@@ -70,7 +79,17 @@
   </section>
 </main>
 
+<script type="text/javascript">
+    $(document).ready(function(){
+        setTimeout(function(){
+            $('#email_error, #password_error, #password_confirmation_error').fadeOut();
+        }, 5000);
+    })
 
+    // function open_modal(){
+    //     document.getElementById("logon_modal").style.display = "block"
+    // }
+</script>
 
 
 

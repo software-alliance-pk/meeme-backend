@@ -30,17 +30,17 @@
               <div class="col-12">
                 <div class="form_blk">
                   <input type="text" name="title" id="title" class="input"
-                         placeholder="Push Notification Title">
+                         placeholder="Push Notification Title" required>
                 </div>
               </div>
               <div class="col-12">
                 <div class="form_blk">
-                  <input type="text" name="body" id="body" class="input" placeholder="Link (Optional)">
+                  <input type="text" name="body" id="link" class="input" placeholder="Link (Optional)">
                 </div>
               </div>
               <div class="col-12">
                 <div class="form_blk">
-                  <textarea class="input" name="body" rows="10" placeholder="Start typing here....."></textarea>
+                  <textarea class="input" name="body" id="body" rows="10" placeholder="Start typing here....." required></textarea>
                 </div>
               </div>
             </div>
@@ -107,6 +107,10 @@
             document.getElementById("notify_confirm").style.display = "none"
         }
         document.getElementById("notify_confirm").style.display = "none"
+        $("#title")[0].value = ""
+        $("#link")[0].value = ""
+        $("#body")[0].value = ""
+        $("#send_all").prop("checked", false)
     }
 
     function cancel(){

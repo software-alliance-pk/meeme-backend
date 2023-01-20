@@ -1,5 +1,5 @@
 class PushNotificationBroadCastJob < ApplicationJob
-    queue_as :default
+    # queue_as :default
     def perform(body, title, date)
         require 'fcm'
         fcm_client = FCM.new(ENV['FIREBASE_SERVER_KEY'])
@@ -19,6 +19,6 @@ class PushNotificationBroadCastJob < ApplicationJob
           puts "----------------------------------------------"
           puts "----------------------------------------------"
           puts "----------------------------------------------"
-      end
+        end
     end
 end

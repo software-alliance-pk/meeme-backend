@@ -98,7 +98,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% @amazon_cards.each do |card| %>
+                                  <% if @amazon_cards.present? %>
+                                    <% @amazon_cards.reverse.each do |card| %>
                                         <tr>
                                             <td>
                                                 <div class="amazon_card">
@@ -130,6 +131,7 @@
                                             </td>
                                         </tr>
                                     <% end %>
+                                  <% end %>
                                 </tbody>
                             </table>
                         </div>
@@ -166,7 +168,7 @@
                                                 <div class="col-12">
                                                     <h6 class="form_label">Amazon Gift Card Number</h6>
                                                     <div class="form_blk">
-                                                        <%= f.text_field :card_number, class: "input", id: "number" ,placeholder: "Card Number" %>
+                                                        <%= f.text_field :card_number, class: "input", id: "number" ,placeholder: "Card Number", required: true %>
                                                         <div class="img">
                                                             <img src="<%= asset_path("amazon-card-1.png")%>" alt="">
                                                         </div>
@@ -225,7 +227,6 @@
                                     <div class="_inner">
                                         <button type="button" class="x_btn" onclick="close_amazon_card()"></button>
                                         <h4>Add Amazon Gift Card</h4>
-                                        <%= @amazon_card.errors.full_messages.first if @amazon_card.present? %>
                                         <div class="detail_blk">
                                             <div class="left_blk">
                                                 <%= form_with(model: @amazon_card, local: true) do |f| %>

@@ -38,12 +38,12 @@ en:
     page_entries_info:
       single_page:
         zero: "No entires found"
-        one: "Showing 1 entry"
-        other: "Showing %{count} entries"
+        one: "Showing %{count} to %{count} of %{count} entries"
+        other: "Showing %{count} to %{count} of %{count} entries"
       single_page_html:
         zero: "No entires found"
-        one: "Showing 1 entry"
-        other: "Showing <b>all&nbsp;%{count}</b> entries"
+        one: "Showing %{count} to %{count} of %{count} entries"
+        other: "Showing %{count} to %{count} of %{count} entries"
 
       multi_page: "Showing %{from} to %{to} of %{count} entries"
       multi_page_html: "Showing <b>%{from}&nbsp;to&nbsp;%{to}</b> of <b>%{count}</b> entries"

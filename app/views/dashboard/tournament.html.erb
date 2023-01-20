@@ -25,7 +25,7 @@
                 <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onclick: "submit()" %>
               <% end %>
             </div>
-            <p class="ms-3"> Participants: <span id = "joined"><%= @banner.tournament_users.count if @banner.present? %></span></p>
+            <p class="ms-3"> Participants: <span id = "joined" style="font-size: 2.4rem"><%= @banner.present? ? @banner.tournament_users.count : TournamentBanner&.first&.tournament_users.count %> Joined</span></p>
           </div>
           <h4 class="fw_400 mb-0">
             <a href="/tournament-winner-list" id = "banner_id">Tournament Winners</a>
@@ -68,7 +68,7 @@
                 <td><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).dislike.count%></td>
                 <td><%=post.user.tournament_users.first.created_at.strftime('%B %d,%Y') %></td>
-                <% banner_id = @banner.id if @banner.present? %>
+                <% banner_id = @banner.present? ? @banner.id : TournamentBanner&.first&.id %>
                 <td><%=post.user.likes.where(tournament_banner_id: banner_id).count %></td>
                 <td>
                   <div class="img">
@@ -86,10 +86,16 @@
                       <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                      <li><button type="button">Disable Account</button></li>
+                      <li><button type="button" onclick="disable_user('<%= post.user.id %>')">Disable Account</button></li>
                       <li>
+                        <% username = post.user.username %>
+                        <% email = post.user.email %>
+                        <% likes = post.likes.where(status: "like").count %>
+                        <% created = post.user.tournament_users&.first&.created_at.strftime('%b %d, %Y') %>
+                        <% dislikes = post.likes.where(status: "dislike").count %>
+                        <% url = post.post_image.present? ? post.post_image.blob.url : asset_path("tr-1.jpg") %>
                         <button type="button" class="pop_btn"
-                                data-popup="trans_profile">Reward</button>
+                                data-popup="trans_profile" onclick="open_tormnt_modal('<%=username %>', '<%= email%>', '<%= likes%>', '<%=created %>', '<%= dislikes%>', '<%= url %>')">Reward</button>
                       </li>
                     </ul>
                   </div>
@@ -104,6 +110,77 @@
           <ul class="pagination">
             <li class="disabled"> <%= will_paginate(@posts, :class => "h5 text-white", :outer_window => 1, :inner_window => 0) %></li>
           </ul>
+        </div>
+      </div>
+    </div>
+    <div class="popup" data-popup="trans_profile" id="tormnt_modal">
+      <div class="table_dv">
+        <div class="table_cell">
+          <div class="contain">
+            <div class="row justify-content-center">
+              <div class="col-12">
+                <div class="_inner">
+                  <button type="button" class="x_btn" onclick="close_tormnt_modal()"></button>
+                  <h3>Reward</h3>
+                  <div class="detail_blk">
+                    <div class="left_blk">
+                      <table>
+                        <thead>
+                        <tr>
+                          <th style="width: 13rem;">Name</th>
+                          <th style="width: 22rem;">Email</th>
+                          <th>Date Joined</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                          <td id="tournament_user_name"></td>
+                          <td id="tournament_user_email"></td>
+                          <td id="tournament_user_joined"></td>
+                        </tr>
+                        </tbody>
+                      </table>
+                      <%= form_tag(winner_reward_path, method: "get") do %>
+                        <div class="row">
+                          <div class="col-12">
+                            <h6 class="form_label">Gift Card #</h6>
+                            <div class="form_blk">
+                              <input type="text" id="gift_card_number" class="input" placeholder="000000" required>
+                            </div>
+                          </div>
+                          <div class="col-12">
+                            <h6 class="form_label">Coin</h6>
+                            <div class="form_blk">
+                              <input type="text" id="coins" class="input" placeholder="Enter Coins" required>
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="btn_blk mt-5" id="reward_btn">
+                          <button class="site_btn prime_btn round w-100" onclick= "get_user_name()">Send</button>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="right_blk">
+                      <div class="img">
+                        <img src="" alt="" id="image">
+                      </div>
+                      <div class="vote_blk">
+                        <span class="vote">
+                          <img src="<%= asset_path("icon-vote-up.svg") %>" alt="">
+                          <span id="user_likes"></span>
+                        </span>
+                        <span class="vote vote_down">
+                          <img src="<%= asset_path("icon-vote-down.svg") %>" alt="">
+                          <span id="user_dislikes"></span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -196,5 +273,43 @@
 
     function open_trmnt_model(){
         document.getElementById("tormnt_modal").style.display="block"
+    }
+
+    function disable_user(id){
+        $.ajax({
+            type: "GET",
+            url: "user_disable",
+            data: {id: id},
+            success: function(response){
+            }
+        })
+    }
+
+    function open_tormnt_modal(name, email, likes, created, dislike, url){
+        document.getElementById("tormnt_modal").style.display="block"
+        document.getElementById("tournament_user_name").innerHTML= name
+        document.getElementById("tournament_user_email").innerHTML= email
+        document.getElementById("tournament_user_joined").innerHTML= created
+        document.getElementById("user_likes").innerHTML= likes
+        document.getElementById("user_dislikes").innerHTML= dislike
+        document.getElementById("image").src = url
+    }
+
+    function get_user_name(){
+        var name = document.getElementById("tournament_user_name").innerHTML
+        var card_number = document.getElementById("gift_card_number").value
+        var coins = document.getElementById("coins").value
+        $.ajax({
+            type: "GET",
+            url: "winner-reward",
+            data: {name: name, card_number: card_number, coins: coins},
+            success: function() {
+                document.getElementById("tormnt_modal").style.display="none"
+            }
+        })
+    }
+
+    function close_tormnt_modal(){
+        document.getElementById("tormnt_modal").style.display="none"
     }
 </script>

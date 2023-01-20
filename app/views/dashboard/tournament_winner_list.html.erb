@@ -41,7 +41,7 @@
           </thead>
           <tbody>
             <% banner = session[:banner] %>
-            <% users = TournamentBanner.find(banner["id"]).tournament_users.joins(user: {posts: :likes}).group("posts.id", "tournament_users.id").order("COUNT(likes.id) DESC").limit(10) %>
+            <% users = TournamentBanner.find(banner["id"]).tournament_users.joins(user: {posts:  :likes}).where(likes: {is_judged: true}).group("posts.id", "tournament_users.id").order("COUNT(likes.id) DESC").limit(10) %>
             <% i = 0 %>
             <% if users.present? %>
               <% users.each do |tournament_user| %>
@@ -75,21 +75,31 @@
                   <td><%= tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
                   <td><%= tournament_user.created_at.strftime("%F") %></td>
                   <td>
-                    <div class="dropdown">
-                      <button class="dropdown-toggle chevron" data-bs-toggle="dropdown">
-                        Gift Card
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                          <button type="button" onclick="disable_user('<%= tournament_user.user.id %>')">Disable Account</button>
-                        </li>
-                        <li>
-                          <button type="button" onclick="open_tormnt_modal('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.count%>',
-                            '<%= tournament_user.user.created_at.strftime('%F') %>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.where(status: "dislike")&.count%>') ; image('<%=tournament_user.user.username%>')">Reward
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
+                    <% if i < 4 %>
+                      <div class="dropdown">
+                        <button class="dropdown-toggle chevron" data-bs-toggle="dropdown">
+                          Gift Card
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                          <li>
+                            <button type="button" onclick="disable_user('<%= tournament_user.user.id %>')">Disable
+                              Account
+                            </button>
+                          </li>
+                          <li>
+                            <button type="button" onclick="open_tormnt_modal('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.where(status: "like").count%>',
+                              '<%= tournament_user.user.created_at.strftime('%b %d, %Y') %>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.where(status: "dislike")&.count%>') ; image('<%=tournament_user.user.username%>')">Reward
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    <% else %>
+                      <%= form_with(method: "get") do |f|%>
+                        <%= f.text_field :coins, class: "input", value: "1000", data: { numeric: true }, id: "rank_user_coins" %>
+                        <%= f.text_field :user_id, hidden: true, value: tournament_user.user_id %>
+                        <%= f.submit "" , hidden: true %>
+                      <% end %>
+                    <% end %>
                   </td>
                 </tr>
               <% end %>
@@ -197,11 +207,13 @@
                                         <img src="" alt="" id="image">
                                     </div>
                                     <div class="vote_blk">
-                                        <span class="vote" id="user_likes">
+                                        <span class="vote">
                                             <img src="<%= asset_path("icon-vote-up.svg")%>" alt="">
+                                            <span id="user_likes"></span>
                                         </span>
-                                        <span class="vote vote_down" id="user_dislikes">
+                                        <span class="vote vote_down">
                                             <img src="<%= asset_path("icon-vote-down.svg")%>" alt="">
+                                            <span id="user_dislikes"></span>
                                         </span>
                                     </div>
                                 </div>
@@ -257,7 +269,7 @@
   }
 
   function image(name){
-    var banner_id = '<%= session[:banner]["id"] %>'
+    var banner_id = '<%= session[:banner].present? ? session[:banner]["id"] : '' %>'
     $.ajax({
       type: "GET",
       url: "post-images",
