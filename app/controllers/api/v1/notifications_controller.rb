@@ -3,8 +3,8 @@ class Api::V1::NotificationsController < Api::V1::ApiController
 
   def user_notifications
     @notifications=@current_user.notifications.where(notification_type: [2,3,8]).reverse
+    @notifications=@notifications.group_by{ |x| x.created_at.strftime('%d,%m,%Y') }
     if @notifications.present?
-      render json: { user: @current_user,notification_count: @notifications.count, notifications: @notifications }, status: :ok
     else
       render json: { user: @current_user, notifications: [] }, status: :ok
     end
