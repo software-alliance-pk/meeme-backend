@@ -64,7 +64,10 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             conversation_id: @conversation.id,
                             user_id: @message.receiver_id,
                             message_id: @message.id,
-                            notification_type: 'message')
+                            notification_type: 'message',
+                            sender_id: @current_user.id,
+                            sender_name: @current_user.username,
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -83,7 +86,10 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             conversation_id: @conversation.id,
                             user_id: @message.sender_id,
                             message_id: @message.id,
-                            notification_type: 'admin_message')
+                            notification_type: 'admin_message',
+                            sender_id: @current_user.id,
+                            sender_name: @current_user.username,
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -103,7 +109,10 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             conversation_id: @conversation.id,
                             user_id: @message.sender_id,
                             message_id: @message.id,
-                            notification_type: 'admin_message')
+                            notification_type: 'admin_message',
+                            sender_id: @current_user.id,
+                            sender_name: @current_user.username,
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
       end
     else
       render json: { message: "No conversation present" }, status: :not_found

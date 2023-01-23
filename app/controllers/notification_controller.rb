@@ -13,6 +13,7 @@ class NotificationController < ApplicationController
 
     private
     def notification_params
-        params.permit(:title, :send_all, :body, :status, :alert, :user_id, :conversation_id, :message_id, :follow_request_id, :send_date)
+        params.permit(:title, :send_all, :body, :status, :alert, :user_id, :conversation_id, :message_id, :follow_request_id, :send_date).merge( sender_id: current_admin_user.id, sender_name: current_admin_user.admin_user_name,
+                                                                                                                                                 sender_image: current_admin_user.admin_profile_image.present? ?  current_admin_user.admin_profile_image.blob.url : '')
     end
 end

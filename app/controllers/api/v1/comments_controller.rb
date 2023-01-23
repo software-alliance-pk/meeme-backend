@@ -39,7 +39,10 @@ class Api::V1::CommentsController < Api::V1::ApiController
       Notification.create(title: "Comment",
                           body: "#{@current_user.username} commented on your post",
                           user_id: @comment.post.user.id,
-                          notification_type: 'comment')
+                          notification_type: 'comment',
+                          sender_id: @current_user.id,
+                          sender_name: @current_user.username,
+                          sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
       render json: { comment: @comment }, status: :ok
     else
       render_error_messages(@comment)
@@ -56,7 +59,10 @@ class Api::V1::CommentsController < Api::V1::ApiController
       Notification.create(title: "Comment",
                           body: "#{@current_user.username} commented on your post",
                           user_id: @comment.post.user.id,
-                          notification_type: 'comment')
+                          notification_type: 'comment',
+                          sender_id: @current_user.id,
+                          sender_name: @current_user.username,
+                          sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
     else
       render_error_messages(@comment)
     end
