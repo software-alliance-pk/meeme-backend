@@ -86,6 +86,12 @@ class DashboardController < ApplicationController
   def tournament_banner_create
     @banner = TournamentBanner.new(banner_params)
     if @banner.save
+      @today_date = Time.zone.now.end_of_day.to_datetime
+      @tournament_end_date = @banner.end_date.strftime("%a, %d %b %Y").to_datetime
+      @tournamnet_days = (@tournament_end_date - @today_date).to_i
+      TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @banner.id)
+      # TournamentWorker.perform_in((Time.now + 1.minute), @banner.id)
+
       redirect_to tournament_banner_path
     end
   end
