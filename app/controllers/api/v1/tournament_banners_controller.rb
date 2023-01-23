@@ -119,8 +119,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     # @difference = (@tournament_end_date - @tournament_start_date).to_i
     @tournamnet_days = (@tournament_end_date - @tournament_start_date).to_i
     @difference = (@today_date - @tournament_start_date).to_i
-
-    if (@tournament_end_date == @today_date) | @tournament.enable == false
+    if ((@tournament_end_date <= @today_date) | (@tournament.enable == false))
       return render json: { message: "Tournament Ended" }, status: :ok
     else
       @posts_judged = Like.where(created_at: (@tournament_start_date).beginning_of_day..(@tournament_end_date).end_of_day, is_judged: true, user_id: @current_user.id).where.not(post_id: nil) if present?
