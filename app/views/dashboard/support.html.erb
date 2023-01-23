@@ -15,20 +15,22 @@
       </div>
       <div class="inside">
         <div class="person_side">
-          <%= form_tag(conversations_path, method: "get", html: {id: 'form'}) do %>
-            <div class="form_blk">
-              <select class="input" name="subject" onchange="submit()" style="width: 100%; height: 50px">
-                <li><option>Select Subject</option></li>
-                <li><option class="dropdown-divider">Nothing_Happened</option></li>
-                <li><option>Abuse</option></li>
-                <li><option>Payment</option></li>
-                <li><option>Image</option></li>
-                <li><option>Profile</option></li>
-                <li><option>Tournament_Winner</option></li>
-                <li><option>Coins</option></li>
-                <li><option>Plagiarism</option></li>
-                <li><option>Winner_Feedback</option></li>
-              </select>
+          <%= form_for(conversations_path, method: "get", html: {id: 'form'}) do |f|%>
+            <div class="dropdown form_blk">
+              <button type="button" class="dropdown-toggle site_btn chevron w-100" data-bs-toggle="dropdown"><%= @header_value.present? ? @header_value : "" %></button>
+              <ul class="dropdown-menu w-100">
+                <li><button selected type="button" onclick="submission(this.innerText)">Nothing_Happened</button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Abuse <span class="dot"></span></button></li>
+                <%= f.text_field :subject, hidden: true, id: "subject" %>
+                <li><button type="button" onclick="submission(this.innerText)">Payment</button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Image <span class="dot"></span></button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Profile</button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Tournament_Winner <span class="dot"></span></button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Coins <span class="dot"></span></button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Plagiarism</button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Winner_Feedback</button></li>
+                <%= f.submit "", hidden: true, id: "form_submit" %>
+              </ul>
             </div>
           <% end %>
           </br></br>
@@ -107,6 +109,10 @@
     $("#clicked").addClass("active")
     $("#chat_list").animate({ scrollTop: 20000000 }, "slow");
 
+    $(".user_list").on('click','.user_blk',function(){
+        $(".user_list .user_blk.active").removeClass("active");
+        $(this).addClass("active");
+    });
     function open_conversation(sender_id, conversation_id, name, email){
         $('#chat_list').data('id', conversation_id);
         $("#clicked").removeClass("active")
@@ -253,5 +259,10 @@
                 document.getElementById("profile_image").src = response.image
             }
         })
+    }
+
+    function submission(subject){
+        $("#subject")[0].value = subject
+        $("#form_submit").click()
     }
 </script>

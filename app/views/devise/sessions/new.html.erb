@@ -17,9 +17,9 @@
                 <%= f.email_field :email, autofocus: true, autocomplete: "Email", type: "text", id: "", class: "input", placeholder: "Email" %>
                 <%if params[:admin_user].present?%>
                   <% if params[:admin_user][:email].blank? %>
-                    <p style="margin: 5px 0 0 15px; color: red">Email can't be blank</p>
-                  <% elsif params[:admin_user][:email] != AdminUser.first.email %>
-                    <p style="margin: 5px 0 0 15px; color: red">Invalid email</p>
+                    <p id="email_blank" style="margin: 5px 0 0 15px; color: red">Email can't be blank</p>
+                  <% elsif params[:admin_user][:email] != (AdminUser.first.present? ? AdminUser.first.email : "") %>
+                    <p id="email_invalid" style="margin: 5px 0 0 15px; color: red">Invalid email</p>
                   <%end%>
                 <%end%>
               </div>
@@ -30,9 +30,9 @@
                 <%= f.password_field :password, autocomplete: "current-password", type: "password", id: "", class: "input", placeholder: "Password" %>
                 <%if params[:admin_user].present?%>
                   <%if params[:admin_user][:password].blank? %>
-                    <p style="margin: 5px 0 0 15px; color: red">Password can't be blank</p>
-                  <% elsif params[:admin_user][:password] != AdminUser.first.password %>
-                    <p style="margin: 5px 0 0 15px; color: red">Invalid password</p>
+                    <p id="password_blank" style="margin: 5px 0 0 15px; color: red">Password can't be blank</p>
+                  <% elsif params[:admin_user][:password] != (AdminUser.first.present? ? AdminUser.first.password : "") %>
+                    <p id="password_invalid" style="margin: 5px 0 0 15px; color: red">Invalid password</p>
                   <%end%>
                 <%end%>
               </div>
@@ -57,8 +57,8 @@
 <script type="text/javascript">
     $(document).ready(function(){
         setTimeout(function(){
-            $('.flash').fadeOut();
-        }, 2000);
+            $('#email_blank, #email_invalid, #password_blank, #password_invalid').fadeOut();
+        }, 3000);
     })
 </script>
 

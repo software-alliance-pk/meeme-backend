@@ -14,16 +14,20 @@
         </div>
       </div>
       <div class="inner_blk">
+        <% start_date = "" %>
+        <% end_date = "" %>
         <div class="top gap-3">
           <%= form_tag(transactions_path, method: "get") do %>
             <div class="d-flex gap-3">
               <div class="trans_blk">
                 <span>From: </span>
                 <input type="date" name="start_date"></input>
+                <% start_date = params[:start_date] if params[:start_date].present? %>
               </div>
               <div class="trans_blk">
                 <span>To: </span>
                 <input type="date" name="end_date"></input>
+                <% end_date = params[:end_date] if params[:end_date].present? %>
               </div>
             </div>
             <%= submit_tag "", hidden: true ,:name => nil %>
@@ -37,7 +41,7 @@
               <%= submit_tag "" , type: :image ,:name => nil %>
             </div>
           <% end %>
-          <a href= "/transaction-export.csv?search=<%= search_value %>" class="ms-auto d-block"><button type="button" class="site_btn round csv_btn">
+          <a href= "/transaction-export.csv?search=<%= search_value %>&start_date=<%= start_date %>&end_date=<%= end_date %>" class="ms-auto d-block"><button type="button" class="site_btn round csv_btn">
             <img src="<%= asset_path("icon-csv.svg")%>" alt="">
             Export CSV
           </button></a>

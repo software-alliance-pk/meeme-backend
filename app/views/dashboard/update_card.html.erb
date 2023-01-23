@@ -160,19 +160,19 @@
                                                         <div class="col-12">
                                                             <h6 class="form_label">Amount</h6>
                                                             <div class="form_blk">
-                                                                <%= f.text_field :amount, class: "input", id: "form_amount", value: card.amount, data: { numeric: true } %>
+                                                                <%= f.text_field :amount, class: "input", id: "form_amount", value: card.amount, data: { numeric: true }, required: true %>
                                                             </div>
                                                         </div>
                                                         <div class="col-12">
                                                             <h6 class="form_label">Gift Card #</h6>
                                                             <div class="form_blk">
-                                                                <%= f.text_field :gift_card_number, class: "input", value: card.gift_card_number %>
+                                                                <%= f.text_field :gift_card_number, class: "input", value: card.gift_card_number, required: true %>
                                                             </div>
                                                         </div>
                                                         <div class="col-12">
                                                             <h6 class="form_label">Coin Price</h6>
                                                             <div class="form_blk">
-                                                                <%= f.text_field :coin_price, class: "input", id: "form_coins" ,value: card.coin_price, data: { numeric: true } %>
+                                                                <%= f.text_field :coin_price, class: "input", id: "form_coins" ,value: card.coin_price, data: { numeric: true }, required: true %>
                                                                 <%= f.hidden_field :id, value: params[:id] %>
                                                             </div>
                                                         </div>

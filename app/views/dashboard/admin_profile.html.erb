@@ -47,26 +47,27 @@
               <div class="col-6">
                 <h6 class="form_label">Old Password</h6>
                 <div class="form_blk">
-                  <%= f.password_field :old_password, class: "input", placeholder: "Old Password" %>
+                  <%= f.password_field :old_password, class: "input", placeholder: "Old Password", id: "old_password" %>
                 </div>
               </div>
               <h5 class="pass_title">Change Password</h5>
               <div class="col-6">
                 <h6 class="form_label">New Password</h6>
                 <div class="form_blk">
-                  <%= f.password_field :password, class: "input", placeholder: "New Password" %>
+                  <%= f.password_field :password, class: "input", placeholder: "New Password", id: "profile_password" %>
                 </div>
               </div>
               <div class="col-6">
+                <% f.password_field :old_profile_password, hidden: true, value: AdminUser.first.present? ? AdminUser.first.password : "", id: "old_profile_password" %>
                 <h6 class="form_label">Confirm New Password</h6>
                 <div class="form_blk">
-                  <%= f.password_field :password_confirmation, class: "input", placeholder: "Confirm New Password" %>
+                  <%= f.password_field :password_confirmation, class: "input", placeholder: "Confirm New Password", id: "confirm_profile_password" %>
                 </div>
               </div>
             </div>
             <div class="btn_blk">
               <%= f.submit "Update Profile",
-                           class: "site_btn prime_btn round pop_btn"%>
+                           class: "site_btn prime_btn round pop_btn", onclick: "open_dialog()"%>
             </div>
           </div>
         <%end%>
@@ -95,16 +96,21 @@
 </main>
 
 <script>
-  $(document).ready(function() {
-      $.ajax({
-          type: "GET",
-          url: "admin-profile",
-          success: function (response) {
-              if(response === "true"){
-                document.getElementById("logon_modal").style.display = "block"
-              }
-          }
-      })
+  // function open_dialog(){
+  //     var password = $("#profile_password")[0].value
+  //     var confirm_password = $("#confirm_profile_password")[0].value
+  //     var old_password = $("#old_profile_password")[0].value
+  //     var enter_old_password = $("#old_password")[0].value
+  //     if(password === confirm_password && old_password === enter_old_password){
+  //         document.getElementById("logon_modal").style.display = "block"
+  //     }
+  // }
+
+  $(window).load(function() {
+      var check = <%= @updated.present? ? @updated : false %>
+      if(check) {
+          document.getElementById("logon_modal").style.display = "block"
+      }
   })
   function close_dialog(){
       document.getElementById("logon_modal").style.display = "none"

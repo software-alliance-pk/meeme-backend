@@ -25,7 +25,11 @@
                 <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onclick: "submit()" %>
               <% end %>
             </div>
-            <p class="ms-3"> Participants: <span id = "joined" style="font-size: 2.4rem"><%= @banner.present? ? @banner.tournament_users.count : TournamentBanner&.first&.tournament_users.count %> Joined</span></p>
+            <p class="ms-3"> Participants: <span id = "joined" style="font-size: 2.4rem"><%= if @banner.present?
+                                                                                               @banner.tournament_users.count
+                                                                                             else
+                                                                                               TournamentBanner.first.present? ? TournamentBanner.first.tournament_users.count : ""
+                                                                                             end %> Joined</span></p>
           </div>
           <h4 class="fw_400 mb-0">
             <a href="/tournament-winner-list" id = "banner_id">Tournament Winners</a>
@@ -151,13 +155,12 @@
                           <div class="col-12">
                             <h6 class="form_label">Coin</h6>
                             <div class="form_blk">
-                              <input type="text" id="coins" class="input" placeholder="Enter Coins" required>
+                              <input type="number" id="coins" class="input" placeholder="Enter Coins" required>
                             </div>
                           </div>
-
-                        </div>
-                        <div class="btn_blk mt-5" id="reward_btn">
-                          <button class="site_btn prime_btn round w-100" onclick= "get_user_name()">Send</button>
+                          <div class="btn_blk mt-5" id="reward_btn">
+                            <button class="site_btn prime_btn round w-100" onclick= "get_user_name()">Send</button>
+                          </div>
                         </div>
                       <% end %>
                     </div>
@@ -299,14 +302,17 @@
         var name = document.getElementById("tournament_user_name").innerHTML
         var card_number = document.getElementById("gift_card_number").value
         var coins = document.getElementById("coins").value
-        $.ajax({
-            type: "GET",
-            url: "winner-reward",
-            data: {name: name, card_number: card_number, coins: coins},
-            success: function() {
-                document.getElementById("tormnt_modal").style.display="none"
-            }
-        })
+        var tourmnt = "Tournament"
+        if(card_number !== "" && coins !== "") {
+            $.ajax({
+                type: "GET",
+                url: "winner-reward",
+                data: {name: name, card_number: card_number, coins: coins, tournament: tourmnt},
+                success: function () {
+                    document.getElementById("tormnt_modal").style.display = "none"
+                }
+            })
+        }
     }
 
     function close_tormnt_modal(){
