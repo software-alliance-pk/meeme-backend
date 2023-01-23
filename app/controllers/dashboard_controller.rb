@@ -51,13 +51,16 @@ class DashboardController < ApplicationController
   end
 
   def admin_profile
-    if params[:password] == ""
+    if params[:password] == "" && params[:full_name].present? && params[:admin_user_name]
       current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
+      @updated = true
     elsif params[:password] != nil && params[:password] != params[:password_confirmation]
+      @updated = false
       redirect_to admin_profile_path
     elsif params[:password] != nil && params[:password] == params[:password_confirmation] && current_admin_user.valid_password?(params[:old_password])
       current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name], password: params[:password])
-      @updated = "true"
+      @updated = true
+      sign_in(current_admin_user, :bypass => true)
     end
     if current_admin_user.update(admin_user_params)
     end
@@ -71,6 +74,8 @@ class DashboardController < ApplicationController
     if params[:tournament_banner_id].present?
       @banner = TournamentBanner.find(params[:tournament_banner_id])
       session[:banner] = @banner
+    else
+      session[:banner] = TournamentBanner.first.present? ? TournamentBanner.first : ""
     end
   end
 
@@ -112,9 +117,20 @@ class DashboardController < ApplicationController
   end
 
   def winner_reward
-    @user = User.find_by(username: params[:name])
-    @user.update(coins: @user.coins + params[:coins].to_i)
-    redirect_to tournament_winner_list_path
+    if params[:name].present? && params[:coins].present? && params[:card_number].present? && params[:tournament_winner].present?
+      @user = User.find_by(username: params[:name])
+      @user.update(coins: @user.coins + params[:coins].to_i)
+      @tournament_winner = true
+    elsif params[:name].present? && params[:coins].present? && params[:card_number].present? && params[:tournament].present?
+      @user = User.find_by(username: params[:name])
+      @user.update(coins: @user.coins + params[:coins].to_i)
+      @tournament_winner = false
+    end
+    if @tournament_winner
+      redirect_to tournament_winner_list_path
+    else
+      redirect_to tournament_path
+    end
   end
 
   def post_images
@@ -215,15 +231,21 @@ class DashboardController < ApplicationController
     elsif params[:start_date].present? && params[:end_date] == ""  && params[:start_date] != "false"
       @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
     elsif params[:start_date] == "" && params[:end_date].present?
-      @transactions_list = Transaction.end_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
+      @transactions_list = Transaction.end_date_filter(params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     else
       @transactions_list = Transaction.order("id DESC").paginate(page: params[:page], per_page: 10)
     end
   end
 
   def transaction_export
-    if params[:search]
+    if params[:search].present? && params[:search] != ""
       @transactions_list = Transaction.search(params[:search]).order("created_at DESC")
+    elsif params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
+      @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
+    elsif params[:start_date].present? && params[:end_date] == ""  && params[:start_date] != "false"
+      @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
+    elsif params[:start_date] == "" && params[:end_date].present?
+      @transactions_list = Transaction.end_date_filter(params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     else
       @transactions_list = Transaction.order("id DESC")
     end
@@ -331,11 +353,13 @@ class DashboardController < ApplicationController
   end
 
   def support
-    if params[:subject].present?
-      @message = Message.subjects[params[:subject]]
+    if params["/conversations"].present? && params["/conversations"][:subject].present?
+      @message = Message.subjects[params["/conversations"][:subject]]
+      @header_value = params["/conversations"][:subject]
       @conversation = Conversation.includes(:messages).where("messages.subject = ?", @message).group("conversations.id", "messages.id").order("messages.created_at DESC")
     else
       @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC").where.not(admin_user_id: nil)
+      @header_value = "Select Subject"
     end
   end
 

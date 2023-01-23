@@ -14,6 +14,6 @@ class Transaction < ApplicationRecord
   end
 
   def self.end_date_filter(end_date)
-    Transaction.where("created_at.strftime(%F)".eql?(end_date))
+    Transaction.where("created_at >= (?)", end_date)
   end
 end

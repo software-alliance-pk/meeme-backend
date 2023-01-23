@@ -4,7 +4,7 @@
     <div id="dashboard" class="main_side">
       <div id="top_header">
         <div class="left_blk">
-          <h1>Hi <%= current_admin_user.admin_user_name.upcase_first%> </h1>
+          <h1>Hi <%= current_admin_user.admin_user_name.upcase_first if current_admin_user.admin_user_name.present?  %> </h1>
           <div class="img">
             <img src="<%= asset_path("Emoji-hand.svg")%>" alt="">
           </div>

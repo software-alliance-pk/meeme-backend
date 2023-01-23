@@ -2,7 +2,7 @@
   <section id="logon" style="background-image: url(<%= asset_path("logon-bg.jpg")%>);">
     <div class="contain">
       <div class="log_blk">
-        <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= form_for(resource, as: resource_name,  html: {id: "register"} ,url: registration_path(resource_name)) do |f| %>
           <div class="logo">
             <img src="<%= asset_path("logo.svg") %>" alt="">
           </div>
@@ -24,7 +24,7 @@
             </div>
             <div class="col-12">
               <div class="form_blk">
-                <%= f.email_field :email, autofocus: true, autocomplete: "email", type: "text", class: "input", id: "", placeholder: "Email" %>
+                <%= f.email_field :email, autofocus: true, autocomplete: "email", type: "text", class: "input", id: "register_email", placeholder: "Email" %>
                 <% if resource.errors[:email].present? %>
                   <div id="email_error" style="margin: 5px 0 0 15px; color: red"><%= resource.errors.full_messages_for(:email).first %></div>
                 <% end %>
@@ -35,7 +35,7 @@
                 <% if @minimum_password_length %>
                   <em>(<%= @minimum_password_length %> characters minimum)</em>
                 <% end %><br/>
-                <%= f.password_field :password, autocomplete: "new-password", type: "password", class: "input", id: "", placeholder: "Password" %>
+                <%= f.password_field :password, autocomplete: "new-password", type: "password", class: "input", id: "register_password", placeholder: "Password" %>
                 <% if resource.errors[:password].present? %>
                   <div id="password_error" style="margin: 5px 0 0 15px; color: red"><%= resource.errors.full_messages_for(:password).first %></div>
                 <% end %>
@@ -43,7 +43,7 @@
             </div>
             <div class="col-12">
               <div class="form_blk">
-                <%= f.password_field :password_confirmation, autocomplete: "confirm-password", type: "password", id: "", class: "input", placeholder: "Confirm Password" %>
+                <%= f.password_field :password_confirmation, autocomplete: "confirm-password", type: "password", id: "register_confirm_password", class: "input", placeholder: "Confirm Password" %>
                 <% if resource.errors[:password_confirmation].present? %>
                   <div id="password_confirmation_error" style="margin: 5px 0 0 15px; color: red"><%= resource.errors.full_messages_for(:password_confirmation).first %></div>
                 <% end %>
@@ -52,7 +52,7 @@
           </div>
           <div class="btn_blk">
             <%#= f.submit "Sign up",type:"button" ,class:"site_btn prime_btn w-100 pop_btn"  %>
-            <button class= "site_btn prime_btn w-100 pop_btn"><%= f.submit "Sign up", type: "button", class: "site_btn prime_btn w-45 pop_btn" %></button>
+            <button class= "site_btn prime_btn w-100 pop_btn" onclick="success_modal()"><%= f.submit "Sign up", type: "button", class: "site_btn prime_btn w-45 pop_btn" %></button>
           </div>
         <% end %>
       </div>
@@ -86,9 +86,15 @@
         }, 5000);
     })
 
-    // function open_modal(){
-    //     document.getElementById("logon_modal").style.display = "block"
-    // }
+    function success_modal(){
+        var email = $("#register_email")[0].value
+        var password = $("#register_password")[0].value
+        var confirm_password = $("#register_confirm_password")[0].value
+        var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        if(email !== "" && password !== "" && password.length >= 6 && password === confirm_password && email.match(validRegex)) {
+            document.getElementById("logon_modal").style.display = "block"
+        }
+    }
 </script>
 
 
