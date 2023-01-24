@@ -68,7 +68,7 @@ class DashboardController < ApplicationController
 
   def tournament
     @tournament_banner_name = params[:tournament_banner_id]
-    @tournament_banner = Like.where(is_judged: true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id , tournament_meme: true }).
+    @tournament_banner = Like.where(is_judged: true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true }).
       group(:post_id).count(:post_id).sort_by(&:last).sort_by(&:last).reverse.to_h
     @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
     if params[:tournament_banner_id].present?
@@ -110,6 +110,7 @@ class DashboardController < ApplicationController
     if params[:coins].present? && params[:user_id].present?
       @user = User.find(params[:user_id])
       @user.update(coins: @user.coins + params[:coins].to_i)
+      UserMailer.winner_email_for_coin(@user.email, params[:coins], params[:rank]).deliver_now
     end
     if params[:username].present?
       @user = User.find_by(username: params[:username])
@@ -127,10 +128,12 @@ class DashboardController < ApplicationController
       @user = User.find_by(username: params[:name])
       @user.update(coins: @user.coins + params[:coins].to_i)
       @tournament_winner = true
+      UserMailer.winner_email(@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
     elsif params[:name].present? && params[:coins].present? && params[:card_number].present? && params[:tournament].present?
       @user = User.find_by(username: params[:name])
       @user.update(coins: @user.coins + params[:coins].to_i)
       @tournament_winner = false
+      UserMailer.winner_email(@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
     end
     if @tournament_winner
       redirect_to tournament_winner_list_path
@@ -189,7 +192,7 @@ class DashboardController < ApplicationController
       end
     end
     respond_to do |format|
-      format.json {render json: {user: @user , image: @image, title: @badge_title, badge_images: @badge_images}}
+      format.json { render json: { user: @user, image: @image, title: @badge_title, badge_images: @badge_images } }
     end
   end
 
@@ -231,11 +234,11 @@ class DashboardController < ApplicationController
 
   def transactions
     if params[:search]
-      @transactions_list = Transaction.search(params[:search]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
+      @transactions_list = Transaction.search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     elsif params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
-      @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
-    elsif params[:start_date].present? && params[:end_date] == ""  && params[:start_date] != "false"
-      @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
+      @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
+    elsif params[:start_date].present? && params[:end_date] == "" && params[:start_date] != "false"
+      @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     elsif params[:start_date] == "" && params[:end_date].present?
       @transactions_list = Transaction.end_date_filter(params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     else
@@ -247,9 +250,9 @@ class DashboardController < ApplicationController
     if params[:search].present? && params[:search] != ""
       @transactions_list = Transaction.search(params[:search]).order("created_at DESC")
     elsif params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
-      @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
-    elsif params[:start_date].present? && params[:end_date] == ""  && params[:start_date] != "false"
-      @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page ] ,per_page: 10)
+      @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
+    elsif params[:start_date].present? && params[:end_date] == "" && params[:start_date] != "false"
+      @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     elsif params[:start_date] == "" && params[:end_date].present?
       @transactions_list = Transaction.end_date_filter(params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     else
