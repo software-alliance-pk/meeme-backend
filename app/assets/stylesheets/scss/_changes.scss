@@ -42,6 +42,7 @@
 #tormnt #top_header #notify_dropdown{
   .dropdown-menu{
     min-width: 43.5rem;
+    z-index: 20 !important;
   }
 }
 #add_gift form .form_blk select.input{
@@ -327,7 +328,7 @@
   height: 100%;
   z-index: -1;
   &.show {
-    z-index: 1;
+    z-index: 10;
     background: rgba(11, 2, 19, 0.7);
     backdrop-filter: blur(5px);
   }
@@ -335,8 +336,6 @@
 
 #tormnt{
 #top_header{
-
-
   #notify_dropdown {
     .bell_btn{
       z-index: 99;
@@ -365,7 +364,8 @@
         font-weight: 600;
         font-size: 1.2rem;
         line-height: 1.6rem;
-        color: var(--light);      }
+        color: var(--light);
+      }
     }
     .dropdown-menu {
       min-width: 43.5rem;
@@ -374,6 +374,7 @@
       border-color: transparent;
       padding: 3rem 2rem;
       color: var(--light);
+      z-index: 20 !important;
     }
   }
 }
@@ -395,4 +396,39 @@
   border-radius: 14px;
   background-color: #1F1D21;
   font-size: 16px;
+}
+
+#notify_dropdown .dropdown-menu{
+  z-index: 20 !important;
+}
+
+#support_dropDown{
+  .dropdown-toggle{
+    z-index: 20;
+  }
+  .dropdown-menu{
+    z-index: 20 !important;
+  }
+}
+#support{
+  #top_header .side .hide_bell_btn{
+    z-index: -1;
+  }
+  #support_dropDown{
+    .dropdown-toggle.hide_select_btn{
+      z-index: -1;
+    }
+  }
+}
+
+#sidebar .inside .btm_blk .img{
+  height: 4rem !important;
+}
+
+#tormnt_modal .detail_blk .right_blk .img{
+
+  max-height: 37rem;
+  img{
+    object-fit: contain;
+  }
 }

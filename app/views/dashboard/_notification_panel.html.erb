@@ -55,10 +55,18 @@
 
     $(document).ready(function () {
         $("#notify_dropdown .bell_btn").on("click", function () {
-            $("#overlay").addClass("show")
+            if($("#overlay").hasClass("show")){
+                $("#overlay").removeClass("show")
+                $("#support .dropdown-toggle").removeClass("hide_select_btn")
+
+            }else {
+                $("#overlay").addClass("show")
+                $("#support .dropdown-toggle").addClass("hide_select_btn")
+            }
         })
         $("#overlay").on("click", function () {
             $("#overlay").removeClass("show")
+            $("#support .dropdown-toggle").removeClass("hide_select_btn")
         })
     })
 </script>
