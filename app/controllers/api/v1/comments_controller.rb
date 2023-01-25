@@ -1,7 +1,7 @@
 class Api::V1::CommentsController < Api::V1::ApiController
   before_action :authorize_request
-  before_action :find_post,only: [:create]
-  before_action :find_comment, only: [:show, :update_comments, :destroy,:create_child_comment]
+  before_action :find_post, only: [:create]
+  before_action :find_comment, only: [:show, :update_comments, :destroy, :create_child_comment]
   before_action :find_child_comment, only: [:child_comments, :child_comment_destroy]
 
   def index
@@ -18,7 +18,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   def child_comments
-    @child_comment=@child_comment.paginate(page: params[:page], per_page: 25)
+    @child_comment = @child_comment.paginate(page: params[:page], per_page: 25)
     if @child_comment.present?
 
     else
@@ -36,13 +36,15 @@ class Api::V1::CommentsController < Api::V1::ApiController
                                                         user_id: @current_user.id,
                                                         post_id: params[:post_id])
     if @comment.save
-      Notification.create(title: "Comment",
-                          body: "#{@current_user.username} commented on your post",
-                          user_id: @comment.post.user.id,
-                          notification_type: 'comment',
-                          sender_id: @current_user.id,
-                          sender_name: @current_user.username,
-                          sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+      if Post.find(params[:post_id]).user_id != @current_user.id
+        Notification.create(title: "Comment",
+                            body: "#{@current_user.username} commented on your post",
+                            user_id: @comment.post.user.id,
+                            notification_type: 'comment',
+                            sender_id: @current_user.id,
+                            sender_name: @current_user.username,
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+      end
       render json: { comment: @comment }, status: :ok
     else
       render_error_messages(@comment)
@@ -56,13 +58,15 @@ class Api::V1::CommentsController < Api::V1::ApiController
                                                         parent_id: params[:comment_id])
     if @comment.save
       render json: { comment: @comment }, status: :ok
-      Notification.create(title: "Comment",
-                          body: "#{@current_user.username} commented on your post",
-                          user_id: @comment.post.user.id,
-                          notification_type: 'comment',
-                          sender_id: @current_user.id,
-                          sender_name: @current_user.username,
-                          sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+      if Post.find(params[:post_id]).user_id != @current_user.id
+        Notification.create(title: "Comment",
+                            body: "#{@current_user.username} commented on your post",
+                            user_id: @comment.post.user.id,
+                            notification_type: 'comment',
+                            sender_id: @current_user.id,
+                            sender_name: @current_user.username,
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+      end
     else
       render_error_messages(@comment)
     end
@@ -111,13 +115,15 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   private
+
   def find_post
-    @post=Post.find_by(id: params[:post_id]).present?
+    @post = Post.find_by(id: params[:post_id]).present?
     if @post
     else
       return render json: { message: ' Post Not found' }, status: :not_found
     end
   end
+
   def find_comment
     if Post.find_by(id: params[:post_id]).present?
       if Post.find_by(id: params[:post_id]).comments.find_by(id: params[:comment_id]).present?
