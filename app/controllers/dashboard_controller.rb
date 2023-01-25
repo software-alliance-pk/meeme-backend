@@ -118,10 +118,18 @@ class DashboardController < ApplicationController
 
   def winner_reward
     if params[:name].present? && params[:coins].present? && params[:card_number].present? && params[:tournament_winner].present?
+      @gift_card = GiftReward.find_by(card_number: params[:card_number])
+      if @gift_card.present?
+        @gift_card.update(status: 1)
+      end
       @user = User.find_by(username: params[:name])
       @user.update(coins: @user.coins + params[:coins].to_i)
       @tournament_winner = true
     elsif params[:name].present? && params[:coins].present? && params[:card_number].present? && params[:tournament].present?
+      @gift_card = GiftReward.find_by(card_number: params[:card_number])
+      if @gift_card.present?
+        @gift_card.update(status: 1)
+      end
       @user = User.find_by(username: params[:name])
       @user.update(coins: @user.coins + params[:coins].to_i)
       @tournament_winner = false

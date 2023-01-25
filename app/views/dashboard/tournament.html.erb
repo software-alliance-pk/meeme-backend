@@ -22,7 +22,7 @@
             <h4 class="mb-0">Tournament Season</h4>
             <div class="form_blk">
               <%= form_for :post, :url => { :controller => 'dashboard', :action => 'tournament' }, :html => { :method => 'get', class: 'form_blk' } do |f| %>
-                <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onclick: "submit()" %>
+                <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onchange: "submit()" %>
               <% end %>
             </div>
             <p class="ms-3"> Participants: <span id = "joined" style="font-size: 2.4rem"><%= if @banner.present?
@@ -54,7 +54,16 @@
             <tbody>
             <% i = 1 %>
             <% abc = page_entries_info @posts %>
-            <% first_record_value =  abc.split("<b>")[1].split("&")[0].to_i unless abc == "No entires found" %>
+            <% if @posts.present? %>
+              <% banner = TournamentBanner.find(@posts.first.tournament_banner_id).tournament_users.count %>
+              <% if banner > 10 %>
+                <% first_record_value =  abc.split("<b>")[1].split("&")[0].to_i unless abc == "No entires found" %>
+              <% elsif banner == 1 %>
+                <% first_record_value =  abc.split(" ")[5].to_i unless abc == "No entires found" %>
+              <% else %>
+                <% first_record_value =  abc.split(" ")[1].to_i unless abc == "No entires found" %>
+              <% end %>
+            <% end %>
             <% @posts.each do |post| %>
               <tr>
                 <td>
@@ -318,4 +327,5 @@
     function close_tormnt_modal(){
         document.getElementById("tormnt_modal").style.display="none"
     }
+
 </script>

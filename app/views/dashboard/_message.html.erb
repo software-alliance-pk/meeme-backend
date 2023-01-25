@@ -1,0 +1,52 @@
+<% if message.sender_id != nil %>
+  <div class="chat_blk" id="
+    <% dom_id(message) %>">
+    <div class="ico fill round">
+      <img src="<%= message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : asset_path("user.png") %>" alt="">
+    </div>
+    <% if message.message_images.attached? %>
+      <div class="txt w-50 h-50">
+        <% if message.message_images.length == 1 %>
+          <div>
+            <img class="img-thumbnail w-40 h-40 border-0 float-end" src="<%= message.message_images.first.blob.url %>">
+          </div>
+          <div><%= message.body %></div>
+        <% else %>
+          <% message.message_images.each do |image| %>
+            <div>
+              <img class="img-thumbnail w-40 h-40 border-0 float-end mb-1" src="<%= image.blob.url %>">
+            </div>
+          <% end %>
+          <div><%= message.body %></div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="txt"><%= message.body %></div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="chat_blk memee">
+    <div class="ico fill round">
+      <img src="<%= user.admin_profile_image.attached? ? user.admin_profile_image.blob.url : asset_path("john-smith.jpg") %>" alt="" style="object-fit: cover; border-radius: 50% ">
+    </div>
+    <% if message.message_images.attached? %>
+      <div class="txt w-50 h-50">
+        <% if message.message_images.length == 1 %>
+          <div>
+            <img class="img-thumbnail w-40 h-40 border-0 float-end" src="<%= message.message_images.first.blob.url %>">
+          </div>
+          <div style="float: right"><%= message.body %></div>
+        <% else %>
+          <% message.message_images.each do |image| %>
+            <div>
+              <img class="img-thumbnail w-40 h-40 border-0 float-end mb-1" src="<%= image.blob.url %>">
+            </div>
+          <% end %>
+          <div style="float: right"><%= message.body %></div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="txt"><%= message.body %></div>
+    <% end %>
+  </div>
+<% end %>

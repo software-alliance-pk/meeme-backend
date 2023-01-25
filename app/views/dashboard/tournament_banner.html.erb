@@ -25,7 +25,9 @@
             <div class="col-3">
               <div class="item">
                 <div class="body">
-                  <%= link_to "Delete", controller: 'dashboard', action: 'tournament_banner_destroy', id: tournament_banner.id, method: :delete %>
+                  <div style="width: 25px; height: 25px; filter: brightness(0) saturate(100%) invert(14%) sepia(50%) saturate(7458%) hue-rotate(356deg) brightness(111%) contrast(118%)">
+                    <%= link_to image_tag("icon-delete.svg"), controller: 'dashboard', action: 'tournament_banner_destroy', id: tournament_banner.id, method: :delete %>
+                  </div>
                   <div class="fig">
                     <img src="<%= tournament_banner.tournament_banner_photo.attached? ? tournament_banner.tournament_banner_photo.blob.url : asset_path("item-pic.svg")%>" alt="">
                   </div>

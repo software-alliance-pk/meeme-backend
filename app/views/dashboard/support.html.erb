@@ -1,4 +1,3 @@
-<%= turbo_stream_from :message %>
 <main>
   <section id="memee">
     <%= render "dashboard/sidebar" %>
@@ -43,7 +42,7 @@
                   <div class="ico fill round">
                     <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png") %>" alt="">
                   </div>
-                  <div class="inr">
+                  <div class="inr w-100">
                     <div class="title">
                       <h5><%= conversation.sender.username %></h5>
                       <% if conversation.messages.first.present? %>
@@ -55,6 +54,7 @@
                     </div>
                     <div class="txt">
                       <p><%= conversation.messages.first.body if conversation.messages.first.present? %></p>
+<!--                      <div class="num">2</div>-->
                     </div>
                   </div>
                 </div>
@@ -80,9 +80,9 @@
               </div>
             </div>
           </div>
-          <%#= turbo_stream_from @conversation, channel: "ConversationsChannel" %>
+          <%= turbo_stream_from "divs" %>
           <div class="chat_list" id="chat_list">
-              <div class="chat_blk" id="chat_blk">
+              <div class="chat_blk" id="chat_blk_">
               </div>
               <div class="chat_blk memee" id="admin_div">
               </div>
@@ -94,13 +94,13 @@
               <label for="document-btn" class="ico_btn label"><img src="<%= asset_path("icon-clip.svg") %>" alt=""></label>
               <%= form.file_field :message_images, id: "file-btn", direct_upload: true, multiple: true, hidden: true %>
               <label for="file-btn" class="ico_btn label"><img src="<%= asset_path("icon-image.svg") %>" alt=""></label>
-              <input type="text" class="input" name="body" id="body" placeholder="Write your message here">
+              <input type="text" class="input" name="body" id="body" placeholder="Write your message here" required>
               <input name="conversation_id" id="conversation_id" hidden></input>
               <input name="receiver_id" id="receiver_id" hidden></input>
               <input name="user_id" id="user_id" hidden></input>
               <input name="subject" id="subject" hidden></input>
               <input name="admin_user_id" id="admin_id" hidden></input>
-              <button type="submit" data-controller="message" data-action="change->message#received_message" class="send_btn"><img src="<%= asset_path("icon-send.svg") %>" alt=""></button>
+              <button type="submit" class="send_btn"><img src="<%= asset_path("icon-send.svg") %>" alt=""></button>
             </div>
           <% end %>
 
