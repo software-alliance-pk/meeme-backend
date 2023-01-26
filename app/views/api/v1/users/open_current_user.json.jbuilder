@@ -18,6 +18,8 @@ json.profile do
     json.post_likes post.likes.like.count
     json.post_dislikes post.likes.dislike.count
     json.post_share_count post.share_count
+    json.post_type post.post_image.content_type
+
   end
   json.tournament_posts_count @current_user.posts.where(tournament_meme: true).count
   json.tournament_posts @current_user.posts.where(tournament_meme: true).each do |post|
@@ -27,6 +29,8 @@ json.profile do
     json.post_likes post.likes.like.count
     json.post_dislikes post.likes.dislike.count
     json.post_share_count post.share_count
+    json.post_type post.post_image.content_type
+
 
   end
 
