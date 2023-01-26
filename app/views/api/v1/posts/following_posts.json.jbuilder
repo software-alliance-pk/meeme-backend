@@ -1,4 +1,5 @@
 json.following_count @following.count
+
 @following.each do |user|
     json.following_posts user.posts.where(tournament_meme: false).each do |post|
       json.post post
