@@ -1,5 +1,5 @@
-json.(@following) do |user|
-  json.following_posts user.posts.where(tournament_meme: false).each do |post|
+json.following_posts do
+  json.(@following_posts) do |post|
     json.post post
     json.username post.user.username
     json.user_image post.user.profile_image.attached? ? user.profile_image.blob.url : ''
@@ -23,4 +23,3 @@ json.(@following) do |user|
     end
   end
 end
-
