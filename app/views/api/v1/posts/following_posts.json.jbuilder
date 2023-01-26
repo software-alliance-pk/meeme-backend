@@ -2,6 +2,7 @@ json.following_count @following.count
 
 @following.each do |user|
     json.following_posts user.posts.where(tournament_meme: false).each do |post|
+      debugger
       json.post post
       json.user_id post.user.id
       json.username post.user.username
@@ -24,16 +25,6 @@ json.following_count @following.count
           json.description child_comment.description
           json.parent_id child_comment.parent_id
           json.child_comment_likes child_comment.likes.count
-          # json.grand_child_comments child_comment.comments do |grand_child_comment|
-          #   json.id grand_child_comment.id
-          #   json.description grand_child_comment.description
-          #   json.parent_id grand_child_comment.parent_id
-          #   json.child_comment_time grand_child_comment.created_at
-          #   json.user grand_child_comment.user.username
-          #   json.child_comment_like_status grand_child_comment.likes.where(user_id: @current_user.id).present? ? true : false
-          #   json.child_comment_like_count grand_child_comment.likes.count
-          #   json.user_image grand_child_comment.user.profile_image.attached? ? grand_child_comment.user.profile_image.blob.url : ''
-          # end
         end
       end
     end
