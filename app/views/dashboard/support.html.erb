@@ -1,23 +1,23 @@
 <main>
   <section id="memee">
-    <%=render "dashboard/sidebar" %>
+    <%= render "dashboard/sidebar" %>
     <div id="support" class="main_side">
       <div id="top_header">
         <div class="left_blk">
           <h1>Support</h1>
           <div class="img">
-            <img src="<%= asset_path("mobile_icon.svg")%>" alt="">
+            <img src="<%= asset_path("mobile_icon.svg") %>" alt="">
           </div>
         </div>
         <div class="side">
-          <%=render "dashboard/notification_panel" %>
+          <%= render "dashboard/notification_panel" %>
         </div>
       </div>
       <div class="inside">
         <div class="person_side">
-          <%= form_for(conversations_path, method: "get", html: {id: 'form'}) do |f|%>
-            <div class="dropdown form_blk">
-              <button type="button" class="dropdown-toggle site_btn chevron w-100" data-bs-toggle="dropdown"><%= @header_value.present? ? @header_value : "" %></button>
+          <%= form_for(conversations_path, method: "get", html: { id: 'form' }) do |f| %>
+            <div class="dropdown form_blk" id="support_dropDown">
+              <button type="button" class="dropdown-toggle site_btn chevron w-100" data-bs-auto-close="outside" data-bs-toggle="dropdown"><%= @header_value.present? ? @header_value : "" %></button>
               <ul class="dropdown-menu w-100">
                 <li><button selected type="button" onclick="submission(this.innerText)">Nothing_Happened</button></li>
                 <li><button type="button" onclick="submission(this.innerText)">Abuse <span class="dot"></span></button></li>
@@ -37,23 +37,24 @@
           <div class="user_list">
             <%= first_conversation = '' %>
             <% if @conversation.present? %>
-              <% @conversation.each  do |conversation| %>
+              <% @conversation.each do |conversation| %>
                 <div class="user_blk" id="clicked" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.username %>'); get_post('<%= conversation.sender.username %>')">
                   <div class="ico fill round">
-                    <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png")%>" alt="">
+                    <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png") %>" alt="">
                   </div>
-                  <div class="inr">
+                  <div class="inr w-100">
                     <div class="title">
                       <h5><%= conversation.sender.username %></h5>
                       <% if conversation.messages.first.present? %>
                         <% time = Time.now.to_datetime %>
                         <% created = conversation.messages.first.created_at.to_datetime %>
-                        <% calculated_time = ((time - created) * 24 * 60).to_i  %>
+                        <% calculated_time = ((time - created) * 24 * 60).to_i %>
                         <span class="time"><%= distance_of_time_in_words(0, calculated_time.minutes) %></span>
                       <% end %>
                     </div>
                     <div class="txt">
                       <p><%= conversation.messages.first.body if conversation.messages.first.present? %></p>
+<!--                      <div class="num">2</div>-->
                     </div>
                   </div>
                 </div>
@@ -65,39 +66,44 @@
           <div class="top_head_blk">
             <div class="user_blk">
               <div class="ico fill round">
-                <img src="" alt="" id = "profile_image">
+                <img src="" alt="" id="profile_image">
               </div>
               <div class="inr">
                 <h5 id="name"></h5>
                 <div id="email"></div>
               </div>
               <div class="r_blk">
-                <div class="status"><input type="radio" name="is_complete" id="is_complete" onchange="completed()"> Complete</div>
+                <div class="status"><input type="radio" name="is_complete" id="is_complete" onchange="completed()">
+                  Complete
+                </div>
                 <div class="num_id" id="num_id"></div>
               </div>
             </div>
           </div>
+          <%= turbo_stream_from "divs" %>
           <div class="chat_list" id="chat_list">
-            <div class="chat_blk" id = "chat_blk">
-            </div>
-            <div class="chat_blk memee" id="admin_div">
-            </div>
+              <div class="chat_blk" id="chat_blk_">
+              </div>
+              <div class="chat_blk memee" id="admin_div">
+              </div>
           </div>
-          <%= form_with do |form|%>
+
+          <%= form_with do |form| %>
             <div class="form_inside">
-              <%= form.file_field :message_images,  id: "document-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg'%>
-              <label for="document-btn" class="ico_btn label"><img src="<%= asset_path("icon-clip.svg")%>" alt=""></label>
-              <%= form.file_field :message_images,  id: "file-btn", direct_upload: true, multiple: true, hidden: true%>
-              <label for="file-btn" class="ico_btn label"><img src="<%= asset_path("icon-image.svg")%>" alt=""></label>
-              <input type="text" class="input" name ="body" id="body" placeholder="Write your message here">
+              <%= form.file_field :message_images, id: "document-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
+              <label for="document-btn" class="ico_btn label"><img src="<%= asset_path("icon-clip.svg") %>" alt=""></label>
+              <%= form.file_field :message_images, id: "file-btn", direct_upload: true, multiple: true, hidden: true %>
+              <label for="file-btn" class="ico_btn label"><img src="<%= asset_path("icon-image.svg") %>" alt=""></label>
+              <input type="text" class="input" name="body" id="body" placeholder="Write your message here" required>
               <input name="conversation_id" id="conversation_id" hidden></input>
               <input name="receiver_id" id="receiver_id" hidden></input>
               <input name="user_id" id="user_id" hidden></input>
               <input name="subject" id="subject" hidden></input>
               <input name="admin_user_id" id="admin_id" hidden></input>
-              <button type="submit" class="send_btn"><img src="<%= asset_path("icon-send.svg")%>" alt=""></button>
+              <button type="submit" class="send_btn"><img src="<%= asset_path("icon-send.svg") %>" alt=""></button>
             </div>
           <% end %>
+
         </div>
       </div>
     </div>
@@ -107,16 +113,17 @@
 <script>
     $("#clicked").click()
     $("#clicked").addClass("active")
-    $("#chat_list").animate({ scrollTop: 20000000 }, "slow");
+    $("#chat_list").animate({scrollTop: 20000000}, "slow");
 
-    $(".user_list").on('click','.user_blk',function(){
+    $(".user_list").on('click', '.user_blk', function () {
         $(".user_list .user_blk.active").removeClass("active");
         $(this).addClass("active");
     });
-    function open_conversation(sender_id, conversation_id, name, email){
+
+    function open_conversation(sender_id, conversation_id, name, email) {
         $('#chat_list').data('id', conversation_id);
         $("#clicked").removeClass("active")
-        $("#chat_list").animate({ scrollTop: 20000000 }, "slow");
+        $("#chat_list").animate({scrollTop: 20000000}, "slow");
         document.getElementById("conversation_id").value = conversation_id
         document.getElementById("admin_id").value = '<%= current_admin_user.id %>'
         document.getElementById("receiver_id").value = sender_id
@@ -129,24 +136,24 @@
             data: {conversation_id: conversation_id, name: name, admin_id: admin_id},
             success: function (response) {
                 var messages = response.messages
-                if(response.conversation.status === "Resolved"){
+                if (response.conversation.status === "Resolved") {
                     document.getElementById("is_complete").checked = true
-                }else{
+                } else {
                     document.getElementById("is_complete").checked = false
                 }
                 document.getElementById("name").innerHTML = name
                 document.getElementById("email").innerHTML = email
                 var images = response.images
                 var i = -1;
-                messages.forEach(function(message){
+                messages.forEach(function (message) {
                     i++;
-                    message_design(message ,images[i], response.user_image, response.admin_image)
+                    message_design(message, images[i], response.user_image, response.admin_image)
                 })
             }
         })
     }
 
-    function get_image(name){
+    function get_image(name) {
         $.ajax({
             type: "GET",
             url: "conversation-image",
@@ -157,14 +164,14 @@
         })
     }
 
-    function get_post(name){
+    function get_post(name) {
 
     }
 
-    function message_design(message ,images ,user_image, admin_image){
+    function message_design(message, images, user_image, admin_image) {
         var topDiv = document.getElementById("chat_list")
         var admindiv = document.getElementById("admin_div")
-        if(message.sender_id !== null) {
+        if (message.sender_id !== null) {
             document.getElementById("num_id").innerHTML = message.message_ticket
             var message_div = document.createElement("div")
             message_div.setAttribute('class', 'chat_blk')
@@ -174,22 +181,22 @@
             img.src = user_image
             div.appendChild(img)
             var div1 = document.createElement("div")
-            if (images[0] === ""){
+            if (images[0] === "") {
                 div1.setAttribute('class', 'txt')
                 var p = document.createElement("p")
                 p.setAttribute("class", "bottom")
                 div1.appendChild(p.appendChild(document.createTextNode(message.body)))
-            }else{
+            } else {
                 div1.setAttribute('class', 'txt w-50 h-50')
-                if(images.length === 1) {
+                if (images.length === 1) {
                     var image_div = document.createElement("div")
                     var message_img = document.createElement("img");
                     message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
                     message_img.src = images
                     image_div.appendChild(message_img)
-                }else{
+                } else {
                     var image_div = document.createElement("div")
-                    images.forEach(function (image){
+                    images.forEach(function (image) {
                         var message_img = document.createElement("img");
                         message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end mb-1')
                         message_img.src = image
@@ -205,7 +212,7 @@
             message_div.appendChild(div)
             message_div.appendChild(div1)
             topDiv.appendChild(message_div)
-        }else{
+        } else {
             var message_div = document.createElement("div")
             message_div.setAttribute('class', 'chat_blk memee')
             var div = document.createElement("div")
@@ -215,21 +222,21 @@
             img.src = admin_image
             div.appendChild(img)
             var div1 = document.createElement("div")
-            if (images[0] === ""){
+            if (images[0] === "") {
                 div1.setAttribute('class', 'txt')
                 var p = document.createElement("p")
                 div1.appendChild(p.appendChild(document.createTextNode(message.body)))
-            }else{
+            } else {
                 div1.setAttribute('class', 'txt w-50 h-50')
-                if(images.length === 1) {
+                if (images.length === 1) {
                     var image_div = document.createElement("div")
                     var message_img = document.createElement("img");
                     message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
                     message_img.src = images
                     image_div.appendChild(message_img)
-                }else{
+                } else {
                     var image_div = document.createElement("div")
-                    images.forEach(function (image){
+                    images.forEach(function (image) {
                         var message_img = document.createElement("img");
                         message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end mb-1')
                         message_img.src = image
@@ -249,7 +256,7 @@
         }
     }
 
-    function completed(){
+    function completed() {
         var message_ticket = document.getElementById("num_id").innerHTML
         $.ajax({
             type: "GET",
@@ -261,8 +268,24 @@
         })
     }
 
-    function submission(subject){
+    function submission(subject) {
         $("#subject")[0].value = subject
         $("#form_submit").click()
     }
+
+    $(document).ready(function () {
+        $("#support_dropDown .dropdown-toggle").on("click", function () {
+            if ($("#overlay").hasClass("show")) {
+                $("#overlay").removeClass("show")
+                $("#support .bell_btn").removeClass("hide_bell_btn")
+            } else {
+                $("#overlay").addClass("show")
+                $("#support .bell_btn").addClass("hide_bell_btn")
+            }
+        })
+        $("#overlay").on("click", function () {
+            $("#overlay").removeClass("show")
+            $("#support .bell_btn").removeClass("hide_bell_btn")
+        })
+    })
 </script>

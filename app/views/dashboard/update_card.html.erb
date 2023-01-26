@@ -275,18 +275,23 @@
 
     function checkbox(id){
         if(id === 1 && $("#checkbox_1")[0].checked === true){
+            $("#checkbox_2, #checkbox_3, #checkbox_4, #checkbox_5").prop("checked", false)
             $("#form_amount")[0].value = $("#image_amount_1")[0].innerHTML.slice(1, 4)
             $("#form_coins")[0].value = $("#image_coin_1")[0].innerText
         }else if(id === 2 && $("#checkbox_2")[0].checked === true){
+            $("#checkbox_1, #checkbox_3, #checkbox_4, #checkbox_5").prop("checked", false)
             $("#form_amount")[0].value = $("#image_amount_2")[0].innerHTML.slice(1, 4)
             $("#form_coins")[0].value = $("#image_coin_2")[0].innerText
         }else if(id === 3 && $("#checkbox_3")[0].checked === true){
+            $("#checkbox_2, #checkbox_1, #checkbox_4, #checkbox_5").prop("checked", false)
             $("#form_amount")[0].value = $("#image_amount_3")[0].innerHTML.slice(1, 4)
             $("#form_coins")[0].value = $("#image_coin_3")[0].innerText
         }else if(id === 4 && $("#checkbox_4")[0].checked === true){
+            $("#checkbox_2, #checkbox_3, #checkbox_1, #checkbox_5").prop("checked", false)
             $("#form_amount")[0].value = $("#image_amount_4")[0].innerHTML.slice(1, 4)
             $("#form_coins")[0].value = $("#image_coin_4")[0].innerText
         }else if(id === 5 && $("#checkbox_5")[0].checked === true){
+            $("#checkbox_2, #checkbox_3, #checkbox_4, #checkbox_1").prop("checked", false)
             $("#form_amount")[0].value = $("#image_amount_5")[0].innerHTML.slice(1, 4)
             $("#form_coins")[0].value = $("#image_coin_5")[0].innerText
         }

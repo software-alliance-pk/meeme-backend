@@ -39,11 +39,11 @@ en:
       single_page:
         zero: "No entires found"
         one: "Showing %{count} to %{count} of %{count} entries"
-        other: "Showing %{count} to %{count} of %{count} entries"
+        other: "Showing 1 to %{count} of %{count} entries"
       single_page_html:
         zero: "No entires found"
         one: "Showing %{count} to %{count} of %{count} entries"
-        other: "Showing %{count} to %{count} of %{count} entries"
+        other: "Showing 1 to %{count} of %{count} entries"
 
       multi_page: "Showing %{from} to %{to} of %{count} entries"
       multi_page_html: "Showing <b>%{from}&nbsp;to&nbsp;%{to}</b> of <b>%{count}</b> entries"

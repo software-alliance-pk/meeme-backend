@@ -3,7 +3,9 @@
 // import "controllers"
 // import "./channels"
 // import "./channels/bootsrap_jquery"
+//= require turbo.min.js
 //= require jquery3
+//= require channels
 //= require channels/bootstrap.bundle.min.js
 //= require allow_numeric
 
