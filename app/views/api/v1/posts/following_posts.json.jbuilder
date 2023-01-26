@@ -1,7 +1,7 @@
 json.following_posts do
   json.(@following_posts) do |post|
     json.post post
-    json.username post.user.username
+    # json.username post.user.username
     json.user_image post.user.profile_image.attached? ? user.profile_image.blob.url : ''
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.post_type post.post_image.content_type
