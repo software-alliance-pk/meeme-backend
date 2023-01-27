@@ -1,0 +1,29 @@
+<% if message.sender_id != nil %>
+  <% if Notification.present? %>
+    <% count = Notification.where(notification_type: 'admin_message', status: 0).count %>
+    <%= turbo_stream.replace "icon_count" do %>
+      <span id='icon_count'><%= count + 1 %></span>
+    <% end %>
+    <%= turbo_stream.prepend "notification_list" do %>
+      <li>
+        <div class="item" style="background-color: #3a3b3c">
+          <div class="detail_blk">
+            <div class="img_blk">
+              <div class="img">
+                <img src="<%= message.sender.profile_image.present? ? message.sender.profile_image.blob.url : asset_path("user.png") %>" alt="">
+              </div>
+            </div>
+            <div class="txt">
+              <h6><%= message.sender.username %></h6>
+              <p>Message from <%= message.sender.username %></p>
+            </div>
+          </div>
+          <% time = Time.now.to_datetime %>
+          <% created = message.created_at.to_datetime %>
+          <% calculated_time = ((time - created) * 24 * 60).to_i %>
+          <p class="time"><%= distance_of_time_in_words(0, calculated_time.minutes) %></p>
+        </div>
+      </li>
+    <% end %>
+  <% end %>
+<% end %>

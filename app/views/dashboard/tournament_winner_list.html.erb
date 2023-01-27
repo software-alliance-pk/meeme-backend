@@ -110,51 +110,7 @@
         </table>
       </div>
     </div>
-    <div class="popup w-75" style="margin-left: 281px; margin-top: 50px" data-popup="trans_profile" id="tour_winner">
-      <div class="inner">
-          <div class="inside">
-              <div class="winner_blk">
-                  <div class="user_blk">
-                      <a href="#" class="icon" onclick="close_details()">
-                        <img src="<%= asset_path("left-arrow.svg")%>" alt="">
-                      </a>
-                      <div class="user">
-                          <div class="img">
-                              <img src="" alt="" id="user_image">
-                          </div>
-                          <div class="content">
-                              <h6 id="name"></h6>
-                              <p id="email"></p>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="name_blk">
-                      <h4 id="post_by"></h4>
-                  </div>
-                  <div class="post_blk" id="post_image">
-                      <div class="detail">
-                          <span>Date Posted</span>
-                          <p id="created"></p>
-                          <div class="bottom">
-                              <div class="like">
-                                  <div class="icon">
-                                      <img src="<%= asset_path("heart-icon.svg")%>" alt="">
-                                  </div>
-                                  <span id="likes"></span>
-                              </div>
-                              <div class="unlike">
-                                  <div class="icon">
-                                      <img src="<%= asset_path("cross-icon.svg")%>" alt="">
-                                  </div>
-                                  <span id= "dislike"></span>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-    </div>
+    <%= render partial: "dashboard/winner_modal" %>
   </div>
   <div class="popup" data-popup="trans_profile" id="tormnt_modal">
     <div class="table_dv">
@@ -236,7 +192,7 @@
 
 <script>
   function open_details(name, email, likes, created, dislike){
-    document.getElementById("tour_winner").style.display="block"
+    document.getElementById("winner_modal").style.display="block"
     document.getElementById("name").innerHTML= name
     document.getElementById("email").innerHTML= email
     document.getElementById("created").innerHTML= created
@@ -249,15 +205,15 @@
       data: {username: name},
       success: function(response){
         document.getElementById("user_image").src = response.user_image
-        var c = response.post_image
-        document.getElementById("post_image").style.backgroundImage = "linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(c)"
-        
+          $('#post_image').css({
+              'background-image': 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(' + response.post_image + ')'
+          })
       }
     })
   }
 
   function close_details(){
-    document.getElementById("tour_winner").style.display="none"
+    document.getElementById("winner_modal").style.display="none"
   }
 
   function open_tormnt_modal(name, email, likes, created, dislike){

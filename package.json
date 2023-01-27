@@ -1,11 +1,11 @@
 {
   "type": "module",
   "dependencies": {
+    "@hotwired/stimulus": "^3.2.1",
     "@rails/actioncable": "^7.0.4",
     "@rails/actiontext": "^7.0.4-1",
     "bootstrap": "^5.2.3",
     "bootstrap-sass": "^3.3.7",
-    "cable_ready": "^5.0.0-pre9",
     "chart.js": "^4.1.1",
     "chartkick": "^4.2.0",
     "controllers": "^0.0.2",

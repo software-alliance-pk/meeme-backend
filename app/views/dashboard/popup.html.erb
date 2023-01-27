@@ -39,7 +39,7 @@
                       </div>
                     </div>
                     <div class="txt">
-                      <%= popup.description %>
+                      <%= popup.description.html_safe %>
                     </div>
                   </div>
                 <% end %>
@@ -52,11 +52,11 @@
             <ul class="htry_list">
               <% Popup.all.reverse.each do |pop| %>
                 <% if pop.created_at == pop.updated_at %>
-                  <p>Faq - Created <%= pop.title %>!</p>
+                  <p>Popup - Created <%= pop.title %>!</p>
                   <p class="time"><%= pop.created_at.strftime("%F") %></p>
                   <hr>
                 <% else %>
-                  <p>Faq - Updated <%= pop.title %>!</p>
+                  <p>Popup - Updated <%= pop.title %>!</p>
                   <p class="time"><%= pop.updated_at.strftime("%F") %></p>
                   <hr>
                 <% end %>

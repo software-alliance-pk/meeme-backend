@@ -80,7 +80,7 @@
                 <td><%=post.user.email %></td>
                 <td><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).dislike.count%></td>
-                <td><%=post.user.tournament_users.first.created_at.strftime('%B %d,%Y') %></td>
+                <td><%=post.user.tournament_users.first.created_at.strftime('%b %d, %Y') %></td>
                 <% banner_id = @banner.present? ? @banner.id : TournamentBanner&.first&.id %>
                 <td><%=post.user.likes.where(tournament_banner_id: banner_id).count %></td>
                 <td>

@@ -78,8 +78,9 @@ class Api::V1::MessagesController < Api::V1::ApiController
     @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Pending')
     if @conversation.present?
       @message = @conversation.messages.new(message_params)
+      @message.message_ticket = SecureRandom.hex(5)
       if @message.save
-        @message.update(message_ticket: SecureRandom.hex(5))
+        # @message.update(message_ticket: SecureRandom.hex(5))
         ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message) })
         Notification.create(title:"#{@message.sender.username} generated a support ticket",
                             body: @message.body,
@@ -101,8 +102,10 @@ class Api::V1::MessagesController < Api::V1::ApiController
     if @conversation.present?
       subject = @conversation.messages.first.slice(:subject, :message_ticket).values
       @message = @conversation.messages.new(message_params)
+        @message.subject = subject[0]
+        @message.message_ticket = subject[1]
       if @message.save
-        @message.update(subject: subject[0], message_ticket: subject[1])
+        # @message.update(subject: subject[0], message_ticket: subject[1])
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
         Notification.create(title:"Message from #{@message.sender.username}",
                             body: @message.body,
