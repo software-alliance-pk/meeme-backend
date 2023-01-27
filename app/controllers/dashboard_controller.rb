@@ -84,8 +84,10 @@ class DashboardController < ApplicationController
 
   def tournament_banner_create
     @banner = TournamentBanner.new(banner_params)
+    @banner.enable = true
     if @banner.save
-      TournamentBannerRule.create(rules: ["Abusing is not Allowed"], tournament_banner_id: @banner.id)
+      rule = @banner.build_tournament_banner_rule(rules: ["Abusing is not Allowed"])
+      rule.save
       @today_date = Time.zone.now.end_of_day.to_datetime
       @tournament_end_date = @banner.end_date.strftime("%a, %d %b %Y").to_datetime
       @tournamnet_days = (@tournament_end_date - @today_date).to_i
