@@ -133,12 +133,12 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def trending_posts
     @trending_posts=[]
-    @counts=[]
     @likes = Like.where(status: 1, is_liked: true, is_judged: false).joins(:post).where(post: { tournament_meme: false }).group(:post_id).count(:post_id).sort_by(&:last).reverse.to_h
     @likes.keys.each do |key|
       @trending_posts<<[Post.find_by(id: key),(Post.find_by(id: key).comments.count+Post.find_by(id: key).comments.count)]
     end
-    @trending_posts=(@trending_posts.to_h).sort_by {|k,v| v}.reverse
+    @trending_posts=(@trending_posts.to_h).sort_by {|k,v| v}.reverse.paginate(page: params[:page], per_page: 25)
+    # @trending_posts=@trending_posts.paginate(page: params[:page], per_page: 25)
     # @trending_posts = Post.where(id: @likes.keys).paginate(page: params[:page], per_page: 25)
     if @trending_posts
 
