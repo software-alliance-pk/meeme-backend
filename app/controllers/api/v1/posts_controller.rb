@@ -109,24 +109,38 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def following_posts
+    @following_posts=[]
     @following = @current_user.followers.where(is_following: true).pluck(:follower_user_id)
     @following = User.where(id: @following).paginate(page: params[:page], per_page: 25)
-    if @following.present?
+    @following.each do |user|
+      user.posts.where(tournament_meme: false).each do |post|
+        @following_posts << post
+      end
+    end
+    @following_posts=@following_posts.shuffle
+    if @following_posts.present?
     else
       render json: { following_posts: [], following_count: @following.count }, status: :ok
     end
   end
 
   def recent_posts
-    @today_post = Post.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
-    @random_posts = Post.where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).paginate(page: params[:page], per_page: 25).shuffle
-    @recent_posts = @today_post + @random_posts
+    @recent_posts = Post.where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
+    # @today_post = Post.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
+    # @random_posts = Post.where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).paginate(page: params[:page], per_page: 25).shuffle
+    # @recent_posts = @today_post + @random_posts
     # @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).paginate(page: params[:page], per_page: 25).shuffle
   end
 
   def trending_posts
+    @trending_posts=[]
     @likes = Like.where(status: 1, is_liked: true, is_judged: false).joins(:post).where(post: { tournament_meme: false }).group(:post_id).count(:post_id).sort_by(&:last).reverse.to_h
-    @trending_posts = Post.where(id: @likes.keys).paginate(page: params[:page], per_page: 25).reverse
+    @likes.keys.each do |key|
+      @trending_posts<<[Post.find_by(id: key),(Post.find_by(id: key).comments.count+Post.find_by(id: key).comments.count)]
+    end
+    @trending_posts=(@trending_posts.to_h).sort_by {|k,v| v}.reverse.paginate(page: params[:page], per_page: 25)
+    # @trending_posts=@trending_posts.paginate(page: params[:page], per_page: 25)
+    # @trending_posts = Post.where(id: @likes.keys).paginate(page: params[:page], per_page: 25)
     if @trending_posts
 
     end

@@ -90,7 +90,7 @@
                           </li>
                           <li>
                             <button type="button" onclick="open_tormnt_modal('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.where(status: "like").count%>',
-                              '<%= tournament_user.user.created_at.strftime('%b %d, %Y') %>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.where(status: "dislike")&.count%>') ; image('<%=tournament_user.user.username%>')">Reward
+                              '<%= tournament_user.user.created_at.strftime('%b %d, %Y') %>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.where(status: "dislike")&.count%>,', '<%= i %>') ; image('<%=tournament_user.user.username%>')">Reward
                             </button>
                           </li>
                         </ul>
@@ -99,6 +99,7 @@
                       <%= form_with(method: "get") do |f|%>
                         <%= f.text_field :coins, class: "input", value: "1000", data: { numeric: true }, id: "rank_user_coins" %>
                         <%= f.text_field :user_id, hidden: true, value: tournament_user.user_id %>
+                        <%= f.text_field :rank, hidden: true, value: i %>
                         <%= f.submit "" , hidden: true %>
                       <% end %>
                     <% end %>
@@ -139,12 +140,13 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <%= form_tag(winner_reward_path, method: "get") do %>
+                                    <%= form_for(winner_reward_path, method: "get") do |f|%>
                                         <div class="row">
                                             <div class="col-12">
                                                 <h6 class="form_label">Gift Card #</h6>
                                                 <div class="form_blk">
                                                     <input type="text" id="gift_card_number" class="input" placeholder="Enter Card Number" required>
+                                                    <%= f.text_field :rank, id: "user_rank", hidden: true %>
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -199,6 +201,7 @@
     document.getElementById("likes").innerHTML= likes
     document.getElementById("dislike").innerHTML= dislike
     document.getElementById("post_by").innerHTML= "Memes Posts by " + name;
+      $('#user_rank')[0].value = rank
     $.ajax({
       type: "GET",
       url: "tournament-winner-list",
@@ -216,13 +219,14 @@
     document.getElementById("winner_modal").style.display="none"
   }
 
-  function open_tormnt_modal(name, email, likes, created, dislike){
+  function open_tormnt_modal(name, email, likes, created, dislike, rank){
     document.getElementById("tormnt_modal").style.display="block"
     document.getElementById("tournament_user_name").innerHTML= name
     document.getElementById("tournament_user_email").innerHTML= email
     document.getElementById("tournament_user_joined").innerHTML= created
     document.getElementById("user_likes").innerHTML= likes
     document.getElementById("user_dislikes").innerHTML= dislike
+    $('#user_rank')[0].value = rank
   }
 
   function image(name){
@@ -241,12 +245,13 @@
     var name = document.getElementById("tournament_user_name").innerHTML
     var card_number = document.getElementById("gift_card_number").value
     var coins = document.getElementById("coins").value
+    var rank =  document.getElementById("user_rank").value
     var tournament_winner = "Tournament_winner"
     if(card_number !== "" && coins !== "") {
         $.ajax({
             type: "GET",
             url: "winner-reward",
-            data: {name: name, card_number: card_number, coins: coins, tournament_winner: tournament_winner},
+            data: {name: name, card_number: card_number, coins: coins, tournament_winner: tournament_winner, rank: rank},
             success: function () {
                 document.getElementById("tormnt_modal").style.display = "none"
             }

@@ -1,6 +1,7 @@
 class Api::V1::TournamentBannersController < Api::V1::ApiController
   before_action :authorize_request
-  before_action :find_tournament
+  before_action :find_tournament ,except: [:create_tournament]
+  before_action :check_expiration, except: [:create_tournament]
   before_action :check_user_is_in_tournament, only: [:enroll_in_tournament]
 
   def index
@@ -35,7 +36,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   def top_10_positions
     @username = []
     @post_like = []
-    @all_user={}
+    @all_user = {}
     @tournament_posts = Like.joins(:post).where(post: { tournament_banner_id: @tournament.id, tournament_meme: true }).group(:post_id).count(:post_id).sort_by(&:last).to_h
     @tournament_posts = @tournament_posts.group_by { |k, v| v }
     @tournament_posts.keys.each do |key|
@@ -47,8 +48,8 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
       @username = []
       @post_like = []
     end
-    @all_user=@all_user.to_a.reverse
-    render json: {tournament_name: @tournament.title,username_with_position: @all_user.each_with_index.map{|a,index| "#{a[1]} is at position #{index+1}" }}
+    @all_user = @all_user.to_a.reverse
+    render json: { tournament_name: @tournament.title, username_with_position: @all_user.each_with_index.map { |a, index| "#{a[1]} is at position #{index + 1}" } }
 
   end
 
@@ -82,6 +83,10 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
 
   def create_tournament
     @tournament_banner = TournamentBanner.create!(title: params[:title], start_date: params[:start_date], end_date: params[:end_date])
+    @today_date = Time.zone.now.end_of_day.to_datetime
+    @tournament_end_date = @tournament_banner.end_date.strftime("%a, %d %b %Y").to_datetime
+    @tournamnet_days = (@tournament_end_date - @today_date).to_i
+    TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @tournament_banner.id)
     render json: { tournament_banner: @tournament_banner }, status: :ok
   end
 
@@ -142,6 +147,13 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     unless (@tournament = TournamentBanner.find_by(enable: true))
       return render json: { message: 'No Tournament is played at the moment' }, status: :not_found
     end
+  end
+
+  def check_expiration
+      @today_date = Time.zone.now.end_of_day.to_datetime
+      if @tournament.end_date <= @today_date
+        return render json: { message: 'No Tournament is played at the moment' }, status: :not_found
+      end
   end
 
   #
