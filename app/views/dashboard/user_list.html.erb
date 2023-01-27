@@ -67,7 +67,7 @@
                 <tr>
                   <td>
                     <div class="user">
-                      <input type="checkbox">
+                      <input type="checkbox" id="<%=user_details.id%>" onclick="export_csv('<%=user_details.id %>')">
                       <button class="pop_btn btn" id="user_id_<%= user_details.id %>" data-user="<%= user_details.id %>" data-popup="user_profile" onclick="open_profile('<%= user_details.email %>', <%= session[:id] = user_details.id %>)">
                         <div class="ellipse">
                           <img src="<%= user_details.profile_image.attached? ? user_details.profile_image.blob.url : asset_path("user.png") %>" alt="">
@@ -77,7 +77,7 @@
                   </td>
                   <td>
                     <div class="name">
-                      <p class="f-16"><%= user_details.username %></p>
+                      <p class="f-16" onclick="open_post('<%= user_details.id  %>')"><%= user_details.username %></p>
                       <p class="f-13" id="user_mail"><%= user_details.email %></p>
                     </div>
                   </td>
@@ -150,21 +150,21 @@
         <div class="table_cell">
           <div class="contain">
             <div class="_inner">
-              <button type="button" class="x_btn"></button>
-              <div class="post_blk" style="background-image: url('<%= asset_path("bg-img.jpg")%>')">
+              <button type="button" class="x_btn" onclick="close_post_modal()"></button>
+              <div class="post_blk" id="post_image_user">
               </div>
               <div class="bottom">
                 <div class="like">
                   <div class="icon">
                     <img src="<%= asset_path("tick-icon.svg") %>" alt="">
                   </div>
-                  <span>324</span>
+                  <span id="likes"></span>
                 </div>
                 <div class="unlike">
                   <div class="icon">
                     <img src="<%= asset_path("cross-icon.svg") %>" alt="">
                   </div>
-                  <span>12</span>
+                  <span id="dislikes"></span>
                 </div>
               </div>
             </div>
@@ -363,6 +363,26 @@
         document.getElementById("user_modal").style.display = "none";
     }
 
+    function open_post(id){
+        document.getElementById("post_modal").style.display = "block";
+        $.ajax({
+            type: "GET",
+            url: "get_user_post",
+            data: {id: id},
+            success: function(response){
+                $('#post_image_user').css({
+                    'background-image': 'url(' + response.post_image + ')'
+                })
+                document.getElementById("likes").innerHTML = response.likes
+                document.getElementById("dislikes").innerHTML = response.dislike
+            }
+        })
+    }
+
+    function close_post_modal(){
+        document.getElementById("post_modal").style.display = "none";
+    }
+
     var user_id = ""
 
     function open_disable_dialog(id){
@@ -412,6 +432,26 @@
           $('input[type="checkbox"]').prop("checked", true)
         }else{
           $('input[type="checkbox"]').prop("checked", false)
+        }
+    }
+
+    function export_csv(id){
+        if(document.getElementById(id).checked === true){
+            $.ajax({
+                type: "GET",
+                url: "user-export",
+                data: {user_id: id, checked: true},
+                success: function(response){
+                }
+            })
+        }else if(document.getElementById(id).checked === false){
+            $.ajax({
+                type: "GET",
+                url: "user-export",
+                data: {user_id: id, checked: false},
+                success: function(response){
+                }
+            })
         }
     }
 

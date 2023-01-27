@@ -75,6 +75,7 @@ Rails.application.routes.draw do
   get '/winner-reward', to: "dashboard#winner_reward"
   get '/post-images', to: "dashboard#post_images"
   get '/set_coins', to: "dashboard#set_coins"
+  get '/get_user_post', to: "dashboard#get_user_post"
 
   namespace :api do
     namespace :v1 do

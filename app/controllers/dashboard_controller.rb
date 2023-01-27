@@ -3,7 +3,6 @@ require 'csv'
 class DashboardController < ApplicationController
 
   include Rails.application.routes.url_helpers
-
   # include DailyCoinHelper
   def dashboard
     @user = User.order("id DESC").limit(4)
@@ -162,7 +161,28 @@ class DashboardController < ApplicationController
     end
   end
 
+  def get_user_post
+    if params[:id].present?
+      @user = User.find(params[:id].to_i)
+      if @user.posts.present?
+        @post_image = @user.posts.first.post_image.attached? ? @user.posts.first.post_image.blob.url : ActionController::Base.helpers.asset_path('bg-img.jpg')
+        @likes = @user.posts.first.likes.where(status: "like").count
+        @dislike = @user.posts.first.likes.where(status: "dislike").count
+      else
+        @post_image = ActionController::Base.helpers.asset_path('no_posts_yet.jpg')
+        @likes = 0
+        @dislike = 0
+      end
+    end
+    respond_to do |format|
+      format.json { render json: { post_image: @post_image, likes: @likes, dislike: @dislike} }
+    end
+  end
+
   def user_list
+    if User.first.present?
+      User.all.where(checked: true).update(checked: false)
+    end
     @users = User.paginate(page: params[:page], per_page: 10)
     if params[:search]
       @users = User.search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
@@ -172,6 +192,20 @@ class DashboardController < ApplicationController
   end
 
   def user_export
+    if params[:user_id].present? && params[:checked].present? && params[:checked] == "true"
+      @user = User.find(params[:user_id].to_i)
+      if @user.present?
+        @user.update(checked: true)
+      end
+    elsif params[:user_id].present? && params[:checked].present? && params[:checked] == "false"
+      @user = User.find(params[:user_id].to_i)
+      if @user.present?
+        @user.update(checked: false)
+      end
+    end
+    if User.first.present?
+      @checked_user = User.all.where(checked: true)
+    end
     if params[:search]
       @all_user = User.search(params[:search]).order("created_at DESC")
     else
