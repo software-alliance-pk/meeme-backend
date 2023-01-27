@@ -111,4 +111,5 @@ Rails.application.configure do
     "audio/mpeg",
     "video/mp4"
   ]
+  config.assets.compile = true
 end
