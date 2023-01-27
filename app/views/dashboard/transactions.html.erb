@@ -21,12 +21,12 @@
             <div class="d-flex gap-3">
               <div class="trans_blk">
                 <span>From: </span>
-                <input type="date" name="start_date" value=<%= params[:start_date] if present? %>></input>
+                <input type="date" name="start_date" onchange="submit()" value=<%= params[:start_date] if present? %>></input>
                 <% start_date = params[:start_date] if params[:start_date].present? %>
               </div>
               <div class="trans_blk">
                 <span>To: </span>
-                <input type="date" name="end_date" value=<%= params[:end_date] if present? %>></input>
+                <input type="date" name="end_date" onchange="submit()" value=<%= params[:end_date] if present? %>></input>
                 <% end_date = params[:end_date] if params[:end_date].present? %>
               </div>
             </div>
