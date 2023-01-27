@@ -34,6 +34,7 @@
             </div>
           <% end %>
           </br></br>
+          <% conversation_id = "" %>
           <div class="user_list">
             <%= first_conversation = '' %>
             <% if @conversation.present? %>
@@ -53,8 +54,7 @@
                       <% end %>
                     </div>
                     <div class="txt">
-                      <p><%= conversation.messages.first.body if conversation.messages.first.present? %></p>
-<!--                      <div class="num">2</div>-->
+                      <p class="live_message"><%= conversation.messages.first.body if conversation.messages.first.present? %></p>
                     </div>
                   </div>
                 </div>
@@ -81,8 +81,8 @@
             </div>
           </div>
           <%= turbo_stream_from "divs" %>
-          <div class="chat_list" id="chat_list">
-              <div class="chat_blk" id="chat_blk_">
+          <div class="chat_list">
+              <div class="chat_blk" id="chat_blk">
               </div>
               <div class="chat_blk memee" id="admin_div">
               </div>
@@ -92,8 +92,8 @@
             <div class="form_inside">
               <%= form.file_field :message_images, id: "document-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
               <label for="document-btn" class="ico_btn label"><img src="<%= asset_path("icon-clip.svg") %>" alt=""></label>
-              <%= form.file_field :message_images, id: "file-btn", direct_upload: true, multiple: true, hidden: true %>
-              <label for="file-btn" class="ico_btn label"><img src="<%= asset_path("icon-image.svg") %>" alt=""></label>
+              <%= form.file_field :message_images, id: "file-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
+              <label for="file-btn" class="ico_btn label" id="label_btn"><img src="<%= asset_path("icon-image.svg") %>" alt=""></label>
               <input type="text" class="input" name="body" id="body" placeholder="Write your message here" required>
               <input name="conversation_id" id="conversation_id" hidden></input>
               <input name="receiver_id" id="receiver_id" hidden></input>
@@ -113,23 +113,22 @@
 <script>
     $("#clicked").click()
     $("#clicked").addClass("active")
-    $("#chat_list").animate({scrollTop: 20000000}, "slow");
-
     $(".user_list").on('click', '.user_blk', function () {
         $(".user_list .user_blk.active").removeClass("active");
         $(this).addClass("active");
     });
 
     function open_conversation(sender_id, conversation_id, name, email) {
+        $(".txt .live_message").attr("id", "under_message_" + conversation_id)
         $('#chat_list').data('id', conversation_id);
+        $(".chat_side .chat_list").attr("id", "chat_list_" + conversation_id)
         $("#clicked").removeClass("active")
-        $("#chat_list").animate({scrollTop: 20000000}, "slow");
         document.getElementById("conversation_id").value = conversation_id
         document.getElementById("admin_id").value = '<%= current_admin_user.id %>'
         document.getElementById("receiver_id").value = sender_id
         document.getElementById("user_id").value = sender_id
         var admin_id = '<%= current_admin_user.id %>'
-        $("#chat_list").empty()
+        $(".chat_list").empty()
         $.ajax({
             type: "GET",
             url: "conversation",
@@ -169,7 +168,8 @@
     }
 
     function message_design(message, images, user_image, admin_image) {
-        var topDiv = document.getElementById("chat_list")
+        var chat_list_id = document.getElementsByClassName("chat_list")[0].id
+        var topDiv = document.getElementById(chat_list_id)
         var admindiv = document.getElementById("admin_div")
         if (message.sender_id !== null) {
             document.getElementById("num_id").innerHTML = message.message_ticket
@@ -254,6 +254,7 @@
             message_div.appendChild(div1)
             topDiv.appendChild(message_div)
         }
+        $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
     }
 
     function completed() {

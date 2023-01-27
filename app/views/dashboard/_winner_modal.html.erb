@@ -1,0 +1,54 @@
+<div class="popup" data-popup="trans_profile" id="winner_modal">
+  <div class="table_dv">
+    <div class="table_cell">
+      <div class="contain">
+        <div class="row justify-content-center">
+          <div class="col-4">
+            <div class="_inner">
+<!--              <button type="button" class="x_btn"></button>-->
+              <div class="winner_blk">
+                <div class="user_blk">
+                  <a href="#" class="icon">
+                    <img src="<%= asset_path("left-arrow.svg")%>" onclick="close_details()" alt="">
+                  </a>
+                  <div class="user">
+                    <div class="img">
+                      <img src="" alt="" id="user_image" style="object-fit: cover;border-radius: 75%;">
+                    </div>
+                    <div class="content">
+                      <h6 id="name"></h6>
+                      <p id="email"></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="name_blk">
+                  <h4 id="post_by"></h4>
+                </div>
+                <div class="post_blk" id="post_image">
+                  <div class="detail">
+                    <span>Date Posted</span>
+                    <p id="created"></p>
+                    <div class="bottom">
+                      <div class="like">
+                        <div class="icon">
+                          <img src="<%= asset_path("heart-icon.svg")%>" alt="">
+                        </div>
+                        <span id="likes"></span>
+                      </div>
+                      <div class="unlike">
+                        <div class="icon">
+                          <img src="<%= asset_path("cross-icon.svg")%>" alt="">
+                        </div>
+                        <span id= "dislike"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

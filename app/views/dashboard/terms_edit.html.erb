@@ -24,7 +24,7 @@
                         </ul>
                     </nav>
                     
-                        <div class="content_blk edit">
+                        <div class="content_blk edit position-relative">
                             <%= form_with(model: @terms, local: true) do |form| %>
                                 <div class="row mb-5">
                                     <div class="col-9">
@@ -37,9 +37,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
-                                        <h6 class="mb-4">Description</h6>
                                         <div class="form_blk">
-                                            <%= form.rich_text_area :description, cols:"30", rows:"20", placeholder: "Start typing here...." %>
+                                            <%= form.rich_text_area :description, class: "input" ,placeholder: "Start typing here...." %>
                                         </div>
                                     </div>
                                 </div>
