@@ -1,4 +1,4 @@
-<h1>Hi @user.username</h1>
+<h1>Hi <%= @user.username%></h1>
 <p>Congratulations for ranking <%=@rank  %> </p>
 <p>Memee App would like to thank you for participating in the tournament</p>
 <% if @coins.present? && @coins.to_i >0 %>
