@@ -1,5 +1,5 @@
 json.trending_posts do
-  json.(@trending_posts) do |post|
+  json.(@trending_posts.to_h.keys) do |post|
     json.user_id post.user.id
     json.username post.user.username
     json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
