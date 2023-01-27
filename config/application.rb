@@ -25,6 +25,5 @@ module MemeeApp
     config.action_cable.disable_request_forgery_protection = true
     config.action_cable.url = "/cable"
     config.active_storage.service_urls_expire_in = 6.days
-    config.assets.paths << Rails.root.join("app", "assets", "fonts")
   end
 end
