@@ -125,9 +125,10 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def recent_posts
-    @today_post = Post.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
-    @random_posts = Post.where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).paginate(page: params[:page], per_page: 25).shuffle
-    @recent_posts = @today_post + @random_posts
+    @recent_posts = Post.where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
+    # @today_post = Post.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
+    # @random_posts = Post.where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).paginate(page: params[:page], per_page: 25).shuffle
+    # @recent_posts = @today_post + @random_posts
     # @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).paginate(page: params[:page], per_page: 25).shuffle
   end
 
