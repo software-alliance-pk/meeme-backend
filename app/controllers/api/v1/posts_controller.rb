@@ -22,7 +22,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     if @post.save
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
       if @post.post_image.attached? && @post.post_image.content_type == "video/mp4"
-        @post.update(duplicate_tags: @tags, thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
+        @post.update(duplicate_tags: @tags, thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.service_url)
       else
         @post.update(duplicate_tags: @tags)
       end
