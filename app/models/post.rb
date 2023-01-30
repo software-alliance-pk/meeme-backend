@@ -11,7 +11,8 @@ class Post < ApplicationRecord
 
   belongs_to :user
   has_one_attached :post_image, dependent: :destroy
-  has_one :post_image_attached,class_name: 'ActiveStorage::Attachment',as: :record
+
+  has_one :post_image_attached, class_name: 'ActiveStorage::Attachment', as: :record
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
   belongs_to :tournament_banner, optional: true
@@ -39,5 +40,7 @@ class Post < ApplicationRecord
     end
     self.tag_list = tag_list.reject(&:blank?)
   end
+
+
 
 end

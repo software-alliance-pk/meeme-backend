@@ -21,7 +21,11 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post.tags_which_duplicate_tag = params[:tag_list]
     if @post.save
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
-      @post.update(duplicate_tags: @tags)
+      if @post.post_image.attached? && @post.post_image.content_type == "video/mp4"
+        @post.update(duplicate_tags: @tags, thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
+      else
+        @post.update(duplicate_tags: @tags)
+      end
       render json: { user: @post.attributes.except('tag_list'), post_image: @post.post_image.attached? ? @post.post_image.blob.url : '', post_type: @post.post_image.content_type, message: 'Post created successfully' }, status: :ok
     else
       render_error_messages(@post)
@@ -36,6 +40,13 @@ class Api::V1::PostsController < Api::V1::ApiController
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
       @post.update(post_params)
       @post.update(duplicate_tags: @tags) if @tags.present?
+      if params[:post_image].present?
+        if params[:post_image].content_type == "video/mp4"
+          @post.update(thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
+        else
+          @post.update(thumbnail: nil)
+        end
+      end
       render json: { post: @post.attributes.except('tag_list'),
                      post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
                      post_type: @post.post_image.content_type,
@@ -109,7 +120,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def following_posts
-    @following_posts=[]
+    @following_posts = []
     @following = @current_user.followers.where(is_following: true).pluck(:follower_user_id)
     @following = User.where(id: @following).paginate(page: params[:page], per_page: 25)
     @following.each do |user|
@@ -117,7 +128,7 @@ class Api::V1::PostsController < Api::V1::ApiController
         @following_posts << post
       end
     end
-    @following_posts=@following_posts.shuffle
+    @following_posts = @following_posts.shuffle
     if @following_posts.present?
     else
       render json: { following_posts: [], following_count: @following.count }, status: :ok
@@ -133,12 +144,12 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def trending_posts
-    @trending_posts=[]
+    @trending_posts = []
     @likes = Like.where(status: 1, is_liked: true, is_judged: false).joins(:post).where(post: { tournament_meme: false }).group(:post_id).count(:post_id).sort_by(&:last).reverse.to_h
     @likes.keys.each do |key|
-      @trending_posts<<[Post.find_by(id: key),(Post.find_by(id: key).comments.count+Post.find_by(id: key).comments.count)]
+      @trending_posts << [Post.find_by(id: key), (Post.find_by(id: key).comments.count + Post.find_by(id: key).comments.count)]
     end
-    @trending_posts=(@trending_posts.to_h).sort_by {|k,v| v}.reverse.paginate(page: params[:page], per_page: 25)
+    @trending_posts = (@trending_posts.to_h).sort_by { |k, v| v }.reverse.paginate(page: params[:page], per_page: 25)
     # @trending_posts=@trending_posts.paginate(page: params[:page], per_page: 25)
     # @trending_posts = Post.where(id: @likes.keys).paginate(page: params[:page], per_page: 25)
     if @trending_posts
@@ -154,7 +165,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       else
         count = @share_post.share_count + 1
         @share_post.update_columns(share_count: count)
-        ShareBadgeJob.perform_now(@share_post,@current_user)
+        ShareBadgeJob.perform_now(@share_post, @current_user)
         render json: { message: 'Tournament Posts Shared', post: @share_post, share_count: @share_post.share_count }, status: :ok
       end
     else
@@ -172,6 +183,6 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def post_params
-    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags, :share_count)
+    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags, :share_count, :thumbnail)
   end
 end
