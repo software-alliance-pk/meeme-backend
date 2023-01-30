@@ -138,7 +138,7 @@
         <div class="paginate_sec">
           <p><%= page_entries_info @users , :html => false %></p>
           <ul class="pagination">
-            <li class="disabled"> <%= will_paginate(@users, :class => "h5 text-white", :outer_window => 1, :inner_window => 0) %></li>
+            <li class="disabled"> <%= will_paginate(@users, :class => "h5 text-white", :outer_window => 0, :inner_window => 1) %></li>
           </ul>
         </div>
 

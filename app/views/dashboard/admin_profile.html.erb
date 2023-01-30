@@ -20,7 +20,7 @@
               <img src="<%= current_admin_user.admin_profile_image.attached? ? current_admin_user.admin_profile_image.blob.url : asset_path("admin-profile.png")%>" alt="" style="object-fit: cover; height: 100%">
             </div>
             <div class="btn_blk">
-              <%= f.file_field :admin_profile_image, hidden: true , id: "admin_profile_upload"%>
+              <%= f.file_field :admin_profile_image, hidden: true , id: "admin_profile_upload", accept: 'image/png, image/jpeg, image/jpg'%>
               <label for="admin_profile_upload" type="button" class="btn round upload_btn d-flex justify-content-center align-items-center">Upload New</label>
             </div>
           </div>
@@ -30,6 +30,9 @@
                 <h6 class="form_label">Your Full Name</h6>
                 <div class="form_blk">
                   <%= f.text_field :full_name, class: "input", value: current_admin_user.full_name %>
+                  <% if @updated == false %>
+                    <div id="already" style="margin: 5px 0 0 15px; color: red">Full Name already taken</div>
+                  <% end %>
                 </div>
               </div>
               <div class="col-6">
@@ -42,6 +45,9 @@
                 <h6 class="form_label">Username</h6>
                 <div class="form_blk">
                   <%= f.text_field :admin_user_name, class: "input", value: current_admin_user.admin_user_name %>
+                  <% if @updated == false %>
+                    <div id="admin_already" style="margin: 5px 0 0 15px; color: red">Admin User Name already taken</div>
+                  <% end %>
                 </div>
               </div>
               <div class="col-6">
@@ -112,6 +118,13 @@
           document.getElementById("logon_modal").style.display = "block"
       }
   })
+
+  $(document).ready(function(){
+      setTimeout(function(){
+          $('#already, #admin_already').fadeOut();
+      }, 5000);
+  })
+
   function close_dialog(){
       document.getElementById("logon_modal").style.display = "none"
   }

@@ -5,7 +5,7 @@
   <button type="button" class="btn bell_btn"  data-bs-auto-close="outside">
     <img src="<%= asset_path("icon-bell.svg") %>" alt="">
     <% if notification.present? %>
-      <% count = notification.where(status: 0).count %>
+      <% count = notification.where(notification_type: 'admin_message',status: 0).count %>
       <% if count > 0 %>
         <span id="icon_count"><%= count %></span>
       <% end %>
@@ -22,7 +22,7 @@
               <div class="detail_blk">
                 <div class="img_blk">
                   <div class="img">
-                    <img src="<%= user.profile_image.attached? ? user.profile_image.blob.url : asset_path("john-smith.jpg") %>" alt="">
+                    <img src="<%= user.profile_image.attached? ? user.profile_image.blob.url : asset_path("user.png") %>" alt="">
                   </div>
                 </div>
                 <div class="txt">

@@ -27,7 +27,7 @@
   <% else %>
     <div class="chat_blk memee">
       <div class="ico fill round">
-        <img src="<%= user.admin_profile_image.attached? ? user.admin_profile_image.blob.url : asset_path("john-smith.jpg") %>" alt="" style="object-fit: cover; border-radius: 50% ">
+        <img src="<%= user.admin_profile_image.attached? ? user.admin_profile_image.blob.url : asset_path("user.png") %>" alt="" style="object-fit: cover; border-radius: 50% ">
       </div>
       <% if message.message_images.attached? %>
         <div class="txt w-50 h-50">
@@ -56,9 +56,13 @@
   <%= turbo_stream.replace "body" do %>
     <input type="text" class="input" name="body" id="body" placeholder="Write your message here" required>
   <% end %>
-
-  <%= turbo_stream.replace "label_btn" do %>
-    <label for="file-btn" class="ico_btn label" id="label_btn"><img src="<%= asset_path("icon-image.svg") %>" alt=""></label>
+  <%= form_with(url: support_path) do |form| %>
+    <%= turbo_stream.replace "file-btn" do %>
+      <%= form.file_field :message_images, id: "file-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
+    <% end %>
+    <%= turbo_stream.replace "document-btn" do %>
+      <%= form.file_field :message_images, id: "document-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
+    <% end %>
   <% end %>
 <% end %>
 
