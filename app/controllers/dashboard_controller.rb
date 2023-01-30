@@ -50,9 +50,17 @@ class DashboardController < ApplicationController
   end
 
   def admin_profile
-    if params[:password] == "" && params[:full_name].present? && params[:admin_user_name]
-      current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
-      @updated = true
+    if params[:password] == "" && params[:admin_profile_image] == nil && params[:full_name].present? && params[:admin_user_name]
+      # current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
+      # @updated = true
+      if AdminUser.first.present?
+        if params[:full_name] == AdminUser.first.full_name && params[:admin_user_name] == AdminUser.first.admin_user_name
+          @updated = false
+        else
+          current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
+          @updated = true
+        end
+      end
     elsif params[:password] != nil && params[:password] != params[:password_confirmation]
       @updated = false
       redirect_to admin_profile_path

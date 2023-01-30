@@ -66,7 +66,7 @@
           <div class="top_head_blk">
             <div class="user_blk">
               <div class="ico fill round">
-                <img src="" alt="" id="profile_image">
+                <img src="" alt="" id="profile_image" hidden>
               </div>
               <div class="inr">
                 <h5 id="name"></h5>
@@ -158,6 +158,7 @@
             url: "conversation-image",
             data: {name: name},
             success: function (response) {
+                document.getElementById("profile_image").removeAttribute("hidden")
                 document.getElementById("profile_image").src = response.image
             }
         })
@@ -264,6 +265,7 @@
             url: "completed",
             data: {message_ticket: message_ticket},
             success: function (response) {
+                document.getElementById("profile_image").removeAttribute("hidden")
                 document.getElementById("profile_image").src = response.image
             }
         })

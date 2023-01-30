@@ -670,3 +670,7 @@
   background-repeat: no-repeat;
   background-position: center;
 }
+
+#chart-2 > div > div:nth-child(1) > div > svg > g:nth-child(2){
+  display: none;
+}
