@@ -26,6 +26,7 @@ json.profile do
     json.post_dislikes post.likes.dislike.count
     json.post_share_count post.share_count
     json.post_type post.post_image.content_type
+    json.post_thumbnail post.thumbnail
 
 
   end

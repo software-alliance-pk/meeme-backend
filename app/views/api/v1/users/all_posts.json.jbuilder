@@ -6,6 +6,8 @@ json.posts do
     json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
     json.post post.attributes.except('tag_list')
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
+    json.post_thumbnail post.thumbnail
+
     json.liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false
     json.post_likes post.likes.count
     json.post_comments_count post.comments.count

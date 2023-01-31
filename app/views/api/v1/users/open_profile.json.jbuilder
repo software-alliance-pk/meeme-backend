@@ -11,6 +11,8 @@ json.open_profile_of do
       json.post_comments_count post.comments.count
       json.post_share_count post.share_count
       json.post_type post.post_image.content_type
+      json.post_thumbnail post.thumbnail
+
 
       json.post_comments post.comments.each do |comment|
         json.id comment.id
