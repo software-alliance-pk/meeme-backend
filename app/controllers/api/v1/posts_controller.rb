@@ -21,7 +21,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post.tags_which_duplicate_tag = params[:tag_list]
     if @post.save
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
-      if @post.post_image.attached? && @post.post_image.content_type == "video/mp4"
+      if @post.post_image.attached? && @post.post_image.video?
         @post.update(duplicate_tags: @tags, thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
       else
         @post.update(duplicate_tags: @tags)
@@ -41,7 +41,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       @post.update(post_params)
       @post.update(duplicate_tags: @tags) if @tags.present?
       if params[:post_image].present?
-        if params[:post_image].content_type == "video/mp4"
+        if params[:post_image].content_type[0..4]=="video"
           @post.update(thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
         else
           @post.update(thumbnail: nil)
