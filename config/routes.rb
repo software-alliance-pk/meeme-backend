@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   get '/welcome', to: "dashboard#welcome"
   get '/signin', to: "dashboard#signin"
   get '/signup', to: "dashboard#signup"
+  post '/signup', to: "dashboard#signup"
+  get '/sub-admin-sign-up', to: "dashboard#sub_admin_sign_up"
   get '/forgot-password', to: "dashboard#forgot_password"
   get '/reset-password', to: "dashboard#reset_password"
   get '/follower_count', to: "dashboard#follower_count"

@@ -42,8 +42,9 @@
               <tr style="width: 1080px">
                 <th style="width: 15.6rem;"><input id="main_checkbox" type="checkbox" onclick="select_all()"></th>
                 <th style="width: 20rem;">Name/Email</th>
-                <th style="width: 14.7rem;">Status</th>
+                <th style="width: 14.7rem;">Current User Status</th>
                 <th style="width: 20rem;">Date Joined</th>
+                <th style="width: 14.7rem;">Status</th>
                 <th style="width: 10rem;">Action</th>
               </tr>
               </thead>
@@ -101,6 +102,21 @@
                       <span><%= user_details.created_at.strftime("%F") %></span>
                     </div>
                   </td>
+                  <% if user_details.disabled == true %>
+                    <td>
+                      <div class="status">
+                        <div style="background-color: red"></div>
+                        <span class="active">Disable</span>
+                      </div>
+                    </td>
+                  <% else %>
+                    <td>
+                      <div class="status">
+                        <div style="background-color: green"></div>
+                        <span class="active">Enable</span>
+                      </div>
+                    </td>
+                  <% end %>
                   <td>
                     <div class="action">
                       <% if user_details.disabled === false %>

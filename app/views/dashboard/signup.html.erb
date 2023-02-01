@@ -2,6 +2,7 @@
     <section id="logon" style="background-image: url(<%= asset_path("logon-bg.jpg")%>);">
         <div class="contain">
             <div class="log_blk">
+              <%= form_with(url: signup_path) do |f| %>
                 <form action="" method="POST">
                     <div class="logo">
                         <img src="<%= asset_path("logo.svg")%>" alt="">
@@ -13,29 +14,45 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form_blk">
-                                <input type="text" name="" id="" class="input" placeholder="Full Name">
+                              <%= f.text_field :full_name, autofocus: true, autocomplete: "full name", type: "text", id: "", class: "input", placeholder: "Full Name" %>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form_blk">
-                                <input type="text" name="" id="" class="input" placeholder="Admin Username">
+                              <%= f.text_field :admin_user_name, autofocus: true, autocomplete: "admin full name", type: "text", id: "", class: "input", placeholder: "Admin Full Name" %>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form_blk">
-                                <input type="text" name="" id="" class="input" placeholder="Email">
+                              <%= f.email_field :email, autofocus: true, autocomplete: "email", type: "text", class: "input", id: "register_email", placeholder: "Email", required: true %>
+                              <% if flash[:mail].present? %>
+                                <div id="signup_email" style="margin: 5px 0 0 15px; color: red"><%= flash[:mail] %></div>
+                              <% end %>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form_blk">
-                                <input type="password" name="" id="" class="input" placeholder="Password">
+                              <em>(6 characters minimum)</em><br/>
+                              <%= f.password_field :password, autocomplete: "new-password", type: "password", class: "input", id: "register_password", placeholder: "Password", required: true %>
+                              <% if flash[:length].present? %>
+                                <div id="signup_password" style="margin: 5px 0 0 15px; color: red"><%= flash[:length] %></div>
+                              <% end %>
                             </div>
                         </div>
+                      <div class="col-12">
+                        <div class="form_blk">
+                          <%= f.password_field :password_confirmation, autocomplete: "confirm-password", type: "password", id: "register_confirm_password", class: "input", placeholder: "Confirm Password", required: true %>
+                          <% if flash[:confirmation].present? %>
+                            <div id="signup_password_confirm" style="margin: 5px 0 0 15px; color: red"><%= flash[:confirmation ] %></div>
+                          <% end %>
+                        </div>
+                      </div>
                     </div>
                     <div class="btn_blk">
-                        <button type="button" class="site_btn prime_btn w-100 pop_btn" data-popup="sign_up">Sign up</button>
+                        <button class="site_btn prime_btn w-100 pop_btn"><%= f.submit "Sign up", type: "button", class: "site_btn prime_btn w-45 pop_btn" %></button>
                     </div>
                 </form>
+              <% end %>
             </div>
         </div>
         <div class="popup" data-popup="sign_up" id="logon_modal">
@@ -59,3 +76,11 @@
         </div>
     </section>
 </main>
+
+<script>
+    $(document).ready(function(){
+        setTimeout(function(){
+            $('#signup_email, #signup_password, #signup_password_confirm').fadeOut();
+        }, 5000);
+    })
+</script>

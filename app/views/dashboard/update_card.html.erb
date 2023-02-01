@@ -273,6 +273,22 @@
         window.location = "<%= card_inventory_path %>"
     }
 
+    $(window).load(function(){
+        var amount = $("#form_amount")[0].value
+        var coins = $("#form_coins")[0].value
+        if($("#image_amount_1")[0].innerHTML.slice(1, 4) === amount && $("#image_coin_1")[0].innerText === coins){
+            $("#checkbox_1").prop("checked", true)
+        }else if($("#image_amount_2")[0].innerHTML.slice(1, 4) === amount && $("#image_coin_2")[0].innerText === coins){
+            $("#checkbox_2").prop("checked", true)
+        }else if($("#image_amount_3")[0].innerHTML.slice(1, 4) === amount && $("#image_coin_3")[0].innerText === coins){
+            $("#checkbox_3").prop("checked", true)
+        }else if($("#image_amount_4")[0].innerHTML.slice(1, 4) === amount && $("#image_coin_4")[0].innerText === coins){
+            $("#checkbox_4").prop("checked", true)
+        }else if($("#image_amount_5")[0].innerHTML.slice(1, 4) === amount && $("#image_coin_5")[0].innerText === coins){
+            $("#checkbox_5").prop("checked", true)
+        }
+    })
+
     function checkbox(id){
         if(id === 1 && $("#checkbox_1")[0].checked === true){
             $("#checkbox_2, #checkbox_3, #checkbox_4, #checkbox_5").prop("checked", false)
