@@ -75,7 +75,10 @@ class DashboardController < ApplicationController
           @updated = true
         end
       end
+    elsif params[:old_password].present? && current_admin_user.valid_password?(params[:old_password]) == false
+      flash[:old_password] = "Old Password is wrong"
     elsif params[:password] != nil && params[:password] != params[:password_confirmation]
+      flash[:password_confirmation] = "Password confirmation doesn't match Password"
       @updated = false
       redirect_to admin_profile_path
     elsif params[:password] != nil && params[:password] == params[:password_confirmation] && current_admin_user.valid_password?(params[:old_password])

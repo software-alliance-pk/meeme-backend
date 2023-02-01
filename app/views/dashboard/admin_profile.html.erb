@@ -54,6 +54,9 @@
                 <h6 class="form_label">Old Password</h6>
                 <div class="form_blk">
                   <%= f.password_field :old_password, class: "input", placeholder: "Old Password", id: "old_password" %>
+                  <% if flash[:old_password].present? %>
+                    <div id="old_password_error" style="margin: 5px 0 0 15px; color: red"><%=flash[:old_password]%></div>
+                  <% end %>
                 </div>
               </div>
               <h5 class="pass_title">Change Password</h5>
@@ -68,6 +71,9 @@
                 <h6 class="form_label">Confirm New Password</h6>
                 <div class="form_blk">
                   <%= f.password_field :password_confirmation, class: "input", placeholder: "Confirm New Password", id: "confirm_profile_password" %>
+                  <% if flash[:password_confirmation].present? %>
+                    <div id="password_confirmation_error" style="margin: 5px 0 0 15px; color: red"><%=flash[:password_confirmation]%></div>
+                  <% end %>
                 </div>
               </div>
             </div>
@@ -121,7 +127,7 @@
 
   $(document).ready(function(){
       setTimeout(function(){
-          $('#already, #admin_already').fadeOut();
+          $('#already, #admin_already,#old_password_error, #password_confirmation_error').fadeOut();
       }, 5000);
   })
 
