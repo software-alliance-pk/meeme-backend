@@ -31,6 +31,20 @@ class DashboardController < ApplicationController
   end
 
   def signup
+    if params[:password].length < 6
+      flash[:length] = "Password is too short (minimum is 6 characters)"
+    elsif params[:password] != params[:password_confirmation]
+      flash[:confirmation] = "Password confirmation doesn't match Password"
+    elsif params[:password] == params[:password_confirmation] && params[:email].match(/\A[^@\s]+@[^@\s]+\z/)
+      AdminUser.create(email: params[:email], full_name: params[:full_name], admin_user_name: params[:admin_user_name], password: params[:password])
+      redirect_to dashboard_path
+    else
+      flash[:mail] = "Email is invalid"
+    end
+  end
+
+  def sub_admin_sign_up
+    render "dashboard/signup"
   end
 
   def forgot_password
@@ -93,15 +107,20 @@ class DashboardController < ApplicationController
   def tournament_banner_create
     @banner = TournamentBanner.new(banner_params)
     @banner.enable = true
-    if @banner.save
-      rule = @banner.build_tournament_banner_rule(rules: ["Abusing is not Allowed"])
-      rule.save
-      @today_date = Time.zone.now.end_of_day.to_datetime
-      @tournament_end_date = @banner.end_date.strftime("%a, %d %b %Y").to_datetime
-      @tournamnet_days = (@tournament_end_date - @today_date).to_i
-      TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @banner.id)
-      # TournamentWorker.perform_in((Time.now + 1.minute), @banner.id)
+    if TournamentBanner.count == 0
+      if @banner.save
+        rule = @banner.build_tournament_banner_rule(rules: ["Abusing is not Allowed"])
+        rule.save
+        @today_date = Time.zone.now.end_of_day.to_datetime
+        @tournament_end_date = @banner.end_date.strftime("%a, %d %b %Y").to_datetime
+        @tournamnet_days = (@tournament_end_date - @today_date).to_i
+        TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @banner.id)
+        # TournamentWorker.perform_in((Time.now + 1.minute), @banner.id)
 
+        redirect_to tournament_banner_path
+      end
+    else
+      flash[:alert] = "There can be only one banner at a time"
       redirect_to tournament_banner_path
     end
   end
