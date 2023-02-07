@@ -7,7 +7,7 @@ class Api::V1::StoresController < Api::V1::ApiController
     if @store.present?
       render json: { items_bought: @store.count, store: @store, tournament: TournamentBanner.find_by(enable: true).title }, status: :ok
     else
-      if TournamentBanner.find_by(enable: true).title.present?
+      if TournamentBanner.find_by(enable: true).present?
         render json: { message: "#{TournamentBanner.find_by(enable: true).title}" }, status: :not_found
       else
         render json: { message: [] }, status: :not_found
