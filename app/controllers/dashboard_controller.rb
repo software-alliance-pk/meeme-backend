@@ -110,7 +110,11 @@ class DashboardController < ApplicationController
   def tournament_banner_create
     @banner = TournamentBanner.new(banner_params)
     @banner.enable = true
-    if TournamentBanner.count == 0
+    if TournamentBanner.where(enable: true).present?
+      flash[:alert] = "Cannot add another because Tournament
+                     #{TournamentBanner.where(enable: true).first.title} is being played."
+      redirect_to tournament_banner_path
+    else
       if @banner.save
         rule = @banner.build_tournament_banner_rule(rules: ["Abusing is not Allowed"])
         rule.save
@@ -119,12 +123,8 @@ class DashboardController < ApplicationController
         @tournamnet_days = (@tournament_end_date - @today_date).to_i
         TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @banner.id)
         # TournamentWorker.perform_in((Time.now + 1.minute), @banner.id)
-
         redirect_to tournament_banner_path
       end
-    else
-      flash[:alert] = "There can be only one banner at a time"
-      redirect_to tournament_banner_path
     end
   end
 
@@ -208,7 +208,7 @@ class DashboardController < ApplicationController
       end
     end
     respond_to do |format|
-      format.json { render json: { post_image: @post_image, likes: @likes, dislike: @dislike} }
+      format.json { render json: { post_image: @post_image, likes: @likes, dislike: @dislike } }
     end
   end
 
