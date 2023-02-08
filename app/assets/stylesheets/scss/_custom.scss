@@ -1301,6 +1301,93 @@
 	}
 }
 
+#reward_payout {
+	._inner {
+		background: #201e23;
+		border: 0.3rem solid #5e5e5e;
+		border-radius: 4rem;
+		max-width: 60rem;
+	}
+	.x_btn {
+		width: 6.6rem;
+		min-width: 6.6rem;
+		height: 6.6rem;
+		background: linear-gradient(180deg, #ee0909 0%, #cc0b0b 100%);
+		top: -1.5rem;
+		right: -1.5rem;
+	}
+	h3 {
+		font-weight: 700;
+		font-size: 3.2rem;
+		line-height: 3.9rem;
+		color: var(--light);
+	}
+	.detail_blk {
+		@include flex(center, center);
+		margin-top: 4rem;
+		.left_blk {
+			width: 100%;
+			table {
+				width: 100%;
+				thead {
+					tr {
+						border-bottom: 0.1rem solid
+						rgba($color: #e4e4e4, $alpha: 0.2);
+						th {
+							font-weight: 600;
+							font-size: 1.2rem;
+							line-height: 1.8rem;
+							color: #939394;
+							padding: 1.2rem 0.5rem 1.2rem 0;
+						}
+					}
+				}
+				tbody {
+					tr {
+						td {
+							padding: 2rem 0.5rem 2rem 0;
+							font-weight: 500;
+							font-size: 1.4rem;
+							line-height: 2.1rem;
+							color: var(--light);
+						}
+					}
+				}
+			}
+			form {
+				margin-top: 5.5rem;
+				.form_label {
+					font-weight: 600;
+					font-size: 1.2rem;
+					line-height: 1.8rem;
+					color: #939394;
+				}
+				.form_blk {
+					.input {
+						background: #373737;
+						border-radius: 2.8rem;
+						height: 5.6rem;
+						padding: 1.8rem 2.3rem;
+						font-size: 1.8rem;
+						line-height: 2rem;
+						color: #fedd88;
+						border-color: transparent;
+						&::placeholder {
+							color: #6c6c6c;
+						}
+						&:focus {
+							border-color: #fedd88 !important;
+						}
+					}
+				}
+				.btn_blk {
+					margin-top: 2rem;
+				}
+			}
+		}
+	}
+}
+
 #trans_modal {
 	._inner {
 		max-width: 97.4rem;

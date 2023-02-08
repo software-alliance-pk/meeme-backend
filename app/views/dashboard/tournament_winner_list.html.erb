@@ -24,7 +24,7 @@
     <div class="inner">
       <div class="top_blk justify-content-end">
         <div class="btn_blk">
-          <a href="?" class="site_btn prime_btn round">Reward Payout</a>
+          <button class="site_btn prime_btn round" onclick="reward_payout()">Reward Payout</button>
         </div>
       </div>
       <div id="table_blk">
@@ -184,6 +184,50 @@
         </div>
     </div>
   </div>
+  <div class="popup" data-popup="trans_profile" id="add_gift">
+    <div class="table_dv">
+      <div class="table_cell">
+        <div class="contain">
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <div class="_inner">
+                <button type="button" class="x_btn" onclick="close_reward_modal()"></button>
+                <h3 class="text-white">Reward</h3>
+                <div class="detail_blk">
+                  <div class="left_blk">
+                    <%= form_with(method: "get", html: {id: 'send_form'}) do |f|%>
+                      <div class="form_blk">
+                        <select class="input" id="place" required>
+                          <option value="">Select User</option>
+                        </select>
+                      </div>
+                      <div class="row">
+                        <div class="col-12">
+                          <h6 class="form_label">Gift Card #</h6>
+                          <div class="form_blk">
+                            <input type="text" id="single_user_card" class="input" placeholder="Enter Card Number" name="gift_card">
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <h6 class="form_label">Coin</h6>
+                          <div class="form_blk">
+                            <input type="number" id="single_user_coins" class="input" placeholder="Enter Coins" name="coins">
+                          </div>
+                        </div>
+                        <div class="btn_blk">
+                          <button class="site_btn prime_btn round w-100">Send</button>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 </main>
 
@@ -193,6 +237,21 @@
 </html>
 
 <script>
+  $('#send_form').on('submit', function (){
+      event.preventDefault()
+      var name = $('#place')[0].value
+      var card = $('#single_user_card')[0].value
+      var coins = $('#single_user_coins')[0].value
+      document.getElementById("add_gift").style.display="none"
+      $.ajax({
+          type: "GET",
+          url: "add_reward",
+          data: {name: name, card: card, coins: coins},
+          success: function(response) {
+          }
+      })
+  })
+
   function open_details(name, email, likes, created, dislike){
     document.getElementById("winner_modal").style.display="block"
     document.getElementById("name").innerHTML= name
@@ -228,6 +287,30 @@
     $('#user_rank')[0].value = rank
   }
 
+  function reward_payout(){
+      $("#tbody_head").empty()
+      document.getElementById("add_gift").style.display="block"
+      var banner_id = '<%= session[:banner].present? ? session[:banner]["id"] : '' %>'
+      $.ajax({
+          type: "GET",
+          url: "show_top_10",
+          data: {banner_id: banner_id},
+          success: function(response) {
+              var i = 0;
+              response.names.forEach(function (name){
+                  // var clas = 'radio_' + (i + 1)
+                  // var id = 'check_' + (i + 1)
+                  // $("#table_head").append("<tr><td><input type='radio'/></td><td>" + (i + 1) + "</td><td>" + name + "</td><td>" + response.emails[i] + "</td><td>" + response.joined[i] + "</td></tr>");
+                  // $('tr td:first-child').attr('class', clas)
+                  // $(clas).attr('id', id)
+                  // i+=1;
+                  $('#place').append('<option value="' + name + '">' + name + '</option>');
+                  i+=1
+              })
+          }
+      })
+  }
+
   function image(name){
     var banner_id = '<%= session[:banner].present? ? session[:banner]["id"] : '' %>'
     $.ajax({
@@ -260,6 +343,10 @@
 
   function close_tormnt_modal(){
     document.getElementById("tormnt_modal").style.display="none"
+  }
+
+  function close_reward_modal(){
+      document.getElementById("add_gift").style.display="none"
   }
 
   function disable_user(id){

@@ -57,7 +57,7 @@
                         <img src="<%= asset_path("icon-guidelines.svg")%>" alt=""> Guidelines </a>
                 </li>
               <li>
-                <a rel="nofollow" href="/sub-admin-sign-up" class="btn">
+                <a rel="nofollow" href="/sub-admin-sign-up" class="btn <%= params[:action] == "sub_admin_sign_up" ? "active" : "" %>">
                   <img src="<%= asset_path("sign-up.png")%>" alt="">
                   Sign up</a>
               </li>

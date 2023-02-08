@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   delete 'tournament-banner/:id', to: 'dashboard#tournament_banner_destroy'
   get 'tournament-banner/:id', to: 'dashboard#tournament_banner_destroy'
   get '/winner-detail', to: "dashboard#winner_detail"
+  get '/show_top_10', to: "dashboard#show_top_10"
   get '/user-list', to: "dashboard#user_list"
   get '/user-export', to: 'dashboard#user_export'
   get '/transaction-export', to: 'dashboard#transaction_export'
@@ -74,6 +75,7 @@ Rails.application.routes.draw do
   get '/completed', to: "support#issue_resolved"
   get '/admin-user-image', to: "support#admin_user_images"
   get '/tournament-winner-list', to: "dashboard#tournament_winner_list"
+  get '/add_reward', to: "dashboard#add_reward"
   get '/winner-reward', to: "dashboard#winner_reward"
   get '/post-images', to: "dashboard#post_images"
   get '/set_coins', to: "dashboard#set_coins"
