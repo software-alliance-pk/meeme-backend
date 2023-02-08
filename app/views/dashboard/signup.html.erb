@@ -1,5 +1,6 @@
 <main>
-    <section id="logon" style="background-image: url(<%= asset_path("logon-bg.jpg")%>);">
+  <%=render "dashboard/sidebar" %>
+  <section id="logon" style="background-image: url(<%= asset_path("logon-bg.jpg")%>);" class="admin">
         <div class="contain">
             <div class="log_blk">
               <%= form_with(url: signup_path) do |f| %>

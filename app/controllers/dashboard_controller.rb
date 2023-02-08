@@ -142,7 +142,7 @@ class DashboardController < ApplicationController
     if params[:coins].present? && params[:user_id].present?
       @user = User.find(params[:user_id])
       @user.update(coins: @user.coins + params[:coins].to_i)
-      UserMailer.winner_email_for_coin(@user.email, params[:coins], params[:rank]).deliver_now
+      UserMailer.winner_email_for_coin(@user,@user.email, params[:coins], params[:rank]).deliver_now
     end
     if params[:username].present?
       @user = User.find_by(username: params[:username])
@@ -164,7 +164,7 @@ class DashboardController < ApplicationController
       @user = User.find_by(username: params[:name])
       @user.update(coins: @user.coins + params[:coins].to_i)
       @tournament_winner = true
-      UserMailer.winner_email(@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
+      UserMailer.winner_email(@user ,@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
     elsif params[:name].present? && params[:coins].present? && params[:card_number].present? && params[:tournament].present?
       @gift_card = GiftReward.find_by(card_number: params[:card_number])
       if @gift_card.present?
@@ -173,12 +173,50 @@ class DashboardController < ApplicationController
       @user = User.find_by(username: params[:name])
       @user.update(coins: @user.coins + params[:coins].to_i)
       @tournament_winner = false
-      UserMailer.winner_email(@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
+      UserMailer.winner_email(@user ,@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
     end
     if @tournament_winner
       redirect_to tournament_winner_list_path
     else
       redirect_to tournament_path
+    end
+  end
+
+  def show_top_10
+    @name, @email, @joined = [], [], []
+    if params[:banner_id].present?
+      @users = TournamentBanner.find(params[:banner_id]).tournament_users.joins(user: {posts:  :likes}).where(likes: {is_judged: true}).group("posts.id", "tournament_users.id").order("COUNT(likes.id) DESC").limit(10)
+      if @users.present?
+        @users.each do |user|
+          @name << user.user.username
+          @email << user.user.email
+          @joined << user.created_at.strftime("%F")
+        end
+        respond_to do |format|
+          format.json { render json: { names: @name, emails: @email, joined: @joined } }
+        end
+      end
+    end
+  end
+
+  def add_reward
+    if params[:name].present? && params[:coins].present? && params[:card].present?
+      @user = User.find_by(username: params[:name])
+      if @user.present?
+        @user.update(coins: @user.coins + params[:coins].to_i)
+        UserMailer.reward_payout(@user,@user.email, params[:coins], params[:card]).deliver_now
+        @gift_card = GiftReward.find_by(card_number: params[:card])
+        if @gift_card.present?
+          @gift_card.update(status: 1)
+        end
+        redirect_to tournament_winner_list_path
+      end
+    elsif params[:name].present? && params[:coins].present?
+      @user = User.find_by(username: params[:name])
+      if @user.present?
+        @user.update(coins: @user.coins + params[:coins].to_i)
+        redirect_to tournament_winner_list_path
+      end
     end
   end
 
