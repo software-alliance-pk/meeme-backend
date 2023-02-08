@@ -68,9 +68,14 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
       @tournament_post.tags_which_duplicate_tag = params[:tag_list]
       if @tournament_post.save
         @tags = @tournament_post.tag_list.map { |item| item&.split("dup")&.first }
-        @tournament_post.update(duplicate_tags: @tags)
+        if @tournament_post.post_image.attached? && @tournament_post.post_image.video?
+          @tournament_post.update(duplicate_tags: @tags, thumbnail: @tournament_post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
+        else
+          @tournament_post.update(duplicate_tags: @tags)
+        end
         render json: { tournament: @tournament_post.attributes.except('tag_list'),
                        tournament_banner_image: @tournament_post.post_image.attached? ? @tournament_post.post_image.blob.url : '',
+                       tournament_banner_image_content_type: @tournament_post.post_image.content_type
         }, status: :ok
         PostBadgeJob.perform_now(@tournament_post)
       else
