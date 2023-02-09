@@ -57,9 +57,8 @@
             <% if @posts.present? %>
               <% banner = TournamentBanner.find(@posts.first.tournament_banner_id).tournament_users.count %>
               <% if banner > 10 %>
-                <% if abc == nil %>
+                  <script>console.log(<%= abc %>)</script>
                   <% first_record_value =  abc.split("<b>")[1].split("&")[0].to_i unless abc == "No entires found" %>
-                <% end %>
               <% elsif banner == 1 %>
                 <% first_record_value =  abc.split(" ")[5].to_i unless abc == "No entires found" %>
               <% else %>
