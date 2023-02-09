@@ -35,13 +35,21 @@
                     <div class="history">
                         <h5>History</h5>
                         <ul class="htry_list">
-                        <li>
-                            <% if Term.first.updated_at != Term.first.created_at? %>
-                                <p>Terms &amp; Conditions - Updated!</p>
-                                <p class="time"><%= Term.first.updated_at.strftime("%F") %></p>
+                          <% terms = Term.first %>
+                          <% if terms.present? && terms.audits.present? %>
+                            <% terms.audits.reverse.each do |audit| %>
+                              <li>
+                                <% if audit.action == 'create' %>
+                                  <p>Terms &amp; Conditions - Created!</p>
+                                  <p class="time"><%= audit.created_at.strftime('%F') %></p>
+                                <% else %>
+                                  <p>Terms &amp; Conditions - Updated!</p>
+                                  <p class="time"><%= audit.created_at.strftime('%F') %></p>
+                                <% end %>
                                 <hr>
+                              </li>
                             <% end %>
-                        </li>
+                          <% end %>
                         </ul>
                     </div>
                 </div>

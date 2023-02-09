@@ -31,14 +31,14 @@
                                     </div>
                                     <div class="col-3">
                                     <div class="btn_blk edit">
-                                        <%= form.submit "Save" ,class: "site_btn prime_btn round" %>
+                                        <%= form.submit "Save" ,class: "site_btn prime_btn round", onclick: 'return_terms()' %>
                                     </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form_blk">
-                                            <%= form.rich_text_area :description, class: "input" ,placeholder: "Start typing here...." %>
+                                            <%= form.rich_text_area :description, class: "input" ,placeholder: "Start typing here....", value: Term.first.description%>
                                         </div>
                                     </div>
                                 </div>
