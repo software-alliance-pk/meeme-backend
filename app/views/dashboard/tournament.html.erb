@@ -52,31 +52,31 @@
             </tr>
             </thead>
             <tbody>
-            <% i = 1 %>
-            <% abc = page_entries_info @posts %>
-            <% if @posts.present? %>
-              <% banner = TournamentBanner.find(@posts.first.tournament_banner_id).tournament_users.count %>
-              <% if banner > 10 %>
-                  <script>console.log(<%= abc %>)</script>
-                  <% first_record_value =  abc.split("<b>")[1].split("&")[0].to_i unless abc == "No entires found" %>
-              <% elsif banner == 1 %>
-                <% first_record_value =  abc.split(" ")[5].to_i unless abc == "No entires found" %>
-              <% else %>
-                <% first_record_value =  abc.split(" ")[1].to_i unless abc == "No entires found" %>
-              <% end %>
-            <% end %>
+            <%# i = 1 %>
+            <% first_record_value = @posts.length %>
+            <%# if @posts.present? %>
+              <%# banner = TournamentBanner.find(@posts.first.tournament_banner_id).tournament_users.count %>
+              <%# if banner > 10 %>
+                <%# first_record_value =  abc.split("<b>")[1].split("&")[0].to_i unless abc == "No entires found" %>
+              <%# elsif banner == 1 %>
+                <%# first_record_value =  abc.split(" ")[5].to_i unless abc == "No entires found" %>
+              <%# else %>
+                <%# first_record_value =  abc.split(" ")[1].to_i unless abc == "No entires found" %>
+              <%# end %>
+            <%# end %>
+            <% counter =  first_record_value > 10 ?  first_record_value : params[:page].to_i > 1 ? (params[:page].to_i - 1) * 10  : 0%>
             <% @posts.each do |post| %>
               <tr>
                 <td>
-                  <% if first_record_value < 4 %>
-                    <div class="win"><%=first_record_value%></div>
-                  <% elsif first_record_value <= 10 %>
-                    <div class="win win_5"><%=first_record_value%></div>
+                  <% counter += 1 %>
+                  <% if counter < 4 %>
+                    <div class="win"><%=counter%></div>
+                  <% elsif counter <= 10 %>
+                    <div class="win win_5"><%=counter%></div>
                   <% else %>
-                    <div class="win win_10"><%=first_record_value%></div>
+                    <div class="win win_10"><%=counter%></div>
                   <% end %>
                 </td>
-                <% first_record_value+=1 %>
                 <td><%=post.user.username %></td>
                 <td><%=post.user.email %></td>
                 <td><%=post.likes.where(is_judged: true).like.count %></td>
@@ -109,7 +109,7 @@
                         <% dislikes = post.likes.where(status: "dislike").count %>
                         <% url = post.post_image.present? ? post.post_image.blob.url : asset_path("tr-1.jpg") %>
                         <button type="button" class="pop_btn"
-                                data-popup="trans_profile" onclick="open_tormnt_modal('<%=username %>', '<%= email%>', '<%= likes%>', '<%=created %>', '<%= dislikes%>', '<%= url %>','<%= first_record_value %>')">Reward</button>
+                                data-popup="trans_profile" onclick="open_tormnt_modal('<%=username %>', '<%= email%>', '<%= likes%>', '<%=created %>', '<%= dislikes%>', '<%= url %>','<%= counter %>')">Reward</button>
                       </li>
                     </ul>
                   </div>
