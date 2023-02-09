@@ -2,6 +2,7 @@ class Post < ApplicationRecord
   attr_accessor :tags_which_duplicate_tag
   before_create :check_act_as_taggable_record
   before_update :check_act_as_taggable_record
+  after_create_commit :compress
 
   scope :by_recently_created, -> (limit) { order(created_at: :desc).limit(limit) }
   scope :by_recently_updated, -> (limit) { order(updated_at: :desc).limit(limit) }
@@ -26,6 +27,13 @@ class Post < ApplicationRecord
     self.where(created_at: from..to).group('date(created_at)').count
   end
 
+  def compress
+    if self.post_image.present? && self.post_image.content_type[0...5] == "image"
+      @image = self.post_image.variant(quality: 10).processed.url
+      self.update(compress_image: @@image)
+    end
+  end
+
   def check_act_as_taggable_record
     tag_list = []
 
@@ -40,7 +48,5 @@ class Post < ApplicationRecord
     end
     self.tag_list = tag_list.reject(&:blank?)
   end
-
-
 
 end
