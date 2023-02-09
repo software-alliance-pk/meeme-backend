@@ -1,4 +1,4 @@
-<% headers = ['Name','Email','Status','Date'] %>
+<% headers = ['Name','Email','Current User Status','Date Joined', 'Status'] %>
 <%=CSV.generate_line headers %>
 <% if @checked_user.present? %>
   <% @checked_user.each do |user| %>
@@ -6,6 +6,6 @@
   <% end %>
 <% elsif @all_user.present? %>
   <% @all_user.each do |user| %>
-    <%=CSV.generate_line([user['username'],user['email'] ,user.status == true ? "Active" : "Inactive",user.created_at], skip_blanks: true)%>
+    <%=CSV.generate_line([user['username'],user['email'] ,user.disabled == true ? "Disable" : "Enable",user.created_at.strftime("%F"), user.status == true ? "Active" : "Inactive"], skip_blanks: true)%>
   <% end %>
 <% end %>

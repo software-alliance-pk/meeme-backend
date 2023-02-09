@@ -50,15 +50,23 @@
           <div class="history">
             <h5>History</h5>
             <ul class="htry_list">
-              <% Faq.all.reverse.each do |faq| %>
-                <% if faq.created_at == faq.updated_at %>
-                  <p>Faq - Created <%= faq.title %>!</p>
-                  <p class="time"><%= faq.created_at.strftime("%F") %></p>
-                  <hr>
-                <% else %>
-                  <p>Faq - Updated <%= faq.title %>!</p>
-                  <p class="time"><%= faq.updated_at.strftime("%F") %></p>
-                  <hr>
+              <% faqs = Faq.all %>
+              <% if faqs.present? %>
+                <% faqs.reverse.each do |faq| %>
+                  <% if faq.audits.present? %>
+                    <% faq.audits.reverse.each do |audit| %>
+                      <li>
+                        <% if audit.action == 'create' %>
+                          <p>Faq - Created!</p>
+                          <p class="time"><%= audit.created_at.strftime('%F') %></p>
+                        <% else %>
+                          <p>Faq - Updated!</p>
+                          <p class="time"><%= audit.created_at.strftime('%F') %></p>
+                        <% end %>
+                        <hr>
+                      </li>
+                    <% end %>
+                  <% end %>
                 <% end %>
               <% end %>
             </ul>

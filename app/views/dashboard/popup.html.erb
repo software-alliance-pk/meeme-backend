@@ -50,15 +50,23 @@
           <div class="history">
             <h5>History</h5>
             <ul class="htry_list">
-              <% Popup.all.reverse.each do |pop| %>
-                <% if pop.created_at == pop.updated_at %>
-                  <p>Popup - Created <%= pop.title %>!</p>
-                  <p class="time"><%= pop.created_at.strftime("%F") %></p>
-                  <hr>
-                <% else %>
-                  <p>Popup - Updated <%= pop.title %>!</p>
-                  <p class="time"><%= pop.updated_at.strftime("%F") %></p>
-                  <hr>
+              <% popups = Popup.all %>
+              <% if popups.present? %>
+                <% popups.reverse.each do |popup| %>
+                  <% if popup.audits.present? %>
+                    <% popup.audits.reverse.each do |audit| %>
+                      <li>
+                        <% if audit.action == 'create' %>
+                          <p>Popup - Created!</p>
+                          <p class="time"><%= audit.created_at.strftime('%F') %></p>
+                        <% else %>
+                          <p>Popup - Updated!</p>
+                          <p class="time"><%= audit.created_at.strftime('%F') %></p>
+                        <% end %>
+                        <hr>
+                      </li>
+                    <% end %>
+                  <% end %>
                 <% end %>
               <% end %>
             </ul>

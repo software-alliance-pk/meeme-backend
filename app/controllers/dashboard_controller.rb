@@ -36,8 +36,12 @@ class DashboardController < ApplicationController
     elsif params[:password] != params[:password_confirmation]
       flash[:confirmation] = "Password confirmation doesn't match Password"
     elsif params[:password] == params[:password_confirmation] && params[:email].match(/\A[^@\s]+@[^@\s]+\z/)
-      AdminUser.create(email: params[:email], full_name: params[:full_name], admin_user_name: params[:admin_user_name], password: params[:password])
-      redirect_to dashboard_path
+      @admin_user = AdminUser.create(email: params[:email], full_name: params[:full_name], admin_user_name: params[:admin_user_name], password: params[:password])
+      if @admin_user.save
+        redirect_to dashboard_path
+      else
+        flash[:mail] = "Email has already been taken"
+      end
     else
       flash[:mail] = "Email is invalid"
     end
@@ -64,27 +68,31 @@ class DashboardController < ApplicationController
   end
 
   def admin_profile
-    if params[:password] == "" && params[:admin_profile_image] == nil && params[:full_name].present? && params[:admin_user_name]
-      # current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
-      # @updated = true
-      if AdminUser.first.present?
-        if params[:full_name] == AdminUser.first.full_name && params[:admin_user_name] == AdminUser.first.admin_user_name
-          @updated = false
-        else
-          current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
-          @updated = true
+    if params[:email].present?
+      @admin = AdminUser.find_by(email: params[:email])
+    end
+    if @admin.present?
+      if params[:password] == "" && params[:admin_profile_image] == nil && params[:full_name].present? && params[:admin_user_name]
+        if AdminUser.first.present?
+          if params[:full_name] == @admin.full_name && params[:admin_user_name] == @admin.admin_user_name
+            @updated = false
+          else
+            current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
+            @updated = true
+          end
         end
+      elsif params[:old_password].present? && current_admin_user.valid_password?(params[:old_password]) == false
+        flash[:old_password] = "Old Password is wrong"
+        @updated = false
+      elsif params[:password] != nil && params[:password] != params[:password_confirmation]
+        flash[:password_confirmation] = "Password confirmation doesn't match Password"
+        @updated = false
+        redirect_to admin_profile_path
+      elsif params[:password] != nil && params[:password] == params[:password_confirmation] && current_admin_user.valid_password?(params[:old_password])
+        current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name], password: params[:password])
+        @updated = true
+        sign_in(current_admin_user, :bypass => true)
       end
-    elsif params[:old_password].present? && current_admin_user.valid_password?(params[:old_password]) == false
-      flash[:old_password] = "Old Password is wrong"
-    elsif params[:password] != nil && params[:password] != params[:password_confirmation]
-      flash[:password_confirmation] = "Password confirmation doesn't match Password"
-      @updated = false
-      redirect_to admin_profile_path
-    elsif params[:password] != nil && params[:password] == params[:password_confirmation] && current_admin_user.valid_password?(params[:old_password])
-      current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name], password: params[:password])
-      @updated = true
-      sign_in(current_admin_user, :bypass => true)
     end
     if current_admin_user.update(admin_user_params)
     end
@@ -363,11 +371,11 @@ class DashboardController < ApplicationController
     if params[:search].present? && params[:search] != ""
       @transactions_list = Transaction.search(params[:search]).order("created_at DESC")
     elsif params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
-      @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
+      @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC")
     elsif params[:start_date].present? && params[:end_date] == "" && params[:start_date] != "false"
-      @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
+      @transactions_list = Transaction.start_date_filter(params[:start_date]).order("created_at DESC")
     elsif params[:start_date] == "" && params[:end_date].present?
-      @transactions_list = Transaction.end_date_filter(params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
+      @transactions_list = Transaction.end_date_filter(params[:end_date]).order("created_at DESC")
     else
       @transactions_list = Transaction.order("id DESC")
     end

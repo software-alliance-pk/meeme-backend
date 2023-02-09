@@ -39,6 +39,7 @@
                 <h6 class="form_label">Email</h6>
                 <div class="form_blk">
                   <%= f.email_field :email, disabled: true ,class: "input",value: current_admin_user.email %>
+                  <%= f.text_field :email, hidden: true ,value: current_admin_user.email %>
                 </div>
               </div>
               <div class="col-6">

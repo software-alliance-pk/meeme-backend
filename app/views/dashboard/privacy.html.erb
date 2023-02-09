@@ -33,16 +33,24 @@
                         </div>
                     </div>
                     <div class="history">
-                        <h5>History</h5>
-                        <ul class="htry_list">
+                      <h5>History</h5>
+                      <ul class="htry_list">
+                        <% privacy = Privacy.first %>
+                        <% if privacy.present? && privacy.audits.present? %>
+                          <% privacy.audits.reverse.each do |audit| %>
                             <li>
-                                <% if Privacy.first.updated_at != Privacy.first.created_at? %>
-                                    <p>Privacy &amp; Policy - Updated!</p>
-                                    <p class="time"><%= Privacy.first.updated_at.strftime("%F") %></p>
-                                    <hr>
-                                <% end %>
+                              <% if audit.action == 'create' %>
+                                <p>Privacy &amp; Policy - Created!</p>
+                                <p class="time"><%= audit.created_at.strftime('%F') %></p>
+                              <% else %>
+                                <p>Privacy &amp; Policy - Updated!</p>
+                                <p class="time"><%= audit.created_at.strftime('%F') %></p>
+                              <% end %>
+                              <hr>
                             </li>
-                        </ul>
+                          <% end %>
+                        <% end %>
+                      </ul>
                     </div>
                 </div>
             </div>
