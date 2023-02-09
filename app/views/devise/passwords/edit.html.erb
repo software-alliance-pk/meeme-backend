@@ -22,6 +22,7 @@
               </div>
             </div>
             <div class="col-12">
+              <%= f.hidden_field :reset_password_token %>
               <div class="form_blk">
                 <%= f.password_field :password_confirmation, autocomplete: "new-password",type:"password",id:"", class:"input", placeholder:"Re-type new password" %>
 <!--                <input type="password" name="" id="" class="input" placeholder="Re-type new password">-->
