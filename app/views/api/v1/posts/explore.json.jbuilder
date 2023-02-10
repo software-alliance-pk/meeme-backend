@@ -9,6 +9,7 @@ if @posts.present?
       json.post post
       json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
       json.post_thumbnail post.thumbnail
+      json.compress_image post.compress_image
       json.post_type post.post_image.content_type
       json.liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false
       json.post_likes post.likes.count

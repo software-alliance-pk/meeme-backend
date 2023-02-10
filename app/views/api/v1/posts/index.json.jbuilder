@@ -7,5 +7,7 @@ json.user_posts do
     json.post_type post.post_image.content_type
     json.post_share_count post.share_count
     json.post_thumbnail post.thumbnail
+    json.compress_image post.compress_image
+
   end
 end
