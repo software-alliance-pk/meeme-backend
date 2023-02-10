@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :admin_users
+  devise_for :admin_users, :controllers => {:registrations => "registrations", :passwords => "passwords"}
   mount ActionCable.server => "/cable"
   require 'sidekiq/web'
   mount Sidekiq::Web => '/sidekiq'

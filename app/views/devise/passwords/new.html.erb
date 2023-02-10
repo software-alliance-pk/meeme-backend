@@ -37,7 +37,7 @@
             <div class="row justify-content-center">
               <div class="col-md-7">
                 <div class="_inner">
-                  <button type="button" class="x_btn"></button>
+                  <button type="button" class="x_btn" onclick="close_modal()"></button>
                   <div class="success_img">
                     <img src="<%= asset_path("forgot-confirm.svg")%>" alt="">
                   </div>
@@ -51,6 +51,18 @@
     </div>
   </section>
 </main>
+<% if flash[:reset].present? %>
+  <script>
+      document.getElementById('logon_modal').style.display = 'block'
+  </script>
+<% end %>
+
+<script>
+  function close_modal(){
+      document.getElementById('logon_modal').style.display = 'none'
+      window.location = "<%= new_admin_user_session_path %>"
+  }
+</script>
 
 <!--<h2>Forgot your password?</h2>-->
 

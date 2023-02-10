@@ -52,7 +52,7 @@
           </div>
           <div class="btn_blk">
             <%#= f.submit "Sign up",type:"button" ,class:"site_btn prime_btn w-100 pop_btn"  %>
-            <button class= "site_btn prime_btn w-100 pop_btn" onclick="success_modal()"><%= f.submit "Sign up", type: "button", class: "site_btn prime_btn w-45 pop_btn" %></button>
+            <button class= "site_btn prime_btn w-100 pop_btn"><%= f.submit "Sign up", type: "button", class: "site_btn prime_btn w-45 pop_btn" %></button>
           </div>
         <% end %>
       </div>
@@ -64,7 +64,7 @@
             <div class="row justify-content-center">
               <div class="col-md-7">
                 <div class="_inner">
-                  <button type="button" class="x_btn"></button>
+                  <button type="button" class="x_btn" onclick="close_modal()"></button>
                   <div class="success_img">
                     <img src="<%= asset_path("signup-confirm.svg") %>" alt="">
                   </div>
@@ -78,6 +78,11 @@
     </div>
   </section>
 </main>
+<% if flash[:created].present? %>
+  <script>
+      document.getElementById('logon_modal').style.display = 'block'
+  </script>
+<% end %>
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -86,14 +91,19 @@
         }, 5000);
     })
 
-    function success_modal(){
-        var email = $("#register_email")[0].value
-        var password = $("#register_password")[0].value
-        var confirm_password = $("#register_confirm_password")[0].value
-        var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-        if(email !== "" && password !== "" && password.length >= 6 && password === confirm_password && email.match(validRegex)) {
-            document.getElementById("logon_modal").style.display = "block"
-        }
+    // function success_modal(){
+    //     var email = $("#register_email")[0].value
+    //     var password = $("#register_password")[0].value
+    //     var confirm_password = $("#register_confirm_password")[0].value
+    //     var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    //     if(email !== "" && password !== "" && password.length >= 6 && password === confirm_password && email.match(validRegex)) {
+    //         document.getElementById("logon_modal").style.display = "block"
+    //     }
+    // }
+
+    function close_modal(){
+        document.getElementById('logon_modal').style.display = 'none'
+        window.location = "<%= new_admin_user_session_path %>"
     }
 </script>
 
