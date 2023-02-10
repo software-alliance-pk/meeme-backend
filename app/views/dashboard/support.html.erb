@@ -118,6 +118,10 @@
         $(this).addClass("active");
     });
 
+    $(window).load(function () {
+        $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
+    })
+
     function open_conversation(sender_id, conversation_id, name, email) {
         $(".txt .live_message").attr("id", "under_message_" + conversation_id)
         $('#chat_list').data('id', conversation_id);
