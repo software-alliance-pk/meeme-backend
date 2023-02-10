@@ -288,7 +288,6 @@
   }
 
   function reward_payout(){
-      $("#tbody_head").empty()
       document.getElementById("add_gift").style.display="block"
       var banner_id = '<%= session[:banner].present? ? session[:banner]["id"] : '' %>'
       $.ajax({
@@ -347,6 +346,9 @@
 
   function close_reward_modal(){
       document.getElementById("add_gift").style.display="none"
+      $('#place').empty()
+      $('#single_user_card, #single_user_coins, #place').val('')
+      $('#place').append('<option value="">' + 'Select User' + '</option>');
   }
 
   function disable_user(id){

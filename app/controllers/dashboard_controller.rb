@@ -467,7 +467,10 @@ class DashboardController < ApplicationController
 
   def privacy_edit
     @privacy_edit = Privacy.first_or_initialize
-    if @privacy_edit.update(privacy_params)
+    if privacy_params.present?
+      if @privacy_edit.update(privacy_params)
+        redirect_to privacy_path
+      end
     end
   end
 
@@ -478,7 +481,10 @@ class DashboardController < ApplicationController
 
   def terms_edit
     @terms_edit = Term.first_or_initialize
-    if @terms_edit.update(terms_params)
+    if terms_params.present?
+      if @terms_edit.update(terms_params)
+        redirect_to terms_path
+      end
     end
   end
 
