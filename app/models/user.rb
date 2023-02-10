@@ -42,7 +42,17 @@ class User < ApplicationRecord
   end
 
   def self.search(search)
-    where("lower(username) LIKE ?", "%#{search.downcase}%")
+    if "enable".include?(search.downcase)
+      where(disabled: false)
+    elsif 'disable'.include?(search.downcase)
+      where(disabled: true)
+    elsif search.downcase == 'active'
+      where(status: true)
+    elsif search.downcase == 'inactive'
+      where(status: false)
+    else
+      where("lower(username) || lower(email) LIKE ?", "%#{search.downcase}%")
+    end
   end
 
   def self.to_csv

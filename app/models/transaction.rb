@@ -2,7 +2,11 @@ class Transaction < ApplicationRecord
   belongs_to :user
 
   def self.search(search)
-    self.joins(:user).where("transactions.user_id = users.id AND LOWER(users.username) LIKE ?", "%#{search.downcase}%")
+    if search.match('^[0-9]*$')
+      self.joins(:user).where(amount: search)
+    else
+      self.joins(:user).where("transactions.user_id = users.id AND LOWER(users.username) || lower(users.email) || lower(transactions.brand) LIKE ?", "%#{search.downcase}%")
+    end
   end
 
   def self.date_filter(start_date, end_date)
