@@ -193,7 +193,7 @@ class DashboardController < ApplicationController
   def show_top_10
     @name, @email, @joined = [], [], []
     if params[:banner_id].present?
-      @users = TournamentBanner.find(params[:banner_id]).tournament_users.joins(user: {posts:  :likes}).where(likes: {is_judged: true}).group("posts.id", "tournament_users.id").order("COUNT(likes.id) DESC").limit(10)
+      @users = TournamentBanner.find(params[:banner_id]).tournament_users.joins(user: {posts:  :likes}).where(likes: {is_judged: true}).group("tournament_users.id").order("COUNT(likes.id) DESC").limit(10)
       if @users.present?
         @users.each do |user|
           @name << user.user.username
