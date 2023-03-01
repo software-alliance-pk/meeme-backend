@@ -72,8 +72,8 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   # DELETE /users/{username}
   def destroy
-    return render json: { message: @user.errors.full_messages }, status: :bad_request unless @user.destroy
-
+    @user.destroys
+    # return render json: { message: @user.errors.full_messages }, status: :bad_request unless
     render json: { message: 'User Successfully Deleted' }, status: :ok
   end
 
