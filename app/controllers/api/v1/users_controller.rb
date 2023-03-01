@@ -72,7 +72,7 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   # DELETE /users/{username}
   def destroy
-    @user.destroy
+    @user.delete
     render json: { message: 'User Successfully Deleted' }, status: :ok
   end
 
