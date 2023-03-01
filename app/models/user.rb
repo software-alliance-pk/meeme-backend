@@ -28,7 +28,7 @@ class User < ApplicationRecord
   has_many :user_badges
   has_many :badges,through: :user_badges
   has_many :mobile_devices, dependent: :destroy
-  has_many :notifications, dependent: :destroy
+  has_many :notifications
 
   def get_wallet
     return self.wallet if self.wallet.present?
