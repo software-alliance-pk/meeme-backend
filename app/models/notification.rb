@@ -6,6 +6,7 @@ class Notification < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :conversation, optional: true
   belongs_to :message, optional: true
+  # belongs_to :comment, optional: true
 
   def create_push_notification
     require 'fcm'
