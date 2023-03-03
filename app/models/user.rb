@@ -24,11 +24,11 @@ class User < ApplicationRecord
   has_one :wallet, dependent: :destroy
   has_many :user_cards, dependent: :destroy
   has_many :transactions,dependent: :destroy
-  belongs_to :user_store,optional: true
-  has_many :user_badges
-  has_many :badges,through: :user_badges
+  belongs_to :user_store,optional: true, dependent: :destroy
+  has_many :user_badges, dependent: :destroy
+  has_many :badges,through: :user_badges, dependent: :destroy
   has_many :mobile_devices, dependent: :destroy
-  has_many :notifications
+  has_many :notifications, dependent: :destroy
 
   def get_wallet
     return self.wallet if self.wallet.present?
