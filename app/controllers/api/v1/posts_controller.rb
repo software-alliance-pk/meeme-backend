@@ -39,6 +39,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     else
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
       @post.update(post_params)
+      Post.compress_update(@post)
       @post.update(duplicate_tags: @tags) if @tags.present?
       if params[:post_image].present?
         if params[:post_image].content_type[0..4]=="video"

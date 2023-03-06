@@ -34,6 +34,13 @@ class Post < ApplicationRecord
     end
   end
 
+  def self.compress_update(post)
+    if post.post_image.present? && post.post_image.content_type[0...5] == "image"
+      @image = post.post_image.variant(quality: 45).processed.url
+      post.update(compress_image: @image)
+    end
+  end
+
   def check_act_as_taggable_record
     tag_list = []
 
