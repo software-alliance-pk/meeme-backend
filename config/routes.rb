@@ -200,6 +200,12 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :block_users, only: [:create, :index, :destroy] do
+        collection do
+          post :report
+        end
+      end
+
       resources :notifications do
         collection do
           get :user_notifications
