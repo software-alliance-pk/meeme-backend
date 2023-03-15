@@ -100,6 +100,8 @@ Rails.application.routes.draw do
           delete 'payments/delete_a_card', to: "payments#delete_a_card"
           post 'payments/charge_a_customer', to: "payments#charge_a_customer"
           get 'payments/show_transactions_history', to: "payments#show_transactions_history"
+          post 'payments/payment_intent', to: "payments#payment_intent"
+          post 'payments/apple_pay', to: "payments#apple_pay"
           post :active_status_change
           post :notification_settings
 
