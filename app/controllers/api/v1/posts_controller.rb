@@ -63,10 +63,21 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def explore
     @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
+    @posts = []
     if params[:tag] == ""
-      @posts = Post.where(tournament_meme: false)
+      Post.where(tournament_meme: false).each do |post|
+        if post.flagged_by_user.include?(@current_user.id)
+        else
+          @posts << post
+        end
+      end
     else
-      @posts = Post.tagged_with(params[:tag], :any => true)
+      Post.tagged_with(params[:tag], :any => true).each do |post|
+        if post.flagged_by_user.include?(@current_user.id)
+        else
+          @posts << post
+        end
+      end
       if @posts.present?
       else
         # @posts=Post.all.paginate(page: params[:page], per_page: 25)
@@ -99,11 +110,22 @@ class Api::V1::PostsController < Api::V1::ApiController
   def other_posts
     @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
     @post = Post.find_by(id: params[:post_id])
+    @posts = []
     if params[:tag] == "#"
-      @posts = Post.where(tournament_meme: false)
+      Post.where(tournament_meme: false).each do |post|
+        if post.flagged_by_user.include?(@current_user.id)
+        else
+          @posts << post
+        end
+      end
     else
       @posts = Post.tagged_with(params[:tag])
-      @posts = @posts.where.not(id: @post.id)
+      @posts.where.not(id: @post.id).each do |post|
+        if post.flagged_by_user.include?(@current_user.id)
+        else
+          @posts << post
+        end
+      end
       if @posts.present?
       else
         render json: { message: "No Post found against this tag " }, status: :not_found
