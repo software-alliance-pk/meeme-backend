@@ -136,4 +136,18 @@ class StripeService
     end
   end
 
+  def self.create_payment_intent(amount, customer)
+    Stripe::PaymentIntent.create({
+      amount: amount,
+      customer: customer,
+      currency: 'usd'
+    })
+  end
+
+  def self.retrieve_payment_intent(intent)
+    Stripe::PaymentIntent.retrieve(
+      intent,
+    )
+  end
+
 end
