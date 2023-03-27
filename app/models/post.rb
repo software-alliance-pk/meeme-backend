@@ -45,15 +45,17 @@ class Post < ApplicationRecord
     tag_list = []
 
     dup_arr = self&.tags_which_duplicate_tag&.split(",")
-    dup_value = dup_arr.map { |element| element if dup_arr.count(element) > 1 }
-    tag_list = dup_arr.map { |element| element unless dup_arr.count(element) > 1 }
-    last_value = ''
-    dup_value&.compact&.each_with_index do |single_tag, index|
-      tag_list << single_tag + "dup" + index.to_s if index != 0
-      tag_list << single_tag if index == 0 || last_value == '' || last_value != single_tag
-      last_value = single_tag
+    if dup_arr.present?
+      dup_value = dup_arr.map { |element| element if dup_arr.count(element) > 1 }
+      tag_list = dup_arr.map { |element| element unless dup_arr.count(element) > 1 }
+      last_value = ''
+      dup_value&.compact&.each_with_index do |single_tag, index|
+        tag_list << single_tag + "dup" + index.to_s if index != 0
+        tag_list << single_tag if index == 0 || last_value == '' || last_value != single_tag
+        last_value = single_tag
+      end
+      self.tag_list = tag_list.reject(&:blank?)
     end
-    self.tag_list = tag_list.reject(&:blank?)
   end
 
 end

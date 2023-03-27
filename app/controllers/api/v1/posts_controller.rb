@@ -63,10 +63,21 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def explore
     @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
+    @posts = []
     if params[:tag] == ""
-      @posts = Post.where(tournament_meme: false)
+      Post.where(tournament_meme: false).each do |post|
+        if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
+        else
+          @posts << post
+        end
+      end
     else
-      @posts = Post.tagged_with(params[:tag], :any => true)
+      Post.tagged_with(params[:tag], :any => true).each do |post|
+        if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
+        else
+          @posts << post
+        end
+      end
       if @posts.present?
       else
         # @posts=Post.all.paginate(page: params[:page], per_page: 25)
@@ -99,12 +110,24 @@ class Api::V1::PostsController < Api::V1::ApiController
   def other_posts
     @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
     @post = Post.find_by(id: params[:post_id])
+    @all_posts = []
     if params[:tag] == "#"
-      @posts = Post.where(tournament_meme: false)
+      Post.where(tournament_meme: false).each do |post|
+        if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
+        else
+          @all_posts << post
+        end
+      end
     else
       @posts = Post.tagged_with(params[:tag])
-      @posts = @posts.where.not(id: @post.id)
-      if @posts.present?
+      @posts = @posts.where.not(id: @post.id) unless @post.nil?
+      @posts.each do |post|
+        if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
+        else
+          @all_posts << post
+        end
+      end
+      if @all_posts.present?
       else
         render json: { message: "No Post found against this tag " }, status: :not_found
       end
@@ -126,7 +149,10 @@ class Api::V1::PostsController < Api::V1::ApiController
     @following = User.where(id: @following).paginate(page: params[:page], per_page: 25)
     @following.each do |user|
       user.posts.where(tournament_meme: false).each do |post|
-        @following_posts << post
+        if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
+        else
+          @following_posts << post
+        end
       end
     end
     @following_posts = @following_posts.shuffle
@@ -137,7 +163,15 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def recent_posts
-    @recent_posts = Post.where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
+    @recent_posts = []
+    Post.where.not(tournament_meme: true).by_recently_created(25).each do |post|
+      if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
+      else
+        @recent_posts << post
+      end
+    end
+    @recent_posts = @recent_posts.paginate(page: params[:page], per_page: 25)
+    # @recent_posts = Post.where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
     # @today_post = Post.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
     # @random_posts = Post.where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).paginate(page: params[:page], per_page: 25).shuffle
     # @recent_posts = @today_post + @random_posts
@@ -148,7 +182,11 @@ class Api::V1::PostsController < Api::V1::ApiController
     @trending_posts = []
     @likes = Like.where(status: 1, is_liked: true, is_judged: false).joins(:post).where(post: { tournament_meme: false }).group(:post_id).count(:post_id).sort_by(&:last).reverse.to_h
     @likes.keys.each do |key|
-      @trending_posts << [Post.find_by(id: key), (Post.find_by(id: key).comments.count + Post.find_by(id: key).comments.count)]
+      @post = Post.find_by(id: key)
+      if @post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(@post.user.id)
+      else
+        @trending_posts << [@post, (Post.find_by(id: key).comments.count + Post.find_by(id: key).comments.count)]
+      end
     end
     @trending_posts = (@trending_posts.to_h).sort_by { |k, v| v }.reverse.paginate(page: params[:page], per_page: 25)
     # @trending_posts=@trending_posts.paginate(page: params[:page], per_page: 25)
