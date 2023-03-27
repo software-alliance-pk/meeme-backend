@@ -30,7 +30,7 @@ class User < ApplicationRecord
   has_many :mobile_devices, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :block_users, dependent: :destroy
-  has_many :blocked_users, :foreign_key => "blocked_by_id", :class_name => "BlockUser"
+  has_many :blocked_users, :foreign_key => "user_id", :class_name => "BlockUser"
 
   def get_wallet
     return self.wallet if self.wallet.present?

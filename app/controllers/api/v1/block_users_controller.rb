@@ -8,7 +8,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
       if @user.present?
         return render json: { message: 'User is already blocked' } if @blocked_user.present?
 
-        @block_user = BlockUser.create(blocked_user_id: params[:user_id], blocked_by_id: @current_user.id)
+        @block_user = BlockUser.create(blocked_user_id: params[:user_id], user_id: @current_user.id)
         return render json: { errors: @block_user.errors.full_messages }, status: :bad_request unless @block_user.save
       else
         render json: { message: 'This user does not exist' }
@@ -55,7 +55,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
 
   def destroy
     @user = User.find_by(id: params[:id])
-    @blocked_user = BlockUser.find_by(blocked_user_id: @user.id, blocked_by_id: @current_user.id)
+    @blocked_user = BlockUser.find_by(blocked_user_id: @user.id, user_id: @current_user.id)
     if @user.present?
       if @blocked_user.present?
         @blocked_user.destroy
@@ -89,7 +89,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
   end
 
   def find_blocked_user
-    @blocked_user = BlockUser.find_by(blocked_user_id: params[:block_user_id], blocked_by_id: @current_user.id)
+    @blocked_user = BlockUser.find_by(blocked_user_id: params[:block_user_id], user_id: @current_user.id)
   end
 
   def generate_ticket_number
