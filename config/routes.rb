@@ -211,6 +211,8 @@ Rails.application.routes.draw do
         end
       end
 
+      get '/privacy_policies', to: 'privacy_policies#privacy'
+
     end
 
   end
