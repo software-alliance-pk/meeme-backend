@@ -2,7 +2,7 @@ if params[:type] == 'block'
   json.blocked_user do
     json.id @block_user.id
     json.blocked_user_id @block_user.blocked_user_id
-    json.block_by_id @block_user.blocked_by_id
+    json.block_by_id @block_user.user_id
   end
   json.success 'User Blocked Successfully'
 else

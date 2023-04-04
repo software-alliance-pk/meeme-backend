@@ -1,0 +1,6 @@
+<h1>Hi <%= @user.username%></h1>
+<p>It is to inform you that total judged coins have been added to your wallet</p>
+<p>Memee App would like to thank you for participating in the tournament</p>
+<% if @coins.present? %>
+  <p> <%= @coins %> coins are added to your account</p>
+<% end %>
