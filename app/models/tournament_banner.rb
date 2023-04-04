@@ -1,3 +1,4 @@
+require 'open-uri'
 class TournamentBanner < ApplicationRecord
   has_many :tournament_users, dependent: :destroy
   has_many :users, through: :tournament_users
