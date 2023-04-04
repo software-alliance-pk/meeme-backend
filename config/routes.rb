@@ -80,6 +80,7 @@ Rails.application.routes.draw do
   get '/post-images', to: "dashboard#post_images"
   get '/set_coins', to: "dashboard#set_coins"
   get '/get_user_post', to: "dashboard#get_user_post"
+  post '/add_rules', to: "tournament_rules#create"
 
   namespace :api do
     namespace :v1 do
@@ -111,6 +112,7 @@ Rails.application.routes.draw do
       post '/auth/login', to: "authentication#login"
       post '/auth/logout', to: "authentication#logout"
       post '/social/social_login', to: "social_login#social_login"
+      get '/tutorials', to: 'tutorials#tutorial'
       resources :posts do
         collection do
           put :update_posts
@@ -160,7 +162,7 @@ Rails.application.routes.draw do
           get :tournament_winner
           get :judge
           get :top_10_positions
-
+          post :forwarding_memee_to_tournament
         end
       end
       resources :stories do
@@ -212,7 +214,6 @@ Rails.application.routes.draw do
       end
 
       get '/privacy_policies', to: 'privacy_policies#privacy'
-
     end
 
   end

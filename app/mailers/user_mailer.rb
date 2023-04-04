@@ -30,4 +30,9 @@ class UserMailer < ApplicationMailer
     mail(to: @email, subject: 'Winner' )
   end
 
+  def tournament_judged_coins(user, coins)
+    @user = user
+    @coins = coins
+    mail(to: @user.email, subject: 'Added Total Judged Coins' )
+  end
 end

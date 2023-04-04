@@ -176,6 +176,98 @@
 	}
 }
 
+#add_rules {
+	._inner {
+		max-width: 72rem;
+		background: #201e23;
+		border: 0.3rem solid #5e5e5e;
+		border-radius: 4rem;
+		padding: 5rem 6rem 4rem 6rem;
+		.x_btn {
+			height: 6.6rem;
+			width: 6.6rem;
+			max-width: 6.6rem;
+			top: -2.5rem;
+			right: -1.5rem;
+			background: linear-gradient(180deg, #ee0909 0%, #cc0b0b 100%);
+		}
+
+		h4 {
+			color: #ffffff;
+			margin-bottom: 4rem;
+		}
+	}
+
+	.left_blk {
+		h6 {
+			font-size: 1.8rem;
+			font-weight: 400;
+			color: #939394;
+		}
+		.form_blk {
+			margin-bottom: 2.8rem;
+			.input {
+				background: #373737;
+				border-radius: 2.8rem;
+				font-size: 1.6rem;
+				color: #6c6c6c;
+				padding: 1.8rem 2.3rem;
+				height: 5.6rem;
+				border: none;
+				&::placeholder {
+					font-size: 1.6rem;
+					line-height: 2rem;
+					color: #6c6c6c;
+				}
+			}
+
+		}
+	}
+
+	.right_blk {
+		h6 {
+			font-size: 1.8rem;
+			font-weight: 400;
+			color: #939394;
+		}
+
+		.img_blk {
+			height: 28rem;
+			width: 100%;
+			background: #3d3a3a;
+			opacity: 0.4;
+			border: 0.1rem dashed #ffffff;
+			border-radius: 1rem;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			.icon {
+				height: 3.3rem;
+				width: 3.3rem;
+				img {
+					height: 100%;
+					object-fit: contain;
+				}
+			}
+		}
+	}
+
+	.btn_blk {
+		justify-content: center;
+		margin-top: 2rem;
+		.site_btn {
+			background: linear-gradient(180deg, #ffde88 0%, #ffb905 100%);
+			border-radius: 29.0123rem;
+			font-size: 1.8rem;
+			line-height: 2.1rem;
+			text-align: center;
+			color: #000000;
+			width: 20rem;
+			height: 6.8rem;
+		}
+	}
+}
+
 #tour_winner {
 	.inside {
 		background: #201e23;
@@ -1080,4 +1172,19 @@
 			}
 		}
 	}
+}
+
+
+#rules{
+	height: 16rem !important;
+overflow-y: auto;
+	margin-top: 5rem;
+}
+
+#add_rules #trix-toolbar-1{
+	top: -8.1rem !important;
+}
+
+#logon_modal ._inner.rules{
+	position: unset;
 }
