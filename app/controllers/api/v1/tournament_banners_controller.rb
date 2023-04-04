@@ -161,7 +161,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     @tournament_meme.tag_list = @post.tag_list
     return render_error_messages(@tournament_meme) unless @tournament_meme.save
 
-    render json: { forwarded_meme: @tournament_meme, post_type: @tournament_meme.post_image.content_type }, status: :ok
+    render json: { forwarded_meme: @tournament_meme, post_type: @tournament_meme.post_image.content_type, message: 'Meme Forwarded Successfully' }, status: :ok
   end
 
   private
