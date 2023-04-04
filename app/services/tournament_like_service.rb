@@ -24,9 +24,11 @@ class TournamentLikeService
         daily_coins = DailyCoin.first.daily_coins_reward.to_i
       end
       coins = +daily_coins
-      user_coin = User.find(@current_user_id).coins
+      # user_coin = User.find(@current_user_id).coins
+      user_coin = TournamentUser.find_by(user_id: @current_user_id).total_judged_coins
       coins += user_coin
-      User.find(@current_user_id).update(coins: coins)
+      # User.find(@current_user_id).update(coins: coins)
+      TournamentUser.find_by(user_id: @current_user_id).update(total_judged_coins: coins)
       message = "Liked 50 coins added"
       check=true
     end
@@ -52,9 +54,11 @@ class TournamentLikeService
         daily_coins = DailyCoin.first.daily_coins_reward.to_i
       end
       coins = +daily_coins
-      user_coin = User.find(@current_user_id).coins
+      # user_coin = User.find(@current_user_id).coins
+      user_coin = TournamentUser.find_by(user_id: @current_user_id).total_judged_coins
       coins += user_coin
-      User.find(@current_user_id).update(coins: coins)
+      # User.find(@current_user_id).update(coins: coins)
+      TournamentUser.find_by(user_id: @current_user_id).update(total_judged_coins: coins)
       message = "DisLiked added 50 coins in your wallet"
       check=true
     end

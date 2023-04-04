@@ -73,5 +73,48 @@ class Api::V1::PaymentsController < Api::V1::ApiController
       render json: { history: [] }, status: :ok
     end
   end
+
+  def payment_intent
+    begin
+      intent = StripeService.create_payment_intent((params[:amount].to_i)*100, @current_user.stripe_id)
+      render json: { payment_intent: intent }
+    rescue => e
+      return render json: { error: e.message }
+    end
+  end
+
+  def apple_pay
+    payment_intent = StripeService.retrieve_payment_intent(params[:payment_intent])
+    if payment_intent.status == "succeeded"
+      if params[:amount_to_be_paid].to_i == 10
+        coins = 12000
+      elsif params[:amount_to_be_paid].to_i == 25
+        coins = 20000
+      elsif params[:amount_to_be_paid].to_i == 50
+        coins = 60000
+      elsif params[:amount_to_be_paid].to_i == 75
+        coins = 90000
+      elsif params[:amount_to_be_paid].to_i == 100
+        coins = 120000
+      end
+      # coins = (params[:amount_to_be_paid].to_i * 100)/0.00083
+      user_coin = @current_user.coins
+      coins += user_coin
+      @current_user.update(coins: coins)
+      Transaction.create!({
+                            charge_id: payment_intent.id,
+                            customer_id: payment_intent.customer,
+                            amount: payment_intent.amount * 0.01,
+                            card_number: 'apple_pay',
+                            brand: 'apple_pay',
+                            currency: payment_intent.currency,
+                            user_id: @current_user.id,
+                            username: @current_user.username
+                          })
+      render json: { intent: payment_intent, coins: @current_user.coins }
+    else
+      render json: { message: "Your transaction has not been succeeded"}
+    end
+  end
 end
 

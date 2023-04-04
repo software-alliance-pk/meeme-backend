@@ -3,6 +3,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   before_action :find_tournament ,except: [:create_tournament]
   before_action :check_expiration, except: [:create_tournament]
   before_action :check_user_is_in_tournament, only: [:enroll_in_tournament]
+  before_action :find_post, only: [:forwarding_memee_to_tournament]
 
   def index
     render json: { tournament: @tournament,
@@ -14,7 +15,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   end
 
   def tournament_posts
-    @tournament_posts = @tournament.posts.paginate(page: params[:page], per_page: 25)
+    @tournament_posts = @tournament.posts.where.not(user_id: @current_user.id).paginate(page: params[:page], per_page: 25)
     if @tournament_posts.present?
     else
     end
@@ -146,6 +147,23 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     return render json: { rules: @tournament }, status: :ok if @tournament
   end
 
+  def forwarding_memee_to_tournament
+    return render json: { message: 'User Must Join Tournament First' }, status: :unauthorized unless @tournament.tournament_users.find_by(user_id: @current_user.id).present?
+
+    @tournament_meme = Post.create(post_params)
+    @tournament_meme.description = @post.description
+    @tournament_meme.duplicate_tags = @post.duplicate_tags
+    @tournament_meme.share_count = @post.share_count
+    @tournament_meme.thumbnail = @post.thumbnail
+    TournamentBanner.add_image(@post.compress_image, @tournament_meme)
+    # @tournament_meme.post_image.attach(io: open(@post.compress_image), filename: 'meme_image')
+    @tournament_meme.compress_image = @post.compress_image
+    @tournament_meme.tag_list = @post.tag_list
+    return render_error_messages(@tournament_meme) unless @tournament_meme.save
+
+    render json: { forwarded_meme: @tournament_meme, post_type: @tournament_meme.post_image.content_type }, status: :ok
+  end
+
   private
 
   def find_tournament
@@ -174,5 +192,10 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     if (@tournament.tournament_users.find_by(user_id: @current_user.id).present?)
       return render json: { message: 'Already enrolled', status: false }, status: :ok
     end
+  end
+
+  def find_post
+    @post = Post.find_by(id: params[:post_id])
+    return render json: { message: 'Post not found' }, status: :bad_request unless @post.present?
   end
 end

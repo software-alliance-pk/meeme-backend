@@ -391,6 +391,7 @@
 #description{
   height: 500px !important;
   width: 100%;
+  overflow-y: auto;
 }
 
 #notify_dropdown .dropdown-menu{
@@ -646,17 +647,20 @@
   #description{
     height: 500px;
     width: 100%;
+    overflow-y: auto;
   }
 }
 
 #faq_description{
   height: 500px !important;
   width: 100% !important;
+  overflow-y: auto;
 }
 
 #popup_description{
   height: 500px !important;
   width: 100% !important;
+  overflow-y: auto;
 }
 
 #winner_modal .winner_blk .post_blk{
