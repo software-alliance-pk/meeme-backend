@@ -155,8 +155,8 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     @tournament_meme.duplicate_tags = @post.duplicate_tags
     @tournament_meme.share_count = @post.share_count
     @tournament_meme.thumbnail = @post.thumbnail
-    TournamentBanner.add_image(@post.compress_image, @tournament_meme)
-    # @tournament_meme.post_image.attach(io: open(@post.compress_image), filename: 'meme_image')
+    @tournament_meme.post_image.attach(io: URI.parse(@post.compress_image).open, filename: 'meme_image')
+    # TournamentBanner.add_image(@post.compress_image, @tournament_meme)
     @tournament_meme.compress_image = @post.compress_image
     @tournament_meme.tag_list = @post.tag_list
     return render_error_messages(@tournament_meme) unless @tournament_meme.save
