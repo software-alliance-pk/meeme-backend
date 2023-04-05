@@ -6,12 +6,16 @@ class Api::V1::FollowersController < Api::V1::ApiController
 
   # GET /users
   def index
-    @user_followers = @current_user.followings.paginate(page: params[:page], per_page: 25)
-    # @user_followers = @current_user.followers.where(is_following: true, status: "added").paginate(page: params[:page], per_page: 25)
-    if @user_followers.present?
-      render json: { followers_count: @user_followers.count, followers: @user_followers }, status: :ok
-    else
-      render json: { followers: @user_followers }, status: :not_found
+    if params[:key] == 'followers'
+      @user_followers = @current_user.followers.paginate(page: params[:page], per_page: 25)
+      return render json: { message: 'No Followers Present', followers: [] }, status: :ok unless @user_followers.present?
+
+      # render json: { followers: @user_followers }, status: :ok
+    elsif params[:key] == 'followings'
+      @user_followings = @current_user.followings.where(is_following: true, status: "added").paginate(page: params[:page], per_page: 25)
+      return render json: { message: 'You are not following any user', followings: [] }, status: :ok unless @user_followings.present?
+
+      # render json: { followings: @user_followings }, status: :ok
     end
   end
 
