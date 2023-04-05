@@ -17,6 +17,12 @@ class Api::V1::FollowersController < Api::V1::ApiController
 
       # render json: { followings: @user_followings }, status: :ok
     end
+
+    # if @user_followers.present?
+    #   render json: { followers_count: @user_followers.count, following_count: @user_followings.count ,followers: @user_followers, followings: @user_followings }, status: :ok
+    # else
+    #   render json: { followers: @user_followers }, status: :not_found
+    # end
   end
 
   def show_pending_requests
