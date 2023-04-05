@@ -136,6 +136,7 @@ class DashboardController < ApplicationController
 
   def tournament_banner_destroy
     @banner = TournamentBanner.find(params[:id])
+    SendJudgeCoinWorker.perform_in(Time.now, @banner.id)
     if @banner.destroy
       redirect_to tournament_banner_path
     end
