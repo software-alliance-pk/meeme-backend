@@ -7,7 +7,8 @@ class Api::V1::FollowersController < Api::V1::ApiController
   # GET /users
   def index
     if params[:key] == 'followers'
-      @user_followers = @current_user.followers.paginate(page: params[:page], per_page: 25)
+      @user_followers = @current_user.followers.where(is_following: true, status: "added").paginate(page: params[:page], per_page: 25)
+      # @user_followers = @current_user.followers.paginate(page: params[:page], per_page: 25)
       return render json: { message: 'No Followers Present', followers: [] }, status: :ok unless @user_followers.present?
 
       # render json: { followers: @user_followers }, status: :ok
@@ -85,7 +86,8 @@ class Api::V1::FollowersController < Api::V1::ApiController
         render json: { message: "User removed from pending" }, status: :ok
       else
         @follower.update(is_following: true, status: 'added')
-        Follower.create(is_following: true, user_id: params[:follower_user_id], follower_user_id: @current_user.id, status: "added")
+        # This line will also create following for pending requests users
+        # Follower.create(is_following: true, user_id: params[:follower_user_id], follower_user_id: @current_user.id, status: "added")
         # @secondary_follower.update(is_following: true, status: 'added')
         Notification.create(title: "Request Accepted",
                             body: "Follower request has been accepted by #{@current_user.username}",
