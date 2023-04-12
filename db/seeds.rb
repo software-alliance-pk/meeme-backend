@@ -4,6 +4,72 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
+
+themes = { 0 => ['red_theme'], 1 => ['black_theme'], 2 => ['grenish_theme'], 3 => ['orange_theme'], 4 => ['light_green_theme'],
+           5 => ['blue_theme'], 6 => ['dark_blue_theme'], 7 => ['mauve_taupe_theme'], 8 => ['scooter_theme'], 9 => ['blue_lagoon_theme'],
+           10 => ['elf_green_theme'], 11 => ['river_bed_theme'], 12 => ['hot_curry_theme'], 13 => ['red_robin_theme'], 14 => ['amulet_theme'],
+           15 => ['jungle_mist_theme'], 16 => ['portage_theme']
+}
+theme_type = %w[basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic]
+nav_background_colors = [['#5A1E25'], ['#1B1C25'], ['#0E5241'], ['#FF8C00'], ['#72BD72'], ['#4815AA'], ['#30009B'], ['#9B6675'],
+                         ['#3A9EAA'], ['#0C5E73'], ['#0D9265'], ['#4D5E5F'], %w[rgba(245, 91, 57, 1) rgba(129, 89, 42, 0.9)],
+                         %w[rgba(125, 63, 62, 1) rgba(55, 55, 55, 0.79)], ['#373737'], ['#373737'], ['#373737']
+]
+background_colors = [['#310309'], ['#040216'], ['#003528'], ['rgba(255, 140, 0, 0.7)'], ['#72BD72'], ['#4815AA'], ['#30009B'], ['#A18089'], ['#51B7C3'],
+                     ['#023341'], ['#13CF8F'], ['#818F90'], %w[rgba(110, 34, 18, 0.95) rgba(20, 17, 35, 1)], %w[rgba(207, 103, 102, 1) rgba(79, 40, 40, 1)],
+                     %w[rgba(129, 169, 116, 1) rgba(23, 48, 61, 1)], %w[rgba(167, 202, 200, 1) rgba(23, 48, 61, 1)], %w[rgba(126, 134, 208, 1) rgba(23, 48, 61, 1)]
+]
+# background_colors_percentage = [[''], [''], [''], ['70%'], [''], [''], [''], [''], [''], [''], [''], [''], %w[95% 100%]]
+fonts = ['Product Sans', 'Akshar', 'Alef', 'Quantico', 'Cuprum', 'Readex Pro', 'Sen', 'Yaldevi', 'Saira', 'Pridi', 'Signika', 'Helvetica',
+         'Teko', 'Lato', 'Product Sans', 'Product Sans', 'Product Sans'
+]
+buttons_colors = [%w[#F23F58 #D4233B], ['#FFF62A'], %w[#1EDAAD #00AF85], ['#FF8C00'], ['#569A56'], %w[#FFE299 #F6B202], %w[#FFE299 #F6B202], %w[#FFE299 #F6B202], %w[#FFE299 #F6B202],
+                  %w[#FFE299 #F6B202], %w[#FFE299 #F6B202], ['#FFE299'], ['#FFFFFF'], %w[rgba(203, 101, 100, 1) rgba(116, 95, 95, 1)], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF']
+]
+
+# buttons_color_percentage = [%w[100% 100%], [''], %w[100% 100%], [''], [''], %w[100% 100%], %w[100% 100%], %w[100% 100%], %w[100% 100%], %w[100% 100%], %w[100% 100%], [''],
+#                             ['']
+# ]
+IMAGES_PATH = "app/assets/images/themes"
+themes.keys.each do |key|
+  themes[key].each do |value|
+    images = Dir.glob("#{IMAGES_PATH}/#{value}/*.png")
+    icons = Dir.glob("#{IMAGES_PATH}/#{value}/svg/*.svg")
+    images_and_icons = {
+      nav_bar: images[0],
+      nav_add: images[1],
+      tab_bar: images[2],
+      nav_tournament_icon: icons[0],
+      nav_explore_icon: icons[1],
+      nav_home_icon: icons[2],
+      nav_profile_icon: icons[3]
+    }
+    theme = Theme.create!(
+      title: value,
+      nav_background_color: nav_background_colors[key],
+      background_colors: background_colors[key] ? background_colors[key] : '',
+      # background_colors_percentage: background_colors_percentage[key],
+      font: fonts[key],
+      buttons_color: buttons_colors[key],
+      theme_type: theme_type[key]
+      # buttons_color_percentage: buttons_color_percentage[key]
+    )
+
+    images_and_icons.each do |attribute, path|
+      attachment_name = "#{value}.png" if attribute.to_s.start_with?("nav", "tab")
+      attachment_name = "#{value}.svg" if attribute.to_s.start_with?("nav_tournament", "nav_explore", "nav_home", "nav_profile")
+      theme.send("#{attribute}_image").attach(io: File.open(File.join(Rails.root, path)), filename: attachment_name)
+    end
+    # theme.nav_bar_image.attach(io: File.open(File.join(Rails.root, images[0])), filename: "#{value}.png")
+    # theme.nav_add_image.attach(io: File.open(File.join(Rails.root, images[1])), filename: "#{value}.png")
+    # theme.tab_bar_image.attach(io: File.open(File.join(Rails.root, images[2])), filename: "#{value}.png")
+    # theme.nav_tournament_icon_image.attach(io: File.open(File.join(Rails.root, icons[0])), filename: "#{value}.svg")
+    # theme.nav_explore_icon_image.attach(io: File.open(File.join(Rails.root, icons[1])), filename: "#{value}.svg")
+    # theme.nav_home_icon_image.attach(io: File.open(File.join(Rails.root, icons[2])), filename: "#{value}.svg")
+    # theme.nav_profile_icon_image.attach(io: File.open(File.join(Rails.root, icons[3])), filename: "#{value}.svg")
+  end
+end
+
 tutorials = { 1 => ["Memee will have a monthly Tournament that users can join."],
               2 => ["The Tournament starts every first day of the month and winners are announced during the last day of each month."],
               3 => ["End Users can join and post  memes in the tournament as many  as they want."],
