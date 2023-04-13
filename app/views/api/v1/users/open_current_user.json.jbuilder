@@ -1,8 +1,8 @@
 json.profile do
   json.user @current_user
   json.user_image @current_user.profile_image.attached? ? @current_user.profile_image.blob.url : ''
-  json.followers  @current_user.followers.count
-  json.following  @current_user.followings.count
+  json.followers  @current_user.followers.where(is_following: true, status: "added").count
+  json.following  @current_user.followings.where(is_following: true, status: "added").count
   json.badges_count  @current_user.badges.count
   json.badges  @current_user.badges.all.each do |badge|
     json.title badge.title
