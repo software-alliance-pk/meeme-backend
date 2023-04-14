@@ -55,15 +55,16 @@ class Api::V1::PaymentsController < Api::V1::ApiController
   def charge_a_customer
     if params[:platform] == 'ios'
       @history = Transaction.create(amount: params[:amount_to_be_paid],
-                                    brand: 'Apple Pay',
-                                    coins_buy: params[:coins_buy],
+                                    brand: 'In App Purchase',
+                                    coins: params[:coins].to_i,
                                     username: @current_user.username,
                                     user_id: @current_user.id
       )
-
+      coins = @current_user.coins + params[:coins].split(',').join.to_i
+      @current_user.update(coins: coins)
       return render json: { error: @history.errors.full_messages }, status: :unprocessable_entity unless @history.save
 
-      render json: { history: @history }, status: :ok
+      render json: { history: @history, coins: @current_user.coins }, status: :ok
     else
       return render json: { message: 'Invalid Card' }, status: :unauthorized unless @current_user.stripe_id.present?
       if response.present?
