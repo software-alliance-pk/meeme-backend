@@ -213,6 +213,12 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :themes do
+        collection do
+          get :get_theme
+        end
+      end
+
       get '/privacy_policies', to: 'privacy_policies#privacy'
     end
 
