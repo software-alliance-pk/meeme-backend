@@ -64,7 +64,7 @@ class Api::V1::PaymentsController < Api::V1::ApiController
       @current_user.update(coins: coins)
       return render json: { error: @history.errors.full_messages }, status: :unprocessable_entity unless @history.save
 
-      render json: { charge: @history, coins: @current_user.coins }, status: :ok
+      render json: { history: @history, coins: @current_user.coins }, status: :ok
     else
       return render json: { message: 'Invalid Card' }, status: :unauthorized unless @current_user.stripe_id.present?
       if response.present?

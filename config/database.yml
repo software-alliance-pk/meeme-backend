@@ -4,8 +4,8 @@ development:
   pool: 5
   adapter: postgresql
   host: localhost
-  username: postgres
-  password: 1234
+  username: memee
+  password: 12345
   database: memee-dev
 
 test:
