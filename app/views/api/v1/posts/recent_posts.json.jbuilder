@@ -26,3 +26,4 @@ json.recent_posts do
       end
     end
 end
+json.coins @current_user.coins
