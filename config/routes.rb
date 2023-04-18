@@ -215,7 +215,7 @@ Rails.application.routes.draw do
 
       resources :themes do
         collection do
-          get :get_theme
+          get :set_theme
         end
       end
 
