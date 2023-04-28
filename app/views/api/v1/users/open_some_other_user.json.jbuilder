@@ -5,12 +5,17 @@ json.profile do
     json.followers  @current_user.followers.count
     json.following  @current_user.followings.count
   else
-    json.followers  @user.followers.count
-    json.following  @user.followings.count
+    json.followers  @user.followers.where(user_id: @user.id, status: 'follower_added').count
+    json.following  @user.followings.where(follower_user_id: @user.id, status: 'following_added').count
 
   end
-  json.follow_each_other Follower.where(user_id: @current_user.id,is_following: true, follower_user_id: @user.id,status: 'added').present?
-  json.follow_request_send Follower.where(is_following: false, user_id: @user.id,follower_user_id: @current_user.id, status: 'pending').present?  ? true : false
+  if Follower.where(user_id: @user.id,follower_user_id: @current_user.id,status: 'follower_added').present? && Follower.where(user_id: @current_user.id,follower_user_id: @user.id,status: 'following_added').present?
+    json.follow_each_other true
+  elsif Follower.where(user_id: @user.id,follower_user_id: @current_user.id,status: 'follower_added').present?
+    json.follower_added true
+  elsif Follower.where(user_id: @user.id,follower_user_id: @current_user.id, status: 'pending').present?
+    json.follow_request_send true
+  end
   json.badges_count  @user.badges.count
   json.badges  @user.badges.all.each do |badge|
     json.title badge.title
