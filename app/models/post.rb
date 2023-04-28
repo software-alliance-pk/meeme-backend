@@ -1,8 +1,10 @@
+require 'open-uri'
 class Post < ApplicationRecord
   attr_accessor :tags_which_duplicate_tag
   before_create :check_act_as_taggable_record
   before_update :check_act_as_taggable_record
-  after_create_commit :compress
+  after_create_commit :add_image_variant
+  # after_create_commit :compress
 
   scope :by_recently_created, -> (limit) { order(created_at: :desc).limit(limit) }
   scope :by_recently_updated, -> (limit) { order(updated_at: :desc).limit(limit) }
@@ -27,17 +29,31 @@ class Post < ApplicationRecord
     self.where(created_at: from..to).group('date(created_at)').count
   end
 
-  def compress
-    if self.post_image.present? && self.post_image.content_type[0...5] == "image"
-      @image = self.post_image.variant(quality: 45).processed.url
-      self.update(compress_image: @image)
+  # def compress
+  #   if self.post_image.present? && self.post_image.content_type[0...5] == "image"
+  #     @image = self.post_image.variant(quality: 45).processed.url
+  #     self.update(compress_image: @image)
+  #   end
+  # end
+
+  # def self.compress_update(post)
+  #   if post.post_image.present? && post.post_image.content_type[0...5] == "image"
+  #     @image = post.post_image.variant(quality: 45).processed.url
+  #     post.update(compress_image: @image)
+  #   end
+  # end
+
+  def add_image_variant
+    if post_image.attached? && post_image.content_type[0...5] == "image"
+      image = URI.open(self.post_image.variant(quality: 45).processed.url)
+      post_image.attach(io: image, filename: 'compressed')
     end
   end
 
-  def self.compress_update(post)
-    if post.post_image.present? && post.post_image.content_type[0...5] == "image"
-      @image = post.post_image.variant(quality: 45).processed.url
-      post.update(compress_image: @image)
+  def self.add_image_variant_update(post)
+    if post.post_image.attached? && post.post_image.content_type[0...5] == "image"
+      image = URI.open(post.post_image.variant(quality: 45).processed.url)
+      post.post_image.attach(io: image, filename: 'compressed')
     end
   end
 

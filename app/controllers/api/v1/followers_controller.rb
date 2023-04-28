@@ -105,26 +105,35 @@ class Api::V1::FollowersController < Api::V1::ApiController
   end
 
   def un_follow_user
-    @secondary_follower = Follower.find_by(follower_user_id: @current_user.id, user_id: params[:follower_user_id])
-    @follower = Follower.find_by(user_id: @current_user.id, follower_user_id: params[:follower_user_id])
-    if @follower.present?
-      if @follower.un_followed!
-        @follower.destroy
-        @secondary_follower.destroy
-        render json: { message: "#{User.find_by(id: @follower.follower_user_id).username} has been unfollowed" }, status: :ok
-      else
-        render json: { message: "Could not process the request" }, status: :ok
-      end
-    elsif @secondary_follower.present?
-      if @secondary_follower.un_followed!
-        @secondary_follower.destroy
-        render json: { message: "#{User.find_by(id: @secondary_follower.user_id).username} has been unfollowed" }, status: :ok
-      else
-        render json: { message: "Could not process the request" }, status: :ok
-      end
+    @follower = Follower.find_by(follower_user_id: @current_user.id, user_id: params[:follower_user_id], status: 'follower_added')
+    @following = Follower.find_by(follower_user_id: @current_user.id, user_id: params[:follower_user_id], status: 'following_added')
+    if @follower.present? && @following.present?
+      @follower.destroy
+      @following.destroy
+      render json: { message: "#{User.find_by(id: @follower.user_id).username} has been unfollowed" }, status: :ok
     else
-      render json: { message: "The don't follow each other" }, status: :not_found
+      render json: { message: "They don't follow each other" }, status: :not_found
     end
+    # @secondary_follower = Follower.find_by(follower_user_id: @current_user.id, user_id: params[:follower_user_id])
+    # @follower = Follower.find_by(user_id: @current_user.id, follower_user_id: params[:follower_user_id])
+    # if @follower.present?
+    #   if @follower.un_followed!
+    #     @follower.destroy
+    #     @secondary_follower.destroy
+    #     render json: { message: "#{User.find_by(id: @follower.follower_user_id).username} has been unfollowed" }, status: :ok
+    #   else
+    #     render json: { message: "Could not process the request" }, status: :ok
+    #   end
+    # elsif @secondary_follower.present?
+    #   if @secondary_follower.un_followed!
+    #     @secondary_follower.destroy
+    #     render json: { message: "#{User.find_by(id: @secondary_follower.user_id).username} has been unfollowed" }, status: :ok
+    #   else
+    #     render json: { message: "Could not process the request" }, status: :ok
+    #   end
+    # else
+    #   render json: { message: "The don't follow each other" }, status: :not_found
+    # end
   end
 
   def show_people
