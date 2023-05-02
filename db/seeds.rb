@@ -5,20 +5,29 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-themes = { 0 => ['red_theme'], 1 => ['black_theme'], 2 => ['grenish_theme'], 3 => ['orange_theme'], 4 => ['light_green_theme'],
-           5 => ['blue_theme'], 6 => ['dark_blue_theme'], 7 => ['mauve_taupe_theme'], 8 => ['scooter_theme'], 9 => ['blue_lagoon_theme'],
-           10 => ['elf_green_theme'], 11 => ['river_bed_theme'], 12 => ['hot_curry_theme'], 13 => ['red_robin_theme'], 14 => ['amulet_theme'],
-           15 => ['jungle_mist_theme'], 16 => ['portage_theme'], 17 => ['alice_blue_theme'], 18 => ['chathams_blue_theme'],
-           19 => ['neon_pink_theme'], 20 => ['bittersweet_theme'], 21 => ['sidecar_theme'], 22 => ['light_slate_blue_theme'],
-           23 => ['cornflower_blue_theme'], 24 => ['brandy_rose_theme'], 25 => ['opium_theme'], 26 => ['oasis_theme'], 27 => ['mauve_theme'],
-           28 => ['shalimar_theme'], 29 => ['flamenco_theme'], 30 => ['hawkes_blue_theme'], 31 => ['apple_blossom_theme'], 32 => ['ecstasy_theme'],
-           33 => ['swamp_theme'], 34 => ['sunflower_theme'], 35 => ['pancho_theme'], 36 => ['navy_theme'], 37 => ['patterns_blue_theme'],
-           38 => ['black_russian_theme'], 39 => ['bilbao_theme'], 40 => ['corn_theme'], 41 => ['cherry_pie_theme'], 42 => ['black_rare_theme'],
-           43 => ['chambray_theme']
-}
-theme_type = %w[basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic
-                basic basic basic basic basic basic basic basic basic basic common common common common common rare rare rare rare rare
-]
+# themes = { 0 => ['red_theme'], 1 => ['black_theme'], 2 => ['grenish_theme'], 3 => ['orange_theme'], 4 => ['light_green_theme'],
+#            5 => ['blue_theme'], 6 => ['dark_blue_theme'], 7 => ['mauve_taupe_theme'], 8 => ['scooter_theme'], 9 => ['blue_lagoon_theme'],
+#            10 => ['elf_green_theme'], 11 => ['river_bed_theme'], 12 => ['hot_curry_theme'], 13 => ['red_robin_theme'], 14 => ['amulet_theme'],
+#            15 => ['jungle_mist_theme'], 16 => ['portage_theme'], 17 => ['alice_blue_theme'], 18 => ['chathams_blue_theme'],
+#            19 => ['neon_pink_theme'], 20 => ['bittersweet_theme'], 21 => ['sidecar_theme'], 22 => ['light_slate_blue_theme'],
+#            23 => ['cornflower_blue_theme'], 24 => ['brandy_rose_theme'], 25 => ['opium_theme'], 26 => ['oasis_theme'], 27 => ['mauve_theme'],
+#            28 => ['shalimar_theme'], 29 => ['flamenco_theme'], 30 => ['hawkes_blue_theme'], 31 => ['apple_blossom_theme'], 32 => ['ecstasy_theme'],
+#            33 => ['swamp_theme'], 34 => ['sunflower_theme'], 35 => ['pancho_theme'], 36 => ['navy_theme'], 37 => ['patterns_blue_theme'],
+#            38 => ['black_russian_theme'], 39 => ['bilbao_theme'], 40 => ['corn_theme'], 41 => ['cherry_pie_theme'], 42 => ['black_rare_theme'],
+#            43 => ['chambray_theme']
+# }
+
+# themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'], 6 => ['bluish'],
+#            7 => ['greenish_yellow'], 8 => ['orangy_yellow'], 9 => ['meteorite'], 10 => ['black'], 11 => ['dusk']
+#
+# }
+
+themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'] }
+theme_type = %w[default common common common common common common rare rare rare rare rare]
+ref_title = %w[black space common1 common4 common3 common2 common5 rare1 rare2 rare3 rare4 rare5]
+# theme_type = %w[basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic
+#                 basic basic basic basic basic basic basic basic basic basic common common common common common rare rare rare rare rare
+# ]
 # nav_background_colors = [['#5A1E25'], ['#1B1C25'], ['#0E5241'], ['#FF8C00'], ['#72BD72'], ['#4815AA'], ['#30009B'], ['#9B6675'],
 #                          ['#3A9EAA'], ['#0C5E73'], ['#0D9265'], ['#4D5E5F'], %w[rgba(245, 91, 57, 1) rgba(129, 89, 42, 0.9)],
 #                          %w[rgba(125, 63, 62, 1) rgba(55, 55, 55, 0.79)], ['#373737'], ['#373737'], ['#373737']
@@ -38,43 +47,62 @@ theme_type = %w[basic basic basic basic basic basic basic basic basic basic basi
 # buttons_color_percentage = [%w[100% 100%], [''], %w[100% 100%], [''], [''], %w[100% 100%], %w[100% 100%], %w[100% 100%], %w[100% 100%], %w[100% 100%], %w[100% 100%], [''],
 #                             ['']
 # ]
-IMAGES_PATH = "app/assets/images/themes"
+
+IMAGES_PATH = "app/assets/images/meme_themes"
 themes.keys.each do |key|
   themes[key].each do |value|
-    images = Dir.glob("#{IMAGES_PATH}/#{value}/*.png")
-    icons = Dir.glob("#{IMAGES_PATH}/#{value}/svg/*.svg")
+    images = Dir.glob("#{IMAGES_PATH}/#{value}/theme_pngs/*.png")
+    selected_nav_icons = Dir.glob("#{IMAGES_PATH}/#{value}/selected_svgs/*.svg")
+    un_selected_nav_icons = Dir.glob("#{IMAGES_PATH}/#{value}/unselected_svgs/*.svg")
+    app_svgs = Dir.glob("#{IMAGES_PATH}/#{value}/app_svgs/*.svg")
+
     images_and_icons = {
-      nav_bar: images[0],
-      nav_add: images[1],
-      tab_bar: images[2],
-      nav_tournament_icon: icons[0],
-      nav_explore_icon: icons[1],
-      nav_home_icon: icons[2],
-      nav_profile_icon: icons[3]
+      nav_add: images[0],
+      tab_bar: images[1],
+      nav_tournament_icon_selected: selected_nav_icons[0],
+      nav_explore_icon_selected: selected_nav_icons[1],
+      nav_home_icon_selected: selected_nav_icons[2],
+      nav_profile_icon_selected: selected_nav_icons[3],
+      nav_tournament_icon_unselected: un_selected_nav_icons[0],
+      nav_explore_icon_unselected: un_selected_nav_icons[1],
+      nav_home_icon_unselected: un_selected_nav_icons[2],
+      nav_profile_icon_unselected: un_selected_nav_icons[3],
+      filter_icon: nil,
+      filter_cross_icon: nil,
+      search_icon: nil
     }
+
+    if selected_nav_icons.length > 0
+      if app_svgs.length == 0
+        images_and_icons.delete(:filter_icon)
+        images_and_icons.delete(:filter_cross_icon)
+      elsif app_svgs.length == 1
+        images_and_icons.delete(:filter_icon)
+        images_and_icons.delete(:filter_cross_icon)
+        images_and_icons[:search_icon] = app_svgs[0]
+      elsif app_svgs.length == 2
+        images_and_icons[:filter_icon] = app_svgs[0]
+        images_and_icons[:filter_cross_icon] = app_svgs[1]
+      end
+    end
+
     theme = Theme.create!(
       title: value,
-      # nav_background_color: nav_background_colors[key],
-      # background_colors: background_colors[key] ? background_colors[key] : '',
-      # background_colors_percentage: background_colors_percentage[key],
-      # font: fonts[key],
-      # buttons_color: buttons_colors[key],
-      theme_type: theme_type[key]
-      # buttons_color_percentage: buttons_color_percentage[key]
+      theme_type: theme_type[key],
+      ref: ref_title[key],
+      buy_price: 100
     )
 
     images_and_icons.each do |attribute, path|
+      next unless path
+
       attachment_name = "#{value}.png" if attribute.to_s.start_with?("nav", "tab")
       attachment_name = "#{value}.svg" if attribute.to_s.start_with?("nav_tournament", "nav_explore", "nav_home", "nav_profile")
+      attachment_name = "#{value}.svg" if attribute.to_s.start_with?("filter")
+      attachment_name = "#{value}.svg" if attribute.to_s.start_with?("search")
+
       theme.send("#{attribute}_image").attach(io: File.open(File.join(Rails.root, path)), filename: attachment_name)
     end
-    # theme.nav_bar_image.attach(io: File.open(File.join(Rails.root, images[0])), filename: "#{value}.png")
-    # theme.nav_add_image.attach(io: File.open(File.join(Rails.root, images[1])), filename: "#{value}.png")
-    # theme.tab_bar_image.attach(io: File.open(File.join(Rails.root, images[2])), filename: "#{value}.png")
-    # theme.nav_tournament_icon_image.attach(io: File.open(File.join(Rails.root, icons[0])), filename: "#{value}.svg")
-    # theme.nav_explore_icon_image.attach(io: File.open(File.join(Rails.root, icons[1])), filename: "#{value}.svg")
-    # theme.nav_home_icon_image.attach(io: File.open(File.join(Rails.root, icons[2])), filename: "#{value}.svg")
-    # theme.nav_profile_icon_image.attach(io: File.open(File.join(Rails.root, icons[3])), filename: "#{value}.svg")
   end
 end
 

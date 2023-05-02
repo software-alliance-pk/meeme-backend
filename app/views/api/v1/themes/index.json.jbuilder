@@ -1,6 +1,6 @@
 json.themes @themes.each do |theme|
   json.name theme.title.split('_').join(' ').titleize
-  json.ref theme.title
+  json.ref theme.ref
   # json.font theme.font
   # json.background_colors theme.background_colors
   # json.buttons_color theme.buttons_color
