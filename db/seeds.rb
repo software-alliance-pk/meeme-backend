@@ -84,6 +84,8 @@ themes.keys.each do |key|
         images_and_icons[:filter_icon] = app_svgs[0]
         images_and_icons[:filter_cross_icon] = app_svgs[1]
       end
+    else
+      images_and_icons[:tab_bar] = images[0]
     end
 
     theme = Theme.create!(
