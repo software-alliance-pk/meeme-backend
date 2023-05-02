@@ -124,13 +124,11 @@ class DashboardController < ApplicationController
       redirect_to tournament_banner_path
     else
       if @banner.save
-        rule = @banner.build_tournament_banner_rule(rules: ["Abusing is not Allowed"])
-        rule.save
         @today_date = Time.zone.now.end_of_day.to_datetime
         @tournament_end_date = @banner.end_date.strftime("%a, %d %b %Y").to_datetime
         @tournamnet_days = (@tournament_end_date - @today_date).to_i
-        TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @banner.id)
-        # TournamentWorker.perform_in((Time.now + 1.minute), @banner.id)
+        TournamentWorker.perform_in((Time.now + @tournamnet_days.days))
+        # TournamentWorker.perform_in((Time.now + 1.minute))
         redirect_to tournament_banner_path
       end
     end
@@ -138,6 +136,7 @@ class DashboardController < ApplicationController
 
   def tournament_banner_destroy
     @banner = TournamentBanner.find(params[:id])
+    SendJudgeCoinWorker.perform_in(Time.now, @banner.id)
     if @banner.destroy
       redirect_to tournament_banner_path
     end

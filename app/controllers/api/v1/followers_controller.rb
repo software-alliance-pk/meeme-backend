@@ -6,13 +6,24 @@ class Api::V1::FollowersController < Api::V1::ApiController
 
   # GET /users
   def index
-    @user_followers = @current_user.followings.paginate(page: params[:page], per_page: 25)
-    # @user_followers = @current_user.followers.where(is_following: true, status: "added").paginate(page: params[:page], per_page: 25)
-    if @user_followers.present?
-      render json: { followers_count: @user_followers.count, followers: @user_followers }, status: :ok
-    else
-      render json: { followers: @user_followers }, status: :not_found
+    if params[:key] == 'followers'
+      @user_followers = @current_user.followers.where(user_id: @current_user.id, status: "follower_added").paginate(page: params[:page], per_page: 25)
+      # @user_followers = @current_user.followers.paginate(page: params[:page], per_page: 25)
+      return render json: { message: 'No Followers Present', followers: [] }, status: :ok unless @user_followers.present?
+
+      # render json: { followers: @user_followers }, status: :ok
+    elsif params[:key] == 'followings'
+      @user_followings = @current_user.followings.where(follower_user_id: @current_user.id, status: "following_added").paginate(page: params[:page], per_page: 25)
+      return render json: { message: 'You are not following any user', followings: [] }, status: :ok unless @user_followings.present?
+
+      # render json: { followings: @user_followings }, status: :ok
     end
+
+    # if @user_followers.present?
+    #   render json: { followers_count: @user_followers.count, following_count: @user_followings.count ,followers: @user_followers, followings: @user_followings }, status: :ok
+    # else
+    #   render json: { followers: @user_followers }, status: :not_found
+    # end
   end
 
   def show_pending_requests
@@ -26,10 +37,10 @@ class Api::V1::FollowersController < Api::V1::ApiController
   end
 
   def create
-    @follower = Follower.new(user_id: @current_user.id, is_following: true, follower_user_id: params[:follower_user_id], status: 'added')
+    @follower = Follower.new(user_id: @current_user.id, is_following: true, follower_user_id: params[:follower_user_id], status: 'follower_added')
     if @follower.save
       render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} and #{User.find_by(id: @follower.follower_user_id).username} are now friends" }, status: :ok
-      @follower = Follower.create!(follower_user_id: @current_user.id, is_following: true, user_id: params[:follower_user_id], status: 'added')
+      @follower = Follower.create!(follower_user_id: params[:follower_user_id], is_following: true, user_id: @current_user.id , status: 'following_added')
     else
       render_error_messages(@follower)
     end
@@ -63,7 +74,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
   def update_follower
     @follower = Follower.find_by(follower_user_id: params[:follower_user_id], user_id: @current_user.id)
     if @follower.present?
-      if @follower.is_following.to_s == params[:is_following] && @follower.added?
+      if @follower.is_following.to_s == params[:is_following] && @follower.follower_added?
         render json: { message: "User unfriend his follower" }, status: :ok
       elsif @follower.is_following.to_s == params[:is_following] && @follower.pending?
         # Notification.create(title: "Request Rejected",
@@ -74,8 +85,9 @@ class Api::V1::FollowersController < Api::V1::ApiController
         # @secondary_follower.destroy
         render json: { message: "User removed from pending" }, status: :ok
       else
-        @follower.update(is_following: true, status: 'added')
-        Follower.create(is_following: true, user_id: params[:follower_user_id], follower_user_id: @current_user.id, status: "added")
+        @follower.update(is_following:true, status: 'follower_added')
+        # This line will also create following for pending requests users
+        Follower.create(user_id: @current_user.id, is_following: true ,follower_user_id: params[:follower_user_id], status: "following_added")
         # @secondary_follower.update(is_following: true, status: 'added')
         Notification.create(title: "Request Accepted",
                             body: "Follower request has been accepted by #{@current_user.username}",
@@ -93,26 +105,35 @@ class Api::V1::FollowersController < Api::V1::ApiController
   end
 
   def un_follow_user
-    @secondary_follower = Follower.find_by(follower_user_id: @current_user.id, user_id: params[:follower_user_id])
-    @follower = Follower.find_by(user_id: @current_user.id, follower_user_id: params[:follower_user_id])
-    if @follower.present?
-      if @follower.un_followed!
-        @follower.destroy
-        @secondary_follower.destroy
-        render json: { message: "#{User.find_by(id: @follower.follower_user_id).username} has been unfollowed" }, status: :ok
-      else
-        render json: { message: "Could not process the request" }, status: :ok
-      end
-    elsif @secondary_follower.present?
-      if @secondary_follower.un_followed!
-        @secondary_follower.destroy
-        render json: { message: "#{User.find_by(id: @secondary_follower.user_id).username} has been unfollowed" }, status: :ok
-      else
-        render json: { message: "Could not process the request" }, status: :ok
-      end
+    @follower = Follower.find_by(follower_user_id: @current_user.id, user_id: params[:follower_user_id], status: 'follower_added')
+    @following = Follower.find_by(follower_user_id: @current_user.id, user_id: params[:follower_user_id], status: 'following_added')
+    if @follower.present? && @following.present?
+      @follower.destroy
+      @following.destroy
+      render json: { message: "#{User.find_by(id: @follower.user_id).username} has been unfollowed" }, status: :ok
     else
-      render json: { message: "The don't follow each other" }, status: :not_found
+      render json: { message: "They don't follow each other" }, status: :not_found
     end
+    # @secondary_follower = Follower.find_by(follower_user_id: @current_user.id, user_id: params[:follower_user_id])
+    # @follower = Follower.find_by(user_id: @current_user.id, follower_user_id: params[:follower_user_id])
+    # if @follower.present?
+    #   if @follower.un_followed!
+    #     @follower.destroy
+    #     @secondary_follower.destroy
+    #     render json: { message: "#{User.find_by(id: @follower.follower_user_id).username} has been unfollowed" }, status: :ok
+    #   else
+    #     render json: { message: "Could not process the request" }, status: :ok
+    #   end
+    # elsif @secondary_follower.present?
+    #   if @secondary_follower.un_followed!
+    #     @secondary_follower.destroy
+    #     render json: { message: "#{User.find_by(id: @secondary_follower.user_id).username} has been unfollowed" }, status: :ok
+    #   else
+    #     render json: { message: "Could not process the request" }, status: :ok
+    #   end
+    # else
+    #   render json: { message: "The don't follow each other" }, status: :not_found
+    # end
   end
 
   def show_people
@@ -147,7 +168,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
   end
 
   def already_following
-    return render json: { message: 'Already Following Each Other' } if (Follower.find_by(user_id: @current_user.id, is_following: true, follower_user_id: params[:follower_user_id]))
+    return render json: { message: 'Already Following Each Other' } if (Follower.find_by(user_id: params[:follower_user_id], follower_user_id: @current_user.id))
   end
 
   def not_following_himself

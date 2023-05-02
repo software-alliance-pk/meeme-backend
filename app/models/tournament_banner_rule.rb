@@ -1,3 +1,4 @@
 class TournamentBannerRule <ApplicationRecord
-  belongs_to :tournament_banner ,dependent: :destroy
+  has_rich_text :body
+  belongs_to :tournament_banner
 end

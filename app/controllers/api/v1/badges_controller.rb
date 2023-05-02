@@ -46,6 +46,13 @@ class Api::V1::BadgesController < Api::V1::ApiController
     end
   end
 
+  def show
+    @badge = Badge.find_by(id: params[:id])
+    return render json: { error: 'Badge not found' }, status: :not_found unless @badge.present?
+
+    render json: { badge: @badge }, status: :ok
+  end
+
   def current_user_badges
     @badges = @current_user.badges.uniq
     if @badges.present?
