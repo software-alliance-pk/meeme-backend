@@ -4,6 +4,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   before_action :check_expiration, except: [:create_tournament]
   before_action :check_user_is_in_tournament, only: [:enroll_in_tournament]
   before_action :find_post, only: [:forwarding_memee_to_tournament]
+  before_action :find_tournament_rule, only: :show_tournament_rules
 
   def index
     render json: { tournament: @tournament,
@@ -138,8 +139,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   end
 
   def show_tournament_rules
-    @tournament_rule = @tournament.tournament_banner_rule
-    return render json: { rules: @tournament_rule }, status: :ok if @tournament_rule
+    render json: { tournament_rules: @tournament_rules }, status: :ok
   end
 
   def show_tournament_prices
@@ -155,11 +155,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     @tournament_meme.duplicate_tags = @post.duplicate_tags
     @tournament_meme.share_count = @post.share_count
     @tournament_meme.thumbnail = @post.thumbnail
-    if @post.compress_image.nil?
-      TournamentBanner.add_image(@post.post_image.blob.url, @tournament_meme)
-    else
-      TournamentBanner.add_image(@post.compress_image, @tournament_meme)
-    end
+    TournamentBanner.add_image(@post.post_image.blob.url, @tournament_meme)
     # @tournament_meme.post_image.attach(io: URI.parse(@post.compress_image).open, filename: 'meme_image')
     @tournament_meme.compress_image = @post.compress_image
     @tournament_meme.tag_list = @post.tag_list
@@ -201,5 +197,11 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   def find_post
     @post = Post.find_by(id: params[:post_id])
     return render json: { message: 'Post not found' }, status: :bad_request unless @post.present?
+  end
+
+  def find_tournament_rule
+    return render json: { message: "Tournament not found" }, status: :not_found unless (@tournament = TournamentBanner.find_by(id: params[:id]))
+
+    return render json: { message: 'No rules added for this tournament' }, status: :not_found unless (@tournament_rules = @tournament.tournament_banner_rule)
   end
 end
