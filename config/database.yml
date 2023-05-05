@@ -1,12 +1,21 @@
 # database.yml
-development:
-  encoding: unicode
-  pool: 5
-  adapter: postgresql
-  host: localhost
-  username: postgres
-  password: 1234
-  database: memee-dev
+#development:
+#  encoding: unicode
+#  pool: 5
+#  adapter: postgresql
+#  host: localhost
+#  username: postgres
+#  password: 1234
+#  database: memee-dev
+
+#development:
+#  encoding: unicode
+#  pool: 5
+#  adapter: postgresql
+#  host: db-meme-production.ccbef2vbfix0.us-east-1.rds.amazonaws.com
+#  username: postgres
+#  password: postgres
+#  database: db_meme_production
 
 test:
   encoding: unicode
@@ -17,15 +26,24 @@ test:
   password: 1234
   database: memee-test
 
+#production:
+#  encoding: unicode
+#  pool: 5
+#  adapter: postgresql
+#  host: localhost
+#  username: deploy
+#  password: admin123
+
+#  database: memee-production
+
 production:
   encoding: unicode
   pool: 5
   adapter: postgresql
-  host: localhost
-  username: deploy
-  password: admin123
-
-  database: memee-production
+  host: db-meme-production.ccbef2vbfix0.us-east-1.rds.amazonaws.com
+  username: postgres
+  password: postgres
+  database: db_meme_production
 
 staging:
   encoding: unicode
