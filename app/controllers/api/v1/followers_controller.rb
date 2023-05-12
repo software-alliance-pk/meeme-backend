@@ -152,7 +152,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
     # followings=@current_user.followings.pluck(:user_id)
     # excluded << @current_user.id
     excluded=((@current_user.followers.pluck(:follower_user_id)+@current_user.followings.pluck(:user_id))<< @current_user.id).uniq
-    @users=User.where.not(id: excluded).shuffle.first(5)
+    @users=User.where.not(id: excluded).shuffle.paginate(page: params[:page], per_page: 25)
     if @users.present?
     else
       return render json: { suggestions: [] }, status: :ok

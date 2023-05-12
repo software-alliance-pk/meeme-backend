@@ -75,7 +75,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def support_ticket
-    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Pending')
+    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Ongoing')
     if @conversation.present?
       @message = @conversation.messages.new(message_params)
       @message.message_ticket = SecureRandom.hex(5)
