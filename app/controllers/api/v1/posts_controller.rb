@@ -57,7 +57,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def destroy
-    @post.delete
+    @post.destroy
     render json: { message: "Post successfully deleted" }, status: :ok
   end
 

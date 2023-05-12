@@ -22,8 +22,11 @@ class Notification < ApplicationRecord
                 }
 
     }
+    if notification_type == 'comment'
+      CommentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type ,self.user_id, user.id)
+    end
     
-    if notification_type != 'admin_message' && notification_type != "push_notification"
+    if notification_type != 'admin_message' && notification_type != "push_notification" && notification_type != 'comment'
       registration_ids = user.mobile_devices.pluck(:mobile_token)
       if user.notifications_enabled?
         registration_ids.each do |registration_id|
