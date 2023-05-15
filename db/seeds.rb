@@ -17,14 +17,19 @@
 #            43 => ['chambray_theme']
 # }
 
-# themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'], 6 => ['bluish'],
-#            7 => ['greenish_yellow'], 8 => ['orangy_yellow'], 9 => ['meteorite'], 10 => ['black'], 11 => ['dusk']
-#
-# }
+themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'], 6 => ['bluish'],
+           7 => ['greenish_yellow'], 8 => ['orangy_yellow'], 9 => ['meteorite'], 10 => ['black'], 11 => ['dusk'], 12 => ["banana"], 13 => ["fire"],
+           14 => ['water'], 15 => ['blacksand'], 16 => ['smoky'], 17 => ['pink_polka'], 18 => ['camouflage'], 19 => ['flamingo'], 20 => ['samurai_head'],
+           21 => ['phsychedelic'], 22 => ['earth'], 23 => ['tricolor'], 24 => ['clouds'], 25 => ['geometric'], 26 => ['coin']
+}
 
-themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'] }
-theme_type = %w[default common common common common common common rare rare rare rare rare]
-ref_title = %w[black space common1 common4 common3 common2 common5 rare1 rare2 rare3 rare4 rare5]
+# themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'] }
+theme_type = %w[default common common common common common common rare rare rare rare rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare
+                ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare
+]
+ref_title = %w[black space common1 common4 common3 common2 common5 rare1 rare2 rare3 rare4 rare5 ultra_rare1 ultra_rare2 ultra_rare3 ultra_rare4 ultra_rare5 ultra_rare6 ultra_rare7 ultra_rare8
+               ultra_rare9 ultra_rare10 ultra_rare11 ultra_rare12 ultra_rare13 ultra_rare14 ultra_rare15
+]
 # theme_type = %w[basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic
 #                 basic basic basic basic basic basic basic basic basic basic common common common common common rare rare rare rare rare
 # ]
@@ -59,6 +64,7 @@ themes.keys.each do |key|
     images_and_icons = {
       nav_add: images[0],
       tab_bar: images[1],
+      background: nil,
       nav_tournament_icon_selected: selected_nav_icons[0],
       nav_explore_icon_selected: selected_nav_icons[1],
       nav_home_icon_selected: selected_nav_icons[2],
@@ -69,10 +75,33 @@ themes.keys.each do |key|
       nav_profile_icon_unselected: un_selected_nav_icons[3],
       filter_icon: nil,
       filter_cross_icon: nil,
-      search_icon: nil
+      search_icon: nil,
+      backward_icon: nil,
+      comment_icon: nil,
+      dots_icon: nil,
+      edit_icon: nil,
+      forward_icon: nil,
+      gallery_icon: nil,
+      like_icon: nil,
+      main_back_icon: nil,
+      main_notification_icon: nil,
+      notification_icon: nil,
+      pending_requests_icon: nil,
+      profile_edit_icon: nil,
+      profile_notification_icon: nil,
+      send_icon: nil,
+      setting_icon: nil,
+      share_icon: nil,
+      shop_icon: nil,
+      tournament_forward_icon: nil
     }
 
     if selected_nav_icons.length > 0
+      if images.length > 2
+        images_and_icons[:background] = images[0]
+        images_and_icons[:nav_add] = images[1]
+        images_and_icons[:tab_bar] = images[2]
+      end
       if app_svgs.length == 0
         images_and_icons.delete(:filter_icon)
         images_and_icons.delete(:filter_cross_icon)
@@ -83,6 +112,32 @@ themes.keys.each do |key|
       elsif app_svgs.length == 2
         images_and_icons[:filter_icon] = app_svgs[0]
         images_and_icons[:filter_cross_icon] = app_svgs[1]
+      elsif app_svgs.length == 3
+        images_and_icons[:filter_icon] = app_svgs[0]
+        images_and_icons[:filter_cross_icon] = app_svgs[1]
+        images_and_icons[:search_icon] = app_svgs[2]
+      elsif app_svgs.length > 3
+        images_and_icons[:backward_icon] = app_svgs[0]
+        images_and_icons[:comment_icon] = app_svgs[1]
+        images_and_icons[:dots_icon] = app_svgs[2]
+        images_and_icons[:edit_icon] = app_svgs[3]
+        images_and_icons[:filter_icon] = app_svgs[4]
+        images_and_icons[:filter_cross_icon] = app_svgs[5]
+        images_and_icons[:forward_icon] = app_svgs[6]
+        images_and_icons[:gallery_icon] = app_svgs[7]
+        images_and_icons[:like_icon] = app_svgs[8]
+        images_and_icons[:main_back_icon] = app_svgs[9]
+        images_and_icons[:main_notification_icon] = app_svgs[10]
+        images_and_icons[:notification_icon] = app_svgs[11]
+        images_and_icons[:pending_requests_icon] = app_svgs[12]
+        images_and_icons[:profile_edit_icon] = app_svgs[13]
+        images_and_icons[:profile_notification_icon] = app_svgs[14]
+        images_and_icons[:search_icon] = app_svgs[15]
+        images_and_icons[:send_icon] = app_svgs[16]
+        images_and_icons[:setting_icon] = app_svgs[17]
+        images_and_icons[:share_icon] = app_svgs[18]
+        images_and_icons[:shop_icon] = app_svgs[19]
+        images_and_icons[:tournament_forward_icon] = app_svgs[20]
       end
     else
       images_and_icons[:tab_bar] = images[0]
@@ -98,9 +153,9 @@ themes.keys.each do |key|
     images_and_icons.each do |attribute, path|
       next unless path
 
-      attachment_name = "#{value}.png" if attribute.to_s.start_with?("nav", "tab")
+      attachment_name = "#{value}.png" if attribute.to_s.start_with?("nav", "tab", "background")
       attachment_name = "#{value}.svg" if attribute.to_s.start_with?("nav_tournament", "nav_explore", "nav_home", "nav_profile")
-      attachment_name = "#{value}.svg" if attribute.to_s.start_with?("filter")
+      attachment_name = "#{value}.svg" if attribute.to_s.start_with?("filter", "backward", "comment", "dots","pending_requests","edit", "forward", "gallery", "like", "main_back", "main_notification", "profile_edit", "profile_notification", "send", "setting", "share", "shop", "tournament_forward", "notification")
       attachment_name = "#{value}.svg" if attribute.to_s.start_with?("search")
 
       theme.send("#{attribute}_image").attach(io: File.open(File.join(Rails.root, path)), filename: attachment_name)
