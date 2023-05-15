@@ -1,6 +1,13 @@
+#amazon:
+#  service: S3
+#  access_key_id: <%#= ENV["AWS_ACCESS_KEY_ID"] %>
+#  secret_access_key: <%#= ENV['AWS_SECRET_ACCESS_KEY'] %>
+#  region: us-east-1
+#  bucket: <%#= ENV['AWS_BUCKET_NAME'] %>
+
 amazon:
   service: S3
-  access_key_id: <%= ENV["AWS_ACCESS_KEY_ID"] %>
-  secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
-  region: us-east-1
-  bucket: <%= ENV['AWS_BUCKET_NAME'] %>
+  access_key_id: 'AKIA4L5GIDMIRSKBHGVI'
+  secret_access_key: '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'
+  region: us-west-2
+  bucket: 'testbuckettextng'
