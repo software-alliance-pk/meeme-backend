@@ -50,14 +50,14 @@
       <% end %>
     </div>
   <% end %>
+  <script>
+      $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
+  </script>
 <% end %>
 
 <% if message.sender_id == nil %>
   <%= turbo_stream.replace "body" do %>
     <input type="text" class="input" name="body" id="body" placeholder="Write your message here" required>
-    <script>
-        $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
-    </script>
   <% end %>
   <%= form_with(url: support_path) do |form| %>
     <%= turbo_stream.replace "file-btn" do %>
