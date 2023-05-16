@@ -94,7 +94,7 @@
               <label for="document-btn" class="ico_btn label"><img src="<%= asset_path("icon-clip.svg") %>" alt=""></label>
               <%= form.file_field :message_images, id: "file-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
               <label for="file-btn" class="ico_btn label" id="label_btn"><img src="<%= asset_path("icon-image.svg") %>" alt=""></label>
-              <input type="text" class="input" name="body" id="body" placeholder="Write your message here" required>
+              <input type="text" class="input" name="body" id="body" placeholder="Write your message here" required autocomplete="off">
               <input name="conversation_id" id="conversation_id" hidden></input>
               <input name="receiver_id" id="receiver_id" hidden></input>
               <input name="user_id" id="user_id" hidden></input>
