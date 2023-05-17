@@ -1,0 +1,24 @@
+<% conversation = Conversation.find_by(id: conversation_id) %>
+<% if conversation.messages.count == 1 %>
+  <%= turbo_stream.prepend "prepend_conversation" do %>
+    <div class="user_blk active" id="clicked" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.username %>'); get_post('<%= conversation.sender.username %>')">
+      <div class="ico fill round">
+        <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png") %>" alt="">
+      </div>
+      <div class="inr w-100">
+        <div class="title">
+          <h5><%= conversation.sender.username %></h5>
+          <% if conversation.messages.first.present? %>
+            <% time = Time.now.to_datetime %>
+            <% created = conversation.messages.first.created_at.to_datetime %>
+            <% calculated_time = ((time - created) * 24 * 60).to_i %>
+            <span class="time"><%= distance_of_time_in_words(0, calculated_time.minutes) %></span>
+          <% end %>
+        </div>
+        <div class="txt">
+          <p class="live_message_<%= conversation.id %>"><%= conversation.messages.first.body if conversation.messages.first.present? %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

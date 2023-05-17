@@ -108,7 +108,11 @@ themes.keys.each do |key|
       elsif app_svgs.length == 1
         images_and_icons.delete(:filter_icon)
         images_and_icons.delete(:filter_cross_icon)
-        images_and_icons[:search_icon] = app_svgs[0]
+        if app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/search.svg"
+          images_and_icons[:search_icon] = app_svgs[0]
+        else
+          images_and_icons[:edit_icon] = app_svgs[0]
+        end
       elsif app_svgs.length == 2
         images_and_icons[:filter_icon] = app_svgs[0]
         images_and_icons[:filter_cross_icon] = app_svgs[1]
@@ -116,7 +120,7 @@ themes.keys.each do |key|
         images_and_icons[:filter_icon] = app_svgs[0]
         images_and_icons[:filter_cross_icon] = app_svgs[1]
         images_and_icons[:search_icon] = app_svgs[2]
-      elsif app_svgs.length > 3
+      elsif app_svgs.length == 21
         images_and_icons[:backward_icon] = app_svgs[0]
         images_and_icons[:comment_icon] = app_svgs[1]
         images_and_icons[:dots_icon] = app_svgs[2]
@@ -138,6 +142,24 @@ themes.keys.each do |key|
         images_and_icons[:share_icon] = app_svgs[18]
         images_and_icons[:shop_icon] = app_svgs[19]
         images_and_icons[:tournament_forward_icon] = app_svgs[20]
+      elsif app_svgs.length == 17
+        images_and_icons[:backward_icon] = app_svgs[0]
+        images_and_icons[:comment_icon] = app_svgs[1]
+        images_and_icons[:dots_icon] = app_svgs[2]
+        images_and_icons[:edit_icon] = app_svgs[3]
+        images_and_icons[:forward_icon] = app_svgs[4]
+        images_and_icons[:gallery_icon] = app_svgs[5]
+        images_and_icons[:like_icon] = app_svgs[6]
+        images_and_icons[:main_back_icon] = app_svgs[7]
+        images_and_icons[:main_notification_icon] = app_svgs[8]
+        images_and_icons[:notification_icon] = app_svgs[9]
+        images_and_icons[:pending_requests_icon] = app_svgs[10]
+        images_and_icons[:profile_notification_icon] = app_svgs[11]
+        images_and_icons[:search_icon] = app_svgs[12]
+        images_and_icons[:send_icon] = app_svgs[13]
+        images_and_icons[:share_icon] = app_svgs[14]
+        images_and_icons[:shop_icon] = app_svgs[15]
+        images_and_icons[:tournament_forward_icon] = app_svgs[16]
       end
     else
       images_and_icons[:tab_bar] = images[0]
