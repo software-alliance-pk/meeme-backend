@@ -68,10 +68,11 @@
                                             </td>
                                             <% if reward.status == "Awarded" %>
                                               <td>0</td>
+                                              <td><%= reward.updated_at.strftime("%d %b, %Y") %></td>
                                             <% else %>
                                               <td>1</td>
+                                              <td>Pending</td>
                                             <% end %>
-                                            <td>Pending</td>
                                         </tr>
                                     <% end %>
                                 </tbody>
