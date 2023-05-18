@@ -86,7 +86,7 @@ Rails.application.configure do
   config.action_cable.url = ENV["ACTION_CABLE_URL"]
 
   config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
-  config.action_mailer.default_url_options = { host: 'http://3.93.123.9'}
+  config.action_mailer.default_url_options = { host: 'http://meme-1648553004.us-east-1.elb.amazonaws.com'}
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
