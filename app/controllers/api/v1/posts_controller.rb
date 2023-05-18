@@ -1,5 +1,5 @@
 class Api::V1::PostsController < Api::V1::ApiController
-  before_action :authorize_request
+  before_action :authorize_request, except: :create
   before_action :find_post, only: [:show, :update_posts, :destroy]
 
   def index
@@ -17,6 +17,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def create
+    @current_user = User.first
     @post = @current_user.posts.new(post_params)
     @post.tags_which_duplicate_tag = params[:tag_list]
     if @post.save
