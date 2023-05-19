@@ -9,6 +9,7 @@
       <%= javascript_importmap_tags %>
     <% end %>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/0.12.0/trix.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/0.12.0/trix.js"></script>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
@@ -37,4 +38,5 @@
   <body>
   <%= yield %>
   </body>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </html>

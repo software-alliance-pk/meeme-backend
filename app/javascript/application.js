@@ -4,4 +4,9 @@
 //= require channels
 //= require channels/bootstrap.bundle.min.js
 //= require allow_numeric
+//= require flatpickr
+
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr('.datepicker');
+})
 

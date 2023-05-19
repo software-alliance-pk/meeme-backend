@@ -1,0 +1,51 @@
+/* Override default Flatpickr styles */
+.flatpickr-calendar {
+    background-color: #313032 !important;
+    border: 1px solid #313032 !important;
+    box-shadow: none !important;
+    color:  #FFFFFF !important;
+    border-radius: 15px !important;
+}
+
+.dayContainer .flatpickr-day{
+    color: #fff !important;
+}
+
+.dayContainer .flatpickr-day.today{
+    border: 1.91px solid #FCE307 !important;
+}
+.dayContainer .flatpickr-day:hover{
+    background-color: #201E23 !important;
+}
+.dayContainer .flatpickr-day.nextMonthDay{
+    color: #FFFFFF66 !important;
+}
+
+.flatpickr-monthDropdown-months {
+    color: #fff !important;
+    background-color: #313032 !important;
+}
+
+.flatpickr-calendar .numInput{
+    color: #fff !important;
+}
+.flatpickr-weekdaycontainer .flatpickr-weekday{
+    color: #fff !important;
+}
+
+.flatpickr-prev-month, .flatpickr-current-month ,.flatpickr-next-month {
+    color: #999;
+}
+
+/* Additional custom styles */
+.my-datepicker {
+    /* Add your custom styles here */
+}
+
+.flatpickr-months .flatpickr-month{
+    height: 40px !important;
+}
+
+flatpickr-months{
+background-color: #313032 !important;
+}

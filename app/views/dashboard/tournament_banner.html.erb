@@ -69,11 +69,11 @@
                         </div>
                         <h6>Date Start</h6>
                         <div class="form_blk">
-                          <%= form.date_field :start_date,id: 'start_date' ,class: "input banner_date", required: true %>
+                          <%= form.date_field :start_date,id: 'start_date' ,class: "input banner_date datepicker", placeholder: 'YYYY-MM-DD', required: true %>
                         </div>
                         <h6>Date End</h6>
                         <div class="form_blk">
-                          <%= form.date_field :end_date, id: 'end_date',class: "input banner_date", required: true%>
+                          <%= form.date_field :end_date, id: 'end_date',class: "input banner_date datepicker", placeholder: 'YYYY-MM-DD', required: true%>
                         </div>
                       </div>
                     </div>
@@ -184,6 +184,10 @@
         setTimeout(function () {
             $('#banner_error').fadeOut();
         }, 5000);
+    })
+
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr('.datepicker');
     })
 
 </script>

@@ -122,6 +122,8 @@ GEM
       dotenv (= 2.8.1)
       railties (>= 3.2)
     erubi (1.11.0)
+    faker (3.2.0)
+      i18n (>= 1.8.11, < 2)
     faraday (2.7.2)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
@@ -130,6 +132,7 @@ GEM
       faraday (>= 1.0.0, < 3.0)
       googleauth (~> 1)
     ffi (1.15.5)
+    flatpickr (4.6.11.0)
     globalid (1.0.0)
       activesupport (>= 5.0)
     googleauth (1.3.0)
@@ -141,6 +144,9 @@ GEM
       signet (>= 0.16, < 2.a)
     groupdate (6.1.0)
       activesupport (>= 5.2)
+    httparty (0.21.0)
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     image_processing (1.12.2)
@@ -182,6 +188,7 @@ GEM
     minitest (5.16.3)
     msgpack (1.6.0)
     multi_json (1.15.0)
+    multi_xml (0.6.0)
     net-imap (0.3.1)
       net-protocol
     net-pop (0.1.2)
@@ -324,8 +331,11 @@ DEPENDENCIES
   debug
   devise
   dotenv-rails
+  faker
   fcm
+  flatpickr
   groupdate
+  httparty
   image_processing (~> 1.2)
   importmap-rails
   jbuilder
@@ -353,4 +363,4 @@ RUBY VERSION
    ruby 3.0.0p0
 
 BUNDLED WITH
-   2.4.3
+   2.4.13
