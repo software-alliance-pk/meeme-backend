@@ -12,7 +12,7 @@ if @user_followers.present?
         json.id follower_user.id
         json.username follower_user.username
         json.email follower_user.email
-        json.profile_image follower_user.profile_image.attached? ? follower_user.profile_image.blob.url : ''
+        json.profile_image follower_user.profile_image.attached? ? CloudfrontUrlService.new(follower_user.profile_image).cloudfront_url : ''
       end
     end
   end
@@ -30,7 +30,7 @@ elsif @user_followings.present?
         json.id following_user.id
         json.username following_user.username
         json.email following_user.email
-        json.profile_image following_user.profile_image.attached? ? following_user.profile_image.blob.url : ''
+        json.profile_image following_user.profile_image.attached? ? CloudfrontUrlService.new(following_user.profile_image).cloudfront_url : ''
       end
     end
   end

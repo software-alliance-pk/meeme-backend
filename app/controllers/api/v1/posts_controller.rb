@@ -1,5 +1,5 @@
 class Api::V1::PostsController < Api::V1::ApiController
-  before_action :authorize_request, except: :create
+  before_action :authorize_request
   before_action :find_post, only: [:show, :update_posts, :destroy]
 
   def index
@@ -17,17 +17,18 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def create
-    @current_user = User.first
     @post = @current_user.posts.new(post_params)
     @post.tags_which_duplicate_tag = params[:tag_list]
     if @post.save
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
       if @post.post_image.attached? && @post.post_image.video?
-        @post.update(duplicate_tags: @tags, thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
+        thumbnail = @post.post_image.preview(resize_to_limit: [100, 100]).processed.url
+        thumbnail = CloudfrontUrlService.new(thumbnail.split('?').first.split('/').last).generate_thumbnail
+        @post.update(duplicate_tags: @tags, thumbnail: thumbnail)
       else
         @post.update(duplicate_tags: @tags)
       end
-      render json: { user: @post.attributes.except('tag_list'), post_image: @post.post_image.attached? ? @post.post_image.blob.url : '', post_type: @post.post_image.content_type, message: 'Post created successfully' }, status: :ok
+      render json: { user: @post.attributes.except('tag_list'), post_image: @post.post_image.attached? ? CloudfrontUrlService.new(@post.post_image).cloudfront_url : '', post_type: @post.post_image.content_type, message: 'Post created successfully' }, status: :ok
     else
       render_error_messages(@post)
     end
@@ -50,7 +51,7 @@ class Api::V1::PostsController < Api::V1::ApiController
         end
       end
       render json: { post: @post.attributes.except('tag_list'),
-                     post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
+                     post_image: @post.post_image.attached? ? CloudfrontUrlService.new(@post.post_image).cloudfront_url : '',
                      post_type: @post.post_image.content_type,
                      message: "Post Updated" },
              status: :ok

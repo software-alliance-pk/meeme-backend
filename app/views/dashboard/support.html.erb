@@ -62,49 +62,53 @@
             <% end %>
           </div>
         </div>
-        <div class="chat_side">
-          <div class="top_head_blk">
-            <div class="user_blk">
-              <div class="ico fill round">
-                <img src="" alt="" id="profile_image" hidden>
-              </div>
-              <div class="inr">
-                <h5 id="name"></h5>
-                <div id="email"></div>
-              </div>
-              <div class="r_blk">
-                <div class="status"><input type="radio" name="is_complete" id="is_complete" onchange="completed()">
-                  Complete
+        <% if @conversation.present? %>
+          <div class="chat_side">
+            <div class="top_head_blk">
+              <div class="user_blk">
+                <div class="ico fill round">
+                  <img src="" alt="" id="profile_image" hidden>
                 </div>
-                <div class="num_id" id="num_id"></div>
+                <div class="inr">
+                  <h5 id="name"></h5>
+                  <div id="email"></div>
+                </div>
+                <div class="r_blk">
+                  <div class="status"><input type="radio" name="is_complete" id="is_complete" onchange="completed()">
+                    Complete
+                  </div>
+                  <div class="num_id" id="num_id"></div>
+                </div>
               </div>
             </div>
-          </div>
-          <%= turbo_stream_from "divs" %>
-          <div class="chat_list">
+            <%= turbo_stream_from "divs" %>
+            <div class="chat_list">
               <div class="chat_blk" id="chat_blk">
               </div>
               <div class="chat_blk memee" id="admin_div">
               </div>
-          </div>
-
-          <%= form_with do |form| %>
-            <div class="form_inside">
-              <%= form.file_field :message_images, id: "document-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
-              <label for="document-btn" class="ico_btn label"><img src="<%= asset_path("icon-clip.svg") %>" alt=""></label>
-              <%= form.file_field :message_images, id: "file-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
-              <label for="file-btn" class="ico_btn label" id="label_btn"><img src="<%= asset_path("icon-image.svg") %>" alt=""></label>
-              <input type="text" class="input" name="body" id="body" placeholder="Write your message here" required>
-              <input name="conversation_id" id="conversation_id" hidden></input>
-              <input name="receiver_id" id="receiver_id" hidden></input>
-              <input name="user_id" id="user_id" hidden></input>
-              <input name="subject" id="subject" hidden></input>
-              <input name="admin_user_id" id="admin_id" hidden></input>
-              <button type="submit" class="send_btn"><img src="<%= asset_path("icon-send.svg") %>" alt=""></button>
             </div>
-          <% end %>
 
-        </div>
+            <%= form_with do |form| %>
+              <div class="form_inside">
+                <%= form.file_field :message_images, id: "document-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
+                <label for="document-btn" class="ico_btn label"><img src="<%= asset_path("icon-clip.svg") %>" alt=""></label>
+                <%= form.file_field :message_images, id: "file-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
+                <label for="file-btn" class="ico_btn label" id="label_btn"><img src="<%= asset_path("icon-image.svg") %>" alt=""></label>
+                <input type="text" class="input" name="body" id="body" placeholder="Write your message here" required>
+                <input name="conversation_id" id="conversation_id" hidden></input>
+                <input name="receiver_id" id="receiver_id" hidden></input>
+                <input name="user_id" id="user_id" hidden></input>
+                <input name="subject" id="subject" hidden></input>
+                <input name="admin_user_id" id="admin_id" hidden></input>
+                <button type="submit" class="send_btn"><img src="<%= asset_path("icon-send.svg") %>" alt=""></button>
+              </div>
+            <% end %>
+
+          </div>
+        <% else %>
+          <h4 class="w-100 d-flex justify-content-center align-items-center">No Support Ticket Found</h4>
+        <% end %>
       </div>
     </div>
   </section>

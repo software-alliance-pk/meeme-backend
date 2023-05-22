@@ -1,6 +1,6 @@
 json.profile do
   json.user @user
-  json.user_image @user.profile_image.attached? ? @user.profile_image.blob.url : ''
+  json.user_image @user.profile_image.attached? ? CloudfrontUrlService.new(@user.profile_image).cloudfront_url : ''
   if @current_user.id==@user.id
     json.followers  @current_user.followers.count
     json.following  @current_user.followings.count
@@ -20,13 +20,13 @@ json.profile do
   json.badges  @user.badges.all.each do |badge|
     json.title badge.title
     json.rarity badge.rarity
-    json.badge_image badge.badge_image.attached? ? badge.badge_image.blob.url : ''
+    json.badge_image badge.badge_image.attached? ? CloudfrontUrlService.new(badge.badge_image).cloudfront_url : ''
   end
   json.all_post_count @user.posts.count
   json.profile_posts @user.posts.each do |post|
     json.post_description post.description
     json.post_time post.created_at
-    json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
+    json.post_image post.post_image.attached? ? CloudfrontUrlService.new(post.post_image).cloudfront_url : ''
     json.post_likes post.likes.like.count
     json.post_dislikes post.likes.dislike.count
     json.post_share_count post.share_count

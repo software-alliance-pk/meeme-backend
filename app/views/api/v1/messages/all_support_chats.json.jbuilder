@@ -14,8 +14,8 @@ json.messages @messages.each do|chat|
   json.status chat.conversation.status
   json.message_images_count chat.message_images.count
   json.message_images chat.message_images.each do |message_image|
-    json.message_image message_image.present? ? message_image.blob.url : ''
+    json.message_image message_image.present? ? CloudfrontUrlService.new(message_image).cloudfront_url : ''
   end
   # json.message_image chat&.message_image&.attached? ? chat.message_image.blob.url : ''
-  json.sender_image chat&.sender&.profile_image&.attached? ? chat.sender.profile_image.blob.url : ''
+  json.sender_image chat&.sender&.profile_image&.attached? ? CloudfrontUrlService.new(chat.sender.profile_image).cloudfront_url : ''
   end

@@ -61,7 +61,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
                             notification_type: 'request_send',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                            sender_image: @current_user.profile_image.present? ? CloudfrontUrlService.new(@current_user.profile_image).cloudfront_url : '')
 
         render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.user_id).username} " }, status: :ok
         # @secondary_follower = Follower.create!(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
