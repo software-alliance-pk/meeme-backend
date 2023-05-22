@@ -1,6 +1,6 @@
 Sidekiq.configure_server do |config|
-  config.redis = { url: 'redis://127.0.0.1:6379', size: 12, network_timeout: 5  }
+  config.redis = { url: 'redis://memeredis.osucun.ng.0001.use1.cache.amazonaws.com:6379', size: 12, network_timeout: 5  }
 end
 Sidekiq.configure_client do |config|
-  config.redis = { url: 'redis://127.0.0.1:6379', size: 1, network_timeout: 5  }
+  config.redis = { url: 'redis://memeredis.osucun.ng.0001.use1.cache.amazonaws.com:6379', size: 1, network_timeout: 5  }
 end

@@ -7,16 +7,7 @@ development:
   username: postgres
   password: 1234
   database: memee-dev
-
-#development:
-#  encoding: unicode
-#  port: 5432
-#  adapter: postgresql
-#  host: db-meme-production.ccbef2vbfix0.us-east-1.rds.amazonaws.com
-#  username: postgres
-#  password: postgres
-#  database: db_meme_production
-
+  
 test:
   encoding: unicode
   pool: 5
@@ -26,15 +17,16 @@ test:
   password: 1234
   database: memee-test
 
+
 production:
   encoding: unicode
-  pool: 5
+  port: 5432
   adapter: postgresql
-  host: localhost
-  username: deploy
-  password: admin123
+  host: db-meme-production.cnzgcjpatmu5.us-east-1.rds.amazonaws.com
+  username: postgres
+  password: postgres
+  database: db-meme-production
 
-  database: memee-production
 
 #production:
 #  encoding: unicode

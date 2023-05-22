@@ -53,20 +53,38 @@ class Api::V1::PaymentsController < Api::V1::ApiController
   end
 
   def charge_a_customer
-    return render json: {message: 'Invalid Card'}, status: :unauthorized unless @current_user.stripe_id.present?
-    if response.present?
-      response = StripeService.create_stripe_charge(@current_user, params)
-      # Notification.create(title: "In App Purchase",body: "You have bought coins successfully of amount #{params[:amount_to_be_paid]}",
-      #                     user_id: @current_user.id,
-      #                     notification_type: 'coin_buy')
-      render json: { charge: response, coins: @current_user.coins }, status: :ok
+    if params[:platform] == 'ios'
+      @history = Transaction.create(amount: params[:amount_to_be_paid],
+                                    brand: 'In App Purchase',
+                                    coins: params[:coins].to_i,
+                                    username: @current_user.username,
+                                    user_id: @current_user.id
+      )
+      coins = @current_user.coins + params[:coins].split(',').join.to_i
+      @current_user.update(coins: coins)
+      return render json: { error: @history.errors.full_messages }, status: :unprocessable_entity unless @history.save
+
+      render json: { history: @history, coins: @current_user.coins }, status: :ok
     else
-      render json: { charge: [], message: "Cannot be charged" }, status: :not_found
+      return render json: { message: 'Invalid Card' }, status: :unauthorized unless @current_user.stripe_id.present?
+      if response.present?
+        response = StripeService.create_stripe_charge(@current_user, params)
+        # Notification.create(title: "In App Purchase",body: "You have bought coins successfully of amount #{params[:amount_to_be_paid]}",
+        #                     user_id: @current_user.id,
+        #                     notification_type: 'coin_buy')
+        render json: { charge: response, coins: @current_user.coins }, status: :ok
+      else
+        render json: { charge: [], message: "Cannot be charged" }, status: :not_found
+      end
     end
   end
 
   def show_transactions_history
-    @history = Transaction.where(user_id: @current_user.id)
+    if params[:platform] == 'ios'
+      @history = Transaction.where(user_id: @current_user.id, customer_id: nil)
+    else
+      @history = Transaction.where(user_id: @current_user.id)
+    end
     if @history.present?
       render json: { transaction_count: @history.count, total_history: @history }, status: :ok
     else

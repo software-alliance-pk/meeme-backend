@@ -68,7 +68,7 @@ class SocialLoginService
     user = create_user(data['email'], data['sub'], data)
     token = JsonWebTokenService.encode(user_id: @user.id)
     @user.verification_tokens.create(token: token,user_id: @user.id)
-    [user, token]
+    [@user, token]
   end
 
   private
