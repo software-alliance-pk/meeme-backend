@@ -59,12 +59,12 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def destroy
-    @post.delete
+    @post.destroy
     render json: { message: "Post successfully deleted" }, status: :ok
   end
 
   def explore
-    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
+    @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
     @posts = []
     if params[:tag] == ""
       Post.where(tournament_meme: false).each do |post|
@@ -90,7 +90,7 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def user_search_tag
     @posts = []
-    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
+    @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
     if params[:tag].empty?
       @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
       if @users.present?
@@ -110,7 +110,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def other_posts
-    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).uniq
+    @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).uniq
     @post = Post.find_by(id: params[:post_id])
     @all_posts = []
     if params[:tag] == "#"
@@ -137,7 +137,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def tags
-    @tags = ActsAsTaggableOn::Tag.all.pluck(:name).map { |item| item.split("dup").first }.uniq
+    @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
     if @tags.present?
       render json: { tags: @tags }, status: :ok
     else

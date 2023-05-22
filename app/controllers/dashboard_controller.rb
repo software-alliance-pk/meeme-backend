@@ -488,7 +488,10 @@ class DashboardController < ApplicationController
   end
 
   def support
-    if params["/conversations"].present? && params["/conversations"][:subject].present?
+    if params["/conversations"].present? && params["/conversations"][:subject].present?  && params["/conversations"][:subject] == 'Nothing_Happened'
+      @header_value = params["/conversations"][:subject]
+      @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC").where.not(admin_user_id: nil)
+    elsif params["/conversations"].present? && params["/conversations"][:subject].present?
       @message = Message.subjects[params["/conversations"][:subject]]
       @header_value = params["/conversations"][:subject]
       @conversation = Conversation.includes(:messages).where("messages.subject = ?", @message).group("conversations.id", "messages.id").order("messages.created_at DESC")

@@ -50,6 +50,9 @@
       <% end %>
     </div>
   <% end %>
+  <script>
+      $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
+  </script>
 <% end %>
 
 <% if message.sender_id == nil %>

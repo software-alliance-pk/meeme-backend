@@ -75,7 +75,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
   end
 
   def index
-    @blocked_users = @current_user.blocked_users
+    @blocked_users = @current_user.blocked_users.paginate(page: params[:page], per_page: 25)
   end
 
   private

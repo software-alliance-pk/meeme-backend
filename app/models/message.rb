@@ -1,4 +1,5 @@
 class Message < ApplicationRecord
+  # after_commit :update_conversation_list
   after_commit :upload_image
   after_commit :notification_update
   scope :recently_created, -> { order(created_at: :desc) }
@@ -15,6 +16,12 @@ class Message < ApplicationRecord
   end
   def upload_image
     broadcast_render_to "divs", partial: "dashboard/message", formats: [:html] ,locals: { role: self, user: Current.admin_user }
+  end
+
+  def update_conversation_list
+    if self.admin_user_id != nil
+      broadcast_render_to "divs", partial: "dashboard/update_conversation_list", formats: [:html] ,locals: { role: self, user: Current.admin_user, conversation_id: self.conversation_id }
+    end
   end
 
 end

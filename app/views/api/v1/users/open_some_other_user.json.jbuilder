@@ -9,12 +9,17 @@ json.profile do
     json.following  @user.followings.where(follower_user_id: @user.id, status: 'following_added').count
 
   end
-  if Follower.where(user_id: @user.id,follower_user_id: @current_user.id,status: 'follower_added').present? && Follower.where(user_id: @current_user.id,follower_user_id: @user.id,status: 'following_added').present?
-    json.follow_each_other true
-  elsif Follower.where(user_id: @user.id,follower_user_id: @current_user.id,status: 'follower_added').present?
-    json.follower_added true
-  elsif Follower.where(user_id: @user.id,follower_user_id: @current_user.id, status: 'pending').present?
-    json.follow_request_send true
+  blocked_user = BlockUser.find_by(blocked_user_id: @user.id, user_id: @current_user.id)
+  if blocked_user.present?
+    json.blocked_user true
+  else
+    if Follower.where(user_id: @user.id, follower_user_id: @current_user.id, status: 'follower_added').present? && Follower.where(user_id: @current_user.id, follower_user_id: @user.id, status: 'following_added').present?
+      json.follow_each_other true
+    elsif Follower.where(user_id: @user.id, follower_user_id: @current_user.id, status: 'follower_added').present?
+      json.follower_added true
+    elsif Follower.where(user_id: @user.id, follower_user_id: @current_user.id, status: 'pending').present?
+      json.follow_request_send true
+    end
   end
   json.badges_count  @user.badges.count
   json.badges  @user.badges.all.each do |badge|
@@ -32,8 +37,5 @@ json.profile do
     json.post_share_count post.share_count
     json.post_type post.post_image.content_type
     json.post_thumbnail post.thumbnail
-
-
   end
-
 end

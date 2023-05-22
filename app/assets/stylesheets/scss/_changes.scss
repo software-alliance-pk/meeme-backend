@@ -321,6 +321,10 @@
     }
   }
 }
+#sidebar .inside .list_blk ul > li > a.btn:focus{
+  box-shadow: none;
+
+}
 
 #user_list .inside .top .round_input input.input,
 #trans .top .form_blk > .input.input{

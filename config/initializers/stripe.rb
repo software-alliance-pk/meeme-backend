@@ -1,6 +1,6 @@
 Rails.configuration.stripe = {
-  :secret_key => "sk_test_51M9ScdLiBz4Ob5xR2eDBHrtxsHi2Z3TKMNpFaN9VrElVSPlCuf6L7ZxydQduEBj3QtW8L9KtATesN5CIOuDAwBgu00i1W7kn3e",
-  :publishable_key => "pk_test_51M9ScdLiBz4Ob5xR3OOO0blU73Nw7lURgo2tvHO1BsjyTRsddRUxDIogJrXH44HmcZQnLajETBf80rufqs4Vbp4b00E368Nhn5"
+  :secret_key => "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",
+  :publishable_key => "pk_live_51LiJD6GTUIZsigd59dvkHtC2tgQMYr61Hu7wzCvEGFAUoNprt40lGGk9hoK3d6PaW7DJGiQuhgl0qAKgfQeNZTcB00Q5dyZtMK"
 }
 
 Stripe.api_key = Rails.configuration.stripe[:secret_key]

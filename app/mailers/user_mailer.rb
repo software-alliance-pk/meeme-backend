@@ -3,7 +3,7 @@ class UserMailer < ApplicationMailer
   def user_forgot_password(email, otp)
     @otp = otp
     @email=  email
-    mail(to: @email, subject: 'Forgot Password For Memee' )
+    mail(to: @email, subject: 'Forgot Password' )
   end
 
   def winner_email(user,email,coins,card,rank)

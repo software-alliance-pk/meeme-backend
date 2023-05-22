@@ -7,7 +7,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
   def index
     @comments = Post.find_by(id: params[:post_id])
     if @comments.present?
-      @comments = @comments.comments.where(parent_id: nil).paginate(page: params[:page], per_page: 25)
+      @comments = @comments.comments.where(parent_id: nil).order('created_at DESC').paginate(page: params[:page], per_page: 25)
       if @comments.present?
       else
       end
@@ -32,9 +32,11 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   def create
-    @comment = Post.find(params[:post_id]).comments.new(description: params[:description],
-                                                        user_id: @current_user.id,
-                                                        post_id: params[:post_id])
+    # @comment = Post.find(params[:post_id]).comments.new(description: params[:description],
+    #                                                     user_id: @current_user.id,
+    #                                                     post_id: params[:post_id])
+    @comment = Post.find(params[:post_id]).comments.new(image_comments_params)
+    @comment.user_id = @current_user.id
     if @comment.save
       if Post.find(params[:post_id]).user_id != @current_user.id
         Notification.create(title: "Comment",
@@ -45,19 +47,22 @@ class Api::V1::CommentsController < Api::V1::ApiController
                             sender_name: @current_user.username,
                             sender_image: @current_user.profile_image.present? ? CloudfrontUrlService.new(@current_user.profile_image).cloudfront_url : '')
       end
-      render json: { comment: @comment }, status: :ok
+      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? @comment.comment_image.blob.url : '' }, status: :ok
     else
       render_error_messages(@comment)
     end
   end
 
   def create_child_comment
-    @comment = Post.find(params[:post_id]).comments.new(description: params[:description],
-                                                        user_id: @current_user.id,
-                                                        post_id: params[:post_id],
-                                                        parent_id: params[:comment_id])
+    # @comment = Post.find(params[:post_id]).comments.new(description: params[:description],
+    #                                                     user_id: @current_user.id,
+    #                                                     post_id: params[:post_id],
+    #                                                     parent_id: params[:comment_id])
+    @comment = Post.find(params[:post_id]).comments.new(image_comments_params)
+    @comment.user_id = @current_user.id
+    @comment.parent_id = params[:comment_id]
     if @comment.save
-      render json: { comment: @comment }, status: :ok
+      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? @comment.comment_image.blob.url : '' }, status: :ok
       if Post.find(params[:post_id]).user_id != @current_user.id
         Notification.create(title: "Comment",
                             body: "#{@current_user.username} commented on your post",
@@ -151,6 +156,10 @@ class Api::V1::CommentsController < Api::V1::ApiController
     else
       return render json: { message: ' Post Not found' }, status: :not_found
     end
+  end
+
+  def image_comments_params
+    params.permit(:description, :post_id, :comment_image)
   end
 
   def comment_params
