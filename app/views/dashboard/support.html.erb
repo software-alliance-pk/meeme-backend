@@ -38,9 +38,9 @@
           <div class="user_list" id="main_user_list">
             <% if @conversation.present? %>
               <% @conversation.each do |conversation| %>
-                <div class="user_blk" id="clicked" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.username %>'); get_post('<%= conversation.sender.username %>')">
+                <div class="user_blk" id="clicked" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.email %>'); get_post('<%= conversation.sender.username %>')">
                   <div class="ico fill round">
-                    <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png") %>" alt="">
+                    <img src="<%= conversation.sender.profile_image.attached? ? CloudfrontUrlService.new(conversation.sender.profile_image).cloudfront_url : asset_path("user.png") %>" alt="">
                   </div>
                   <div class="inr w-100">
                     <div class="title">
@@ -140,7 +140,7 @@
         $.ajax({
             type: "GET",
             url: "conversation",
-            data: {conversation_id: conversation_id, name: name, admin_id: admin_id},
+            data: {conversation_id: conversation_id, email: email, admin_id: admin_id},
             success: function (response) {
                 var messages = response.messages
                 if (response.conversation.status === "Closed") {
@@ -160,11 +160,11 @@
         })
     }
 
-    function get_image(name) {
+    function get_image(email) {
         $.ajax({
             type: "GET",
             url: "conversation-image",
-            data: {name: name},
+            data: {email: email},
             success: function (response) {
                 document.getElementById("profile_image").removeAttribute("hidden")
                 document.getElementById("profile_image").src = response.image

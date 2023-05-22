@@ -17,11 +17,11 @@ class SupportController < ApplicationController
                 @image = []
             end
         end
-        if params[:name].present?
-            @user = User.find_by(username: params[:name])
-            @user_image = @user.profile_image.attached? ? url_for(@user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
+        if params[:email].present?
+            @user = User.find_by(email: params[:email])
+            @user_image = @user.profile_image.attached? ? CloudfrontUrlService.new(@user.profile_image).cloudfront_url : ActionController::Base.helpers.asset_path('user.png')
             @admin = AdminUser.find(params[:admin_id])
-            @admin_image = @admin.admin_profile_image.attached? ? url_for(@admin.admin_profile_image) : ActionController::Base.helpers.asset_path('user.png')
+            @admin_image = @admin.admin_profile_image.attached? ? CloudfrontUrlService.new(@admin.admin_profile_image).cloudfront_url : ActionController::Base.helpers.asset_path('user.png')
         end
         respond_to do |format|
             format.json {render json: {messages: @messages, images: @all_images_array, user_image: @user_image, admin_image: @admin_image, conversation: @conversation}}
@@ -29,9 +29,9 @@ class SupportController < ApplicationController
     end
 
     def get_profile_image
-        if params[:name].present?
-            @user = User.find_by(username: params[:name])
-            @image = @user.profile_image.attached? ? url_for(@user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
+        if params[:email].present?
+            @user = User.find_by(email: params[:email])
+            @image = @user.profile_image.attached? ? CloudfrontUrlService.new(@user.profile_image).cloudfront_url : ActionController::Base.helpers.asset_path('user.png')
             respond_to do |format|
                 format.json {render json: {image: @image}}
             end
@@ -56,7 +56,7 @@ class SupportController < ApplicationController
                                     message_id: @message.id,
                                     sender_id: current_admin_user.id,
                                     sender_name: current_admin_user.admin_user_name,
-                                    sender_image: current_admin_user.admin_profile_image.present? ?  current_admin_user.admin_profile_image.blob.url : '')
+                                    sender_image: current_admin_user.admin_profile_image.present? ?  CloudfrontUrlService.new(current_admin_user.admin_profile_image).cloudfront_url : '')
             end
         else
             render json: { message: "No conversation present" }, status: :not_found
@@ -86,7 +86,7 @@ class SupportController < ApplicationController
           # receiver_name: message.conversation.receiver.username,
           created_at: message.created_at,
           message_images_count:  message.message_images.count,
-          message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
+          message_images: message.message_images.map{|message_image| message_image.present? ? CloudfrontUrlService.new(message_image).cloudfront_url : ''} ,
           # sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
           # receiver_image: message.receiver.profile_image.attached? ? message.receiver.profile_image.blob.url : ''
         }

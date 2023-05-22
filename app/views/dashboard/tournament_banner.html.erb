@@ -37,7 +37,7 @@
                     </div>
                   </div>
                   <div class="fig">
-                    <img src="<%= tournament_banner.tournament_banner_photo.attached? ? tournament_banner.tournament_banner_photo.blob.url : asset_path("item-pic.svg")%>" alt="">
+                    <img src="<%= tournament_banner.tournament_banner_photo.attached? ? CloudfrontUrlService.new(tournament_banner.tournament_banner_photo).cloudfront_url : asset_path("item-pic.svg")%>" alt="">
                   </div>
                   <div class="content">
                     <span class="f-26"><%=tournament_banner.title.present? ? tournament_banner.title: "No title"%></span>

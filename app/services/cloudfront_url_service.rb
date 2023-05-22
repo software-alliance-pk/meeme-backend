@@ -13,4 +13,9 @@ class CloudfrontUrlService
     url = "https://d3mh1peks7kf2k.cloudfront.net/#{@image}"
     url
   end
+
+  def admin_urls
+    url = "https://d3mh1peks7kf2k.cloudfront.net/#{@image.key}"
+    url
+  end
 end

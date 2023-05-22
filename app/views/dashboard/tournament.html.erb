@@ -86,7 +86,7 @@
                 <td><%=post.user.likes.where(tournament_banner_id: banner_id).count %></td>
                 <td>
                   <div class="img">
-                    <img src="<%= post.post_image.attached? ? post.post_image.blob.url : asset_path("tr-1.jpg")%>" alt="">
+                    <img src="<%= post.post_image.attached? ? CloudfrontUrlService.new(post.post_image).cloudfront_url : asset_path("tr-1.jpg")%>" alt="">
                   </div>
                 </td>
                 <% if @banner.present? %>
@@ -107,7 +107,7 @@
                         <% likes = post.likes.where(status: "like").count %>
                         <% created = post.user.tournament_users&.first&.created_at.strftime('%b %d, %Y') %>
                         <% dislikes = post.likes.where(status: "dislike").count %>
-                        <% url = post.post_image.present? ? post.post_image.blob.url : asset_path("tr-1.jpg") %>
+                        <% url = post.post_image.present? ? CloudfrontUrlService.new(post.post_image).cloudfront_url : asset_path("tr-1.jpg") %>
                         <button type="button" class="pop_btn"
                                 data-popup="trans_profile" onclick="open_tormnt_modal('<%=username %>', '<%= email%>', '<%= likes%>', '<%=created %>', '<%= dislikes%>', '<%= url %>','<%= counter %>')">Reward</button>
                       </li>
