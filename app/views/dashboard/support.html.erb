@@ -90,9 +90,9 @@
 
             <%= form_with do |form| %>
               <div class="form_inside">
-                <%= form.file_field :message_images, id: "document-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
+                <%= form.file_field :message_images, id: "document-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg, video/mp4' %>
                 <label for="document-btn" class="ico_btn label"><img src="<%= asset_path("icon-clip.svg") %>" alt=""></label>
-                <%= form.file_field :message_images, id: "file-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg' %>
+                <%= form.file_field :message_images, id: "file-btn", direct_upload: true, multiple: true, hidden: true, accept: 'image/png, image/jpeg, image/jpg, video/mp4' %>
                 <label for="file-btn" class="ico_btn label" id="label_btn"><img src="<%= asset_path("icon-image.svg") %>" alt=""></label>
                 <input type="text" class="input" name="body" id="body" placeholder="Write your message here" required>
                 <input name="conversation_id" id="conversation_id" hidden></input>
@@ -180,91 +180,228 @@
         var chat_list_id = document.getElementsByClassName("chat_list")[0].id
         var topDiv = document.getElementById(chat_list_id)
         var admindiv = document.getElementById("admin_div")
+        document.getElementById("num_id").innerHTML = message.message_ticket
+        var message_div = document.createElement("div")
         if (message.sender_id !== null) {
-            document.getElementById("num_id").innerHTML = message.message_ticket
-            var message_div = document.createElement("div")
             message_div.setAttribute('class', 'chat_blk')
-            var div = document.createElement("div")
-            div.setAttribute('class', 'ico fill round')
-            var img = document.createElement("img");
+        }else{
+            message_div.setAttribute('class', 'chat_blk memee')
+        }
+        var div = document.createElement("div")
+        div.setAttribute('class', 'ico fill round')
+        var img = document.createElement("img");
+        if (message.sender_id !== null) {
             img.src = user_image
             div.appendChild(img)
-            var div1 = document.createElement("div")
-            if (images[0] === "") {
-                div1.setAttribute('class', 'txt')
-                var p = document.createElement("p")
-                p.setAttribute("class", "bottom")
-                div1.appendChild(p.appendChild(document.createTextNode(message.body)))
-            } else {
-                div1.setAttribute('class', 'txt w-50 h-50')
-                if (images.length === 1) {
-                    var image_div = document.createElement("div")
-                    var message_img = document.createElement("img");
-                    message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
-                    message_img.src = images
-                    image_div.appendChild(message_img)
-                } else {
-                    var image_div = document.createElement("div")
-                    images.forEach(function (image) {
-                        var message_img = document.createElement("img");
-                        message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end mb-1')
-                        message_img.src = image
-                        image_div.appendChild(message_img)
-                    })
-                }
-                div1.appendChild(image_div)
-                var p_div = document.createElement("div")
-                var p = document.createElement("p")
-                p_div.appendChild(p.appendChild(document.createTextNode(message.body)))
-                div1.appendChild(p_div)
-            }
-            message_div.appendChild(div)
-            message_div.appendChild(div1)
-            topDiv.appendChild(message_div)
-        } else {
-            var message_div = document.createElement("div")
-            message_div.setAttribute('class', 'chat_blk memee')
-            var div = document.createElement("div")
-            div.setAttribute('class', 'ico fill round')
-            var img = document.createElement("img");
+        }else{
             img.setAttribute("style", "border-radius: 50%; object-fit: cover")
             img.src = admin_image
             div.appendChild(img)
-            var div1 = document.createElement("div")
-            if (images[0] === "") {
-                div1.setAttribute('class', 'txt')
-                var p = document.createElement("p")
-                div1.appendChild(p.appendChild(document.createTextNode(message.body)))
-            } else {
-                div1.setAttribute('class', 'txt w-50 h-50')
-                if (images.length === 1) {
+        }
+        var div1 = document.createElement("div")
+        if (images[0] === "") {
+            div1.setAttribute('class', 'txt')
+            var p = document.createElement("p")
+            if (message.sender_id !== null){
+                p.setAttribute("class", "bottom")
+            }
+            div1.appendChild(p.appendChild(document.createTextNode(message.body)))
+        }else {
+            div1.setAttribute('class', 'txt w-50 h-50')
+            if (images.length === 1) {
+                if (images[0].split('.').pop().toLowerCase() === 'mp4'){
+                    var image_div = document.createElement("div")
+                    image_div.setAttribute('class', 'w-40 h-40 float-end')
+                    var videoSource = document.createElement("source")
+                    videoSource.setAttribute("src", `${images[0]}`)
+                    videoSource.setAttribute("type", "video/mp4");
+                    var video = document.createElement('video')
+                    video.setAttribute("controls", true)
+                    video.setAttribute('class', 'w-100 h-100');
+                    video.append(videoSource)
+                    image_div.append(video);
+                }else{
                     var image_div = document.createElement("div")
                     var message_img = document.createElement("img");
-                    message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end')
+                    message_img.setAttribute('class', 'w-40 h-40 float-end')
                     message_img.src = images
                     image_div.appendChild(message_img)
-                } else {
-                    var image_div = document.createElement("div")
-                    images.forEach(function (image) {
+                }
+            }else {
+                var image_div = document.createElement("div")
+                images.forEach(function (image) {
+                    if(image.split('.').pop().toLowerCase() === 'mp4'){
+                        image_div.setAttribute('class', 'w-40 h-40 float-end')
+                        var videoSource = document.createElement("source")
+                        videoSource.setAttribute("src", `${image}`)
+                        videoSource.setAttribute("type", "video/mp4");
+                        var video = document.createElement('video')
+                        video.setAttribute("controls", true)
+                        video.setAttribute('class', 'w-100 h-100');
+                        video.append(videoSource)
+                        image_div.append(video);
+                    }else{
                         var message_img = document.createElement("img");
-                        message_img.setAttribute('class', 'img-thumbnail w-40 h-40 border-0 float-end mb-1')
+                        message_img.setAttribute('class', 'w-40 h-40 float-end mb-1')
                         message_img.src = image
                         image_div.appendChild(message_img)
-                    })
-                }
-                div1.appendChild(image_div)
-                var p_div = document.createElement("div")
-                var p = document.createElement("p")
-                p_div.setAttribute("class", "float-end")
-                p_div.appendChild(p.appendChild(document.createTextNode(message.body)))
-                div1.appendChild(p_div)
+                    }
+                })
             }
-            message_div.appendChild(div)
-            message_div.appendChild(div1)
-            topDiv.appendChild(message_div)
+            div1.appendChild(image_div)
+            var p_div = document.createElement("div")
+            var p = document.createElement("p")
+            if (message.sender_id === null){
+                p_div.setAttribute("class", "float-end")
+            }
+            p_div.appendChild(p.appendChild(document.createTextNode(message.body)))
+            div1.appendChild(p_div)
         }
+        message_div.appendChild(div)
+        message_div.appendChild(div1)
+        topDiv.appendChild(message_div)
         $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
     }
+
+    // function message_design(message, images, user_image, admin_image) {
+    //     var chat_list_id = document.getElementsByClassName("chat_list")[0].id
+    //     var topDiv = document.getElementById(chat_list_id)
+    //     var admindiv = document.getElementById("admin_div")
+    //     if (message.sender_id !== null) {
+    //         document.getElementById("num_id").innerHTML = message.message_ticket
+    //         var message_div = document.createElement("div")
+    //         message_div.setAttribute('class', 'chat_blk')
+    //         var div = document.createElement("div")
+    //         div.setAttribute('class', 'ico fill round')
+    //         var img = document.createElement("img");
+    //         img.src = user_image
+    //         div.appendChild(img)
+    //         var div1 = document.createElement("div")
+    //         if (images[0] === "") {
+    //             div1.setAttribute('class', 'txt')
+    //             var p = document.createElement("p")
+    //             p.setAttribute("class", "bottom")
+    //             div1.appendChild(p.appendChild(document.createTextNode(message.body)))
+    //         } else {
+    //             div1.setAttribute('class', 'txt w-50 h-50')
+    //             if (images.length === 1) {
+    //                 if (images[0].split('.').pop().toLowerCase() === 'mp4'){
+    //                     var image_div = document.createElement("div")
+    //                     image_div.setAttribute('class', 'w-40 h-40 float-end')
+    //                     var videoSource = document.createElement("source")
+    //                     videoSource.setAttribute("src", `${images[0]}`)
+    //                     videoSource.setAttribute("type", "video/mp4");
+    //                     var video = document.createElement('video')
+    //                     video.setAttribute("controls", true)
+    //                     video.setAttribute('class', 'w-100 h-100');
+    //                     video.append(videoSource)
+    //                     image_div.append(video);
+    //                 }else{
+    //                     var image_div = document.createElement("div")
+    //                     var message_img = document.createElement("img");
+    //                     message_img.setAttribute('class', 'w-40 h-40 float-end')
+    //                     message_img.src = images
+    //                     image_div.appendChild(message_img)
+    //                 }
+    //             } else {
+    //                 var image_div = document.createElement("div")
+    //                 images.forEach(function (image) {
+    //                     if(image.split('.').pop().toLowerCase() === 'mp4'){
+    //                         image_div.setAttribute('class', 'w-40 h-40 float-end')
+    //                         var videoSource = document.createElement("source")
+    //                         videoSource.setAttribute("src", `${image}`)
+    //                         videoSource.setAttribute("type", "video/mp4");
+    //                         var video = document.createElement('video')
+    //                         video.setAttribute("controls", true)
+    //                         video.setAttribute('class', 'w-100 h-100');
+    //                         video.append(videoSource)
+    //                         image_div.appendChild(video);
+    //                     }else{
+    //                         var message_img = document.createElement("img");
+    //                         message_img.setAttribute('class', 'w-40 h-40 float-end mb-1')
+    //                         message_img.src = image
+    //                         image_div.appendChild(message_img)
+    //                     }
+    //                 })
+    //             }
+    //             div1.appendChild(image_div)
+    //             var p_div = document.createElement("div")
+    //             var p = document.createElement("p")
+    //             p_div.appendChild(p.appendChild(document.createTextNode(message.body)))
+    //             div1.appendChild(p_div)
+    //         }
+    //         message_div.appendChild(div)
+    //         message_div.appendChild(div1)
+    //         topDiv.appendChild(message_div)
+    //     } else {
+    //         var message_div = document.createElement("div")
+    //         message_div.setAttribute('class', 'chat_blk memee')
+    //         var div = document.createElement("div")
+    //         div.setAttribute('class', 'ico fill round')
+    //         var img = document.createElement("img");
+    //         img.setAttribute("style", "border-radius: 50%; object-fit: cover")
+    //         img.src = admin_image
+    //         div.appendChild(img)
+    //         var div1 = document.createElement("div")
+    //         if (images[0] === "") {
+    //             div1.setAttribute('class', 'txt')
+    //             var p = document.createElement("p")
+    //             div1.appendChild(p.appendChild(document.createTextNode(message.body)))
+    //         } else {
+    //             div1.setAttribute('class', 'txt w-50 h-50')
+    //             if (images.length === 1) {
+    //                 if(images[0].split('.').pop().toLowerCase() === 'mp4'){
+    //                     var image_div = document.createElement("div")
+    //                     image_div.setAttribute('class', 'w-40 h-40 float-end')
+    //                     var videoSource = document.createElement("source")
+    //                     videoSource.setAttribute("src", `${images[0]}`)
+    //                     videoSource.setAttribute("type", "video/mp4");
+    //                     var video = document.createElement('video')
+    //                     video.setAttribute("controls", true)
+    //                     video.setAttribute('class', 'w-100 h-100');
+    //                     video.append(videoSource)
+    //                     image_div.append(video);
+    //                 }else{
+    //                     var image_div = document.createElement("div")
+    //                     var message_img = document.createElement("img");
+    //                     message_img.setAttribute('class', 'w-40 h-40 float-end')
+    //                     message_img.src = images
+    //                     image_div.appendChild(message_img)
+    //                 }
+    //             } else {
+    //                 var image_div = document.createElement("div")
+    //                 images.forEach(function (image) {
+    //                     if(image.split('.').pop().toLowerCase() === 'mp4'){
+    //                         image_div.setAttribute('class', 'w-40 h-40 float-end')
+    //                         var videoSource = document.createElement("source")
+    //                         videoSource.setAttribute("src", `${image}`)
+    //                         videoSource.setAttribute("type", "video/mp4");
+    //                         var video = document.createElement('video')
+    //                         video.setAttribute("controls", true)
+    //                         video.setAttribute('class', 'w-100 h-100');
+    //                         video.append(videoSource)
+    //                         image_div.append(video);
+    //                     }else{
+    //                         var message_img = document.createElement("img");
+    //                         message_img.setAttribute('class', 'w-40 h-40 float-end mb-1')
+    //                         message_img.src = image
+    //                         image_div.appendChild(message_img)
+    //                     }
+    //                 })
+    //             }
+    //             div1.appendChild(image_div)
+    //             var p_div = document.createElement("div")
+    //             var p = document.createElement("p")
+    //             p_div.setAttribute("class", "float-end")
+    //             p_div.appendChild(p.appendChild(document.createTextNode(message.body)))
+    //             div1.appendChild(p_div)
+    //         }
+    //         message_div.appendChild(div)
+    //         message_div.appendChild(div1)
+    //         topDiv.appendChild(message_div)
+    //     }
+    //     $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
+    // }
 
     function completed() {
         var message_ticket = document.getElementById("num_id").innerHTML
