@@ -8,7 +8,7 @@ class SupportController < ApplicationController
             @conversation.messages.each do |message|
                 if message.message_images.attached?
                     message.message_images.blobs.each do |image|
-                        @image << url_for(image)
+                        @image << CloudfrontUrlService.new(image).admin_urls
                     end
                 else
                     @image << ""
