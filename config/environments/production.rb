@@ -83,7 +83,7 @@ Rails.application.configure do
   # require "syslog/logger"
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new "app-name")
   #config.action_cable.url = 'ws://18.234.141.32/cable'
-  config.action_cable.url = "ws://34.201.211.234/cable"
+  config.action_cable.url = "wss://staging.memee.app/cable"
 
   config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
   config.action_mailer.default_url_options = { host: 'https://staging.memee.app'}
