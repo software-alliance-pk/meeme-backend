@@ -8,28 +8,28 @@
         <div class="txt w-50 h-50">
           <% if message.message_images.length == 1 %>
             <% if message.message_images.blobs.first.content_type == 'video/mp4' %>
-              <div class="img-thumbnail w-40 h-40 border-0 float-end">
+              <div class="w-40 h-40 float-end">
                 <video controls style="width: 100%; height: 100%;">
                   <source src="<%= CloudfrontUrlService.new(message.message_images.first).cloudfront_url %>" type="video/mp4">
                 </video>
               </div>
             <% else %>
               <div>
-                <img class="img-thumbnail w-40 h-40 border-0 float-end" src="<%= CloudfrontUrlService.new(message.message_images.first).cloudfront_url %>">
+                <img class="w-40 h-40 float-end" src="<%= CloudfrontUrlService.new(message.message_images.first).cloudfront_url %>">
               </div>
             <% end %>
             <div><%= message.body %></div>
           <% else %>
             <% message.message_images.each do |image| %>
               <% if image.content_type == 'video/mp4' %>
-                <div class="img-thumbnail w-40 h-40 border-0 float-end">
+                <div class="w-40 h-40 float-end">
                   <video controls style="width: 100%; height: 100%;">
                     <source src="<%= CloudfrontUrlService.new(image).admin_urls %>" type="video/mp4">
                   </video>
                 </div>
               <% else %>
                 <div>
-                  <img class="img-thumbnail w-40 h-40 border-0 float-end mb-1" src="<%= CloudfrontUrlService.new(image).admin_urls %>">
+                  <img class="w-40 h-40 border-0 mb-1" src="<%= CloudfrontUrlService.new(image).admin_urls %>">
                 </div>
               <% end %>
             <% end %>
@@ -49,28 +49,28 @@
         <div class="txt w-50 h-50">
           <% if message.message_images.length == 1 %>
             <% if message.message_images.blobs.first.content_type == 'video/mp4' %>
-              <div class="img-thumbnail w-40 h-40 border-0 float-end">
+              <div class="w-40 h-40 float-end">
                 <video controls style="width: 100%; height: 100%;">
                   <source src="<%= CloudfrontUrlService.new(message.message_images.first).cloudfront_url %>" type="video/mp4">
                 </video>
               </div>
             <% else %>
               <div>
-                <img class="img-thumbnail w-40 h-40 border-0 float-end" src="<%= CloudfrontUrlService.new(message.message_images.first).cloudfront_url %>">
+                <img class="w-40 h-40 float-end" src="<%= CloudfrontUrlService.new(message.message_images.first).cloudfront_url %>">
               </div>
             <% end %>
             <div style="float: right"><%= message.body %></div>
           <% else %>
             <% message.message_images.each do |image| %>
               <% if image.content_type == 'video/mp4' %>
-                <div class="img-thumbnail w-40 h-40 border-0 float-end">
+                <div class="w-40 h-40 float-end">
                   <video controls style="width: 100%; height: 100%;">
                     <source src="<%= CloudfrontUrlService.new(image).admin_urls %>" type="video/mp4">
                   </video>
                 </div>
               <% else %>
                 <div>
-                  <img class="img-thumbnail w-40 h-40 border-0 float-end mb-1" src="<%= CloudfrontUrlService.new(image).admin_urls %>">
+                  <img class="w-40 h-40 float-end mb-1" src="<%= CloudfrontUrlService.new(image).admin_urls %>">
                 </div>
               <% end %>
             <% end %>
