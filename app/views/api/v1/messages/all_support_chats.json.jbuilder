@@ -17,5 +17,5 @@ json.messages @messages.each do|chat|
     json.message_image message_image.present? ? CloudfrontUrlService.new(message_image).cloudfront_url : ''
   end
   # json.message_image chat&.message_image&.attached? ? chat.message_image.blob.url : ''
-  json.sender_image chat&.sender&.profile_image&.attached? ? CloudfrontUrlService.new(chat.sender.profile_image).cloudfront_url : ''
+  json.sender_image chat&.admin_user&.admin_profile_image&.attached? ? CloudfrontUrlService.new(chat.admin_user.admin_profile_image).cloudfront_url : ''
   end

@@ -80,13 +80,15 @@ class SupportController < ApplicationController
           id: message.id,
           body: message.body,
           conversation_id: message.conversation_id,
+          admin_user_name: message.admin_user.admin_user_name.present? ? message.admin_user.admin_user_name : '',
           # sender_id: message.sender_id,
           # sender_name: message.sender.username,
           # receiver_id: message.conversation.receiver.id.present? ? message.conversation.receiver.id : '',
           # receiver_name: message.conversation.receiver.username,
           created_at: message.created_at,
           message_images_count:  message.message_images.count,
-          message_images: message.message_images.map{|message_image| message_image.present? ? CloudfrontUrlService.new(message_image).cloudfront_url : ''} ,
+          message_images: message.message_images.map{|message_image| message_image.present? ? CloudfrontUrlService.new(message_image).cloudfront_url : ''},
+          sender_image: message.admin_user.admin_profile_image.attached? ? CloudfrontUrlService.new(message.admin_user.admin_profile_image).cloudfront_url : '',
           # sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
           # receiver_image: message.receiver.profile_image.attached? ? message.receiver.profile_image.blob.url : ''
         }
