@@ -114,12 +114,22 @@ themes.keys.each do |key|
           images_and_icons[:edit_icon] = app_svgs[0]
         end
       elsif app_svgs.length == 2
-        images_and_icons[:filter_icon] = app_svgs[0]
-        images_and_icons[:filter_cross_icon] = app_svgs[1]
+        if app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/gallery.svg"
+          images_and_icons[:gallery_icon] = app_svgs[0]
+          images_and_icons[:search_icon] = app_svgs[1]
+        else
+          images_and_icons[:filter_icon] = app_svgs[0]
+          images_and_icons[:filter_cross_icon] = app_svgs[1]
+        end
       elsif app_svgs.length == 3
         images_and_icons[:filter_icon] = app_svgs[0]
         images_and_icons[:filter_cross_icon] = app_svgs[1]
         images_and_icons[:search_icon] = app_svgs[2]
+      elsif app_svgs.length == 4
+        images_and_icons[:filter_icon] = app_svgs[0]
+        images_and_icons[:filter_cross_icon] = app_svgs[1]
+        images_and_icons[:gallery_icon] = app_svgs[2]
+        images_and_icons[:search_icon] = app_svgs[3]
       elsif app_svgs.length == 21
         images_and_icons[:backward_icon] = app_svgs[0]
         images_and_icons[:comment_icon] = app_svgs[1]

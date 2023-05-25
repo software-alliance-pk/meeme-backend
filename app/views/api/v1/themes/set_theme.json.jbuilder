@@ -43,9 +43,17 @@ json.nav_bar do
     json.filter CloudfrontUrlService.new(@theme.filter_icon_image).cloudfront_url
     json.filter_cross CloudfrontUrlService.new(@theme.filter_cross_icon_image).cloudfront_url
     json.search CloudfrontUrlService.new(@theme.search_icon_image).cloudfront_url
-  elsif @theme.filter_icon_image.attached? && @theme.filter_cross_icon_image.attached?
-    json.filter CloudfrontUrlService.new(@theme.filter_icon_image).cloudfront_url
-    json.filter_cross CloudfrontUrlService.new(@theme.filter_cross_icon_image).cloudfront_url
+    if @theme.gallery_icon_image.attached?
+      json.gallery CloudfrontUrlService.new(@theme.gallery_icon_image).cloudfront_url
+    end
+  elsif @theme.filter_icon_image.attached? && @theme.filter_cross_icon_image.attached? || @theme.gallery_icon_image.attached?
+    if @theme.gallery_icon_image.attached?
+      json.search CloudfrontUrlService.new(@theme.search_icon_image).cloudfront_url
+      json.gallery CloudfrontUrlService.new(@theme.gallery_icon_image).cloudfront_url
+    else
+      json.filter CloudfrontUrlService.new(@theme.filter_icon_image).cloudfront_url
+      json.filter_cross CloudfrontUrlService.new(@theme.filter_cross_icon_image).cloudfront_url
+    end
   elsif @theme.search_icon_image.attached? || @theme.edit_icon_image.attached?
     if @theme.edit_icon_image.attached?
       json.edit CloudfrontUrlService.new(@theme.edit_icon_image).cloudfront_url
