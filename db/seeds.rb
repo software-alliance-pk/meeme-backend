@@ -114,7 +114,10 @@ themes.keys.each do |key|
           images_and_icons[:edit_icon] = app_svgs[0]
         end
       elsif app_svgs.length == 2
-        if app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/gallery.svg"
+        if app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/edit.svg" && app_svgs[1] == "#{IMAGES_PATH}/#{value}/app_svgs/gallery.svg"
+          images_and_icons[:edit_icon] = app_svgs[0]
+          images_and_icons[:gallery_icon] = app_svgs[1]
+        elsif app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/gallery.svg" && app_svgs[1] == "#{IMAGES_PATH}/#{value}/app_svgs/search.svg"
           images_and_icons[:gallery_icon] = app_svgs[0]
           images_and_icons[:search_icon] = app_svgs[1]
         else
