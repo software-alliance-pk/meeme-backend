@@ -150,11 +150,10 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
+    image_magick (0.1.9)
     image_processing (1.12.2)
       mini_magick (>= 4.9.5, < 5)
       ruby-vips (>= 2.0.17, < 3)
-    imagemagick-binaries (6.8.7.5.1)
-      sys-uname (= 0.9.0)
     importmap-rails (1.1.5)
       actionpack (>= 6.0.0)
       railties (>= 6.0.0)
@@ -288,8 +287,6 @@ GEM
     stimulus-rails (1.2.1)
       railties (>= 6.0.0)
     stripe (8.0.0)
-    sys-uname (0.9.0)
-      ffi (>= 1.0.0)
     thor (1.2.1)
     tilt (2.0.11)
     timeout (0.3.1)
@@ -342,8 +339,8 @@ DEPENDENCIES
   flatpickr
   groupdate
   httparty
+  image_magick
   image_processing (~> 1.2)
-  imagemagick-binaries
   importmap-rails
   jbuilder
   jquery-rails
