@@ -4,4 +4,3 @@ amazon:
   secret_access_key: <%= ENV['BUCKETEER_AWS_SECRET_ACCESS_KEY'] %>
   region: <%= ENV['BUCKETEER_AWS_REGION'] %>
   bucket: <%= ENV['BUCKETEER_BUCKET_NAME'] %>
-  use_accelerate_endpoint: true
