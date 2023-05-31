@@ -12,7 +12,7 @@ production:
   encoding: unicode
   port: 5432
   adapter: postgresql
-  host: ENV['DATABASE_URL']
+  host: <%= ENV['DATABASE_URL'] %>
   username: postgres
   password: postgres
   database: db-meme-production
@@ -31,7 +31,7 @@ staging:
   encoding: unicode
   pool: 5
   adapter: postgresql
-  host: ENV['DATABASE_URL']
+  host: <%= ENV['DATABASE_URL'] %>
   username: deploy
   password: admin123
   database: memee-staging
