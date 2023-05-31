@@ -7,5 +7,5 @@ test:
 production:
   adapter: redis
   channel_prefix: meme_production
-  url: "redis://memeredis.osucun.ng.0001.use1.cache.amazonaws.com:6379"
+  url: ENV['REDIS_URL']
   ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
