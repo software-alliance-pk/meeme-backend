@@ -243,7 +243,7 @@ class DashboardController < ApplicationController
     if params[:id].present?
       @user = User.find(params[:id].to_i)
       if @user.posts.present?
-        @post_image = @user.posts.first.post_image.attached? ? CloudfrontUrlService.new(@user.posts.first.post_image).cloudfront_url : ActionController::Base.helpers.asset_path('bg-img.jpg')
+        @post_image = @user.posts.first.post_image.attached? ? @user.posts.first.post_image.blob.url : ActionController::Base.helpers.asset_path('bg-img.jpg')
         @likes = @user.posts.first.likes.where(status: "like").count
         @dislike = @user.posts.first.likes.where(status: "dislike").count
       else
@@ -301,12 +301,12 @@ class DashboardController < ApplicationController
     @user = User.all
     @badge_title, @badge_images = [], []
     @specific_user = User.find(params[:id])
-    @image = @specific_user.profile_image.attached? ? CloudfrontUrlService.new(@specific_user.profile_image).cloudfront_url : ActionController::Base.helpers.asset_path('user.png')
+    @image = @specific_user.profile_image.attached? ? @specific_user.profile_image.blob.url : ActionController::Base.helpers.asset_path('user.png')
     @badges = @specific_user.user_badges
     @badges.each do |user_badge|
       @badge_title << user_badge.badge.title
       if user_badge.badge.badge_image.attached?
-        @badge_images << CloudfrontUrlService.new(user_badge.badge.badge_image).cloudfront_url
+        @badge_images << user_badge.badge.badge_image.blob.url
       else
         @badge_images << ActionController::Base.helpers.asset_path('user.png')
       end
@@ -389,7 +389,7 @@ class DashboardController < ApplicationController
   def specific_user_transactions
     @transactions = User.find(params[:user_id]).transactions
     @specific_user = User.find(params[:user_id])
-    @image = @specific_user.profile_image.attached? ? CloudfrontUrlService.new(@specific_user.profile_image).cloudfront_url : ActionController::Base.helpers.asset_path('user.png')
+    @image = @specific_user.profile_image.attached? ? @specific_user.profile_image.blob.url : ActionController::Base.helpers.asset_path('user.png')
     respond_to do |format|
       format.json { render json: { transaction: @transactions, image: @image } }
     end

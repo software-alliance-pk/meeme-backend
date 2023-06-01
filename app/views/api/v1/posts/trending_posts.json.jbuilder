@@ -2,9 +2,9 @@ json.trending_posts do
   json.(@trending_posts.to_h.keys) do |post|
     json.user_id post.user.id
     json.username post.user.username
-    json.user_image post.user.profile_image.attached? ? CloudfrontUrlService.new(post.user.profile_image).cloudfront_url : ''
+    json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
     json.post post
-    json.post_image post.post_image.attached? ? CloudfrontUrlService.new(post.post_image).cloudfront_url : ''
+    json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.post_thumbnail post.thumbnail
     json.post_type post.post_image.content_type
     json.compress_image post.post_image.attached? ? post.post_image.blob.url : ''

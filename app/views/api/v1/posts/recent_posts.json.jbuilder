@@ -3,8 +3,8 @@ json.recent_posts do
       json.post post rescue ""
       json.pending_requests @current_user.followers.pending.count
       json.username post.user.username
-      json.user_image post.user.profile_image.attached? ? CloudfrontUrlService.new(post.user.profile_image).cloudfront_url : ''
-      json.post_image post.post_image.attached? ? CloudfrontUrlService.new(post.post_image).cloudfront_url : ''
+      json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
+      json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
       json.post_thumbnail post.thumbnail
       json.post_type post.post_image.content_type
       json.compress_image post.post_image.attached? ? post.post_image.blob.url : ''

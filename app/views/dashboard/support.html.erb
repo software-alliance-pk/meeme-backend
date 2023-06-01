@@ -40,7 +40,7 @@
               <% @conversation.each do |conversation| %>
                 <div class="user_blk" id="clicked" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.email %>'); get_post('<%= conversation.sender.username %>')">
                   <div class="ico fill round">
-                    <img src="<%= conversation.sender.profile_image.attached? ? CloudfrontUrlService.new(conversation.sender.profile_image).cloudfront_url : asset_path("user.png") %>" alt="">
+                    <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png") %>" alt="">
                   </div>
                   <div class="inr w-100">
                     <div class="title">

@@ -71,7 +71,7 @@
                       <input type="checkbox" id="<%=user_details.id%>" onclick="export_csv('<%=user_details.id %>')">
                       <button class="pop_btn btn" id="user_id_<%= user_details.id %>" data-user="<%= user_details.id %>" data-popup="user_profile" onclick="open_profile('<%= user_details.email %>', <%= session[:id] = user_details.id %>)">
                         <div class="ellipse">
-                          <img src="<%= user_details.profile_image.attached? ? CloudfrontUrlService.new(user_details.profile_image).cloudfront_url : asset_path("user.png") %>" alt="">
+                          <img src="<%= user_details.profile_image.attached? ? user_details.profile_image.blob.url : asset_path("user.png") %>" alt="">
                         </div>
                       </button>
                     </div>

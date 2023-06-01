@@ -221,7 +221,7 @@
                           <% @user.each do |user| %>
                           <div class="user d-flex flex-column align-items-center">
                             <div class="ellipse overflow-hidden">
-                              <img src="<%= user.profile_image.attached? ? CloudfrontUrlService.new(user.profile_image).cloudfront_url : asset_path("user.png")%>" alt="" style="object-fit: cover">
+                              <img src="<%= user.profile_image.attached? ? user.profile_image.blob.url : asset_path("user.png")%>" alt="" style="object-fit: cover">
                             </div>
                             <span><%=user.username%></span>
                           </div>

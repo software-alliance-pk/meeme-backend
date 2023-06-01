@@ -3,7 +3,7 @@ class Post < ApplicationRecord
   attr_accessor :tags_which_duplicate_tag
   before_create :check_act_as_taggable_record
   before_update :check_act_as_taggable_record
-  after_create_commit :add_image_variant
+  # after_create_commit :add_image_variant
   # after_create_commit :compress
 
   scope :by_recently_created, -> (limit) { order(created_at: :desc).limit(limit) }

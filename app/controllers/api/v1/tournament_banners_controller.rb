@@ -8,7 +8,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
 
   def index
     render json: { tournament: @tournament,
-                   tournament_banner_image: @tournament.tournament_banner_photo.attached? ? CloudfrontUrlService.new(@tournament.tournament_banner_photo).cloudfront_url : '',
+                   tournament_banner_image: @tournament.tournament_banner_photo.attached? ? @tournament.tournament_banner_photo.blob.url : '',
                    tournament_users_count: @tournament.tournament_users.count,
                    tournament_posts_count: @tournament.posts.count,
                    is_current_user_enrolled: @tournament.users.find_by(id: @current_user.id).present?
@@ -76,7 +76,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
           @tournament_post.update(duplicate_tags: @tags)
         end
         render json: { tournament: @tournament_post.attributes.except('tag_list'),
-                       tournament_banner_image: @tournament_post.post_image.attached? ? CloudfrontUrlService.new(@tournament_post.post_image).cloudfront_url : '',
+                       tournament_banner_image: @tournament_post.post_image.attached? ? @tournament_post.post_image.blob.url : '',
                        tournament_banner_image_content_type: @tournament_post.post_image.content_type
         }, status: :ok
         PostBadgeJob.perform_now(@tournament_post)

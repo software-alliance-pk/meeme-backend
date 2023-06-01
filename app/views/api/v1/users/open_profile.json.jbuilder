@@ -2,11 +2,11 @@ json.user @current_user.username
 json.open_profile_of do
     json.user_id @profile.id
     json.username @profile.username
-    json.user_image @profile.profile_image.attached? ? CloudfrontUrlService.new(@profile.profile_image).cloudfront_url : ''
+    json.user_image @profile.profile_image.attached? ? @profile.profile_image.blob.url : ''
     json.post_count @profile.posts.count
     json.profile_posts @profile.posts.each do |post|
       json.post_description post.description
-      json.post_image post.post_image.attached? ? CloudfrontUrlService.new(post.post_image).cloudfront_url : ''
+      json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
       json.post_likes post.likes.count
       json.post_comments_count post.comments.count
       json.post_share_count post.share_count

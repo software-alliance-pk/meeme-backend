@@ -23,7 +23,7 @@ json.messages @messages.each do |message|
   end
 
   # if message.admin_user.present?
-  #   json.sender_image message.admin_user.admin_profile_image.attached? ? CloudfrontUrlService.new(message.admin_user.admin_profile_image).cloudfront_url : ''
+  #   json.sender_image message.admin_user.admin_profile_image.attached? ? message.admin_user.admin_profile_image.blob.url : ''
   # else
   #   json.sender_image ''
   # end

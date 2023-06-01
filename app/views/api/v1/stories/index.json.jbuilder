@@ -6,10 +6,10 @@ json.user_stories @story.each do |story_user|
       json.user_id story.user_id
       json.username story.user.username
       json.liked_by_current_user Like.where(story_id: story.id, status: 'like', user_id: @current_user.id).present? ? true : false
-      json.user_image story.user.profile_image.attached? ? CloudfrontUrlService.new(story.user.profile_image).cloudfront_url : ''
+      json.user_image story.user.profile_image.attached? ? story.user.profile_image.blob.url : ''
       json.story_created story.created_at
       json.description story.description
-      json.story_image story.story_image.attached? ? CloudfrontUrlService.new(story.story_image).cloudfront_url : ''
+      json.story_image story.story_image.attached? ? story.story_image.blob.url : ''
       json.story_type story.story_image.content_type
       json.story_likes story.likes.count
     end

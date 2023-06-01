@@ -45,9 +45,9 @@ class Api::V1::CommentsController < Api::V1::ApiController
                             notification_type: 'comment',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? CloudfrontUrlService.new(@current_user.profile_image).cloudfront_url : '')
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
       end
-      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? CloudfrontUrlService.new(@comment.comment_image).cloudfront_url : '' }, status: :ok
+      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? @comment.comment_image.blob.url : '' }, status: :ok
     else
       render_error_messages(@comment)
     end
@@ -62,7 +62,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     @comment.user_id = @current_user.id
     @comment.parent_id = params[:comment_id]
     if @comment.save
-      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? CloudfrontUrlService.new(@comment.comment_image).cloudfront_url : '' }, status: :ok
+      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? @comment.comment_image.blob.url : '' }, status: :ok
       if Post.find(params[:post_id]).user_id != @current_user.id
         Notification.create(title: "Comment",
                             body: "#{@current_user.username} commented on your post",
@@ -70,7 +70,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
                             notification_type: 'comment',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? CloudfrontUrlService.new(@current_user.profile_image).cloudfront_url : '')
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
       end
     else
       render_error_messages(@comment)

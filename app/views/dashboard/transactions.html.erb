@@ -63,7 +63,7 @@
                 <td>
                   <div class="user_detail">
                     <div class="img pop_btn" data-popup="trans_profile"  onclick="open_transaction_details('<%= transaction_details.user.username %>', '<%= transaction_details.user.email %>', '<%= transaction_details.user_id %>')">
-                      <img src="<%= transaction_details.user.profile_image.attached? ? CloudfrontUrlService.new(transaction_details.user.profile_image).cloudfront_url : asset_path("user.png")%>" alt="">
+                      <img src="<%= transaction_details.user.profile_image.attached? ? transaction_details.user.profile_image.blob.url : asset_path("user.png")%>" alt="">
                     </div>
                     <div class="txt">
                       <h6><%= transaction_details.user.username %></h6>

@@ -14,7 +14,7 @@ json.message do
   json.message_ticket @message.message_ticket
   json.message_images_count @message.message_images.count
   json.message_images @message.message_images.each do |message_image|
-    json.message_image message_image.present? ? CloudfrontUrlService.new(message_image).cloudfront_url : ''
+    json.message_image message_image.present? ? message_image.blob.url : ''
   end
-  json.sender_image @message.admin_user.admin_profile_image.attached? ? CloudfrontUrlService.new(@message.admin_user.admin_profile_image).cloudfront_url : ''
+  json.sender_image @message.admin_user.admin_profile_image.attached? ? @message.admin_user.admin_profile_image.blob.url : ''
 end

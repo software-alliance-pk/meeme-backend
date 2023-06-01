@@ -2,7 +2,7 @@
   <% if message.sender_id != nil %>
     <div class="chat_blk" id="<% dom_id(message) %>">
       <div class="ico fill round">
-        <img src="<%= message.sender.profile_image.attached? ? CloudfrontUrlService.new(message.sender.profile_image).cloudfront_url : asset_path("user.png") %>" alt="">
+        <img src="<%= message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : asset_path("user.png") %>" alt="">
       </div>
       <% if message.message_images.attached? %>
         <div class="txt w-50 h-50">
@@ -10,12 +10,12 @@
             <% if message.message_images.blobs.first.content_type == 'video/mp4' %>
               <div class="w-40 h-40 float-end">
                 <video controls style="width: 100%; height: 100%;">
-                  <source src="<%= CloudfrontUrlService.new(message.message_images.first).cloudfront_url %>" type="video/mp4">
+                  <source src="<%= message.message_images.first.blob.url %>" type="video/mp4">
                 </video>
               </div>
             <% else %>
               <div>
-                <img class="w-40 h-40 float-end" src="<%= CloudfrontUrlService.new(message.message_images.first).cloudfront_url %>">
+                <img class="w-40 h-40 float-end" src="<%= url_for(message.message_images.first) %>">
               </div>
             <% end %>
             <div><%= message.body %></div>
@@ -24,12 +24,12 @@
               <% if image.content_type == 'video/mp4' %>
                 <div class="w-40 h-40 float-end">
                   <video controls style="width: 100%; height: 100%;">
-                    <source src="<%= CloudfrontUrlService.new(image).admin_urls %>" type="video/mp4">
+                    <source src="<%= image.url %>" type="video/mp4">
                   </video>
                 </div>
               <% else %>
                 <div>
-                  <img class="w-40 h-40 border-0 mb-1" src="<%= CloudfrontUrlService.new(image).admin_urls %>">
+                  <img class="w-40 h-40 border-0 mb-1" src="<%= image.url %>">
                 </div>
               <% end %>
             <% end %>
@@ -43,7 +43,7 @@
   <% else %>
     <div class="chat_blk memee">
       <div class="ico fill round">
-        <img src="<%= user.admin_profile_image.attached? ? CloudfrontUrlService.new(user.admin_profile_image).cloudfront_url : asset_path("user.png") %>" alt="" style="object-fit: cover; border-radius: 50% ">
+        <img src="<%= user.admin_profile_image.attached? ? user.admin_profile_image.blob.url : asset_path("user.png") %>" alt="" style="object-fit: cover; border-radius: 50% ">
       </div>
       <% if message.message_images.attached? %>
         <div class="txt w-50 h-50">
@@ -51,12 +51,12 @@
             <% if message.message_images.blobs.first.content_type == 'video/mp4' %>
               <div class="w-40 h-40 float-end">
                 <video controls style="width: 100%; height: 100%;">
-                  <source src="<%= CloudfrontUrlService.new(message.message_images.first).cloudfront_url %>" type="video/mp4">
+                  <source src="<%= message.message_images.first.blob.url %>" type="video/mp4">
                 </video>
               </div>
             <% else %>
               <div>
-                <img class="w-40 h-40 float-end" src="<%= CloudfrontUrlService.new(message.message_images.first).cloudfront_url %>">
+                <img class="w-40 h-40 float-end" src="<%= message.message_images.first.blob.url %>">
               </div>
             <% end %>
             <div style="float: right"><%= message.body %></div>
@@ -65,12 +65,12 @@
               <% if image.content_type == 'video/mp4' %>
                 <div class="w-40 h-40 float-end">
                   <video controls style="width: 100%; height: 100%;">
-                    <source src="<%= CloudfrontUrlService.new(image).admin_urls %>" type="video/mp4">
+                    <source src="<%= image.url %>" type="video/mp4">
                   </video>
                 </div>
               <% else %>
                 <div>
-                  <img class="w-40 h-40 float-end mb-1" src="<%= CloudfrontUrlService.new(image).admin_urls %>">
+                  <img class="w-40 h-40 float-end mb-1" src="<%= image.url %>">
                 </div>
               <% end %>
             <% end %>

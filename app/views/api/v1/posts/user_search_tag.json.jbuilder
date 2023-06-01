@@ -7,7 +7,7 @@ if @posts.present?
       json.username post.user.username
       # json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
       json.post post.attributes.except('tag_list')
-      json.post_image post.post_image.attached? ? CloudfrontUrlService.new(post.post_image).cloudfront_url : ''
+      json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
       json.post_thumbnail post.thumbnail
       json.post_type post.post_image.content_type
       json.compress_image post.post_image.attached? ? post.post_image.blob.url : ''
@@ -41,7 +41,7 @@ else
       json.username post.user.username
       # json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
       json.post post.attributes.except('tag_list')
-      json.post_image post.post_image.attached? ? CloudfrontUrlService.new(post.post_image).cloudfront_url : ''
+      json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
       json.post_type post.post_image.content_type
       json.liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false
       json.post_likes post.likes.count

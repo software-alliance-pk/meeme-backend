@@ -45,7 +45,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
                             notification_type: 'admin_message',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? CloudfrontUrlService.new(@current_user.profile_image).cloudfront_url : '')
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
         # render json: { report_details: { conversation: @conversation, message: @message } }
       end
     else

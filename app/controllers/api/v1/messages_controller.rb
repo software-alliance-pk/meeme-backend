@@ -67,7 +67,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             notification_type: 'message',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? CloudfrontUrlService.new(@current_user.profile_image).cloudfront_url : '')
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -90,7 +90,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             notification_type: 'admin_message',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? CloudfrontUrlService.new(@current_user.profile_image).cloudfront_url : '')
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -115,7 +115,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             notification_type: 'admin_message',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? CloudfrontUrlService.new(@current_user.profile_image).cloudfront_url : '')
+                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -148,10 +148,10 @@ class Api::V1::MessagesController < Api::V1::ApiController
         receiver_name: message.conversation.receiver.username,
         created_at: message.created_at,
         message_images_count:  message.message_images.count,
-        message_images: message.message_images.map{|message_image| message_image.present? ? CloudfrontUrlService.new(message_image).cloudfront_url : ''} ,
+        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
         # message_image: message.message_image.attached? ? message.message_image.blob.url : '',
-        sender_image: message.sender.profile_image.attached? ? CloudfrontUrlService.new(message.sender.profile_image).cloudfront_url : '',
-        receiver_image: message.receiver.profile_image.attached? ? CloudfrontUrlService.new(message.receiver.profile_image).cloudfront_url : ''
+        sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
+        receiver_image: message.receiver.profile_image.attached? ? message.receiver.profile_image.blob.url : ''
       }
     else
       {
@@ -167,9 +167,9 @@ class Api::V1::MessagesController < Api::V1::ApiController
         created_at: message.created_at,
         message_ticket: message.message_ticket,
         message_images_count:  message.message_images.count,
-        message_images: message.message_images.map{|message_image| message_image.present? ? CloudfrontUrlService.new(message_image).cloudfront_url : ''} ,
+        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
         # message_image: message.message_image.attached? ? message.message_image.blob.url : '',
-        sender_image: message.sender.profile_image.attached? ? CloudfrontUrlService.new(message.sender.profile_image).cloudfront_url : '',
+        sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
         ticket_status: message.conversation.status,
       }
     end
