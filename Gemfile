@@ -43,10 +43,9 @@ gem "bootsnap", require: false
 gem 'activestorage'
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing"
-gem 'imagemagick-binaries'
-gem 'image_magick'
-gem 'ffmpeg'
-gem 'poppler', '~> 3.0', '>= 3.0.7'
+# gem 'imagemagick-binaries'
+# gem 'image_magick'
+# gem 'ffmpeg'
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
