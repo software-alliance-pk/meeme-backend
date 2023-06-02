@@ -45,7 +45,6 @@ gem "bootsnap", require: false
 gem "image_processing", "~> 1.2"
 gem 'imagemagick-binaries'
 gem 'image_magick', "0.1.4"
-# gem 'mini_magick'
 gem 'ffmpeg'
 
 group :development, :test do
