@@ -326,6 +326,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activestorage
   acts-as-taggable-on
   allow_numeric
   audited (~> 5.0)
@@ -343,8 +344,8 @@ DEPENDENCIES
   flatpickr
   groupdate
   httparty
-  image_magick (= 0.1.4)
-  image_processing (~> 1.2)
+  image_magick
+  image_processing
   imagemagick-binaries
   importmap-rails
   jbuilder
