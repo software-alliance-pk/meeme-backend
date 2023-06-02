@@ -22,9 +22,9 @@ class Api::V1::PostsController < Api::V1::ApiController
     if @post.save
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
       if @post.post_image.attached? && @post.post_image.video?
-        thumbnail = @post.post_image.preview(resize_to_limit: [100, 100]).processed.url
+        # thumbnail = @post.post_image.preview(resize_to_limit: [100, 100]).processed.url
         # thumbnail = thumbnail.split('?').first.split('/').last).generate_thumbnail
-        @post.update(duplicate_tags: @tags, thumbnail: thumbnail)
+        @post.update(duplicate_tags: @tags)
       else
         @post.update(duplicate_tags: @tags)
       end
