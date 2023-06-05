@@ -7,6 +7,6 @@ test:
 production:
   adapter: redis
   channel_prefix: meme_production
-  url: "rediss://:p7cf38c935a98598c6ca4249af53306785a4b52d57f7e0bdda738c84560d15934@ec2-44-209-22-162.compute-1.amazonaws.com:23939"
+  url: "rediss://:p54b65164a06d04dfffc8a4163a35c5356994c7ebb99829a6971fa3bc06ca8ec9@ec2-44-198-198-117.compute-1.amazonaws.com:23030"
   ssl_params:
     verify_mode: <%= OpenSSL::SSL::VERIFY_NONE %>
