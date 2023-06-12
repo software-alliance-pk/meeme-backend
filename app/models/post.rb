@@ -9,9 +9,7 @@ class Post < ApplicationRecord
   scope :by_recently_created, -> (limit) { order(created_at: :desc).limit(limit) }
   scope :by_recently_updated, -> (limit) { order(updated_at: :desc).limit(limit) }
   after_create_commit { PostBadgeJob.perform_now(self) }
-
-  validates :description, presence: true
-
+  
   belongs_to :user
   has_one_attached :post_image, dependent: :destroy
 
