@@ -89,7 +89,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
   end
 
   def find_blocked_user
-    @blocked_user = BlockUser.find_by(blocked_user_id: params[:block_user_id], user_id: @current_user.id)
+    @blocked_user = BlockUser.find_by(blocked_user_id: params[:user_id], user_id: @current_user.id)
   end
 
   def generate_ticket_number
