@@ -77,6 +77,12 @@ class Api::V1::PostsController < Api::V1::ApiController
           @posts << post
         end
       end
+      if @posts.present?
+        @posts = @posts.paginate(page: params[:page], per_page: 25)
+      else
+        # @posts=Post.all.paginate(page: params[:page], per_page: 25)
+        render json: { message: "No Post found against this tag " }, status: :not_found
+      end
     else
       Post.tagged_with(params[:tag], :any => true).each do |post|
         if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
@@ -85,6 +91,7 @@ class Api::V1::PostsController < Api::V1::ApiController
         end
       end
       if @posts.present?
+        @posts = @posts.paginate(page: params[:page], per_page: 1)
       else
         # @posts=Post.all.paginate(page: params[:page], per_page: 25)
         render json: { message: "No Post found against this tag " }, status: :not_found

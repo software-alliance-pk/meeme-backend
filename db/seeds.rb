@@ -194,6 +194,10 @@ themes.keys.each do |key|
       attachment_name = "#{value}.svg" if attribute.to_s.start_with?("search")
 
       theme.send("#{attribute}_image").attach(io: File.open(File.join(Rails.root, path)), filename: attachment_name)
+
+      if attribute.to_s.start_with?("tab")
+        theme.update(resized_image: theme.tab_bar_image.blob.variant(resize_to_fill: [1501, 417]).processed.url)
+      end
     end
   end
 end
