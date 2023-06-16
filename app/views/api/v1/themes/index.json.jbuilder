@@ -5,7 +5,7 @@ json.themes @themes.each do |theme|
   # json.background_colors theme.background_colors
   # json.buttons_color theme.buttons_color
   # json.nav_bar_image theme.nav_bar_image.attached? ? theme.nav_bar_image.blob.url : ''
-  json.path theme.tab_bar_image.attached? ? theme.tab_bar_image.blob.url : ''
+  json.path theme.tab_bar_image.attached? ? theme.tab_bar_image.blob.variant(resize_to_limit: [400, 400]) : ''
   # json.width FastImage.size(theme.tab_bar_image.variant(resize: '1800*600^').blob.variant(resize: '1800*600^').url)
   json.coin theme.buy_price
   json.rarity theme.theme_type
