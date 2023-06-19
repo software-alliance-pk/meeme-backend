@@ -12,6 +12,7 @@ module MemeeApp
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
     config.active_storage.variant_processor = :mini_magick
+    Rails.application.config.active_storage.service_urls_expire_in = 1.weeks
 
     # Configuration for the application, engines, and railties goes here.
     #
