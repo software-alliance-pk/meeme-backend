@@ -17,6 +17,7 @@
 #            43 => ['chambray_theme']
 # }
 
+
 themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'], 6 => ['bluish'],
            7 => ['greenish_yellow'], 8 => ['orangy_yellow'], 9 => ['meteorite'], 10 => ['black'], 11 => ['dusk'], 12 => ["banana"], 13 => ["fire"],
            14 => ['water'], 15 => ['blacksand'], 16 => ['smoky'], 17 => ['pink_polka'], 18 => ['camouflage'], 19 => ['flamingo'], 20 => ['samurai_head'],
@@ -194,10 +195,6 @@ themes.keys.each do |key|
       attachment_name = "#{value}.svg" if attribute.to_s.start_with?("search")
 
       theme.send("#{attribute}_image").attach(io: File.open(File.join(Rails.root, path)), filename: attachment_name)
-
-      if attribute.to_s.start_with?("tab")
-        theme.update(resized_image: theme.tab_bar_image.blob.variant(resize_to_fill: [1501, 417]).processed.url)
-      end
     end
   end
 end
