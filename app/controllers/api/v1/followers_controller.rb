@@ -1,8 +1,8 @@
 class Api::V1::FollowersController < Api::V1::ApiController
   before_action :authorize_request
   before_action :not_following_himself, except: %i[index show_pending_requests]
-  before_action :already_following, except: %i[index show_pending_requests update_follower un_follow_user]
-  before_action :find_user, except: %i[index show_pending_requests show_people suggestions]
+  before_action :already_following, except: %i[index show_pending_requests update_follower un_follow_user cancel_follow_request]
+  before_action :find_user, except: %i[index show_pending_requests show_people suggestions cancel_follow_request]
 
   # GET /users
   def index
@@ -53,17 +53,32 @@ class Api::V1::FollowersController < Api::V1::ApiController
       render json: { message: "Request already sent a request" }, status: :ok
     else
       @follower = Follower.new(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
+      @user = User.find_by(id: params[:follower_user_id])
       if @follower.save
-        Notification.create(title: "Friend Request",
-                            body: "#{@current_user.username} wants to follows you",
-                            follow_request_id: @follower.id,
-                            user_id: params[:follower_user_id],
-                            notification_type: 'request_send',
-                            sender_id: @current_user.id,
-                            sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+        if @user.private_account?
+          Notification.create(title: "Friend Request",
+                              body: "#{@current_user.username} wants to follows you",
+                              follow_request_id: @follower.id,
+                              user_id: params[:follower_user_id],
+                              notification_type: 'request_send',
+                              sender_id: @current_user.id,
+                              sender_name: @current_user.username,
+                              sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
 
-        render json: { user: @current_user, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.user_id).username} " }, status: :ok
+          render json: { user: @current_user, is_private: @user.private_account, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.user_id).username} " }, status: :ok
+        else
+          @follower.update(status: 'following_added')
+          Follower.create(user_id: params[:follower_user_id], is_following: true ,follower_user_id: @current_user.id, status: "follower_added")
+          Notification.create(title: "Started Following",
+                              body: "#{@current_user.username} started following you",
+                              follow_request_id: @follower.id,
+                              user_id: params[:follower_user_id],
+                              notification_type: 'request_accepted',
+                              sender_id: @current_user.id,
+                              sender_name: @current_user.username,
+                              sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+          render json: { user: @current_user, is_private: @user.private_account, follower: @follower, message: "#{@current_user.username} started following #{User.find_by(id: @follower.user_id).username} " }, status: :ok
+        end
         # @secondary_follower = Follower.create!(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
       else
         render_error_messages(@follower)
@@ -157,6 +172,14 @@ class Api::V1::FollowersController < Api::V1::ApiController
     else
       return render json: { suggestions: [] }, status: :ok
     end
+  end
+
+  def cancel_follow_request
+    @request = Follower.find_by(follower_user_id: @current_user.id, user_id: params[:follower_user_id], status: 'pending')
+    return render json: { message: 'Not Requested' }, status: :not_found unless @request.present?
+
+    @request.destroy
+    render json: { message: 'Request Cancel Successfullt' }, status: :ok
   end
 
   private

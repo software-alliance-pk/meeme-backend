@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate verify_otp]
-  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_account]
   # GET /users
   def index
     @users = User.all
@@ -141,6 +141,13 @@ class Api::V1::UsersController < Api::V1::ApiController
     if params[:notification_alert] == false.to_s
       @current_user.notifications_disabled!
       render json: { message: "Notifications Off", notification: @current_user.notifications_enabled? }, status: :ok
+    end
+  end
+
+  def private_account
+    if params[:is_private].present?
+      @current_user.update(private_account: params[:is_private])
+      render json: { is_private: @current_user.private_account }, status: :ok
     end
   end
 

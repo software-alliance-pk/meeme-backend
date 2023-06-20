@@ -105,7 +105,7 @@ Rails.application.routes.draw do
           post 'payments/apple_pay', to: "payments#apple_pay"
           post :active_status_change
           post :notification_settings
-
+          put :private_account
         end
         get '/*a', to: 'application#not_found'
       end
@@ -147,7 +147,7 @@ Rails.application.routes.draw do
           get :show_people
           post :un_follow_user
           get :suggestions
-
+          post :cancel_follow_request
         end
       end
       resources :tournament_banners do
