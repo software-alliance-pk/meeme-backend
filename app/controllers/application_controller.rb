@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   # before_action :authenticate_admin_user!
+  protect_from_forgery with: :exception, prepend: true, if: -> { request.protocol == 'https://' }
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_current_user, if: :admin_user_signed_in?
 

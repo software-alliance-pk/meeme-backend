@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meeme-app
+  labels:
+    app: meeme-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: meeme-app
+  template: 
+    metadata:
+      labels:
+        app: meeme-app
+    spec:
+      containers:
+        - name: meeme-app-container
+          image: registry.digitalocean.com/meeme-app/meeme-app:v1
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: meeme-app-env

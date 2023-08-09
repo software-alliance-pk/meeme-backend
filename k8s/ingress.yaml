@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: meeme-app-ingress
+  annotations:
+    # Annotations to preserve session and CSRF token
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "my-app-session"
+    nginx.ingress.kubernetes.io/session-cookie-path: /
+    nginx.ingress.kubernetes.io/secure-backends: "true"
+spec:
+  rules:
+    - host: meeme.appscorridor.com  # Replace with your actual IP address
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: meeme-app
+                port:
+                  number: 3000
+

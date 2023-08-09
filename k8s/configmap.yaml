@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: meeme-app-env
+data:
+  BUCKETEER_AWS_ACCESS_KEY_ID: DO00GE8VCG9AE86UGR62
+  BUCKETEER_AWS_REGION: sfo3
+  BUCKETEER_AWS_SECRET_ACCESS_KEY: kzHEqivgms5Tqk2JYvXFdP0i4rXt0LCDZtgPEYafP9w
+  BUCKETEER_BUCKET_NAME: memee-app-bucket
+  DATABASE_URL: postgresql://doadmin:AVNS_YPnoeFA42BYxBRn7Ibu@memee-app-postgresql-sfo3-18863-do-user-14425281-0.b.db.ondigitalocean.com:25060/defaultdb
+  FIREBASE_SERVER_KEY: AAAAqeL6Uxo:APA91bHHHrX4t8TZj71DxJumIfRrkR5HHFb85g-xia-HkjfLch3kus6OWgEfyNFICnsGvniuUHRxIxxDVrFHDSTGQTKYI2JIHvZOB_T9H1UbRxixwf_CxA52OarD3PtVSVFO2XvAW46J
+  LANG: en_US.UTF-8
+  RAILS_LOG_TO_STDOUT: enabled
+  RAILS_SERVE_STATIC_FILES: enabled
+  REDIS_TLS_URL: rediss://default:AVNS_tjkgiVs0ubFNLpb8iKg@memee-redis-sfo3-57242-do-user-14425281-0.b.db.ondigitalocean.com:25061
+  REDIS_URL: rediss://default:AVNS_tjkgiVs0ubFNLpb8iKg@memee-redis-sfo3-57242-do-user-14425281-0.b.db.ondigitalocean.com:25061
+  SECRET_KEY_BASE: ff47a70569e6f1cc0ee8a6d007f339a03f4bb80b32faae7e0c7bd483198a923f0219f1fdabf9f50021d36c425f5fb4dfedb918521c1a9074f3d25208abcd4bd2
+  ACTION_CABLE_URL: ws://meme-staging.herokuapp.com/cable
