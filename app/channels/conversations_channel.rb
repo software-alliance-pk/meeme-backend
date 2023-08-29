@@ -14,6 +14,7 @@ class ConversationsChannel < ApplicationCable::Channel
       puts "conversation id is missing."
     end
   end
+  # Comment
 
   def unsubscribed
     stop_all_streams
