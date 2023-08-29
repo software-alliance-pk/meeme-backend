@@ -80,6 +80,7 @@ Rails.application.routes.draw do
   get '/post-images', to: "dashboard#post_images"
   get '/set_coins', to: "dashboard#set_coins"
   get '/get_user_post', to: "dashboard#get_user_post"
+  post '/add_rules', to: "tournament_rules#create"
 
   namespace :api do
     namespace :v1 do
@@ -100,15 +101,18 @@ Rails.application.routes.draw do
           delete 'payments/delete_a_card', to: "payments#delete_a_card"
           post 'payments/charge_a_customer', to: "payments#charge_a_customer"
           get 'payments/show_transactions_history', to: "payments#show_transactions_history"
+          post 'payments/payment_intent', to: "payments#payment_intent"
+          post 'payments/apple_pay', to: "payments#apple_pay"
           post :active_status_change
           post :notification_settings
-
+          put :private_account
         end
         get '/*a', to: 'application#not_found'
       end
       post '/auth/login', to: "authentication#login"
       post '/auth/logout', to: "authentication#logout"
       post '/social/social_login', to: "social_login#social_login"
+      get '/tutorials', to: 'tutorials#tutorial'
       resources :posts do
         collection do
           put :update_posts
@@ -143,7 +147,7 @@ Rails.application.routes.draw do
           get :show_people
           post :un_follow_user
           get :suggestions
-
+          post :cancel_follow_request
         end
       end
       resources :tournament_banners do
@@ -158,7 +162,7 @@ Rails.application.routes.draw do
           get :tournament_winner
           get :judge
           get :top_10_positions
-
+          post :forwarding_memee_to_tournament
         end
       end
       resources :stories do
@@ -200,6 +204,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :block_users, only: [:create, :index, :destroy]
+
       resources :notifications do
         collection do
           get :user_notifications
@@ -207,6 +213,13 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :themes do
+        collection do
+          get :set_theme
+        end
+      end
+
+      get '/privacy_policies', to: 'privacy_policies#privacy'
     end
 
   end

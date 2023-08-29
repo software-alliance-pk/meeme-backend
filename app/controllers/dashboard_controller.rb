@@ -124,13 +124,11 @@ class DashboardController < ApplicationController
       redirect_to tournament_banner_path
     else
       if @banner.save
-        rule = @banner.build_tournament_banner_rule(rules: ["Abusing is not Allowed"])
-        rule.save
         @today_date = Time.zone.now.end_of_day.to_datetime
         @tournament_end_date = @banner.end_date.strftime("%a, %d %b %Y").to_datetime
         @tournamnet_days = (@tournament_end_date - @today_date).to_i
-        TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @banner.id)
-        # TournamentWorker.perform_in((Time.now + 1.minute), @banner.id)
+        TournamentWorker.perform_in((Time.now + @tournamnet_days.days))
+        # TournamentWorker.perform_in((Time.now + 1.minute))
         redirect_to tournament_banner_path
       end
     end
@@ -138,6 +136,7 @@ class DashboardController < ApplicationController
 
   def tournament_banner_destroy
     @banner = TournamentBanner.find(params[:id])
+    SendJudgeCoinWorker.perform_in(Time.now, @banner.id)
     if @banner.destroy
       redirect_to tournament_banner_path
     end
@@ -302,12 +301,12 @@ class DashboardController < ApplicationController
     @user = User.all
     @badge_title, @badge_images = [], []
     @specific_user = User.find(params[:id])
-    @image = @specific_user.profile_image.attached? ? url_for(@specific_user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
+    @image = @specific_user.profile_image.attached? ? @specific_user.profile_image.blob.url : ActionController::Base.helpers.asset_path('user.png')
     @badges = @specific_user.user_badges
     @badges.each do |user_badge|
       @badge_title << user_badge.badge.title
       if user_badge.badge.badge_image.attached?
-        @badge_images << url_for(user_badge.badge.badge_image)
+        @badge_images << user_badge.badge.badge_image.blob.url
       else
         @badge_images << ActionController::Base.helpers.asset_path('user.png')
       end
@@ -390,7 +389,7 @@ class DashboardController < ApplicationController
   def specific_user_transactions
     @transactions = User.find(params[:user_id]).transactions
     @specific_user = User.find(params[:user_id])
-    @image = @specific_user.profile_image.attached? ? url_for(@specific_user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
+    @image = @specific_user.profile_image.attached? ? @specific_user.profile_image.blob.url : ActionController::Base.helpers.asset_path('user.png')
     respond_to do |format|
       format.json { render json: { transaction: @transactions, image: @image } }
     end
@@ -489,7 +488,10 @@ class DashboardController < ApplicationController
   end
 
   def support
-    if params["/conversations"].present? && params["/conversations"][:subject].present?
+    if params["/conversations"].present? && params["/conversations"][:subject].present?  && params["/conversations"][:subject] == 'Nothing_Happened'
+      @header_value = params["/conversations"][:subject]
+      @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC").where.not(admin_user_id: nil)
+    elsif params["/conversations"].present? && params["/conversations"][:subject].present?
       @message = Message.subjects[params["/conversations"][:subject]]
       @header_value = params["/conversations"][:subject]
       @conversation = Conversation.includes(:messages).where("messages.subject = ?", @message).group("conversations.id", "messages.id").order("messages.created_at DESC")

@@ -18,7 +18,10 @@
           <%= form_with(model: @notification, local: true, html: {id: 'form'}) do |form| %>
             <div class="top">
               <h6>Choose where to send</h6>
-                <input type="date" name="send_date" class="btn caldr_btn"></input>
+              <div class="caldr_btn">
+                <input type="date" name="send_date" class="btn datepicker"></input>
+              </div>
+
             </div>
             <div class="row">
               <div class="col-12">
@@ -116,4 +119,8 @@
     function cancel(){
         document.getElementById("notify_confirm").style.display = "none"
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr('.datepicker');
+    })
 </script>

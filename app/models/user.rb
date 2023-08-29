@@ -19,7 +19,7 @@ class User < ApplicationRecord
   has_many :tournament_users
   has_many :tournament_banners, through: :tournament_users
   has_many :followers, dependent: :destroy
-  has_many :followings,class_name: "Follower",foreign_key: :follower_user_id
+  has_many :followings,class_name: "Follower",foreign_key: :follower_user_id, dependent: :destroy
   has_many :stories,dependent: :destroy
   has_one :wallet, dependent: :destroy
   has_many :user_cards, dependent: :destroy
@@ -29,6 +29,8 @@ class User < ApplicationRecord
   has_many :badges,through: :user_badges, dependent: :destroy
   has_many :mobile_devices, dependent: :destroy
   has_many :notifications, dependent: :destroy
+  has_many :block_users, dependent: :destroy
+  has_many :blocked_users, :foreign_key => "user_id", :class_name => "BlockUser"
 
   def get_wallet
     return self.wallet if self.wallet.present?

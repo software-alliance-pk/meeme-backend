@@ -19,14 +19,20 @@ json.messages @messages.each do |message|
   if message.sender.present?
     json.sender_image message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : ''
   else
-    json.sender_image ''
+    json.sender_image message.admin_user.admin_profile_image.attached? ? message.admin_user.admin_profile_image.blob.url : ''
   end
+
+  # if message.admin_user.present?
+  #   json.sender_image message.admin_user.admin_profile_image.attached? ? message.admin_user.admin_profile_image.blob.url : ''
+  # else
+  #   json.sender_image ''
+  # end
 
   json.receiver_id message.receiver_id
   json.receiver_name message.receiver.present? ? message.receiver.username : ''
 
-  if message.receiver.present?
-    json.receiver_image message.receiver.profile_image.attached? ? message.receiver.profile_image.blob.url : ''
+  if message.admin_user.present?
+    json.receiver_image message.admin_user.admin_profile_image.attached? ? message.admin_user.admin_profile_image.blob.url : ''
   else
     json.receiver_image ''
   end

@@ -6,5 +6,7 @@ test:
 
 production:
   adapter: redis
-  channel_prefix: memee_production
-  url: redis://127.0.0.1:6379
+  channel_prefix: meme_staging
+  url: "rediss://:p54b65164a06d04dfffc8a4163a35c5356994c7ebb99829a6971fa3bc06ca8ec9@ec2-44-198-198-117.compute-1.amazonaws.com:23030"
+  ssl_params:
+    verify_mode: <%= OpenSSL::SSL::VERIFY_NONE %>

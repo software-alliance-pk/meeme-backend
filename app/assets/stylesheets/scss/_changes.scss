@@ -121,18 +121,32 @@
 #notify {
   .left_blk {
     .top {
-      input[type="date"] {
+      .caldr_btn {
         font-size: 0;
         display: block !important;
-        &::-webkit-calendar-picker-indicator {
+        position: relative;
+        &::after {
+          content: "";
           color: rgba(0, 0, 0, 0);
           opacity: 1;
           display: block;
+          position: absolute;
+          top: 8px;
+          left: 7px;
           background: url("icon-caldr-white.svg") no-repeat;
-          width: 20px;
-          height: 20px;
+          width: 28px;
+          height: 28px;
           margin-right: 0.5rem;
           border-width: thin;
+        }
+        .datepicker{
+          height: 100%;
+          width: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 100;
+          box-shadow: none !important;
         }
       }
     }
@@ -307,6 +321,10 @@
     }
   }
 }
+#sidebar .inside .list_blk ul > li > a.btn:focus{
+  box-shadow: none;
+
+}
 
 #user_list .inside .top .round_input input.input,
 #trans .top .form_blk > .input.input{
@@ -391,6 +409,7 @@
 #description{
   height: 500px !important;
   width: 100%;
+  overflow-y: auto;
 }
 
 #notify_dropdown .dropdown-menu{
@@ -646,17 +665,20 @@
   #description{
     height: 500px;
     width: 100%;
+    overflow-y: auto;
   }
 }
 
 #faq_description{
   height: 500px !important;
   width: 100% !important;
+  overflow-y: auto;
 }
 
 #popup_description{
   height: 500px !important;
   width: 100% !important;
+  overflow-y: auto;
 }
 
 #winner_modal .winner_blk .post_blk{

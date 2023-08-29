@@ -17,5 +17,5 @@ json.messages @messages.each do|chat|
     json.message_image message_image.present? ? message_image.blob.url : ''
   end
   # json.message_image chat&.message_image&.attached? ? chat.message_image.blob.url : ''
-  json.sender_image chat&.sender&.profile_image&.attached? ? chat.sender.profile_image.blob.url : ''
+  json.sender_image chat&.admin_user&.admin_profile_image&.attached? ? chat.admin_user.admin_profile_image.blob.url : ''
   end

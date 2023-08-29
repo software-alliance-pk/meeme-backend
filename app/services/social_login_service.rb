@@ -65,12 +65,10 @@ class SocialLoginService
     end
 
     data = token_data.with_indifferent_access
-    token = JsonWebTokenService.encode(user_id: @user.id)
     user = create_user(data['email'], data['sub'], data)
-    if @fcm_token.present?
-      token = user.mobile_devices.find_or_create_by(mobile_token: @fcm_token)
-    end
-    [user, token]
+    token = JsonWebTokenService.encode(user_id: @user.id)
+    @user.verification_tokens.create(token: token,user_id: @user.id)
+    [@user, token]
   end
 
   private
@@ -80,10 +78,17 @@ class SocialLoginService
       @user
       MobileDevice.find_or_create_by(mobile_token: @fcm_token, user_id: @user.id)
     else
-      @user = User.create(email: email, password: PASSWORD_DIGEST,
-                          password_confirmation: PASSWORD_DIGEST,
-                          username: response['name'])
-      MobileDevice.find_or_create_by(mobile_token: @fcm_token, user_id: @user.id)
+      if response['iss'] == "https://appleid.apple.com"
+        @user = User.create(email: email, password: PASSWORD_DIGEST,
+          password_confirmation: PASSWORD_DIGEST,
+          username: response['email'].split('@').first)
+        MobileDevice.find_or_create_by(mobile_token: @fcm_token, user_id: @user.id)
+      else
+        @user = User.create(email: email, password: PASSWORD_DIGEST,
+                            password_confirmation: PASSWORD_DIGEST,
+                            username: response['name'])
+        MobileDevice.find_or_create_by(mobile_token: @fcm_token, user_id: @user.id)
+      end
     end
   end
 end

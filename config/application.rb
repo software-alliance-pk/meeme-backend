@@ -12,6 +12,7 @@ module MemeeApp
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
     config.active_storage.variant_processor = :mini_magick
+    Rails.application.config.active_storage.service_urls_expire_in = 1.weeks
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -25,6 +26,5 @@ module MemeeApp
     config.eager_load_paths << Rails.root.join("app/services")
     config.action_cable.disable_request_forgery_protection = true
     config.action_cable.url = "/cable"
-    config.active_storage.service_urls_expire_in = 6.days
   end
 end

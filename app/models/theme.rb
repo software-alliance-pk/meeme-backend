@@ -1,0 +1,36 @@
+class Theme < ApplicationRecord
+  validates :title, uniqueness: true
+  has_one_attached :nav_bar_image, dependent: :destroy
+  has_one_attached :background_image, dependent: :destroy
+  has_one_attached :nav_home_icon_selected_image, dependent: :destroy
+  has_one_attached :nav_explore_icon_selected_image, dependent: :destroy
+  has_one_attached :nav_tournament_icon_selected_image, dependent: :destroy
+  has_one_attached :nav_profile_icon_selected_image, dependent: :destroy
+  has_one_attached :nav_home_icon_unselected_image, dependent: :destroy
+  has_one_attached :nav_explore_icon_unselected_image, dependent: :destroy
+  has_one_attached :nav_tournament_icon_unselected_image, dependent: :destroy
+  has_one_attached :nav_profile_icon_unselected_image, dependent: :destroy
+  has_one_attached :search_icon_image, dependent: :destroy
+  has_one_attached :filter_icon_image, dependent: :destroy
+  has_one_attached :filter_cross_icon_image, dependent: :destroy
+  has_one_attached :nav_add_image, dependent: :destroy
+  has_one_attached :tab_bar_image, dependent: :destroy
+  has_one_attached :backward_icon_image, dependent: :destroy
+  has_one_attached :comment_icon_image, dependent: :destroy
+  has_one_attached :edit_icon_image, dependent: :destroy
+  has_one_attached :forward_icon_image, dependent: :destroy
+  has_one_attached :gallery_icon_image, dependent: :destroy
+  has_one_attached :pending_requests_icon_image, dependent: :destroy
+  has_one_attached :tournament_forward_icon_image, dependent: :destroy
+  has_one_attached :dots_icon_image, dependent: :destroy
+  has_one_attached :like_icon_image, dependent: :destroy
+  has_one_attached :main_back_icon_image, dependent: :destroy
+  has_one_attached :main_notification_icon_image, dependent: :destroy
+  has_one_attached :profile_edit_icon_image, dependent: :destroy
+  has_one_attached :profile_notification_icon_image, dependent: :destroy
+  has_one_attached :send_icon_image, dependent: :destroy
+  has_one_attached :setting_icon_image, dependent: :destroy
+  has_one_attached :share_icon_image, dependent: :destroy
+  has_one_attached :shop_icon_image, dependent: :destroy
+  has_one_attached :notification_icon_image, dependent: :destroy
+end

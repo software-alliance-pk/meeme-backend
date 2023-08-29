@@ -28,8 +28,13 @@
             <div class="col-3">
               <div class="item">
                 <div class="body">
-                  <div style="width: 25px; height: 25px; filter: brightness(0) saturate(100%) invert(14%) sepia(50%) saturate(7458%) hue-rotate(356deg) brightness(111%) contrast(118%)">
-                    <%= link_to image_tag("icon-delete.svg"), controller: 'dashboard', action: 'tournament_banner_destroy', id: tournament_banner.id, method: :delete %>
+                  <div class="row">
+                    <div style="width: 40px; height: 40px; filter: brightness(0) saturate(100%) invert(14%) sepia(50%) saturate(7458%) hue-rotate(356deg) brightness(111%) contrast(118%)">
+                      <%= link_to image_tag("icon-delete.svg"), controller: 'dashboard', action: 'tournament_banner_destroy', id: tournament_banner.id, method: :delete %>
+                    </div>
+                    <div style="width: 40px; height: 40px; cursor: pointer">
+                      <a onclick="open_rules()"><%= image_tag('rules.png') %></a>
+                    </div>
                   </div>
                   <div class="fig">
                     <img src="<%= tournament_banner.tournament_banner_photo.attached? ? tournament_banner.tournament_banner_photo.blob.url : asset_path("item-pic.svg")%>" alt="">
@@ -64,11 +69,11 @@
                         </div>
                         <h6>Date Start</h6>
                         <div class="form_blk">
-                          <%= form.date_field :start_date,id: 'start_date' ,class: "input banner_date", required: true %>
+                          <%= form.date_field :start_date,id: 'start_date' ,class: "input banner_date datepicker", placeholder: 'YYYY-MM-DD', required: true %>
                         </div>
                         <h6>Date End</h6>
                         <div class="form_blk">
-                          <%= form.date_field :end_date, id: 'end_date',class: "input banner_date", required: true%>
+                          <%= form.date_field :end_date, id: 'end_date',class: "input banner_date datepicker", placeholder: 'YYYY-MM-DD', required: true%>
                         </div>
                       </div>
                     </div>
@@ -93,27 +98,78 @@
           </div>
         </div>
       </div>
+      <div class="popup" data-popup="add_rules" id="add_rules">
+        <div class="table_dv">
+          <div class="table_cell">
+            <div class="contain">
+              <div class="_inner">
+                <button type="button" class="x_btn" onclick= "close_add_rule()"></button>
+                <h4><%= TournamentBanner.first&.title %> Rules</h4>
+                <%= form_with(url: { controller: 'tournament_rules', action: 'create' }) do |form| %>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="form_blk">
+                        <%= form.rich_text_area :rules, class: "input", required: true, placeholder: "Start typing here....", value: TournamentBanner.first&.tournament_banner_rule&.rules %>
+                        <%= form.hidden_field :tournament_banner_id, value: TournamentBanner.first&.id %>
+                      </div>
+                    </div>
+                    <div class="btn_blk">
+                      <%= form.submit "Save Rules", class: "site_btn", onclick: 'close_add_rule()' %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+<!--      <div class="popup" data-popup="sign_up" id="logon_modal">-->
+<!--        <div class="table_dv">-->
+<!--          <div class="table_cell">-->
+<!--            <div class="contain">-->
+<!--              <div class="row justify-content-center">-->
+<!--                <div class="col-md-7">-->
+<!--                  <div class="_inner rules">-->
+<!--                    <div class="success_img">-->
+<!--                      <img src="<%#= asset_path("signup-confirm.svg") %>" alt="">-->
+<!--                    </div>-->
+<!--                    <p>Rules Added Successfully</p>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
   </section>
 </main>
 
 <script>
-    function open_banner(){
+    function open_banner() {
         document.getElementById("add_banner").style.display = "block"
     }
 
-    function close_banner(){
+    function close_banner() {
         document.getElementById("add_banner").style.display = "none"
         $('#title, #start_date, #end_date').val('')
     }
 
-    $(function() {
-        $('#image_upload').on('change', function(event) {
+    function open_rules() {
+        document.getElementById("add_rules").style.display = "block"
+    }
+
+    function close_add_rule() {
+        document.getElementById("add_rules").style.display = "none"
+    }
+
+    $(function () {
+        $('#image_upload').on('change', function (event) {
             var files = event.target.files;
             var image = files[0]
             console.log(image.size);
             var reader = new FileReader();
-            reader.onload = function(file) {
+            reader.onload = function (file) {
                 var img = new Image();
                 img.src = file.target.result;
                 img.setAttribute("style", "border: 0.1rem; border-radius: 1rem; height: 100%;")
@@ -124,10 +180,14 @@
         });
     });
 
-    $(document).ready(function(){
-        setTimeout(function(){
+    $(document).ready(function () {
+        setTimeout(function () {
             $('#banner_error').fadeOut();
         }, 5000);
+    })
+
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr('.datepicker');
     })
 
 </script>

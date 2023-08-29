@@ -1,7 +1,7 @@
 json.tag params[:tag]
-json.post_count @posts.count
+json.post_count @all_posts.count
 json.explore_posts do
-  json.(@posts) do |post|
+  json.(@all_posts) do |post|
     json.user_id post.user.id
     json.username post.user.username
     json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
@@ -9,7 +9,7 @@ json.explore_posts do
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.post_thumbnail post.thumbnail
     json.post_type post.post_image.content_type
-    json.compress_image post.compress_image
+    json.compress_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false
     json.post_likes post.likes.count
     json.post_comments_count post.comments.count

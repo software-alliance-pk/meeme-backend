@@ -58,8 +58,8 @@
                 </li>
               <li>
                 <a rel="nofollow" href="/sub-admin-sign-up" class="btn <%= params[:action] == "sub_admin_sign_up" ? "active" : "" %>">
-                  <img src="<%= asset_path("sign-up.png")%>" alt="">
-                  Sign up</a>
+                  <img src="<%= asset_path("add-user.svg")%>" alt="">
+                  Sub Admin Sign Up</a>
               </li>
               <li>
                 <a rel="nofollow" data-method="delete" href="/admin_users/sign_out" class="btn log_out">
@@ -68,7 +68,7 @@
               </li>
             </ul>
         </div>
-        <div class="btm_blk">
+      <div class="btm_blk" onclick="window.location.href = '/admin-profile';" style="cursor: pointer">
             <div class="img">
                 <img src="<%= current_admin_user.admin_profile_image.attached? ? current_admin_user.admin_profile_image.blob.url : asset_path("john-smith.jpg")%>" alt="" style="height: 100%">
             </div>

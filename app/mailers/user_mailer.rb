@@ -3,7 +3,7 @@ class UserMailer < ApplicationMailer
   def user_forgot_password(email, otp)
     @otp = otp
     @email=  email
-    mail(to: @email, subject: 'Forgot Password For Memee' )
+    mail(to: @email, subject: 'Forgot Password' )
   end
 
   def winner_email(user,email,coins,card,rank)
@@ -30,4 +30,9 @@ class UserMailer < ApplicationMailer
     mail(to: @email, subject: 'Winner' )
   end
 
+  def tournament_judged_coins(user, coins)
+    @user = user
+    @coins = coins
+    mail(to: @user.email, subject: 'Added Total Judged Coins' )
+  end
 end
