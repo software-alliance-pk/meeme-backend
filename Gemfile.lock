@@ -131,7 +131,7 @@ GEM
     fcm (1.0.8)
       faraday (>= 1.0.0, < 3.0)
       googleauth (~> 1)
-    ffi (1.15.5)
+    ffi (1.15.5-x64-mingw32)
     ffmpeg (0.2.5)
     flatpickr (4.6.11.0)
     globalid (1.0.0)
@@ -202,11 +202,11 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.8)
-    nokogiri (1.13.9-x86_64-linux)
+    nokogiri (1.13.9-x64-mingw32)
       racc (~> 1.4)
     orm_adapter (0.5.0)
     os (1.1.4)
-    pg (1.4.5)
+    pg (1.4.5-x64-mingw32)
     public_suffix (5.0.0)
     puma (4.3.12)
       nio4r (~> 2.0)
@@ -257,7 +257,7 @@ GEM
     rubyzip (2.3.2)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
-    sassc (2.4.0)
+    sassc (2.4.0-x64-mingw32)
       ffi (~> 1.9)
     sassc-rails (2.1.2)
       railties (>= 4.0.0)
@@ -300,6 +300,8 @@ GEM
       railties (>= 6.0.0)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
+    tzinfo-data (1.2023.3)
+      tzinfo (>= 1.0.0)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.0)
@@ -323,6 +325,7 @@ GEM
     zeitwerk (2.6.6)
 
 PLATFORMS
+  x64-mingw32
   x86_64-linux
 
 DEPENDENCIES
@@ -362,13 +365,14 @@ DEPENDENCIES
   stimulus-rails
   stripe
   turbo-rails
+  tzinfo-data
   web-console
   webdrivers
   whenever
   will_paginate
 
 RUBY VERSION
-   ruby 3.0.0p0
+   ruby 3.0.6p216
 
 BUNDLED WITH
    2.4.13

@@ -38,7 +38,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
     if @follower.present?
       render json: { message: "Request already sent a request" }, status: :ok
     else
-      @follower = Follower.new(follower_user_id: @current_user.id, is_following: false, user_id: params[:follower_user_id], status: 'pending')
+      @follower = Follower.new(follower_user_id: @current_user.id, is_following: true, user_id: params[:follower_user_id], status: 'pending')
       @user = User.find_by(id: params[:follower_user_id])
       if @follower.save
         if @user.private_account?

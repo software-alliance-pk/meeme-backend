@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.0.0"
+ruby "3.0.6"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.4"
@@ -27,6 +27,7 @@ gem "stimulus-rails"
 gem "jbuilder"
 gem 'fcm'
 
+gem 'tzinfo-data'
 # Use Redis adapter to run Action Cable in production
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
