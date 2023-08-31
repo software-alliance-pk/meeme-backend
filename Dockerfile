@@ -1,5 +1,5 @@
 # Use the official Ruby image as the base image
-FROM ruby:3.0.0
+FROM ruby:3.0.6
 RUN mkdir -p /var/www/memee-app
 # Set the working directory in the container
 WORKDIR /var/www/memee-app
