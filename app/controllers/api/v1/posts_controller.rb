@@ -91,7 +91,7 @@ class Api::V1::PostsController < Api::V1::ApiController
         end
       end
       if @posts.present?
-        @posts = @posts.paginate(page: params[:page], per_page: 1)
+        @posts = @posts.paginate(page: params[:page], per_page: 25)
       else
         # @posts=Post.all.paginate(page: params[:page], per_page: 25)
         render json: { message: "No Post found against this tag " }, status: :not_found
