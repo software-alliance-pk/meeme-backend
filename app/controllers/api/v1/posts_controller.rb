@@ -25,10 +25,9 @@ class Api::V1::PostsController < Api::V1::ApiController
         thumbnail = ''
         if @post.post_image.previewable?
           video_preview = @post.post_image.preview(resize_to_limit: [100, 100])
-          thumbnail = video_preview.processed
+          thumbnail = video_preview.processed.url if video_preview.processed.present?
         end
-        # thumbnail = thumbnail.split('?').first.split('/').last).generate_thumbnail
-        @post.update(duplicate_tags: @tags, thumbnail: thumbnail&.url)
+        @post.update(duplicate_tags: @tags, thumbnail: thumbnail)
       else
         @post.update(duplicate_tags: @tags)
       end
@@ -37,6 +36,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       render_error_messages(@post)
     end
   end
+  
 
   def update_posts
     @post.tags_which_duplicate_tag = params[:tag_list]
