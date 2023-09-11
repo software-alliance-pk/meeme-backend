@@ -92,4 +92,7 @@ gem "audited", "~> 5.0"
 gem 'httparty'
 gem 'faker'
 gem 'flatpickr'
-
+gem 'mini_magick'
+gem 'carrierwave'
+gem 'image_optim'
+gem 'streamio-ffmpeg'

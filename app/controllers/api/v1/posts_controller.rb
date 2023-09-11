@@ -21,11 +21,11 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post.tags_which_duplicate_tag = params[:tag_list]
     if @post.save
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
-      if @post.post_image.attached? && @post.post_image.video?
+      if @post.post_image.attached? || @post.post_image.video?
         thumbnail = ''
-        if @post.post_image.previewable?
-          video_preview = @post.post_image.preview(resize_to_limit: [100, 100])
-          thumbnail = video_preview.processed.url if video_preview.processed.present?
+        if @post.post_image
+          video_preview = @post.compress
+          # thumbnail = video_preview.processed.url if video_preview.processed.present?
         end
         @post.update(duplicate_tags: @tags, thumbnail: thumbnail)
       else
