@@ -329,7 +329,6 @@ GEM
       concurrent-ruby (~> 1.0)
     tzinfo-data (1.2023.3)
       tzinfo (>= 1.0.0)
-    video_thumbnailer (0.2.0)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.0)
@@ -398,7 +397,6 @@ DEPENDENCIES
   stripe
   turbo-rails
   tzinfo-data
-  video_thumbnailer
   web-console
   webdrivers
   whenever

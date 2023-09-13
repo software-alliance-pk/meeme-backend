@@ -23,6 +23,10 @@ class Api::V1::PostsController < Api::V1::ApiController
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
       if @post.post_image.attached? || @post.post_image.video?
         thumbnail = ''
+        # if @post.post_image.video?
+        #   # Generate a thumbnail for the video
+        #   thumbnail = generate_video_thumbnail(@post.post_image)
+        # end
         if @post.post_image
           video_preview = @post.compress
           # thumbnail = video_preview.processed.url if video_preview.processed.present?
@@ -36,6 +40,56 @@ class Api::V1::PostsController < Api::V1::ApiController
       render_error_messages(@post)
     end
   end
+
+
+  # def generate_video_thumbnail(video_attachment)
+  #   puts "---@@--------Inside Generate Video-----@@--"
+  #   thumbnail = ''
+  
+  #   # Check if FFmpeg is available
+  #   if system('C:\\ffmpeg-2023-09-07-git-9c9f48e7f2-essentials_build\\bin\\ffmpeg.exe -version > NUL 2>&1')
+  #     puts "---@@--------Inside Generate Video IFFFF-----@@--"
+  
+  #     begin
+  #       puts "----@@---- INSIDE BEGIN  = =  "
+  #       # Temporarily create a file to store the thumbnail
+  #       Tempfile.create(['thumbnail', '.jpg']) do |tempfile|
+  #         # Generate the thumbnail using FFmpeg
+  #         puts "----@@---- TEMP FILE CREATE = #{tempfile}"
+  #         video = FFMPEG::Movie.new(video_attachment.download)
+  #         puts "---@@--------PATH NAME ===#{video} -----@@--"
+  #         thumbnail_path = tempfile.path  
+  #         puts "---@@--------PATH NAME ===#{thumbnail_path} -----@@--"
+  #         video.screenshot(thumbnail_path, seek_time: 5) # You can adjust the seek_time as needed
+  
+  #         # Check if the generated thumbnail path contains null bytes
+  #         if thumbnail_path.include?("\x00")
+  #           puts "Error: Thumbnail path contains null byte."
+  #           thumbnail = nil # Indicate that an error occurred
+  #         else
+  #           thumbnail_blob = ActiveStorage::Blob.create_and_upload!(io: File.open(thumbnail_path), filename: "thumbnail.jpg")
+  #           thumbnail = thumbnail_blob.url
+  
+  #           puts "---@@--------Video ScreenSHot == #{thumbnail_blob}-----@@--"
+  #           puts "---@@--------Video ScreenSHot == #{thumbnail_blob}-----@@--"
+  #           puts "---@@--------Video ScreenSHot == #{thumbnail_blob}-----@@--"
+  #           puts "---@@--------Video ScreenSHot == #{thumbnail_blob}-----@@--"
+  #           puts "---@@--------Video ScreenSHot == #{thumbnail_blob}-----@@--"
+  #         end
+  #       end
+  #     rescue StandardError => e
+  #       puts "Error while generating video thumbnail: #{e.message}"
+  #       thumbnail = nil # Indicate that an error occurred
+  #     end
+  #   else
+  #     puts "FFmpeg is not available or there was an error."
+  #     # Handle the case where FFmpeg is not available
+  #     # You might want to log an error or use a default thumbnail
+  #     thumbnail = nil # Indicate that an error occurred
+  #   end
+  #   thumbnail
+  # end
+  
   
 
   def update_posts

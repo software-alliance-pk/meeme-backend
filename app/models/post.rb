@@ -29,26 +29,15 @@ class Post < ApplicationRecord
   end
 
 
-  # def generate_thumbnail
-  #   tempfile = video_attachment.queued_for_write[:original]
-  #   return unless tempfile
-
-  #   movie = FFMPEG::Movie.new(tempfile.path)
-  #   thumbnail_path = File.join(File.dirname(tempfile.path), "thumbnail.jpg")
-
-  #   movie.screenshot(thumbnail_path, seek_time: 5) # Adjust the seek_time as needed
-  #   thumbnail = File.open(thumbnail_path)
-  #   update(thumbnail: thumbnail)
-  # end
-
-
   def  compress
     if self.post_image.present? && self.post_image.content_type[0...5] == "image"
-      @image = self.post_image.variant(quality:10).processed.url
+      @image = self.post_image.variant(resize_to_limit: [512, 512],quality:80).processed.url
       self.update(compress_image: @image)
     end
   end
 
+  
+  
 
   # def self.compress_update(post)
   #   if post.post_image.present? && post.post_image.content_type[0...5] == "image"
