@@ -1,3 +1,5 @@
+require 'tempfile'
+require 'securerandom'
 class Api::V1::PostsController < Api::V1::ApiController
   before_action :authorize_request
   before_action :find_post, only: [:show, :update_posts, :destroy]
@@ -23,10 +25,10 @@ class Api::V1::PostsController < Api::V1::ApiController
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
       if @post.post_image.attached? || @post.post_image.video?
         thumbnail = ''
-        # if @post.post_image.video?
-        #   # Generate a thumbnail for the video
-        #   thumbnail = generate_video_thumbnail(@post.post_image)
-        # end
+        if @post.post_image.video?
+          # Generate a thumbnail for the video
+          thumbnail = generate_video_thumbnail(@post.post_image)
+        end
         if @post.post_image
           video_preview = @post.compress
           # thumbnail = video_preview.processed.url if video_preview.processed.present?
@@ -42,53 +44,65 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
 
-  # def generate_video_thumbnail(video_attachment)
-  #   puts "---@@--------Inside Generate Video-----@@--"
-  #   thumbnail = ''
+  def generate_video_thumbnail(video_attachment)
+    thumbnail = ''
   
-  #   # Check if FFmpeg is available
-  #   if system('C:\\ffmpeg-2023-09-07-git-9c9f48e7f2-essentials_build\\bin\\ffmpeg.exe -version > NUL 2>&1')
-  #     puts "---@@--------Inside Generate Video IFFFF-----@@--"
+    begin
+      # Check if FFmpeg is available
+      if system('C:\\ffmpeg-2023-09-07-git-9c9f48e7f2-essentials_build\\bin\\ffmpeg.exe -version > NUL 2>&1')
   
-  #     begin
-  #       puts "----@@---- INSIDE BEGIN  = =  "
-  #       # Temporarily create a file to store the thumbnail
-  #       Tempfile.create(['thumbnail', '.jpg']) do |tempfile|
-  #         # Generate the thumbnail using FFmpeg
-  #         puts "----@@---- TEMP FILE CREATE = #{tempfile}"
-  #         video = FFMPEG::Movie.new(video_attachment.download)
-  #         puts "---@@--------PATH NAME ===#{video} -----@@--"
-  #         thumbnail_path = tempfile.path  
-  #         puts "---@@--------PATH NAME ===#{thumbnail_path} -----@@--"
-  #         video.screenshot(thumbnail_path, seek_time: 5) # You can adjust the seek_time as needed
+        begin
+          # Generate a random unique filename for the thumbnail
+          thumbnail_filename = "thumbnail_#{SecureRandom.hex(16)}.jpg"
+          thumbnail_path = File.join('C:/Temp', thumbnail_filename)
+          video_blob = video_attachment.blob
   
-  #         # Check if the generated thumbnail path contains null bytes
-  #         if thumbnail_path.include?("\x00")
-  #           puts "Error: Thumbnail path contains null byte."
-  #           thumbnail = nil # Indicate that an error occurred
-  #         else
-  #           thumbnail_blob = ActiveStorage::Blob.create_and_upload!(io: File.open(thumbnail_path), filename: "thumbnail.jpg")
-  #           thumbnail = thumbnail_blob.url
+          # Check if the video_blob content is nil
+          if video_blob.nil?
+            puts "Error: Video content is nil."
+            thumbnail = nil # Indicate that an error occurred
+          else
+            # Download the video blob content to the tempfile
+            File.open(thumbnail_path, 'wb') do |thumbnail_file|
+              thumbnail_file.write(video_blob.download)
+            end
+              
+            # Generate the thumbnail using FFmpeg with a unique output filename
+            thumbnail_output_filename = "thumbnail_#{SecureRandom.hex(16)}.jpg"
+            thumbnail_output_path = File.join('C:/Temp', thumbnail_output_filename)
+            system("C:\\ffmpeg-2023-09-07-git-9c9f48e7f2-essentials_build\\bin\\ffmpeg.exe -i #{thumbnail_path} -ss 5 -vframes 1 -f image2 #{thumbnail_output_path}")
   
-  #           puts "---@@--------Video ScreenSHot == #{thumbnail_blob}-----@@--"
-  #           puts "---@@--------Video ScreenSHot == #{thumbnail_blob}-----@@--"
-  #           puts "---@@--------Video ScreenSHot == #{thumbnail_blob}-----@@--"
-  #           puts "---@@--------Video ScreenSHot == #{thumbnail_blob}-----@@--"
-  #           puts "---@@--------Video ScreenSHot == #{thumbnail_blob}-----@@--"
-  #         end
-  #       end
-  #     rescue StandardError => e
-  #       puts "Error while generating video thumbnail: #{e.message}"
-  #       thumbnail = nil # Indicate that an error occurred
-  #     end
-  #   else
-  #     puts "FFmpeg is not available or there was an error."
-  #     # Handle the case where FFmpeg is not available
-  #     # You might want to log an error or use a default thumbnail
-  #     thumbnail = nil # Indicate that an error occurred
-  #   end
-  #   thumbnail
-  # end
+            # Check if the generated thumbnail path contains null bytes
+            if thumbnail_output_path.include?("\x00")
+              puts "Error: Thumbnail path contains null byte."
+              thumbnail = nil # Indicate that an error occurred
+            else
+              thumbnail_blob = ActiveStorage::Blob.create_and_upload!(io: File.open(thumbnail_output_path), filename: "thumbnail.jpg")
+                            thumbnail = thumbnail_blob.url
+            end
+          end
+        rescue StandardError => e
+          puts "Error while generating video thumbnail: #{e.message}"
+          thumbnail = nil # Indicate that an error occurred
+        ensure
+          # Delete both temporary files after processing
+          # File.delete(thumbnail_path) if File.exist?(thumbnail_path)
+          # File.delete(thumbnail_output_path) if File.exist?(thumbnail_output_path)
+        end
+      else
+        puts "FFmpeg is not available or there was an error."
+        # Handle the case where FFmpeg is not available
+        # You might want to log an error or use a default thumbnail
+        thumbnail = nil # Indicate that an error occurred
+      end
+    rescue StandardError => e
+      puts "Error: #{e.message}"
+      thumbnail = nil # Indicate that an error occurred
+    end
+  
+    thumbnail
+  end
+  
   
   
 
