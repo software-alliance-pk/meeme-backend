@@ -101,7 +101,7 @@ class SocialLoginService
     @user.verification_tokens.create(token: token,user_id: @user.id)
     [@user, token]
   end
-
+ 
   private
 
   def create_user(email, provider_id, response)
