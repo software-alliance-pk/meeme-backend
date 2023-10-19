@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate verify_otp]
-  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_account]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_accoun]
   # GET /users
   def index
     @users = User.all
@@ -82,7 +82,17 @@ class Api::V1::UsersController < Api::V1::ApiController
     if UserMailer.user_forgot_password(@user.email, @otp_generate).deliver_now
       return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
     else
-      return render json: { message: 'OTP was not send successfully' }, status: :unprocessable_entity
+      return render json: { message: 'OTP was not  send successfully' }, status: :unprocessable_entity
+    end
+  end
+
+  def forgot_password_web
+    @otp_generate = 4.times.map { rand(10) }.join
+    @user.update(otp: @otp_generate)
+    if UserMailer.user_forgot_password_web(@user.email, @otp_generate).deliver_now
+      return render json: { message: 'OTP is sent successfully', otp: @otp_generate }, status: :ok
+    else
+      return render json: { message: 'OTP was not  send successfully' }, status: :unprocessable_entity
     end
   end
 

@@ -6,6 +6,13 @@ class UserMailer < ApplicationMailer
     mail(to: @email, subject: 'Forgot Password' )
   end
 
+  def user_forgot_password_web(email, otp)
+    @otp = otp
+    @email=  email
+    @url = "#{ENV['FRONTEND_URL']}/restsetPassword?email=#{email}&otp=#{otp}"
+    mail(to: @email, subject: 'Forgot Password' )
+  end
+
   def winner_email(user,email,coins,card,rank)
     @user = user
     @email=  email
@@ -14,6 +21,7 @@ class UserMailer < ApplicationMailer
     @rank =rank
     mail(to: @email, subject: 'Winner' )
   end
+
   def winner_email_for_coin(user,email,coins,rank)
     @user = user
     @email=  email
