@@ -1,9 +1,10 @@
 class SocialLoginService
   require 'net/http'
+  require 'json'
   PASSWORD_DIGEST = SecureRandom.hex(10)
   APPLE_PEM_URL = 'https://appleid.apple.com/auth/keys'
 
-  def initialize(provider, token, type, mobile_token)
+  def initialize(provider, token, type, mobile_token )
     @token = token
     @provider = provider.downcase
     @type = type
@@ -17,6 +18,8 @@ class SocialLoginService
       facebook_signup(@token)
     elsif @provider == 'apple'
       apple_signup(@token)
+    elsif @provider == 'google_web'
+      google_signup_web(@token)
     end
   end
 
@@ -33,6 +36,45 @@ class SocialLoginService
     @user.verification_tokens.create(token: token,user_id: @user.id)
     [@user, token, profile_image]
   end
+
+
+  def google_signup_web(token)
+    puts " Access Token = #{token}"
+    uri = URI("https://www.googleapis.com/oauth2/v3/userinfo")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    request = Net::HTTP::Get.new(uri)
+    request['Authorization'] = "Bearer #{token}"
+  
+    begin
+      response = http.request(request)
+  
+      if response.code == '200'
+        json_response = JSON.parse(response.body)
+        create_user(json_response['email'], json_response['sub'], json_response)
+  
+        profile_image = @user.profile_image.attached? ? @user.profile_image.blob.url : ''
+        token = JsonWebTokenService.encode(user_id: @user.id)
+        @user.verification_tokens.create(token: token, user_id: @user.id)
+  
+        [@user, token, profile_image]
+      else
+        # Log the error details for debugging
+        Rails.logger.error("Google API Error Response: #{response.body}")
+  
+        error_message = "Failed to authenticate with Google. Error code: #{response.code}"
+        raise StandardError, error_message
+      end
+    rescue StandardError => e
+      # Handle the exception (e.g., log the error and return a user-friendly message)
+      Rails.logger.error("Error during Google authentication: #{e.message}")
+      raise StandardError, "Failed to authenticate with Google. Please try again later."
+    end
+  end
+  
+
+
+  
 
   def facebook_signup(token)
     uri = URI("https://graph.facebook.com/v13.0/me?fields=name,email&access_token=#{token}")
