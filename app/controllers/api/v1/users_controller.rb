@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
-  before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate verify_otp]
-  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_accoun]
+  before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate verify_otp, delete_user]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_accoun, delete_user]
   # GET /users
   def index
     @users = User.all
@@ -16,6 +16,14 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def all_posts
     @posts = Post.where(tournament_meme: false).order('updated_at DESC').paginate(page: params[:page], per_page: 25)
+  end
+
+  def delete_user
+    return render json: { error: "User Id is missing in params." }, status: :unprocessable_entity unless params[:user_id].present?
+    user = User.find_by(id: params[:user_id])
+    return render json: { error: "User with this Id is not present." }, status: :unprocessable_entity unless user.present?
+    user.destroy
+    return render json: { message: "User has been deleted successfully." }, status: :ok
   end
 
   def open_profile

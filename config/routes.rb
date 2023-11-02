@@ -86,6 +86,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :users do
         collection do
+          post:delete_user
           put :update_user
           post :forgot_password
           post :forgot_password_web
