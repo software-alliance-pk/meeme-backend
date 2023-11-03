@@ -20,9 +20,9 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def delete_user
     user_id = params[:user_id]
-    return render json: { error: "User Id is missing in params." }, status: :unprocessable_entity unless user_id.present?
+    return render json: { error: "User Id is missing in params." }, status: :ok unless user_id.present?
     user = User.find_by(id: user_id)
-    return render json: { error: "User with this Id is not present." }, status: :unprocessable_entity unless user.present?
+    return render json: { error: "User with this Id is not present." }, status: :ok unless user.present?
     user.destroy
     return render json: { message: "User has been deleted successfully." }, status: :ok
   end
