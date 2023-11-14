@@ -13,6 +13,10 @@ RUN apt-get update -qq && apt-get install -y \
 # Copy the Gemfile and Gemfile.lock to the container
 COPY Gemfile Gemfile.lock ./
 
+RUN apt update
+RUN apt install -y
+RUN apt-get install -y graphicsmagick
+RUN apt install ffmpeg -y
 # Install project dependencies
 RUN bundle install
 
