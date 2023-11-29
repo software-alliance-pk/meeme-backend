@@ -3,7 +3,7 @@ threads threads_count, threads_count
 port ENV.fetch("PORT") { 3000 }
 worker_timeout 3600 if ENV.fetch("RAILS_ENV", "development") == "development"
  if ENV.fetch("RAILS_ENV", "production") == "production"
-   bind "unix:///var/www/memee-app/tmp/sockets/puma.sock";
+   bind "unix:///var/www/meeme-backend/tmp/sockets/puma.sock";
  end
 environment ENV.fetch("RAILS_ENV") { "production" } if ENV.fetch("RAILS_ENV", "production") == "production"
 environment ENV.fetch("RAILS_ENV") { "development" }  if ENV.fetch("RAILS_ENV", "development") == "development"

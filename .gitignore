@@ -1,3 +1,4 @@
+*nohup.out
 *.rbc
 capybara-*.html
 .rspec

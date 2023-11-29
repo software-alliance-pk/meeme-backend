@@ -388,7 +388,7 @@ DEPENDENCIES
   letter_opener
   mini_magick
   pg
-  puma (~> 4.1)
+  puma
   rails (~> 7.0.4)
   redis (~> 4.2.0)
   sass-rails
