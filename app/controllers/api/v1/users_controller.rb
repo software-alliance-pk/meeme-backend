@@ -1,5 +1,5 @@
 class Api::V1::UsersController < Api::V1::ApiController
-  before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate verify_otp, delete_user]
+  before_action :authorize_request, except: %i[verify_otp create forgot_password reset_user_password email_validate, delete_user]
   before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_accoun, delete_user]
   # GET /users
   def index
@@ -24,7 +24,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     user = User.find_by(id: user_id)
     return render json: { error: "User with this Id is not present." }, status: :ok unless user.present?
     user.destroy
-    return render json: { message: "User has been deleted successfully." }, status: :ok
+    return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
   end
 
   def open_profile
