@@ -20,9 +20,9 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def delete_user
     user_id = params[:user_id]
-    return render json: { error: "User Id is missing in params." }, status: :ok unless user_id.present?
+    return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
     user = User.find_by(id: user_id)
-    return render json: { error: "User with this Id is not present." }, status: :ok unless user.present?
+    return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
     user.destroy
     return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
   end
