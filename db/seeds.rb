@@ -284,3 +284,14 @@ coin_prices_data.each do |data|
 end
 
 
+# Seed data for coin_prices table
+coin_prices_data = [
+  { coins: 'Bitcoin', price: 50000 },
+  { coins: 'Ethereum', price: 4000 },
+  # Add more static values as needed
+]
+
+# Create seed data for coin_prices
+coin_prices_data.each do |data|
+  CoinPrice.create!(coins: data[:coins], price: data[:price])
+end
