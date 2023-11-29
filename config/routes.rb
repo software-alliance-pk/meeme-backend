@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'coin_prices/index'
   get 'privacy-policy', to: 'privacy_policy#privacy_policy'
   devise_for :admin_users, :controllers => {:registrations => "registrations", :passwords => "passwords"}
   mount ActionCable.server => "/cable"
