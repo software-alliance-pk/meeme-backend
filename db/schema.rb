@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_22_133235) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -110,6 +110,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
     t.datetime "updated_at", null: false
     t.index ["blocked_user_id"], name: "index_block_users_on_blocked_user_id"
     t.index ["user_id"], name: "index_block_users_on_user_id"
+  end
+
+  create_table "coin_prices", force: :cascade do |t|
+    t.string "coins"
+    t.decimal "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "comments", force: :cascade do |t|
