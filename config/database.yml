@@ -5,7 +5,7 @@ development:
   host: localhost
   username: postgres
   password: haseeb1234
-  database: memee-dev
+  database: memee-stg
 
 
 production:
