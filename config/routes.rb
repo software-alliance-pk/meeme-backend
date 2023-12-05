@@ -130,6 +130,7 @@ Rails.application.routes.draw do
           post :other_posts
           post :user_search_tag
           post :share_post
+          delete :destroy_multiple
 
         end
       end

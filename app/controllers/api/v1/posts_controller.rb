@@ -194,6 +194,21 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post.destroy
     render json: { message: "Post successfully deleted" }, status: :ok
   end
+  def destroy_multiple
+
+    post_ids = params[:post_ids]
+    deleted_posts = []
+
+    post_ids.each do |post_id|
+      post = Post.find_by(id: post_id)
+      if post.present?
+        post.destroy
+        deleted_posts << post_id
+      end
+    end
+
+    render json: { message: "Posts #{deleted_posts.join(', ')} successfully deleted" }, status: :ok
+  end
 
   def explore
     @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq

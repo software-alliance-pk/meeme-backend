@@ -70,6 +70,7 @@ group :test do
   gem "webdrivers"
 end
 
+gem 'rack-cors'
 gem 'jwt'
 gem 'bcrypt'
 gem 'dotenv-rails'
