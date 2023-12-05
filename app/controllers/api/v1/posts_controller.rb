@@ -1,3 +1,5 @@
+require 'tempfile'
+require 'securerandom'
 class Api::V1::PostsController < Api::V1::ApiController
   before_action :authorize_request
   before_action :find_post, only: [:show, :update_posts, :destroy]
@@ -21,14 +23,17 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post.tags_which_duplicate_tag = params[:tag_list]
     if @post.save
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
-      if @post.post_image.attached? && @post.post_image.video?
+      if @post.post_image.attached? || @post.post_image.video?
         thumbnail = ''
-        if @post.post_image.previewable?
-          video_preview = @post.post_image.preview(resize_to_limit: [100, 100])
-          thumbnail = video_preview.processed
+        if @post.post_image.video?
+          # Generate a thumbnail for the video
+          thumbnail = generate_video_thumbnail(@post.post_image)
         end
-        # thumbnail = thumbnail.split('?').first.split('/').last).generate_thumbnail
-        @post.update(duplicate_tags: @tags, thumbnail: thumbnail&.url)
+        if @post.post_image
+          video_preview = @post.compress
+          # thumbnail = video_preview.processed.url if video_preview.processed.present?
+        end
+        @post.update(duplicate_tags: @tags, thumbnail: thumbnail)
       else
         @post.update(duplicate_tags: @tags)
       end
@@ -37,6 +42,129 @@ class Api::V1::PostsController < Api::V1::ApiController
       render_error_messages(@post)
     end
   end
+
+  
+  def generate_video_thumbnail(video_attachment)
+    thumbnail = ''
+  
+    begin
+      # Check if FFmpeg is available
+      if system('ffmpeg -version > /dev/null 2>&1')
+  
+        begin
+          # Generate a random unique filename for the thumbnail
+          thumbnail_filename = "thumbnail_#{SecureRandom.hex(16)}.jpg"
+          thumbnail_path = File.join('/tmp', thumbnail_filename)
+          video_blob = video_attachment.blob
+  
+          # Check if the video_blob content is nil
+          if video_blob.nil?
+            puts "Error: Video content is nil."
+            thumbnail = nil # Indicate that an error occurred
+          else
+            # Download the video blob content to the tempfile
+            File.open(thumbnail_path, 'wb') do |thumbnail_file|
+              thumbnail_file.write(video_blob.download)
+            end
+  
+            # Generate the thumbnail using FFmpeg with a unique output filename
+            thumbnail_output_filename = "thumbnail_#{SecureRandom.hex(16)}.jpg"
+            thumbnail_output_path = File.join('/tmp', thumbnail_output_filename)
+            system("ffmpeg -i #{thumbnail_path} -ss 5 -vframes 1 -f image2 #{thumbnail_output_path}")
+  
+            # Check if the generated thumbnail path contains null bytes
+            if thumbnail_output_path.include?("\x00")
+              puts "Error: Thumbnail path contains null byte."
+              thumbnail = nil # Indicate that an error occurred
+            else
+              thumbnail_blob = ActiveStorage::Blob.create_and_upload!(io: File.open(thumbnail_output_path), filename: "thumbnail.jpg")
+              thumbnail = thumbnail_blob.url
+            end
+          end
+        rescue StandardError => e
+          puts "Error while generating video thumbnail: #{e.message}"
+          thumbnail = nil # Indicate that an error occurred
+        ensure
+          # Delete both temporary files after processing
+          File.delete(thumbnail_path) if File.exist?(thumbnail_path)
+          File.delete(thumbnail_output_path) if File.exist?(thumbnail_output_path)
+        end
+      else
+        puts "FFmpeg is not available or there was an error."
+        # Handle the case where FFmpeg is not available
+        # You might want to log an error or use a default thumbnail
+        thumbnail = nil # Indicate that an error occurred
+      end
+    rescue StandardError => e
+      puts "Error: #{e.message}"
+      thumbnail = nil # Indicate that an error occurred
+    end
+  
+    thumbnail
+  end
+  
+
+  # def generate_video_thumbnail(video_attachment)
+  #   thumbnail = ''
+  
+  #   begin
+  #     # Check if FFmpeg is available
+  #     if system('C:\\ffmpeg-2023-09-07-git-9c9f48e7f2-essentials_build\\bin\\ffmpeg.exe -version > NUL 2>&1')
+  
+  #       begin
+  #         # Generate a random unique filename for the thumbnail
+  #         thumbnail_filename = "thumbnail_#{SecureRandom.hex(16)}.jpg"
+  #         thumbnail_path = File.join('C:/Temp', thumbnail_filename)
+  #         video_blob = video_attachment.blob
+  
+  #         # Check if the video_blob content is nil
+  #         if video_blob.nil?
+  #           puts "Error: Video content is nil."
+  #           thumbnail = nil # Indicate that an error occurred
+  #         else
+  #           # Download the video blob content to the tempfile
+  #           File.open(thumbnail_path, 'wb') do |thumbnail_file|
+  #             thumbnail_file.write(video_blob.download)
+  #           end
+              
+  #           # Generate the thumbnail using FFmpeg with a unique output filename
+  #           thumbnail_output_filename = "thumbnail_#{SecureRandom.hex(16)}.jpg"
+  #           thumbnail_output_path = File.join('C:/Temp', thumbnail_output_filename)
+  #           system("C:\\ffmpeg-2023-09-07-git-9c9f48e7f2-essentials_build\\bin\\ffmpeg.exe -i #{thumbnail_path} -ss 5 -vframes 1 -f image2 #{thumbnail_output_path}")
+  
+  #           # Check if the generated thumbnail path contains null bytes
+  #           if thumbnail_output_path.include?("\x00")
+  #             puts "Error: Thumbnail path contains null byte."
+  #             thumbnail = nil # Indicate that an error occurred
+  #           else
+  #             thumbnail_blob = ActiveStorage::Blob.create_and_upload!(io: File.open(thumbnail_output_path), filename: "thumbnail.jpg")
+  #                           thumbnail = thumbnail_blob.url
+  #           end
+  #         end
+  #       rescue StandardError => e
+  #         puts "Error while generating video thumbnail: #{e.message}"
+  #         thumbnail = nil # Indicate that an error occurred
+  #       ensure
+  #         # Delete both temporary files after processing
+  #         # File.delete(thumbnail_path) if File.exist?(thumbnail_path)
+  #         # File.delete(thumbnail_output_path) if File.exist?(thumbnail_output_path)
+  #       end
+  #     else
+  #       puts "FFmpeg is not available or there was an error."
+  #       # Handle the case where FFmpeg is not available
+  #       # You might want to log an error or use a default thumbnail
+  #       thumbnail = nil # Indicate that an error occurred
+  #     end
+  #   rescue StandardError => e
+  #     puts "Error: #{e.message}"
+  #     thumbnail = nil # Indicate that an error occurred
+  #   end
+  
+  #   thumbnail
+  # end
+  
+  
+  
 
   def update_posts
     @post.tags_which_duplicate_tag = params[:tag_list]
@@ -66,12 +194,27 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post.destroy
     render json: { message: "Post successfully deleted" }, status: :ok
   end
+  def destroy_multiple
+
+    post_ids = params[:post_ids]
+    deleted_posts = []
+
+    post_ids.each do |post_id|
+      post = Post.find_by(id: post_id)
+      if post.present?
+        post.destroy
+        deleted_posts << post_id
+      end
+    end
+
+    render json: { message: "Posts #{deleted_posts.join(', ')} successfully deleted" }, status: :ok
+  end
 
   def explore
     @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
     @posts = []
     if params[:tag] == ""
-      Post.where(tournament_meme: false).each do |post|
+      Post.where(tournament_meme: false).by_recently_created(25).each do |post|
         if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
         else
           @posts << post
@@ -91,7 +234,7 @@ class Api::V1::PostsController < Api::V1::ApiController
         end
       end
       if @posts.present?
-        @posts = @posts.paginate(page: params[:page], per_page: 1)
+        @posts = @posts.paginate(page: params[:page], per_page: 25)
       else
         # @posts=Post.all.paginate(page: params[:page], per_page: 25)
         render json: { message: "No Post found against this tag " }, status: :not_found
@@ -158,7 +301,7 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def following_posts
     @following_posts = []
-    @following = @current_user.followers.where(is_following: true).pluck(:follower_user_id)
+    @following = Follower.where(follower_user_id: @current_user.id , is_following: true).pluck(:user_id)
     @following = User.where(id: @following).paginate(page: params[:page], per_page: 25)
     @following.each do |user|
       user.posts.where(tournament_meme: false).each do |post|
@@ -171,7 +314,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     @following_posts = @following_posts.shuffle
     if @following_posts.present?
     else
-      render json: { following_posts: [], following_count: @following.count }, status: :ok
+      render json: { following_posts: [], following_count: @following.count}, status: :ok
     end
   end
 

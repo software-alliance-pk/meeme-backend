@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'coin_prices/index'
+  get 'privacy-policy', to: 'privacy_policy#privacy_policy'
+  get 'deletion', to: 'privacy_policy#deletion'
   devise_for :admin_users, :controllers => {:registrations => "registrations", :passwords => "passwords"}
   mount ActionCable.server => "/cable"
   require 'sidekiq/web'
@@ -84,10 +87,13 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      get '/coin_prices', to: 'coin_prices#index'
       resources :users do
         collection do
+          post:delete_user
           put :update_user
           post :forgot_password
+          post :forgot_password_web
           post :reset_user_password
           post :verify_otp
           get :all_posts
@@ -124,6 +130,7 @@ Rails.application.routes.draw do
           post :other_posts
           post :user_search_tag
           post :share_post
+          delete :destroy_multiple
 
         end
       end

@@ -1,6 +1,6 @@
 # Use the official Ruby image as the base image
-FROM ruby:3.0.0
-
+FROM ruby:3.0.6
+RUN mkdir -p /var/www/memee-app
 # Set the working directory in the container
 WORKDIR /var/www/memee-app
 
@@ -13,6 +13,11 @@ RUN apt-get update -qq && apt-get install -y \
 # Copy the Gemfile and Gemfile.lock to the container
 COPY Gemfile Gemfile.lock ./
 
+RUN apt update
+RUN apt install -y
+RUN apt-get install -y graphicsmagick
+RUN apt install ffmpeg -y
+RUN apt install redis-server -y
 # Install project dependencies
 RUN bundle install
 
@@ -23,5 +28,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the Rails server & sidekiq
-CMD ["bash", "-c", "bin/rails server -e production"]
-
+CMD ["bash", "-c", "bin/rails server -e production & bundle exec sidekiq -e production -c 2"]

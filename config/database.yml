@@ -4,8 +4,8 @@ development:
   adapter: postgresql
   host: localhost
   username: postgres
-  password: 1234
-  database: memee-development
+  password: haseeb1234
+  database: memee-stg
 
 
 production:
@@ -17,8 +17,7 @@ production:
   password: postgres
   database: db-meme-production
 
-
-#production:
+# production:
 #  encoding: unicode
 #  port: 5432
 #  adapter: postgresql
