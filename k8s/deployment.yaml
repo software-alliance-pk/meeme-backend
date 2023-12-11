@@ -5,7 +5,7 @@ metadata:
   labels:
     app: meeme-app
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: meeme-app
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: meeme-app-container
-          image: registry.digitalocean.com/meeme-app/meeme-app:v1
+          image: registry.digitalocean.com/meeme-app/meeme-app:merged
           ports:
             - containerPort: 3000
           envFrom:
