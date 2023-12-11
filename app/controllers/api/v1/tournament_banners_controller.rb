@@ -110,6 +110,8 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     end
   end
 
+  
+# To like and Dislike the post creatd in Tournament
   def dislike_a_tournament_post
     if @tournament.posts.find_by(id: params[:post_id]).present?
       if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
