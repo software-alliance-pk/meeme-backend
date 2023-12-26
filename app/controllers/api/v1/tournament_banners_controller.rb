@@ -169,7 +169,9 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   private
 
   def find_tournament
-    unless (@tournament = TournamentBanner.find_by(enable: true))
+    unless (@tournament = TournamentBanner.where(enable: true)
+      .where('end_date > ?', Time.zone.now.end_of_day)
+      .first)
       return render json: { message: 'No Tournament is played at the moment' }, status: :not_found
     end
   end

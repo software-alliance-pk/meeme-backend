@@ -301,7 +301,7 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def following_posts
     @following_posts = []
-    @following = Follower.where(follower_user_id: @current_user.id , is_following: true).pluck(:user_id)
+    @following = Follower.where(follower_user_id: @current_user.id , is_following: true , status: "following_added" || "follower_added" ).pluck(:user_id)
     @following = User.where(id: @following).paginate(page: params[:page], per_page: 25)
     @following.each do |user|
       user.posts.where(tournament_meme: false).each do |post|
@@ -321,6 +321,8 @@ class Api::V1::PostsController < Api::V1::ApiController
   def recent_posts
     @recent_posts = []
     Post.where.not(tournament_meme: true).by_recently_created(25).each do |post|
+      next if post.user.private_account? # Skip posts from users with private accounts
+
       if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
       else
         @recent_posts << post
