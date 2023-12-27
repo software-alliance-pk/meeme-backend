@@ -22,7 +22,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
       return render json: { message: 'Post not found' }, status: :not_found unless @post.present?
 
       @flagged << @current_user.id
-      return render json: { error: @post.errors.full_messages }, status: :bad_request unless @post.update(flagged_by_user: @flagged)
+      return render json: { error: @post.errors.full_messages }, status: :bad_request unless @post.update(flagged_by_user: @flagged, flag_message: params[:message])
 
       render json: { message: 'Post flagged successfully' }
     end

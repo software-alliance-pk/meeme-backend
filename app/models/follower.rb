@@ -6,3 +6,8 @@ class Follower< ApplicationRecord
   after_update  { FollowerBadgeJob.perform_now(self) }
 
 end
+
+class Story < ApplicationRecord
+  belongs_to :user
+  scope :recently_created, -> { order(created_at: :desc) }
+end
