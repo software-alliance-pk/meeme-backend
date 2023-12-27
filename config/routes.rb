@@ -90,7 +90,8 @@ Rails.application.routes.draw do
       get '/coin_prices', to: 'coin_prices#index'
       resources :users do
         collection do
-          post:delete_user
+          post :delete_user
+          get :search
           put :update_user
           post :forgot_password
           post :forgot_password_web
