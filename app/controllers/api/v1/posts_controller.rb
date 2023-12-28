@@ -214,7 +214,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
     @posts = []
     if params[:tag] == ""
-      Post.where(tournament_meme: false).by_recently_created(25).each do |post|
+      Post.where(tournament_meme: false).by_recently_created(200).each do |post|
         if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
         else
           @posts << post
@@ -222,8 +222,8 @@ class Api::V1::PostsController < Api::V1::ApiController
       end
       if @posts.present?
         @posts = @posts.paginate(page: params[:page], per_page: 25)
+        # @posts=Post.all.paginate(page: params[:page], per_page: 2)
       else
-        # @posts=Post.all.paginate(page: params[:page], per_page: 25)
         render json: { message: "No Post found against this tag " }, status: :not_found
       end
     else
