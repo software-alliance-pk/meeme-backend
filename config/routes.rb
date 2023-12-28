@@ -132,7 +132,7 @@ Rails.application.routes.draw do
           post :user_search_tag
           post :share_post
           delete :destroy_multiple
-
+          post :create_downloadable_link
         end
       end
       resources :comments do
@@ -224,6 +224,12 @@ Rails.application.routes.draw do
       resources :themes do
         collection do
           get :set_theme
+        end
+      end
+
+      resources :audits do
+        collection do
+          get :type
         end
       end
 

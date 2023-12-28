@@ -371,6 +371,20 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   end
 
+  def create_downloadable_link
+    image_url = params[:image_url]
+    downloaded_image = open(image_url)
+    temp_file = Tempfile.new(['image', '.jpg'])
+    temp_file.binmode
+    temp_file.write(downloaded_image.read)
+    temp_file.rewind
+    send_file temp_file, filename: 'downloaded_image.jpg', disposition: 'attachment'
+        temp_file.close
+    temp_file.unlink
+    rescue StandardError => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
   private
 
   def find_post
@@ -382,4 +396,5 @@ class Api::V1::PostsController < Api::V1::ApiController
   def post_params
     params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags, :share_count, :thumbnail,:compress_image)
   end
+
 end
