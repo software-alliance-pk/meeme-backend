@@ -5,8 +5,8 @@ class Api::V1::StoriesController < Api::V1::ApiController
 
   def index
     followed_user_ids = Follower.where(follower_user_id: @current_user.id, status: [:follower_added, :following_added]).pluck(:user_id).uniq
-    puts "@current_user.id ======== >>>>> #{@current_user.id}"
-    puts "followed_user_ids ======== >>>>> #{followed_user_ids}"
+    # Include the current user's ID in the followed_user_ids
+    followed_user_ids << @current_user.id
     user_stories = Story.where(user_id: followed_user_ids).recently_created.paginate(page: params[:page], per_page: 25)
     puts user_stories.inspect
     # Assuming you want the count of stories
