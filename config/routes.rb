@@ -129,10 +129,13 @@ Rails.application.routes.draw do
           get :trending_posts
           get :tags
           post :other_posts
+          post :user_search_tags
           post :user_search_tag
           post :share_post
           delete :destroy_multiple
           post :create_downloadable_link
+          post :search_posts_by_tag
+          post :search_tags_trending_post
         end
       end
       resources :comments do

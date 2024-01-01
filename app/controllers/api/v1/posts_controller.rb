@@ -242,15 +242,55 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   end
 
-  def user_search_tag
-    @posts = []
+  def user_search_tags
+    @recent_posts = []
     @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
-    if params[:tag].empty?
+    if params[:tag] == ""
       @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
       if @users.present?
       end
     elsif params[:tag] == "#"
-      @posts = Post.where(tournament_meme: false)
+      @recent_posts = Post.where(tournament_meme: false)
+      @users = []
+
+    else
+      @recent_posts = Post.tagged_with(params[:tag], :any => true)
+      if @recent_posts.present?
+      else
+        render json: { message: "No Post found against this tag " }, status: :not_found
+      end
+    end
+  end
+
+  def search_tags_trending_post
+    @trending_posts = []
+    @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
+    if params[:tag] == ""
+      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
+      if @users.present?
+      end
+    elsif params[:tag] == "#"
+      @trending_posts = Post.where(tournament_meme: false)
+      @users = []
+
+    else
+      @trending_posts = Post.tagged_with(params[:tag], :any => true)
+      if @trending_posts.present?
+      else
+        render json: { message: "No Post found against this tag " }, status: :not_found
+      end
+    end
+  end
+
+  def user_search_tag
+    @posts = []
+    @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
+    if params[:tag] == ""
+      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
+      if @users.present?
+      end
+    elsif params[:tag] == "#"
+      @posts = Posts.where(tournament_meme: false)
       @users = []
 
     else
@@ -260,7 +300,6 @@ class Api::V1::PostsController < Api::V1::ApiController
         render json: { message: "No Post found against this tag " }, status: :not_found
       end
     end
-
   end
 
   def other_posts
