@@ -145,6 +145,7 @@ Rails.application.routes.draw do
           put :update_child_comments
           delete :child_comment_destroy
           post :create_child_comment
+          delete :destroy
         end
       end
       resources :likes do

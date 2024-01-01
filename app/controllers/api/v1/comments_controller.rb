@@ -77,6 +77,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     end
   end
 
+  # To update the single comment 
   def update_comments
     unless @comment.update(comment_params)
       render_error_messages(@comment)
@@ -109,6 +110,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     render json: { message: "Comment successfully destroyed" }, status: :ok
   end
 
+  # To delete the child comments
   def child_comment_destroy
     @child_comment = Comment.find_by(id: params[:comment_id])
     if @child_comment.present?
