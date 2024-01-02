@@ -226,61 +226,61 @@
 #   end
 # end
 
-# badges = { 0 => ["Thousand Miles Badges",
-#                  "Master Aficionado Badge",
-#                  "Opinionated Master Badge",
-#                  "Generous Giver Badge",
-#                  "Explorer God Badge",
-#                  "Part Of The Family Badge",
-#                  "Influencer Badge",
-#                  "I Love My Community Badge",
-#                  "Judgment Level 1 Badge",
-#                  "3rd Place Badge"],
-#            1 => ["Mega Mileage Badge",
-#                  "Expert Aficionado Badge",
-#                  "Reaction Guru Badge",
-#                  "Better To Give Badge",
-#                  "Explorer Guru Badge",
-#                  "Factor Badge",
-#                  "Well Known Badge",
-#                  "The Part Of The Part of Crowd Badge",
-#                  "Spaceship Badge",
-#                  "Judgment Level 2 Badge",
-#                  "2nd Place Badge",
-#                  "Sharing Is Caring Badge"],
-#            2 => ["Novice Aficionado Badge",
-#                  "Commentator Badge",
-#                  "Explorer Badge",
-#                  "Contributor Badge",
-#                  "Famous Badge",
-#                  "Follower Badge",
-#                  "Judgment Level 3 Badge",
-#                  "1st Place Badge",
-#                  "Keepin It A Hundred Badge"] }
+badges = { 0 => ["Thousand Miles Badges",
+                 "Master Aficionado Badge",
+                 "Opinionated Master Badge",
+                 "Generous Giver Badge",
+                 "Explorer God Badge",
+                 "Part Of The Family Badge",
+                 "Influencer Badge",
+                 "I Love My Community Badge",
+                 "Judgment Level 1 Badge",
+                 "3rd Place Badge"],
+           1 => ["Mega Mileage Badge",
+                 "Expert Aficionado Badge",
+                 "Reaction Guru Badge",
+                 "Better To Give Badge",
+                 "Explorer Guru Badge",
+                 "Factor Badge",
+                 "Well Known Badge",
+                 "The Part Of The Part of Crowd Badge",
+                 "Spaceship Badge",
+                 "Judgment Level 2 Badge",
+                 "2nd Place Badge",
+                 "Sharing Is Caring Badge"],
+           2 => ["Novice Aficionado Badge",
+                 "Commentator Badge",
+                 "Explorer Badge",
+                 "Contributor Badge",
+                 "Famous Badge",
+                 "Follower Badge",
+                 "Judgment Level 3 Badge",
+                 "1st Place Badge",
+                 "Keepin It A Hundred Badge"] }
 
-# badges.keys.each do |keys|
-#   badges[keys].each do |values|
-#     v = Badge.create(
-#       title: values,
-#       rarity: keys
-#     )
-#     v.badge_image.attach(
-#       io: File.open(File.join(Rails.root, "app/assets/images/badges/#{values}.png")),
-#       filename: "#{values}.png"
-#     )
-#   end
-# end
-
-
-# Seed data for coin_prices table
-coin_prices_data = [
-  { coin: '12000', price: 10 },
-  { coin: '30000', price: 25 },
-  { coin: '60000', price: 50 },
-  { coin: '120000', price: 100 },
-]
-
-# Create seed data for coin_prices
-coin_prices_data.each do |data|
-  CoinPrice.create!(coin: data[:coin], price: data[:price])
+badges.keys.each do |keys|
+  badges[keys].each do |values|
+    v = Badge.create(
+      title: values,
+      rarity: keys
+    )
+    v.badge_image.attach(
+      io: File.open(File.join(Rails.root, "app/assets/images/badges/#{values}.png")),
+      filename: "#{values}.png"
+    )
+  end
 end
+
+
+# # Seed data for coin_prices table
+# coin_prices_data = [
+#   { coin: '12000', price: 10 },
+#   { coin: '30000', price: 25 },
+#   { coin: '60000', price: 50 },
+#   { coin: '120000', price: 100 },
+# ]
+
+# # Create seed data for coin_prices
+# coin_prices_data.each do |data|
+#   CoinPrice.create!(coin: data[:coin], price: data[:price])
+# end

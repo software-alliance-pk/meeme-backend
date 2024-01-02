@@ -90,7 +90,8 @@ Rails.application.routes.draw do
       get '/coin_prices', to: 'coin_prices#index'
       resources :users do
         collection do
-          post:delete_user
+          post :delete_user
+          get :search
           put :update_user
           post :forgot_password
           post :forgot_password_web
@@ -128,10 +129,13 @@ Rails.application.routes.draw do
           get :trending_posts
           get :tags
           post :other_posts
+          post :user_search_tags
           post :user_search_tag
           post :share_post
           delete :destroy_multiple
-
+          post :create_downloadable_link
+          post :search_posts_by_tag
+          post :search_tags_trending_post
         end
       end
       resources :comments do
@@ -141,6 +145,7 @@ Rails.application.routes.draw do
           put :update_child_comments
           delete :child_comment_destroy
           post :create_child_comment
+          delete :destroy
         end
       end
       resources :likes do
@@ -223,6 +228,12 @@ Rails.application.routes.draw do
       resources :themes do
         collection do
           get :set_theme
+        end
+      end
+
+      resources :audits do
+        collection do
+          get :type
         end
       end
 
