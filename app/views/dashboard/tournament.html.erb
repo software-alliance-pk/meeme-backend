@@ -80,7 +80,7 @@
                 </td>
                 <td><%=post.user.username %></td>
                 <td><%=post.user.email %></td>
-                <td><%=post.likes.where(is_judged: true).like.count %></td>
+                <td onclick="openSidebar()"><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).dislike.count%></td>
                 <td><%=post.user.tournament_users.first.created_at.strftime('%b %d, %Y') %></td>
@@ -283,14 +283,160 @@
       </div>
     </div>
   </section>
-  <div class="side-bar">
-  hello
+
+  <div id="cart-box" class="sidebar">
+  <div id="tormnt_modal">
+      <h3># of Participated</h3>
+      <button type="button" class="x_btn" onclick="closeSidebar()"></button>
+      <div class="detail_blk">
+          <div class="left_blk" style="width:100%">
+              <table>
+                  <thead>
+                      <tr>
+                          <th style="width: 13rem;">Name</th>
+                          <th style="width: 22rem;">Email</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td id="tournament_user_name">Mr Astronut</td>
+                          <td id="tournament_user_email">iammemer@memee.com</td>
+                      </tr>
+                  </tbody>
+              </table>
+              <div class="text-white mb-5">4 of 999 ...</div>
+          </div>
+      </div>
+      <div>
+          <div style="color:#939394">Date Posted</div>
+          <div class="text-white mb-3">Jan 5, 2022</div>
+          <div class="detail_blk mt-0" style="align-items:flex-start;">
+              <div class="right_blk">
+                  <div class="img">
+                      <img src="<%= asset_path("trans-profile.png") %>" alt="">
+                  </div>
+              </div>
+              <div class="right_blk custom-right-side">
+                  <div class="vote_blk">
+                      <span class="vote" style="padding-right:25px">
+                          <img src="<%= asset_path("icon-vote-up.svg") %>" alt="">
+                          <span id="user_likes" style="text-decoration:underline;"></span>
+                          <div class="btn-group" style="position:absolute; right:0;flex-direction:column;">
+                              <a id='up-btn'>
+                                  <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt="">
+                              </a>
+                              <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
+                          </div>
+                      </span>
+                      <span class="vote vote_down" style="padding-right:25px">
+                          <img src="<%= asset_path("icon-vote-down.svg") %>" alt="">
+                          <span id="user_dislikes" style="text-decoration:underline;"></span>
+                          <div class="btn-group" style="position:absolute; right:0;flex-direction:column;">
+                              <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt="">
+                              <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
+                          </div>
+                      </span>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div>
+      <div style="color:#939394">Date Posted</div>
+      <div class="text-white mb-3">Jan 5, 2022</div>
+      <div class="detail_blk mt-0" style="align-items:flex-start;">
+          <div class="right_blk">
+              <div class="img">
+                  <img src="<%= asset_path("trans-profile.png") %>" alt="">
+              </div>
+          </div>
+          <div class="right_blk custom-right-side">
+              <div class="vote_blk">
+                  <span class="vote" style="padding-right:25px">
+                      <img src="<%= asset_path("icon-vote-up.svg") %>" alt="">
+                      <span id="user_likes" style="text-decoration:underline;"></span>
+                      <div class="btn-group" style="position:absolute; right:0;flex-direction:column;">
+                          <a id='up-btn'>
+                              <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt="">
+                          </a>
+                          <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
+                      </div>
+                  </span>
+                  <span class="vote vote_down" style="padding-right:25px">
+                      <img src="<%= asset_path("icon-vote-down.svg") %>" alt="">
+                      <span id="user_dislikes" style="text-decoration:underline;"></span>
+                      <div class="btn-group" style="position:absolute; right:0;flex-direction:column;">
+                          <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt="">
+                          <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
+                      </div>
+                  </span>
+              </div>
+          </div>
+      </div>
   </div>
+  </div>
+</div>
+
+
 </main>
 
 <style>
+.sidebar {
+  height: 100%;
+  width: 400px;
+  position: fixed;
+  top: 0;
+  right: -400px;
+  border-radius: 40px 0px 0px 40px;
+  border: 2px solid #5D5D5D;
+  border-right:none;
+  background: #201E23;
+  overflow-x: hidden;
+  transition: 0.5s;
+  z-index:99;
+}
 
+.sidebar table {
+  max-width:75%;
+}
+.sidebar #tormnt_modal {
+  padding: 20px;
+}
+.sidebar .x_btn{
+min-width: 38px !important;
+width: 38px !important;
+height: 39px !important;
+top: 12px !important;
+right: 12px !important;
+}
+.sidebar .x_btn::before{
+width:25% !important;
+height:25% !important;
+}
+
+.sidebar #tormnt_modal .detail_blk .right_blk{
+width: 65%;
+}
+.sidebar #tormnt_modal .detail_blk .right_blk.custom-right-side{
+  background:transparent;
+  padding-top:0;
+  width:35%
+}
+.sidebar #tormnt_modal .detail_blk .right_blk.custom-right-side .vote_blk{
+  flex-direction: column !important;
+  align-items: flex-start;
+}
 </style>
+<script>
+  function openSidebar() {
+    document.getElementById("cart-box").style.right = "0px"; 
+  }
+
+  function closeSidebar() {
+    document.getElementById("cart-box").style.right = "-400px";
+  }
+</script>
+
 
 <script>
     $('#tournament_id').click(function (){
