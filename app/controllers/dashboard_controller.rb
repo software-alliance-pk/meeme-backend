@@ -7,7 +7,7 @@ class DashboardController < ApplicationController
   def dashboard
     @user = User.order("id DESC").limit(4)
   end
-
+ 
   def welcome
   end
 
@@ -110,6 +110,30 @@ class DashboardController < ApplicationController
       session[:banner] = TournamentBanner.first.present? ? TournamentBanner.first : ""
     end
   end
+
+  def increase_post_like_count
+    like = Like.new(post_id: params[:post_id] , user_id: '1', is_liked: true,is_judged: true,status: 1)
+    like.save
+    render json: { message: "Liked tournament Post" }, status: :ok
+
+    # unless (@tournament = TournamentBanner.where(id: params[:banner_id])
+    #   .where('end_date > ?', Time.zone.now.end_of_day)
+    #   .first)
+    #   return render json: { message: 'No Tournament is played at the moment' }, status: :not_found
+    # end
+
+    # if @tournament.posts.find_by(id: params[:post_id]).present?
+    #   if @tournament.tournament_users.find_by(user_id: '1').present?
+    #     response = TournamentLikeService.new(params[:post_id], '1').create_for_tournament
+    #     render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
+    #   else
+    #     render json: { message: "User is not enrolled in this tournament" }, status: :not_found
+    #   end
+    # else
+    #   render json: { message: "Post is not in this tournament" }, status: :not_found
+    # end
+  end
+  
 
   def tournament_banner
     @tournament_banner = TournamentBanner.all

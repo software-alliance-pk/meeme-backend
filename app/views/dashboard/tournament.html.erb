@@ -42,6 +42,7 @@
               <th style=" width: 6rem">Rank</th>
               <th style="width: 15rem">Name</th>
               <th style="width: 22rem">Email</th>
+              <th style="width: 22rem"> # of times Participated</th>
               <th style="width: 10.6rem">Up Vote</th>
               <th style="width: 13rem">Down Vote</th>
               <th style="width: 13rem">Date Joined</th>
@@ -66,7 +67,7 @@
             <%# end %>
             <% counter =  first_record_value > 10 ?  first_record_value : params[:page].to_i > 1 ? (params[:page].to_i - 1) * 10  : 0%>
             <% @posts.each do |post| %>
-              <tr>
+              <tr >
                 <td>
                   <% counter += 1 %>
                   <% if counter < 4 %>
@@ -79,6 +80,7 @@
                 </td>
                 <td><%=post.user.username %></td>
                 <td><%=post.user.email %></td>
+                <td><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).dislike.count%></td>
                 <td><%=post.user.tournament_users.first.created_at.strftime('%b %d, %Y') %></td>
@@ -109,7 +111,7 @@
                         <% dislikes = post.likes.where(status: "dislike").count %>
                         <% url = post.post_image.present? ? post.post_image.blob.url : asset_path("tr-1.jpg") %>
                         <button type="button" class="pop_btn"
-                                data-popup="trans_profile" onclick="open_tormnt_modal('<%=username %>', '<%= email%>', '<%= likes%>', '<%=created %>', '<%= dislikes%>', '<%= url %>','<%= counter %>')">Reward</button>
+                                data-popup="trans_profile" onclick="open_tormnt_modal('<%=username %>', '<%= email%>', '<%= likes%>', '<%=created %>', '<%= dislikes%>', '<%= url %>','<%= counter %>','<%= post.id%>')">Edit Standing</button>
                       </li>
                     </ul>
                   </div>
@@ -135,7 +137,7 @@
               <div class="col-12">
                 <div class="_inner">
                   <button type="button" class="x_btn" onclick="close_tormnt_modal()"></button>
-                  <h3>Reward</h3>
+                  <h3>Rewards</h3>
                   <div class="detail_blk">
                     <div class="left_blk">
                       <table>
@@ -180,13 +182,24 @@
                         <img src="" alt="" id="image">
                       </div>
                       <div class="vote_blk">
-                        <span class="vote">
+                        <span class="vote" style="padding-right:25px">
                           <img src="<%= asset_path("icon-vote-up.svg") %>" alt="">
-                          <span id="user_likes"></span>
+                          <span id="user_likes" style="text-decoration:underline;"></span>
+                        <div clas="btn-group" style="position:absolute; right:0">
+
+
+
+                     <a id='up-btn'>   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt=""> </a>
+
+                        <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
+                        </div>
                         </span>
-                        <span class="vote vote_down">
+                        <span class="vote vote_down" style="padding-right:25px">
                           <img src="<%= asset_path("icon-vote-down.svg") %>" alt="">
-                          <span id="user_dislikes"></span>
+                          <span id="user_dislikes" style="text-decoration:underline;"></span> <div clas="btn-group" style="position:absolute; right:0">
+                          <img style="width:35px; cursor:pointer;margin-bottom:3px;"  src="<%= asset_path("up-btn.png") %>" alt="">
+                          <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
+                          </div>
                         </span>
                       </div>
                     </div>
@@ -270,7 +283,14 @@
       </div>
     </div>
   </section>
+  <div class="side-bar">
+  hello
+  </div>
 </main>
+
+<style>
+
+</style>
 
 <script>
     $('#tournament_id').click(function (){
@@ -299,7 +319,23 @@
         })
     }
 
-    function open_tormnt_modal(name, email, likes, created, dislike, url, rank){
+    function increaseLikeCount(postId, bannerId ) {
+    console.log("Received postId:", postId, "banner id -- ");
+
+    $.ajax({
+        type: 'GET',
+        url: 'increase_post_like_count', 
+        data: { post_id: postId },
+        success: function(response) {
+            console.log('Like count increased for post ID:>>>>>> ' , response);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error increasing like count:', error);
+        }
+    });
+}
+
+    function open_tormnt_modal(name, email, likes, created, dislike, url, rank, postId){
         document.getElementById("tormnt_modal").style.display="block"
         document.getElementById("tournament_user_name").innerHTML= name
         document.getElementById("tournament_user_email").innerHTML= email
@@ -307,8 +343,10 @@
         document.getElementById("user_likes").innerHTML= likes
         document.getElementById("user_dislikes").innerHTML= dislike
         document.getElementById("image").src = url
+        document.getElementById('up-btn').setAttribute('onclick', 'increaseLikeCount(' + postId + ')')
         $('#rank')[0].value = rank-1
 
+        console.log("Post console === ", postId , "----------",likes)
     }
 
     function get_user_name(){
