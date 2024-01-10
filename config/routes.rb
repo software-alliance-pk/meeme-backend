@@ -41,6 +41,12 @@ Rails.application.routes.draw do
   get '/user_disable', to: "dashboard#user_disable"
 
   get '/increase_post_like_count', to: "dashboard#increase_post_like_count"
+  get '/decrease_post_like_count', to: "dashboard#decrease_post_like_count"
+  
+  get '/increase_post_dislike_count', to: "dashboard#increase_post_dislike_count"
+  get '/decrease_post_dislike_count', to: "dashboard#decrease_post_dislike_count"
+  get '/user_tournament_posts', to: "dashboard#user_tournament_posts"
+
 
   get '/user_enable', to: "dashboard#user_enable"
   get '/specific_user_transactions', to: "dashboard#specific_user_transactions"

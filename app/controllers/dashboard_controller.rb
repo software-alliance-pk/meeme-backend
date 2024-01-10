@@ -115,23 +115,58 @@ class DashboardController < ApplicationController
     like = Like.new(post_id: params[:post_id] , user_id: '1', is_liked: true,is_judged: true,status: 1)
     like.save
     render json: { message: "Liked tournament Post" }, status: :ok
+  end
 
-    # unless (@tournament = TournamentBanner.where(id: params[:banner_id])
-    #   .where('end_date > ?', Time.zone.now.end_of_day)
-    #   .first)
-    #   return render json: { message: 'No Tournament is played at the moment' }, status: :not_found
-    # end
+  def decrease_post_like_count
+    post_id = params[:post_id]
+    like_to_delete = Like.where(post_id: post_id,is_liked: true).last
+  
+    if like_to_delete
+      like_to_delete.destroy
+      render json: { message: "Decreased like count for the post by one" }, status: :ok
+    else
+      render json: { error: "No like found for the specified post" }, status: :not_found
+    end
+  end
 
-    # if @tournament.posts.find_by(id: params[:post_id]).present?
-    #   if @tournament.tournament_users.find_by(user_id: '1').present?
-    #     response = TournamentLikeService.new(params[:post_id], '1').create_for_tournament
-    #     render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
-    #   else
-    #     render json: { message: "User is not enrolled in this tournament" }, status: :not_found
-    #   end
-    # else
-    #   render json: { message: "Post is not in this tournament" }, status: :not_found
-    # end
+  # Dislike Post
+  def increase_post_dislike_count
+    like = Like.new(post_id: params[:post_id] , user_id: '1', is_liked: false,is_judged: true,status: 2)
+    like.save
+    render json: { message: "Disliked tournament Post" }, status: :ok
+  end
+
+  def decrease_post_dislike_count
+    post_id = params[:post_id]
+    like_to_delete = Like.where(post_id: post_id,is_liked: false).last
+  
+    if like_to_delete
+      like_to_delete.destroy
+      render json: { message: "Decreased like count for the post by one" }, status: :ok
+    else
+      render json: { error: "No like found for the specified post" }, status: :not_found
+    end
+  end
+
+  def user_tournament_posts
+    @posts = Post.where(user_id: params[:user_id], tournament_banner_id: params[:tournament_banner_id])
+    if @posts.present?
+      posts_with_images = @posts.map do |post|
+        {
+          id: post.id,
+          description: post.description,
+          dislikes: post.likes.where(status: "dislike").count,
+          likes: post.likes.where(is_judged: true).like.count,
+          likes: post.likes.where(is_judged: true).like.count,
+          created_at: post.user.tournament_users.first.created_at.strftime('%b %d, %Y'),
+          tournament_banner_id: post.tournament_banner_id,
+          post_image: post.post_image.attached? ? url_for(post.post_image) : nil
+        }
+      end
+      render json: { posts: posts_with_images }
+    else
+      render json: { message: "No posts for this particular user" }, status: :not_found
+    end
   end
   
 

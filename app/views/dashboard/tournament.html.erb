@@ -67,6 +67,7 @@
             <%# end %>
             <% counter =  first_record_value > 10 ?  first_record_value : params[:page].to_i > 1 ? (params[:page].to_i - 1) * 10  : 0%>
             <% @posts.each do |post| %>
+            
               <tr >
                 <td>
                   <% counter += 1 %>
@@ -80,8 +81,8 @@
                 </td>
                 <td><%=post.user.username %></td>
                 <td><%=post.user.email %></td>
-                <td onclick="openSidebar()"><%=post.likes.where(is_judged: true).like.count %></td>
-                <td><%=post.likes.where(is_judged: true).like.count %></td>
+                <td class="like-count" onclick="openSidebar('<%=post.user.username %>','<%=post.user.email %>','<%=post.user.id %>', '<%= post.tournament_banner_id %>')"><%=post.likes.where(is_judged: true).like.count %></td>
+                <td class="like-count" ><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).dislike.count%></td>
                 <td><%=post.user.tournament_users.first.created_at.strftime('%b %d, %Y') %></td>
                 <% banner_id = @banner.present? ? @banner.id : TournamentBanner&.first&.id %>
@@ -102,7 +103,7 @@
                       <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                      <li><button type="button" onclick="disable_user('<%= post.user.id %>')">Disable Account</button></li>
+                      <li><button type="button" onclick="disable_user('<%= post.user.id %>')">Flag User</button></li>
                       <li>
                         <% username = post.user.username %>
                         <% email = post.user.email %>
@@ -110,6 +111,8 @@
                         <% created = post.user.tournament_users&.first&.created_at.strftime('%b %d, %Y') %>
                         <% dislikes = post.likes.where(status: "dislike").count %>
                         <% url = post.post_image.present? ? post.post_image.blob.url : asset_path("tr-1.jpg") %>
+                        <% joined_tournaments_count = TournamentUser.where(user_id: post.user.id).count %>
+
                         <button type="button" class="pop_btn"
                                 data-popup="trans_profile" onclick="open_tormnt_modal('<%=username %>', '<%= email%>', '<%= likes%>', '<%=created %>', '<%= dislikes%>', '<%= url %>','<%= counter %>','<%= post.id%>')">Edit Standing</button>
                       </li>
@@ -190,15 +193,19 @@
 
 
                      <a id='up-btn'>   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt=""> </a>
+                     <a id='down-btn'>   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("down-btn.png") %>" alt=""> </a>
 
-                        <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
                         </div>
                         </span>
                         <span class="vote vote_down" style="padding-right:25px">
                           <img src="<%= asset_path("icon-vote-down.svg") %>" alt="">
                           <span id="user_dislikes" style="text-decoration:underline;"></span> <div clas="btn-group" style="position:absolute; right:0">
-                          <img style="width:35px; cursor:pointer;margin-bottom:3px;"  src="<%= asset_path("up-btn.png") %>" alt="">
-                          <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
+
+
+                     <a id='dislike-up-btn'>   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt=""> </a>
+                     <a id='dislike-down-btn'>   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("down-btn.png") %>" alt=""> </a>
+
+
                           </div>
                         </span>
                       </div>
@@ -299,82 +306,27 @@
                   </thead>
                   <tbody>
                       <tr>
-                          <td id="tournament_user_name">Mr Astronut</td>
-                          <td id="tournament_user_email">iammemer@memee.com</td>
+                          <td id="sidebar_user_name"></td>
+                          <td id="sidebar_user_email"></td>
                       </tr>
                   </tbody>
               </table>
-              <div class="text-white mb-5">4 of 999 ...</div>
-          </div>
-      </div>
-      <div>
-          <div style="color:#939394">Date Posted</div>
-          <div class="text-white mb-3">Jan 5, 2022</div>
-          <div class="detail_blk mt-0" style="align-items:flex-start;">
-              <div class="right_blk">
-                  <div class="img">
-                      <img src="<%= asset_path("trans-profile.png") %>" alt="">
-                  </div>
-              </div>
-              <div class="right_blk custom-right-side">
-                  <div class="vote_blk">
-                      <span class="vote" style="padding-right:25px">
-                          <img src="<%= asset_path("icon-vote-up.svg") %>" alt="">
-                          <span id="user_likes" style="text-decoration:underline;"></span>
-                          <div class="btn-group" style="position:absolute; right:0;flex-direction:column;">
-                              <a id='up-btn'>
-                                  <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt="">
-                              </a>
-                              <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
-                          </div>
-                      </span>
-                      <span class="vote vote_down" style="padding-right:25px">
-                          <img src="<%= asset_path("icon-vote-down.svg") %>" alt="">
-                          <span id="user_dislikes" style="text-decoration:underline;"></span>
-                          <div class="btn-group" style="position:absolute; right:0;flex-direction:column;">
-                              <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt="">
-                              <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
-                          </div>
-                      </span>
-                  </div>
-              </div>
+              <%# <div class="text-white mb-5">4 of 999 ...</div> %>
           </div>
       </div>
 
-      <div>
-      <div style="color:#939394">Date Posted</div>
-      <div class="text-white mb-3">Jan 5, 2022</div>
-      <div class="detail_blk mt-0" style="align-items:flex-start;">
-          <div class="right_blk">
-              <div class="img">
-                  <img src="<%= asset_path("trans-profile.png") %>" alt="">
-              </div>
-          </div>
-          <div class="right_blk custom-right-side">
-              <div class="vote_blk">
-                  <span class="vote" style="padding-right:25px">
-                      <img src="<%= asset_path("icon-vote-up.svg") %>" alt="">
-                      <span id="user_likes" style="text-decoration:underline;"></span>
-                      <div class="btn-group" style="position:absolute; right:0;flex-direction:column;">
-                          <a id='up-btn'>
-                              <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt="">
-                          </a>
-                          <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
-                      </div>
-                  </span>
-                  <span class="vote vote_down" style="padding-right:25px">
-                      <img src="<%= asset_path("icon-vote-down.svg") %>" alt="">
-                      <span id="user_dislikes" style="text-decoration:underline;"></span>
-                      <div class="btn-group" style="position:absolute; right:0;flex-direction:column;">
-                          <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt="">
-                          <img style="width:35px; cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
-                      </div>
-                  </span>
-              </div>
-          </div>
+
+      <div class="sibarPosts">
+          
       </div>
-  </div>
-  </div>
+
+
+      
+      <div>
+
+
+
+      
 </div>
 
 
@@ -427,13 +379,92 @@ width: 65%;
   align-items: flex-start;
 }
 </style>
+
+
 <script>
-  function openSidebar() {
+
+
+  function openSidebar(username , email , userId, bannerId) {
+    console.log("User id in the sidebar === ", userId , '---email===', email,'-----username---',username,'---bannerId-----',bannerId)
+
     document.getElementById("cart-box").style.right = "0px"; 
+    document.getElementById("sidebar_user_name").innerHTML= username
+    document.getElementById("sidebar_user_email").innerHTML= email
+  
+      $.ajax({
+      type: "GET",
+      url: "user_tournament_posts",
+      data: { tournament_banner_id: bannerId ,user_id: userId },
+      success: function(response) {
+        if (response) {
+          console.log("Response of the posts in sidebar --- ",response );
+
+        $('.sibarPosts').html('');
+        response?.posts?.forEach((item , ind)=>{
+          // console.log("Inside the loop === ", item);
+          var sidebarHTML = generateSidebarHTML(item , ind) ;
+          // console.log(sidebarHTML);
+           $('.sibarPosts').append(sidebarHTML);
+
+        })
+
+        } else {
+          response.posts.forEach(function(post) {
+            $("#userPosts").append("<p>" + post.title + "</p>");
+          });
+        }
+      },
+      error: function(error) {
+        console.log("Error fetching user posts: ", error);
+      }
+    });
+  }
+
+  function generateSidebarHTML(item , ind){
+    
+          return  `
+                  <div class="mb-3">
+                    <div style="color: #939394">Date Posted</div>
+                    <div class="text-white mb-3">${item?.created_at}</div>
+                    <div class="detail_blk mt-0" style="align-items: flex-start">
+                      <div class="right_blk">
+                        <div class="img">
+                         <img style="width: 200px; height: 200px" src="${item?.post_image}" alt="">
+                        </div>
+                      </div>
+                      <div class="right_blk custom-right-side">
+                        <div class="vote_blk">
+                          <span class="vote" style="padding-right: 25px">
+                            <img src="<%= asset_path("icon-vote-up.svg") %>" alt="">
+                            <span id="side_user_likes-${ind}" style="text-decoration: underline">${item?.likes}</span>
+                            <div class="btn-group" style="position: absolute; right: 0; flex-direction: column">
+
+                              <a id='up-btn'  onclick="increaseLikeCount('${item.id}', '${ind}')" >   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt=""> </a>
+                               <a id='down-btn' onclick="decreaseLikeCount('${item.id}', '${ind}')"  >   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("down-btn.png") %>" alt=""> </a>
+
+                            </div>
+                          </span>
+                          <span class="vote vote_down" style="padding-right: 25px">
+                            <img src="<%= asset_path("icon-vote-down.svg") %>" alt="">
+                            <span id="side_user_dislikes-${ind}" style="text-decoration: underline">${item?.dislikes}</span>
+                            <div class="btn-group" style="position: absolute; right: 0; flex-direction: column">
+
+                              <a id='up-btn'  onclick="increaseDislikeCount('${item.id}', '${ind}')" >   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt=""> </a>
+                               <a id='down-btn' onclick="decreaseDislikeCount('${item.id}', '${ind}')"  >   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("down-btn.png") %>" alt=""> </a>
+
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `
   }
 
   function closeSidebar() {
     document.getElementById("cart-box").style.right = "-400px";
+            location.reload();
+
   }
 </script>
 
@@ -465,21 +496,137 @@ width: 65%;
         })
     }
 
-    function increaseLikeCount(postId, bannerId ) {
-    console.log("Received postId:", postId, "banner id -- ");
-
+    function increaseLikeCount(postId, ind ) {
+    console.log("Increase postId:", postId, '---index----', ind);
     $.ajax({
         type: 'GET',
         url: 'increase_post_like_count', 
         data: { post_id: postId },
         success: function(response) {
             console.log('Like count increased for post ID:>>>>>> ' , response);
+
+            var currentLikes = parseInt(document.getElementById("user_likes").innerHTML);
+              console.log("Curerent likes outer ==== ", currentLikes);
+              if(isNaN(currentLikes)){
+                currentLikes = parseInt(document.getElementById(`side_user_likes-${ind}`).innerHTML)
+                console.log("Curerent likes inner ==== ", currentLikes);
+                var sideLikes = currentLikes + 1;
+                document.getElementById(`side_user_likes-${ind}`).innerHTML = sideLikes;
+                return;
+               }
+
+            var updatedLikes = currentLikes + 1;
+            document.getElementById("user_likes").innerHTML = updatedLikes;
         },
+
         error: function(xhr, status, error) {
             console.error('Error increasing like count:', error);
         }
     });
 }
+
+function decreaseLikeCount(postId, ind ) {
+    console.log("Decrese count postId:", postId, '----index---', ind);
+    var currentLikes = parseInt(document.getElementById(`user_likes`).innerHTML);
+    if(isNaN(currentLikes)){
+        currentLikes = parseInt(document.getElementById(`side_user_likes-${ind}`).innerHTML);
+    }
+    
+    if(currentLikes){ 
+    $.ajax({
+        type: 'GET',
+        url: 'decrease_post_like_count', 
+        data: { post_id: postId },
+        success: function(response) {
+            console.log('Like count decreased for post ID:>>>>>> ' , response);
+
+            var currentLikes = parseInt(document.getElementById(`user_likes`).innerHTML);
+              console.log("Curerent likes outer ==== ", currentLikes);
+              if(isNaN(currentLikes)){
+                currentLikes = parseInt(document.getElementById(`side_user_likes-${ind}`).innerHTML)
+                console.log("Curerent likes inner ==== ", currentLikes);
+                var sideLikes = currentLikes - 1;
+                document.getElementById(`side_user_likes-${ind}`).innerHTML = sideLikes;
+                return;
+               }
+                 var updatedLikes = currentLikes - 1;
+                 document.getElementById("user_likes").innerHTML = updatedLikes;
+
+        },
+        error: function(xhr, status, error) {
+            console.error('Error increasing like count:', error);
+        }
+    });
+  }
+}
+
+
+
+function increaseDislikeCount(postId, ind ) {
+  console.log("Dislike Increase postId:", postId, "ind -- ", ind);
+  $.ajax({
+      type: 'GET',
+      url: 'increase_post_dislike_count', 
+      data: { post_id: postId },
+      success: function(response) {
+          console.log('Dislike count increased for post ID:>>>>>> ' , response);
+
+          var currentLikes = parseInt(document.getElementById("user_dislikes").innerHTML);
+              console.log("Curerent likes outer ==== ", currentLikes);
+              if(isNaN(currentLikes)){
+                currentLikes = parseInt(document.getElementById(`side_user_dislikes-${ind}`).innerHTML)
+                console.log("Curerent likes inner ==== ", currentLikes);
+                var sideLikes = currentLikes + 1;
+                document.getElementById(`side_user_dislikes-${ind}`).innerHTML = sideLikes;
+                return;
+               }
+
+            var updatedLikes = currentLikes + 1;
+            document.getElementById("user_dislikes").innerHTML = updatedLikes;
+
+
+          
+      },
+      error: function(xhr, status, error) {
+          console.error('Error increasing like count:', error);
+      }
+  });
+}
+
+function decreaseDislikeCount(postId, ind ) {
+  var currentLikes = parseInt(document.getElementById("user_dislikes").innerHTML);
+  if(isNaN(currentLikes)){
+    currentLikes = parseInt(document.getElementById(`side_user_dislikes-${ind}`).innerHTML);
+  }
+if(currentLikes){
+  $.ajax({
+      type: 'GET',
+      url: 'decrease_post_dislike_count', 
+      data: { post_id: postId },
+      success: function(response) {
+          console.log('Dislike count increased for post ID:>>>>>> ' , response);
+
+           var currentLikes = parseInt(document.getElementById("user_dislikes").innerHTML);
+              console.log("Curerent likes outer ==== ", currentLikes);
+              if(isNaN(currentLikes)){
+                currentLikes = parseInt(document.getElementById(`side_user_dislikes-${ind}`).innerHTML)
+                console.log("Curerent likes inner ==== ", currentLikes);
+                var sideLikes = currentLikes - 1;
+                document.getElementById(`side_user_dislikes-${ind}`).innerHTML = sideLikes;
+                return;
+               }
+
+            var updatedLikes = currentLikes - 1;
+            document.getElementById("user_dislikes").innerHTML = updatedLikes;
+
+      },
+      error: function(xhr, status, error) {
+          console.error('Error increasing like count:', error);
+      }
+  });
+    }
+}
+
 
     function open_tormnt_modal(name, email, likes, created, dislike, url, rank, postId){
         document.getElementById("tormnt_modal").style.display="block"
@@ -490,6 +637,10 @@ width: 65%;
         document.getElementById("user_dislikes").innerHTML= dislike
         document.getElementById("image").src = url
         document.getElementById('up-btn').setAttribute('onclick', 'increaseLikeCount(' + postId + ')')
+        document.getElementById('down-btn').setAttribute('onclick', 'decreaseLikeCount(' + postId + ')')
+        
+        document.getElementById('dislike-up-btn').setAttribute('onclick', 'increaseDislikeCount(' + postId + ')')
+        document.getElementById('dislike-down-btn').setAttribute('onclick', 'decreaseDislikeCount(' + postId + ')')
         $('#rank')[0].value = rank-1
 
         console.log("Post console === ", postId , "----------",likes)
@@ -515,6 +666,7 @@ width: 65%;
 
     function close_tormnt_modal(){
         document.getElementById("tormnt_modal").style.display="none"
+        location.reload();
     }
 
 </script>
