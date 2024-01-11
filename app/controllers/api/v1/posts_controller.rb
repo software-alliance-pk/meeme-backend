@@ -377,21 +377,41 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def trending_posts
     @trending_posts = []
-    @likes = Like.where(status: 1, is_liked: true, is_judged: false).joins(:post).where(post: { tournament_meme: false }).group(:post_id).count(:post_id).sort_by(&:last).reverse.to_h
+    @likes = Like.where(status: 1, is_liked: true, is_judged: false)
+                 .joins(:post)
+                 .where(post: { tournament_meme: false })
+                 .group(:post_id)
+                 .count(:post_id)
+                 .sort_by(&:last)
+                 .reverse
+                 .to_h
+  
     @likes.keys.each do |key|
       @post = Post.find_by(id: key)
-      if @post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(@post.user.id)
-      else
-        @trending_posts << [@post, (Post.find_by(id: key).comments.count + Post.find_by(id: key).comments.count)]
+  
+      # Check if the post and its user exist
+      if @post && @post.user
+        puts "ALL POSTS on Trending #{@post.inspect}"
+  
+        if @post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(@post.user.id)
+          next  # Skip the current iteration if the post is flagged or the user is blocked
+        end
+  
+        # Only add the post to trending_posts if the user and post are present
+        @trending_posts << [@post, (@post.comments.count + @post.comments.count)]
       end
     end
-    @trending_posts = (@trending_posts.to_h).sort_by { |k, v| v }.reverse.paginate(page: params[:page], per_page: 25)
-    # @trending_posts=@trending_posts.paginate(page: params[:page], per_page: 25)
-    # @trending_posts = Post.where(id: @likes.keys).paginate(page: params[:page], per_page: 25)
+  
+    @trending_posts = @trending_posts.to_h
+                     .sort_by { |k, v| v }
+                     .reverse
+                     .paginate(page: params[:page], per_page: 25)
+  
     if @trending_posts
-
+      # Do something with @trending_posts
     end
   end
+
 
   def share_post
     @share_post = Post.find_by(id: params[:post_id])
