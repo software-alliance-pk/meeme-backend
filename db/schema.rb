@@ -96,6 +96,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_27_134607) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
+  # Comment 
+
   create_table "badges", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false

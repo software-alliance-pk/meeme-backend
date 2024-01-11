@@ -7,7 +7,7 @@ class DashboardController < ApplicationController
   def dashboard
     @user = User.order("id DESC").limit(4)
   end
-
+ 
   def welcome
   end
 
@@ -111,6 +111,65 @@ class DashboardController < ApplicationController
     end
   end
 
+  def increase_post_like_count
+    like = Like.new(post_id: params[:post_id] , user_id: '1', is_liked: true,is_judged: true,status: 1)
+    like.save
+    render json: { message: "Liked tournament Post" }, status: :ok
+  end
+
+  def decrease_post_like_count
+    post_id = params[:post_id]
+    like_to_delete = Like.where(post_id: post_id,is_liked: true).last
+  
+    if like_to_delete
+      like_to_delete.destroy
+      render json: { message: "Decreased like count for the post by one" }, status: :ok
+    else
+      render json: { error: "No like found for the specified post" }, status: :not_found
+    end
+  end
+
+  # Dislike Post
+  def increase_post_dislike_count
+    like = Like.new(post_id: params[:post_id] , user_id: '1', is_liked: false,is_judged: true,status: 2)
+    like.save
+    render json: { message: "Disliked tournament Post" }, status: :ok
+  end
+
+  def decrease_post_dislike_count
+    post_id = params[:post_id]
+    like_to_delete = Like.where(post_id: post_id,is_liked: false).last
+  
+    if like_to_delete
+      like_to_delete.destroy
+      render json: { message: "Decreased like count for the post by one" }, status: :ok
+    else
+      render json: { error: "No like found for the specified post" }, status: :not_found
+    end
+  end
+
+  def user_tournament_posts
+    @posts = Post.where(user_id: params[:user_id], tournament_banner_id: params[:tournament_banner_id])
+    if @posts.present?
+      posts_with_images = @posts.map do |post|
+        {
+          id: post.id,
+          description: post.description,
+          dislikes: post.likes.where(status: "dislike").count,
+          likes: post.likes.where(is_judged: true).like.count,
+          likes: post.likes.where(is_judged: true).like.count,
+          created_at: post.user.tournament_users.first.created_at.strftime('%b %d, %Y'),
+          tournament_banner_id: post.tournament_banner_id,
+          post_image: post.post_image.attached? ? url_for(post.post_image) : nil
+        }
+      end
+      render json: { posts: posts_with_images }
+    else
+      render json: { message: "No posts for this particular user" }, status: :not_found
+    end
+  end
+  
+
   def tournament_banner
     @tournament_banner = TournamentBanner.all
   end
@@ -190,6 +249,13 @@ class DashboardController < ApplicationController
     else
       redirect_to tournament_path
     end
+  end
+
+  def flag_tournament_post
+    @user = User.find(params[:user_id])
+    puts "user email --------#{@user.inspect}"
+    UserMailer.flag_tournament_post(@user ,@user.email).deliver_now
+    render json: { message: "Flagged Email Sent" }, status: :ok
   end
 
   def show_top_10
