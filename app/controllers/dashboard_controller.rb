@@ -251,6 +251,13 @@ class DashboardController < ApplicationController
     end
   end
 
+  def flag_tournament_post
+    @user = User.find(params[:user_id])
+    puts "user email --------#{@user.inspect}"
+    UserMailer.flag_tournament_post(@user ,@user.email).deliver_now
+    render json: { message: "Flagged Email Sent" }, status: :ok
+  end
+
   def show_top_10
     @name, @email, @joined = [], [], []
     if params[:banner_id].present?

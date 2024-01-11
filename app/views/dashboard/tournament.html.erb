@@ -81,7 +81,7 @@
                 </td>
                 <td><%=post.user.username %></td>
                 <td><%=post.user.email %></td>
-                <td class="like-count" onclick="openSidebar('<%=post.user.username %>','<%=post.user.email %>','<%=post.user.id %>', '<%= post.tournament_banner_id %>')"><%=post.likes.where(is_judged: true).like.count %></td>
+                <td onclick="openSidebar('<%=post.user.username %>','<%=post.user.email %>','<%=post.user.id %>', '<%= post.tournament_banner_id %>')"><%=TournamentUser.where(user_id: post.user.id).count%>  </td>
                 <td class="like-count" ><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).dislike.count%></td>
                 <td><%=post.user.tournament_users.first.created_at.strftime('%b %d, %Y') %></td>
@@ -103,7 +103,7 @@
                       <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                      <li><button type="button" onclick="disable_user('<%= post.user.id %>')">Flag User</button></li>
+                      <li><button type="button" onclick="flagTournamentPost('<%= post.user.id %>')">Flag User</button></li>
                       <li>
                         <% username = post.user.username %>
                         <% email = post.user.email %>
@@ -486,11 +486,11 @@ width: 65%;
         document.getElementById("tormnt_modal").style.display="block"
     }
 
-    function disable_user(id){
+    function flagTournamentPost(id){
         $.ajax({
             type: "GET",
-            url: "user_disable",
-            data: {id: id},
+            url: "flag_tournament_post",
+            data: {user_id: id},
             success: function(response){
             }
         })
