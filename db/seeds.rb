@@ -226,37 +226,81 @@
 #   end
 # end
 
-badges = { 0 => ["Thousand Miles Badges",
-                 "Master Aficionado Badge",
-                 "Opinionated Master Badge",
-                 "Generous Giver Badge",
-                 "Explorer God Badge",
-                 "Part Of The Family Badge",
-                 "Influencer Badge",
-                 "I Love My Community Badge",
-                 "Judgment Level 1 Badge",
-                 "3rd Place Badge"],
-           1 => ["Mega Mileage Badge",
-                 "Expert Aficionado Badge",
-                 "Reaction Guru Badge",
-                 "Better To Give Badge",
-                 "Explorer Guru Badge",
-                 "Factor Badge",
-                 "Well Known Badge",
-                 "The Part Of The Part of Crowd Badge",
-                 "Spaceship Badge",
-                 "Judgment Level 2 Badge",
-                 "2nd Place Badge",
-                 "Sharing Is Caring Badge"],
-           2 => ["Novice Aficionado Badge",
-                 "Commentator Badge",
-                 "Explorer Badge",
-                 "Contributor Badge",
-                 "Famous Badge",
-                 "Follower Badge",
-                 "Judgment Level 3 Badge",
-                 "1st Place Badge",
-                 "Keepin It A Hundred Badge"] }
+# Old Badges 
+
+# badges = { 0 => ["Thousand Miles Badges",
+#                  "Master Aficionado Badge",
+#                  "Opinionated Master Badge",
+#                  "Generous Giver Badge",
+#                  "Explorer God Badge",
+#                  "Part Of The Family Badge",
+#                  "Influencer Badge",
+#                  "I Love My Community Badge",
+#                  "Judgment Level 1 Badge",
+#                  "3rd Place Badge"],
+#            1 => ["Mega Mileage Badge",
+#                  "Expert Aficionado Badge",
+#                  "Reaction Guru Badge",
+#                  "Better To Give Badge",
+#                  "Explorer Guru Badge",
+#                  "Factor Badge",
+#                  "Well Known Badge",
+#                  "The Part Of The Part of Crowd Badge",
+#                  "Spaceship Badge",
+#                  "Judgment Level 2 Badge",
+#                  "2nd Place Badge",
+#                  "Sharing Is Caring Badge"],
+#            2 => ["Novice Aficionado Badge",
+#                  "Commentator Badge",
+#                  "Explorer Badge",
+#                  "Contributor Badge",
+#                  "Famous Badge",
+#                  "Follower Badge",
+#                  "Judgment Level 3 Badge",
+#                  "1st Place Badge",
+#                  "Keepin It A Hundred Badge"] }
+
+# badges.keys.each do |keys|
+#   badges[keys].each do |values|
+#     v = Badge.create(
+#       title: values,
+#       rarity: keys
+#     )
+#     v.badge_image.attach(
+#       io: File.open(File.join(Rails.root, "app/assets/images/badges/#{values}.png")),
+#       filename: "#{values}.png"
+#     )
+#   end
+# end
+
+
+# New Badges
+badges = { 0 => ["Commentator Bronze",
+                 "Commentator Gold",
+                 "Commentator Silver",
+                 "Explore Guru Bronze",
+                 "Explore Guru Gold",
+                 "Explore Guru Silver",
+                 "Follower Bronze",
+                 "Follower Gold",
+                 "Follower Silver",
+                 "Gain Followers Bronze"],
+           1 => ["Gain Followers Gold",
+                 "Gain Followers Silver",
+                 "Judge Bronze",
+                 "Judge Gold",
+                 "Judge Silver",
+                 "Likeable Bronze",
+                 "Likeable Gold",
+                 "Likeable Silver",
+                 "Memes Gold",
+                 "Memes Silver",
+                 "Sharer Bronze",
+                 "Sharer Gold"],
+           2 => ["Sharer Silver",
+                 "Upload Photo Bronze",
+                 "Upload Photo Gold",
+                 "Upload Photo Silver"] }
 
 badges.keys.each do |keys|
   badges[keys].each do |values|
@@ -265,7 +309,7 @@ badges.keys.each do |keys|
       rarity: keys
     )
     v.badge_image.attach(
-      io: File.open(File.join(Rails.root, "app/assets/images/badges/#{values}.png")),
+      io: File.open(File.join(Rails.root, "app/assets/images/NewBadges/#{values}.png")),
       filename: "#{values}.png"
     )
   end
