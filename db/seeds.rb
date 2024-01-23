@@ -275,6 +275,7 @@
 
 
 # New Badges
+
 badges = { 0 => ["Commentator Bronze",
                  "Commentator Gold",
                  "Commentator Silver",
@@ -302,11 +303,44 @@ badges = { 0 => ["Commentator Bronze",
                  "Upload Photo Gold",
                  "Upload Photo Silver"] }
 
+  badge_limits = { 
+        "Commentator Bronze" => 100,
+        "Commentator Gold" => 1000000,
+        "Commentator Silver" => 500000,
+        "Explore Guru Bronze" => 1000,
+        "Explore Guru Gold" => 10000,
+        "Explore Guru Silver" => 5000000 ,
+        "Follower Bronze" => 100,
+        "Follower Gold" => 100000,
+        "Follower Silver" => 5000,
+        "Gain Followers Bronze" => 100,
+        "Gain Followers Gold" => 100000,
+        "Gain Followers Silver" => 5000,
+        "Judge Bronze" => 7,
+        "Judge Gold" => 60,
+        "Judge Silver" => 30,
+        "Likeable Bronze" => 1000,
+        "Likeable Gold" => 1000000,
+        "Likeable Silver" => 50000,
+        "Memes Gold" => 10000,
+        "Memes Silver" => 1000,
+        "Sharer Bronze" => 100,
+        "Sharer Gold" => 1000000,
+        "Sharer Silver" => 500000 ,
+        "Upload Photo Bronze" => 100,
+        "Upload Photo Gold" => 1000000,
+        "Upload Photo Silver" => 500000 
+  }
+
+
 badges.keys.each do |keys|
   badges[keys].each do |values|
+    limit = badge_limits[values] || 0 
+    
     v = Badge.create(
       title: values,
-      rarity: keys
+      rarity: keys,
+      limit: limit
     )
     v.badge_image.attach(
       io: File.open(File.join(Rails.root, "app/assets/images/NewBadges/#{values}.png")),

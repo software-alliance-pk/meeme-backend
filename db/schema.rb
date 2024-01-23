@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_27_134607) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_23_114842) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -96,13 +96,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_27_134607) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
-  # Comment 
-
   create_table "badges", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "rarity", default: 0
+    t.integer "limit"
   end
 
   create_table "block_users", force: :cascade do |t|
