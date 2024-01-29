@@ -147,6 +147,7 @@ Rails.application.routes.draw do
           post :create_downloadable_link
           post :search_posts_by_tag
           post :search_tags_trending_post
+          get :increase_explore_count
         end
       end
       resources :comments do
@@ -217,6 +218,7 @@ Rails.application.routes.draw do
       resources :badges do
         collection do
           get :current_user_badges
+          get :current_user_badges_stats
           get :rarity_1_badges
           get :rarity_2_badges
           get :rarity_3_badges

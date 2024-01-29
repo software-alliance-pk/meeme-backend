@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_23_114842) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_29_112123) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -102,6 +102,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_23_114842) do
     t.datetime "updated_at", null: false
     t.integer "rarity", default: 0
     t.integer "limit"
+    t.string "badge_type"
   end
 
   create_table "block_users", force: :cascade do |t|
@@ -426,6 +427,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_23_114842) do
     t.boolean "disabled", default: false
     t.boolean "checked", default: false
     t.boolean "private_account", default: false
+    t.integer "shared"
+    t.integer "explored", default: 0
   end
 
   create_table "verification_tokens", force: :cascade do |t|
