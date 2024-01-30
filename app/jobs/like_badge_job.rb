@@ -3,7 +3,7 @@ class LikeBadgeJob < ApplicationJob
 
   def perform(message)
     if User.find(message.user_id).likes.where.not(post_id: nil).where(is_liked: true).count == 1000
-      @badge = Badge.find_by(title: "Novice Aficionado Badge")
+      @badge = Badge.find_by(title: "Likeable Bronze")
       @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
       if @check.present?
       else
@@ -14,7 +14,7 @@ class LikeBadgeJob < ApplicationJob
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
       end
     elsif User.find(message.user_id).likes.where.not(post_id: nil).where(is_liked: true).count == 500000
-      @badge = Badge.find_by(title: "Expert Aficionado Badge")
+      @badge = Badge.find_by(title: "Likeable Silver")
       @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
       if @check.present?
       else
@@ -25,7 +25,7 @@ class LikeBadgeJob < ApplicationJob
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
       end
     elsif User.find(message.user_id).likes.where.not(post_id: nil).where(is_liked: true).count == 1000000
-      @badge = Badge.find_by(title: "Master Aficionado Badge")
+      @badge = Badge.find_by(title: "Likeable Gold")
       @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
       if @check.present?
       else

@@ -412,13 +412,13 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   end
 
-
   def share_post
     @share_post = Post.find_by(id: params[:post_id])
     if @share_post.present?
-      if @share_post.tournament_meme == true
+      if @share_post.tournament_meme
         render json: { message: 'Tournament Posts cannot be shared', post: [], share_count: @share_post.share_count }, status: :ok
       else
+        @current_user.increment(:shared).save
         count = @share_post.share_count + 1
         @share_post.update_columns(share_count: count)
         ShareBadgeJob.perform_now(@share_post, @current_user)
@@ -427,8 +427,14 @@ class Api::V1::PostsController < Api::V1::ApiController
     else
       render json: { message: 'Post not found' }, status: :not_found
     end
-
   end
+
+  def increase_explore_count
+    @current_user.increment!(:explored)
+    ExploreBadgeJob.perform_now( @current_user)
+    render json: { message: 'Exploration successful', explored_count: @current_user.explored }, status: :ok
+  end
+  
 
   def create_downloadable_link
     image_url = params[:image_url]

@@ -53,6 +53,30 @@ class Api::V1::BadgesController < Api::V1::ApiController
     render json: { badge: @badge }, status: :ok
   end
 
+  def current_user_badges_stats
+    likes = User.find(@current_user.id).likes.where.not(post_id: nil).where(is_liked: true).count
+    comments = @current_user.comments.count
+    gain_follower = @current_user.followers.follower_added.count
+    follow = Follower.where(follower_user_id:@current_user.id).count
+    memes = @current_user.posts.count
+    shared = @current_user.shared || 0
+    explored = @current_user.explored || 0
+    if likes.present?
+      render json: {
+         likes:likes,
+         comments: comments,
+         gain_follower: gain_follower,
+         follow: (follow/2),
+         memes: memes,
+         shared: shared,
+         explored: explored,
+         uploaded_photo: memes
+        }, status: :ok
+    else
+      render json: { badges: [] }, status: :ok
+    end
+  end
+
   def current_user_badges
     @badges = @current_user.badges.uniq
     if @badges.present?
