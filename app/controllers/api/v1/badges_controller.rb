@@ -62,16 +62,16 @@ class Api::V1::BadgesController < Api::V1::ApiController
     shared = @current_user.shared || 0
     explored = @current_user.explored || 0
     if likes.present?
-      render json: {
-         likes:likes,
-         comments: comments,
-         gain_follower: gain_follower,
-         follow: (follow/2),
-         memes: memes,
-         shared: shared,
-         explored: explored,
-         uploaded_photo: memes
-        }, status: :ok
+      render json: [
+        { likes:likes, badge_type: "likeable_badge" },
+        { comments: comments, badge_type: "commentator_badge"},
+        { gain_follower: gain_follower, badge_type: "gain_followers_badge" },
+        { follow: (follow/2), badge_type: "follower_badge"  },
+        { memes: memes, badge_type: "memes_badge" },
+        { shared: shared, badge_type: "sharer_badge"  },
+        { explored: explored, badge_type: "explore_guru_badge" },
+        { uploaded_photo: memes, badge_type: "upload_photo_badge" },
+      ], status: :ok
     else
       render json: { badges: [] }, status: :ok
     end
