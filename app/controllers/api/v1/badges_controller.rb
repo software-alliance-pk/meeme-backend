@@ -61,20 +61,36 @@ class Api::V1::BadgesController < Api::V1::ApiController
     memes = @current_user.posts.count
     shared = @current_user.shared || 0
     explored = @current_user.explored || 0
-    if likes.present?
-      render json: [
-        { likes:likes, badge_type: "likeable_badge" },
-        { comments: comments, badge_type: "commentator_badge"},
-        { gain_follower: gain_follower, badge_type: "gain_followers_badge" },
-        { follow: (follow/2), badge_type: "follower_badge"  },
-        { memes: memes, badge_type: "memes_badge" },
-        { shared: shared, badge_type: "sharer_badge"  },
-        { explored: explored, badge_type: "explore_guru_badge" },
-        { uploaded_photo: memes, badge_type: "upload_photo_badge" },
-      ], status: :ok
-    else
-      render json: { badges: [] }, status: :ok
+
+    # To Culculate the Streat of Judging Post
+    judge = 0
+    current_streak = 0
+    max_streak = 0
+    @result = []
+    @today_date = Time.zone.now.end_of_day.to_datetime
+    60.times do |num|
+      status = Like.where(created_at: (@today_date - num).beginning_of_day..(@today_date - num).end_of_day, is_judged: true, user_id: 52).where.not(post_id: nil).present?
+      @result << status
+      if status
+        current_streak += 1
+        max_streak = [max_streak, current_streak].max
+      else
+        current_streak = 0
+      end
+      judge = num
     end
+
+      render json: [
+        { value:likes, badge_type: "likeable_badge" },
+        { value: comments, badge_type: "commentator_badge"},
+        { value: gain_follower, badge_type: "gain_followers_badge" },
+        { value: (follow/2), badge_type: "follower_badge"  },
+        { value: memes, badge_type: "memes_badge" },
+        { value: shared, badge_type: "sharer_badge"  },
+        { value: explored, badge_type: "explore_guru_badge" },
+        { value: memes, badge_type: "upload_photo_badge" },
+        { current_streak: current_streak, value: current_streak, max_streak:max_streak, judge: judge ,badge_type: "judge_badge" },
+      ], status: :ok
   end
 
   def current_user_badges
