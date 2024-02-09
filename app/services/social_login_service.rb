@@ -142,8 +142,9 @@ class SocialLoginService
     end
 
     data = token_data.with_indifferent_access
-    user = create_user(data['email'], data['sub'], data)
-    token = JsonWebTokenService.encode(user_id: @user.id)
+    create_user(data['email'], data['sub'], data)
+    user = User.find_by(email: data['email'])
+    token = JsonWebTokenService.encode(user_id: user.id)
     @user.verification_tokens.create(token: token,user_id: @user.id)
     [@user, token]
   end
