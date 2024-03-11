@@ -39,6 +39,17 @@ Rails.application.routes.draw do
   get '/transaction-export', to: 'dashboard#transaction_export'
   get '/show_user_profile', to: "dashboard#show_user_profile"
   get '/user_disable', to: "dashboard#user_disable"
+
+  get '/increase_post_like_count', to: "dashboard#increase_post_like_count"
+  get '/decrease_post_like_count', to: "dashboard#decrease_post_like_count"
+  
+  get '/increase_post_dislike_count', to: "dashboard#increase_post_dislike_count"
+  get '/decrease_post_dislike_count', to: "dashboard#decrease_post_dislike_count"
+  get '/user_tournament_posts', to: "dashboard#user_tournament_posts"
+
+  get '/flag_tournament_post', to: "dashboard#flag_tournament_post"
+
+
   get '/user_enable', to: "dashboard#user_enable"
   get '/specific_user_transactions', to: "dashboard#specific_user_transactions"
   get '/inventory', to: "dashboard#gift_rewards", as: "card_inventory"
@@ -90,7 +101,8 @@ Rails.application.routes.draw do
       get '/coin_prices', to: 'coin_prices#index'
       resources :users do
         collection do
-          post:delete_user
+          post :delete_user
+          get :search
           put :update_user
           post :forgot_password
           post :forgot_password_web
@@ -128,9 +140,14 @@ Rails.application.routes.draw do
           get :trending_posts
           get :tags
           post :other_posts
+          post :user_search_tags
           post :user_search_tag
           post :share_post
-
+          delete :destroy_multiple
+          post :create_downloadable_link
+          post :search_posts_by_tag
+          post :search_tags_trending_post
+          get :increase_explore_count
         end
       end
       resources :comments do
@@ -140,6 +157,7 @@ Rails.application.routes.draw do
           put :update_child_comments
           delete :child_comment_destroy
           post :create_child_comment
+          delete :destroy
         end
       end
       resources :likes do
@@ -200,6 +218,7 @@ Rails.application.routes.draw do
       resources :badges do
         collection do
           get :current_user_badges
+          get :current_user_badges_stats
           get :rarity_1_badges
           get :rarity_2_badges
           get :rarity_3_badges
@@ -224,6 +243,14 @@ Rails.application.routes.draw do
           get :set_theme
         end
       end
+
+      resources :audits do
+        collection do
+          get :type
+        end
+      end
+
+      resources :amazon_cards, only: [:index]
 
       get '/privacy_policies', to: 'privacy_policies#privacy'
     end

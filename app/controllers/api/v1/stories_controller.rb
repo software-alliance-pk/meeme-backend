@@ -4,12 +4,17 @@ class Api::V1::StoriesController < Api::V1::ApiController
   before_action :find_valid_user, only: :destroy
 
   def index
-    @story= Story.all.reverse.pluck(:user_id).uniq
-    # @story = Story.recently_created.paginate(page: params[:page], per_page: 25)
-    if @story.present?
-    else
-    end
-  end
+    followed_user_ids = Follower.where(follower_user_id: @current_user.id, status: [:follower_added, :following_added]).pluck(:user_id).uniq
+    # Include the current user's ID in the followed_user_ids
+    followed_user_ids << @current_user.id
+    user_stories = Story.where(user_id: followed_user_ids).recently_created.paginate(page: params[:page], per_page: 25)
+    puts user_stories.inspect
+    # Assuming you want the count of stories
+    @story_count = user_stories.count
+    # Assuming you want the stories themselves
+    @story = user_stories
+  end  
+  
 
   def create
     @story = @current_user.stories.new(story_params)

@@ -8,7 +8,10 @@ class Post < ApplicationRecord
 
   scope :by_recently_created, -> (limit) { order(created_at: :desc).limit(limit) }
   scope :by_recently_updated, -> (limit) { order(updated_at: :desc).limit(limit) }
-  after_create_commit { PostBadgeJob.perform_now(self) }
+  after_create_commit {
+  PostBadgeJob.perform_now(self)
+  UploadPhotoBadgeJob.perform_now(self)
+  }
   
   belongs_to :user
   has_one_attached :post_image, dependent: :destroy
@@ -20,7 +23,10 @@ class Post < ApplicationRecord
   belongs_to :tournament_banner, optional: true
 
   acts_as_taggable_on :tags
-  after_create_commit { PostBadgeJob.perform_now(self) }
+  after_create_commit {
+  PostBadgeJob.perform_now(self)
+  UploadPhotoBadgeJob.perform_now(self)
+  }
 
   def period_count_array
     from = self.created_at.beginning_of_day.beginning_of_day
@@ -35,9 +41,6 @@ class Post < ApplicationRecord
       self.update(compress_image: @image)
     end
   end
-
-  
-  
 
   # def self.compress_update(post)
   #   if post.post_image.present? && post.post_image.content_type[0...5] == "image"

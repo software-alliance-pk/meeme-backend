@@ -5,7 +5,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   before_action :find_post, only: [:show, :update_posts, :destroy]
 
   def index
-    @posts = @current_user.posts.by_recently_created(20).paginate(page: params[:page], per_page: 25).shuffle
+    @posts = @current_user.posts.by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle
     if @posts.present?
 
     else
@@ -194,12 +194,27 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post.destroy
     render json: { message: "Post successfully deleted" }, status: :ok
   end
+  def destroy_multiple
+
+    post_ids = params[:post_ids]
+    deleted_posts = []
+
+    post_ids.each do |post_id|
+      post = Post.find_by(id: post_id)
+      if post.present?
+        post.destroy
+        deleted_posts << post_id
+      end
+    end
+
+    render json: { message: "Posts #{deleted_posts.join(', ')} successfully deleted" }, status: :ok
+  end
 
   def explore
     @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
     @posts = []
     if params[:tag] == ""
-      Post.where(tournament_meme: false).by_recently_created(25).each do |post|
+      Post.where(tournament_meme: false).by_recently_created(200).each do |post|
         if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
         else
           @posts << post
@@ -207,8 +222,8 @@ class Api::V1::PostsController < Api::V1::ApiController
       end
       if @posts.present?
         @posts = @posts.paginate(page: params[:page], per_page: 25)
+        # @posts=Post.all.paginate(page: params[:page], per_page: 2)
       else
-        # @posts=Post.all.paginate(page: params[:page], per_page: 25)
         render json: { message: "No Post found against this tag " }, status: :not_found
       end
     else
@@ -227,15 +242,55 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   end
 
-  def user_search_tag
-    @posts = []
+  def user_search_tags
+    @recent_posts = []
     @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
-    if params[:tag].empty?
+    if params[:tag] == ""
       @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
       if @users.present?
       end
     elsif params[:tag] == "#"
-      @posts = Post.where(tournament_meme: false)
+      @recent_posts = Post.where(tournament_meme: false)
+      @users = []
+
+    else
+      @recent_posts = Post.tagged_with(params[:tag], :any => true)
+      if @recent_posts.present?
+      else
+        render json: { message: "No Post found against this tag " }, status: :not_found
+      end
+    end
+  end
+
+  def search_tags_trending_post
+    @trending_posts = []
+    @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
+    if params[:tag] == ""
+      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
+      if @users.present?
+      end
+    elsif params[:tag] == "#"
+      @trending_posts = Post.where(tournament_meme: false)
+      @users = []
+
+    else
+      @trending_posts = Post.tagged_with(params[:tag], :any => true)
+      if @trending_posts.present?
+      else
+        render json: { message: "No Post found against this tag " }, status: :not_found
+      end
+    end
+  end
+
+  def user_search_tag
+    @posts = []
+    @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
+    if params[:tag] == ""
+      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
+      if @users.present?
+      end
+    elsif params[:tag] == "#"
+      @posts = Posts.where(tournament_meme: false)
       @users = []
 
     else
@@ -245,7 +300,6 @@ class Api::V1::PostsController < Api::V1::ApiController
         render json: { message: "No Post found against this tag " }, status: :not_found
       end
     end
-
   end
 
   def other_posts
@@ -286,8 +340,8 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def following_posts
     @following_posts = []
-    @following = Follower.where(follower_user_id: @current_user.id , is_following: true).pluck(:user_id)
-    @following = User.where(id: @following).paginate(page: params[:page], per_page: 25)
+    @following = Follower.where(follower_user_id: @current_user.id , is_following: true , status: "following_added" || "follower_added" ).pluck(:user_id)
+    @following = User.where(id: @following).paginate(page: params[:page], per_page: 110)
     @following.each do |user|
       user.posts.where(tournament_meme: false).each do |post|
         if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
@@ -305,7 +359,9 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def recent_posts
     @recent_posts = []
-    Post.where.not(tournament_meme: true).by_recently_created(25).each do |post|
+    Post.where.not(tournament_meme: true).by_recently_created(200).each do |post|
+      next if post.user.private_account? # Skip posts from users with private accounts
+
       if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
       else
         @recent_posts << post
@@ -321,28 +377,48 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def trending_posts
     @trending_posts = []
-    @likes = Like.where(status: 1, is_liked: true, is_judged: false).joins(:post).where(post: { tournament_meme: false }).group(:post_id).count(:post_id).sort_by(&:last).reverse.to_h
+    @likes = Like.where(status: 1, is_liked: true, is_judged: false)
+                 .joins(:post)
+                 .where(post: { tournament_meme: false })
+                 .group(:post_id)
+                 .count(:post_id)
+                 .sort_by(&:last)
+                 .reverse
+                 .to_h
+  
     @likes.keys.each do |key|
       @post = Post.find_by(id: key)
-      if @post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(@post.user.id)
-      else
-        @trending_posts << [@post, (Post.find_by(id: key).comments.count + Post.find_by(id: key).comments.count)]
+  
+      # Check if the post and its user exist
+      if @post && @post.user
+        puts "ALL POSTS on Trending #{@post.inspect}"
+  
+        if @post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(@post.user.id)
+          next  # Skip the current iteration if the post is flagged or the user is blocked
+        end
+  
+        # Only add the post to trending_posts if the user and post are present
+        @trending_posts << [@post, (@post.comments.count + @post.comments.count)]
       end
     end
-    @trending_posts = (@trending_posts.to_h).sort_by { |k, v| v }.reverse.paginate(page: params[:page], per_page: 25)
-    # @trending_posts=@trending_posts.paginate(page: params[:page], per_page: 25)
-    # @trending_posts = Post.where(id: @likes.keys).paginate(page: params[:page], per_page: 25)
+  
+    @trending_posts = @trending_posts.to_h
+                     .sort_by { |k, v| v }
+                     .reverse
+                     .paginate(page: params[:page], per_page: 25)
+  
     if @trending_posts
-
+      # Do something with @trending_posts
     end
   end
 
   def share_post
     @share_post = Post.find_by(id: params[:post_id])
     if @share_post.present?
-      if @share_post.tournament_meme == true
+      if @share_post.tournament_meme
         render json: { message: 'Tournament Posts cannot be shared', post: [], share_count: @share_post.share_count }, status: :ok
       else
+        @current_user.increment(:shared).save
         count = @share_post.share_count + 1
         @share_post.update_columns(share_count: count)
         ShareBadgeJob.perform_now(@share_post, @current_user)
@@ -351,7 +427,27 @@ class Api::V1::PostsController < Api::V1::ApiController
     else
       render json: { message: 'Post not found' }, status: :not_found
     end
+  end
 
+  def increase_explore_count
+    @current_user.increment!(:explored)
+    ExploreBadgeJob.perform_now( @current_user)
+    render json: { message: 'Exploration successful', explored_count: @current_user.explored }, status: :ok
+  end
+  
+
+  def create_downloadable_link
+    image_url = params[:image_url]
+    downloaded_image = open(image_url)
+    temp_file = Tempfile.new(['image', '.jpg'])
+    temp_file.binmode
+    temp_file.write(downloaded_image.read)
+    temp_file.rewind
+    send_file temp_file, filename: 'downloaded_image.jpg', disposition: 'attachment'
+        temp_file.close
+    temp_file.unlink
+    rescue StandardError => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   private
@@ -365,4 +461,5 @@ class Api::V1::PostsController < Api::V1::ApiController
   def post_params
     params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags, :share_count, :thumbnail,:compress_image)
   end
+
 end

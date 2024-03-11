@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[verify_otp create forgot_password reset_user_password email_validate, delete_user]
-  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_accoun, delete_user]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_account delete_user search]
   # GET /users
   def index
     @users = User.all
@@ -18,11 +18,17 @@ class Api::V1::UsersController < Api::V1::ApiController
     @posts = Post.where(tournament_meme: false).order('updated_at DESC').paginate(page: params[:page], per_page: 25)
   end
 
+  def search
+    username = params[:username]
+    similar_users = User.where('lower(username) LIKE ?', "%#{username.downcase}%")
+    render json: { similar_users: similar_users }
+  end
+
   def delete_user
     user_id = params[:user_id]
-    return render json: { error: "User Id is missing in params." }, status: :ok unless user_id.present?
+    return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
     user = User.find_by(id: user_id)
-    return render json: { error: "User with this Id is not present." }, status: :ok unless user.present?
+    return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
     user.destroy
     return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
   end
@@ -32,12 +38,12 @@ class Api::V1::UsersController < Api::V1::ApiController
     return render json: { message: "User not found" }, status: :not_found unless @profile
   end
 
-  # GET /users/{username}
-  def show
-    render json: { user: @user,
-                   profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '' },
-           status: :ok
-  end
+  # # GET /users/{username}
+  # def show
+  #   render json: { user: @user,
+  #                  profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '' },
+  #          status: :ok
+  # end
 
   # POST /users
   def create
