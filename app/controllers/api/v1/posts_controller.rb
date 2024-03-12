@@ -369,7 +369,7 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def recent_posts
     @recent_posts = []
-    Post.where.not(tournament_meme: true).by_recently_created(2000).uniq.each do |post|
+    Post.where.not(tournament_meme: true).by_recently_created(200).each do |post|
       next if post.user.private_account? # Skip posts from users with private accounts
 
       if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
