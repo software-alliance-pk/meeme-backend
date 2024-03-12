@@ -27,7 +27,17 @@ class Api::V1::PostsController < Api::V1::ApiController
         thumbnail = ''
         if @post.post_image.video?
           # Generate a thumbnail for the video
+          puts '@@@@@@@@_-------------- Generarting Thumbnial ----------@@@@@@@@@@@'
+          puts '@@@@@@@@_-------------- Generarting Thumbnial ----------@@@@@@@@@@@'
+          puts '@@@@@@@@_-------------- Generarting Thumbnial ----------@@@@@@@@@@@'
+          puts '@@@@@@@@_-------------- Generarting Thumbnial ----------@@@@@@@@@@@'
+          puts '@@@@@@@@_-------------- Generarting Thumbnial ----------@@@@@@@@@@@'
           thumbnail = generate_video_thumbnail(@post.post_image)
+          puts "@@@@@@@@_-------------- Generarting Thumbnial 222222 ----------@@@@@@@@@@@ #{thumbnail}"
+          puts '@@@@@@@@_-------------- Generarting Thumbnial ----------@@@@@@@@@@@'
+          puts '@@@@@@@@_-------------- Generarting Thumbnial ----------@@@@@@@@@@@'
+          puts '@@@@@@@@_-------------- Generarting Thumbnial ----------@@@@@@@@@@@'
+          puts '@@@@@@@@_-------------- Generarting Thumbnial ----------@@@@@@@@@@@'
         end
         if @post.post_image
           video_preview = @post.compress
