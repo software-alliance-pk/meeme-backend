@@ -250,7 +250,12 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :amazon_cards, only: [:index]
+      resources :amazon_cards do
+        collection do
+          get :index
+          post :purchase_card
+        end
+      end
 
       get '/privacy_policies', to: 'privacy_policies#privacy'
     end
