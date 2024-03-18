@@ -1,0 +1,8 @@
+<h1>Hi <%= @user.username %></h1>
+<p>You have Purchased Amazon Gift Card using Memee App</p>
+<% if @card.present?%>
+  <p>Here is your amazon gift card <%= @card %> </p>
+<% end %>
+<% if @coins.present? && @coins.to_i >0 %>
+  <p> <%= @coins %> coins are deducted from your Memee account</p>
+<% end %>

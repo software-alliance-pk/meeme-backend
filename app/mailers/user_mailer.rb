@@ -49,4 +49,11 @@ class UserMailer < ApplicationMailer
     @coins = coins
     mail(to: @user.email, subject: 'Added Total Judged Coins' )
   end
+
+  def amazon_purshase_card(user, card, coins)
+    @user = user
+    @card = card
+    @coins = coins
+    mail(to: @user.email, subject: 'Amazon Card Purshase' )
+  end
 end
