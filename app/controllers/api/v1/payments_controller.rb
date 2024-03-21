@@ -3,6 +3,32 @@ class Api::V1::PaymentsController < Api::V1::ApiController
   before_action :authorize_request
   require "stripe"
 
+
+  def create_checkout_session
+    Stripe.api_key =  Rails.configuration.stripe[:secret_key]
+    session = Stripe::Checkout::Session.create(
+      payment_method_types: ['card'],
+      line_items: [
+          {
+              price_data: {
+                  currency: 'usd', 
+                  product_data: {
+                      name: params[:product_name],
+                  },
+                  unit_amount: params[:amount]*100, 
+              },
+              quantity: 1,
+          },
+      ],
+      mode: 'payment',
+      customer_email: @current_user.email,
+      success_url: 'http://localhost:3001/BuyCoin?amount=10&coins=12000',
+      cancel_url: 'http://localhost:3001/home'
+    )
+
+    render json: { sessionId: session.id, session_url: session.url }
+  end
+
   def add_user_to_stripe
     response = StripeService.find_or_create_customer(@current_user)
     if response.present?
@@ -13,7 +39,7 @@ class Api::V1::PaymentsController < Api::V1::ApiController
   end
 
   def add_a_card
-    if @current_user.user_cards.find_by(number: params[:number].to_i).present?
+    if @current_user.user_cards.find_by(user_id: @current_user.id).present?
       render json: { message: "Card already exits" }, status: :bad_request
     else
       response = StripeService.create_stripe_customer_card(@current_user, params)
@@ -77,6 +103,32 @@ class Api::V1::PaymentsController < Api::V1::ApiController
         render json: { charge: [], message: "Cannot be charged" }, status: :not_found
       end
     end
+  end
+
+  def stripe_checkout_coins
+        if params[:amount_paid].to_i == 10
+          coins = 12000
+        elsif params[:amount_paid].to_i == 25
+          coins = 20000
+        elsif params[:amount_paid].to_i == 50
+          coins = 60000
+        elsif params[:amount_paid].to_i == 75
+          coins = 90000
+        elsif params[:amount_paid].to_i == 100
+          coins = 120000
+        end
+        # coins = (params[:amount_to_be_paid].to_i * 100)/0.00083
+        user_coin = @current_user.coins
+        coins += user_coin
+        @current_user.update(coins: coins)
+        charge = Transaction.create!({
+                              amount: params[:amount_paid],
+                              user_id: @current_user.id,
+                              coins: params[:coins],
+                              username: @current_user.username
+                            })
+      charge
+      render json: { charge: charge, coins: @current_user.coins }, status: :ok
   end
 
   def show_transactions_history

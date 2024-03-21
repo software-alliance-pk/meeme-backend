@@ -121,6 +121,8 @@ Rails.application.routes.draw do
           get 'payments/show_transactions_history', to: "payments#show_transactions_history"
           post 'payments/payment_intent', to: "payments#payment_intent"
           post 'payments/apple_pay', to: "payments#apple_pay"
+          post 'payments/create_checkout_session', to: "payments#create_checkout_session"
+          post 'payments/stripe_checkout_coins', to: "payments#stripe_checkout_coins"
           post :active_status_change
           post :notification_settings
           put :private_account
