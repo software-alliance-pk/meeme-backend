@@ -42,12 +42,16 @@ class Api::V1::PaymentsController < Api::V1::ApiController
     if @current_user.user_cards.find_by(user_id: @current_user.id).present?
       render json: { message: "Card already exits" }, status: :bad_request
     else
+      begin
       response = StripeService.create_stripe_customer_card(@current_user, params)
       return render json: { card:[] ,message: response}, status: :unprocessable_entity if response.class == String
       if response.present?
         render json: { card: response }, status: :ok
       else
         render json: { card: [], message: "Card not added" }, status: :not_found
+      end
+      rescue => e
+        render json: { card: [], message: "Token is not valid" }, status: :not_found
       end
     end
   end
