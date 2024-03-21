@@ -41,24 +41,21 @@ class StripeService
   def self.create_stripe_customer_card(user, params)
     begin
       customer = find_or_create_customer(user)
-      token = create_card_token(params)
-      return token if token.class == String
+      # token = create_card_token(params)
+      # return token if token.class == String
       card = Stripe::Customer.create_source(
         customer.id,
-        { source: token.id,
-        },
+        { source: params[:token],},
       )
       if card.present?
         user.user_cards.create!(name: params[:first_name] + ' ' + params[:last_name],
                                 country: params[:country],
-                                expiry_month: params[:exp_month],
-                                expiry_year: params[:exp_year],
-                                cvc: params[:cvc],
-                                country: params[:country],
+                                expiry_month: card.exp_month,
+                                expiry_year: card.exp_year,
                                 card_id: card.id,
                                 brand: card.brand,
                                 last_four: card.last4.to_i,
-                                number: params[:number].to_i
+                                number: card.last4.to_i
         )
       end
       card
@@ -116,6 +113,7 @@ class StripeService
           coins = 120000
         end
         # coins = (params[:amount_to_be_paid].to_i * 100)/0.00083
+        purshased_coins = coins
         user_coin = user.coins
         coins += user_coin
         user.update(coins: coins)
@@ -128,7 +126,8 @@ class StripeService
                               brand: charge.source.brand,
                               currency: charge.currency,
                               user_id: user.id,
-                              username: user.username
+                              username: user.username,
+                              coins: purshased_coins,
                             })
       end
       charge
