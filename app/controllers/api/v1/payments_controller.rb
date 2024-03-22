@@ -51,7 +51,7 @@ class Api::V1::PaymentsController < Api::V1::ApiController
         render json: { card: [], message: "Card not added" }, status: :not_found
       end
       rescue => e
-        render json: { card: [], message: "Token is not valid" }, status: :not_found
+        render json: { card: [], message: e.message }, status: :not_found
       end
     end
   end
