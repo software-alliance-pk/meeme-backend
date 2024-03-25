@@ -351,14 +351,14 @@ end
 
 
 # Seed data for coin_prices table
-coin_prices_data = [
-  { coin: '10000', price: 1 },
-  { coin: '30000', price: 3 },
-  { coin: '50000', price: 5 },
-  { coin: '100000', price: 10 },
-]
+# coin_prices_data = [
+#   { coin: '10000', price: 1 },
+#   { coin: '30000', price: 3 },
+#   { coin: '50000', price: 5 },
+#   { coin: '100000', price: 10 },
+# ]
 
-# Create seed data for coin_prices
-coin_prices_data.each do |data|
-  CoinPrice.create!(coin: data[:coin], price: data[:price])
-end
+# # Create seed data for coin_prices
+# coin_prices_data.each do |data|
+#   CoinPrice.create!(coin: data[:coin], price: data[:price])
+# end
