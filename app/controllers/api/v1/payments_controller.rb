@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class Api::V1::PaymentsController < Api::V1::ApiController
-  before_action :authorize_request
+  before_action :authorize_request, except: :webhook
   require "stripe"
 
 
@@ -36,6 +36,12 @@ class Api::V1::PaymentsController < Api::V1::ApiController
     else
       render json: { message: "User not added" }, status: :not_found
     end
+  end
+
+  def webhook
+    response = StripeService.webhook(request, @current_user)
+    render json: { message: "Webhook hit" }, status: :ok
+      
   end
 
   def add_a_card
@@ -107,32 +113,6 @@ class Api::V1::PaymentsController < Api::V1::ApiController
         render json: { charge: [], message: "Cannot be charged" }, status: :not_found
       end
     end
-  end
-
-  def stripe_checkout_coins
-        if params[:amount_paid].to_i == 10
-          coins = 12000
-        elsif params[:amount_paid].to_i == 25
-          coins = 20000
-        elsif params[:amount_paid].to_i == 50
-          coins = 60000
-        elsif params[:amount_paid].to_i == 75
-          coins = 90000
-        elsif params[:amount_paid].to_i == 100
-          coins = 120000
-        end
-        # coins = (params[:amount_to_be_paid].to_i * 100)/0.00083
-        user_coin = @current_user.coins
-        coins += user_coin
-        @current_user.update(coins: coins)
-        charge = Transaction.create!({
-                              amount: params[:amount_paid],
-                              user_id: @current_user.id,
-                              coins: params[:coins],
-                              username: @current_user.username
-                            })
-      charge
-      render json: { charge: charge, coins: @current_user.coins }, status: :ok
   end
 
   def show_transactions_history

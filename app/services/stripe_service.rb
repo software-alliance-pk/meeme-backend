@@ -1,8 +1,52 @@
+require 'json'
+require 'sinatra'
+require 'stripe'
+
 class StripeService
   def initialize()
     Stripe.api_key = Rails.configuration.stripe[:secret_key]
-
+    protect_from_forgery with: :null_session
   end
+
+  def self.webhook(request,user)
+    payload = request.body.read
+    # puts "Stripe Payload @@@----#{payload}"
+    sig_header = request.headers['HTTP_STRIPE_SIGNATURE']
+    # puts "Stripe sig_header @@@----#{sig_header}"
+    endpoint_secret =  Rails.configuration.stripe[:webhook_secret]
+    # puts "Stripe endpoint_secret @@@----#{endpoint_secret}"
+  
+    if sig_header.nil?
+      puts "Stripe signature header not present"
+      return
+    end
+  
+    begin
+      event = Stripe::Webhook.construct_event(
+        payload, sig_header, endpoint_secret
+      )
+    rescue JSON::ParserError => e
+      puts "JSON parsing error: #{e.message}"
+      return
+    rescue Stripe::SignatureVerificationError => e
+      puts "Stripe signature verification failed: #{e.message}"
+      return
+    end
+  
+    # Handle the event
+    case event.type
+    when 'checkout.session.completed'
+      handle_checkout_session_completed(event,user)
+  
+    when 'payment_intent.succeeded'
+      handle_payment_intent_succeeded(event)
+    # Add more event handlers as needed
+    else
+      puts "Unhandled event type: #{event.type}"
+    end
+    return :ok
+  end
+  
 
   def self.find_or_create_customer(user)
     begin
@@ -101,16 +145,16 @@ class StripeService
                                        description: "Amount $#{params[:amount_to_be_paid]} charged for coins",
                                      })
       if charge.present?
-        if params[:amount_to_be_paid].to_i == 10
-          coins = 12000
-        elsif params[:amount_to_be_paid].to_i == 25
-          coins = 20000
-        elsif params[:amount_to_be_paid].to_i == 50
-          coins = 60000
-        elsif params[:amount_to_be_paid].to_i == 75
-          coins = 90000
-        elsif params[:amount_to_be_paid].to_i == 100
-          coins = 120000
+        if params[:amount_to_be_paid].to_i == 1
+          coins = 10000
+        elsif params[:amount_to_be_paid].to_i == 3
+          coins = 30000
+        elsif params[:amount_to_be_paid].to_i == 5
+          coins = 50000
+        elsif params[:amount_to_be_paid].to_i == 10
+          coins = 100000
+        elsif params[:coins].present?
+          coins = params[:coins]
         end
         # coins = (params[:amount_to_be_paid].to_i * 100)/0.00083
         purshased_coins = coins
@@ -148,5 +192,58 @@ class StripeService
       intent,
     )
   end
+
+  private
+
+  def self.handle_checkout_session_completed(event, user)
+    session = event.data.object
+    puts "handle_checkout_session_completed ===== #{session}"
+    puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    puts "Amoount ===== #{(session.amount_subtotal.to_i)/100.to_i}"
+    amount_paid = (session.amount_subtotal.to_i)/100
+    puts "Customer email===== #{session.customer_email}"
+    puts "Customer ===== #{session.customer}"
+    puts "id ===== #{session.id}"
+
+    if amount_paid == 10
+      coins = 12000
+    elsif amount_paid == 25
+      coins = 20000
+    elsif amount_paid == 50
+      coins = 60000
+    elsif amount_paid == 75
+      coins = 90000
+    elsif amount_paid == 100
+      coins = 120000
+    end
+    # coins = (params[:amount_to_be_paid].to_i * 100)/0.00083
+    purshased_coins = coins
+    puts "Purhased coins  == #{coins}"
+    puts " User coins  == #{@current_user}"
+    if user.coins
+    user_coin = user.coins 
+    else
+    user_coin = 0
+    end
+    puts "user_coin   == #{user_coin}"
+    coins += user_coin
+    puts "updated coins    == #{coins}"
+    user.update(coins: coins)
+    charge = Transaction.create!({
+                          amount: amount_paid,
+                          balance_transaction_id: session.id,
+                          user_id: user.id,
+                          coins: purshased_coins,
+                          username: user.username,
+                          customer_id: session.customer
+                        })
+  charge
+  end
+
+  def self.handle_payment_intent_succeeded(event)
+    payment_intent = event.data.object
+    # Retrieve relevant data from the payment_intent object and perform actions
+  end
+
 
 end
