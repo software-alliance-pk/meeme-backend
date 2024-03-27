@@ -5,7 +5,7 @@
 Rails.configuration.stripe = {
   :secret_key => ENV['STRIPE_SECRET_KEY'],
   :publishable_key => ENV['STRIPE_PUBLISHABLE_KEY'],
-  :webhook_secret => "whsec_63f60838472b42a496183b2ae5da3954173b16c63c5975dd72ceb65fbb3ecab5"
+  :webhook_secret => ENV['STRIPE_WEBHOOK_SECRET_KEY']
 }
 
 Stripe.api_key = Rails.configuration.stripe[:secret_key]

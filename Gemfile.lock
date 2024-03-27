@@ -341,6 +341,7 @@ GEM
       concurrent-ruby (~> 1.0)
     tzinfo-data (1.2023.3)
       tzinfo (>= 1.0.0)
+    uri (0.13.0)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.0)
@@ -413,6 +414,7 @@ DEPENDENCIES
   stripe
   turbo-rails
   tzinfo-data
+  uri
   web-console
   webdrivers
   whenever
