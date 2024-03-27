@@ -13,7 +13,7 @@ class ShareBadgeJob < ApplicationJob
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
       end
-    elsif UUser.find_by(id: current_user.id)&.shared == 500000
+    elsif User.find_by(id: current_user.id)&.shared == 500000
       @badge = Badge.find_by(title: "Sharer Bronze")
       @check = UserBadge.find_by(user_id: current_user.id, badge_id: @badge.id)
       if @check.present?
