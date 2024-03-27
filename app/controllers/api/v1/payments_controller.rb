@@ -6,6 +6,10 @@ class Api::V1::PaymentsController < Api::V1::ApiController
 
   def create_checkout_session
     Stripe.api_key =  Rails.configuration.stripe[:secret_key]
+    buy_amount = params[:amount]
+    product_name = params[:product_name]
+    unit_amount_cents = (buy_amount * 100).to_i
+
     session = Stripe::Checkout::Session.create(
       payment_method_types: ['card'],
       line_items: [
@@ -13,17 +17,17 @@ class Api::V1::PaymentsController < Api::V1::ApiController
               price_data: {
                   currency: 'usd', 
                   product_data: {
-                      name: params[:product_name],
+                      name: "#{params[:product_name]} Coins",
                   },
-                  unit_amount: params[:amount]*100, 
+                  unit_amount: unit_amount_cents, 
               },
               quantity: 1,
           },
       ],
       mode: 'payment',
       customer_email: @current_user.email,
-      success_url: 'http://localhost:3001/BuyCoin?amount=10&coins=12000',
-      cancel_url: 'http://localhost:3001/home'
+      success_url: "#{ENV['FRONTEND_URL']}/BuyCoin?amount=#{buy_amount}&coins=#{product_name}",
+      cancel_url: "#{ENV['FRONTEND_URL']}"
     )
 
     render json: { sessionId: session.id, session_url: session.url }
@@ -140,16 +144,16 @@ class Api::V1::PaymentsController < Api::V1::ApiController
   def apple_pay
     payment_intent = StripeService.retrieve_payment_intent(params[:payment_intent])
     if payment_intent.status == "succeeded"
-      if params[:amount_to_be_paid].to_i == 10
-        coins = 12000
-      elsif params[:amount_to_be_paid].to_i == 25
-        coins = 20000
-      elsif params[:amount_to_be_paid].to_i == 50
-        coins = 60000
-      elsif params[:amount_to_be_paid].to_i == 75
-        coins = 90000
-      elsif params[:amount_to_be_paid].to_i == 100
-        coins = 120000
+      if params[:amount_to_be_paid].to_i == 1
+        coins = 10000
+      elsif params[:amount_to_be_paid].to_i == 3
+        coins = 30000
+      elsif params[:amount_to_be_paid].to_i == 5
+        coins = 50000
+      elsif params[:amount_to_be_paid].to_i == 10
+        coins = 100000
+      elsif params[:coins].present?
+        coins = params[:coins]
       end
       # coins = (params[:amount_to_be_paid].to_i * 100)/0.00083
       user_coin = @current_user.coins

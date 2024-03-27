@@ -1,6 +1,7 @@
 require 'json'
 require 'sinatra'
 require 'stripe'
+require 'uri'
 
 class StripeService
   def initialize()
@@ -10,12 +11,9 @@ class StripeService
 
   def self.webhook(request,user)
     payload = request.body.read
-    # puts "Stripe Payload @@@----#{payload}"
     sig_header = request.headers['HTTP_STRIPE_SIGNATURE']
-    # puts "Stripe sig_header @@@----#{sig_header}"
     endpoint_secret =  Rails.configuration.stripe[:webhook_secret]
-    # puts "Stripe endpoint_secret @@@----#{endpoint_secret}"
-  
+      
     if sig_header.nil?
       puts "Stripe signature header not present"
       return
@@ -36,7 +34,7 @@ class StripeService
     # Handle the event
     case event.type
     when 'checkout.session.completed'
-      handle_checkout_session_completed(event,user)
+      handle_checkout_session_completed(event)
   
     when 'payment_intent.succeeded'
       handle_payment_intent_succeeded(event)
@@ -193,40 +191,46 @@ class StripeService
     )
   end
 
-  private
-
-  def self.handle_checkout_session_completed(event, user)
+  def self.handle_checkout_session_completed(event)
     session = event.data.object
     puts "handle_checkout_session_completed ===== #{session}"
     puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    puts "Amoount ===== #{(session.amount_subtotal.to_i)/100.to_i}"
+    puts "Amount  ===== #{(session.amount_subtotal.to_i)/100.to_i}"
     amount_paid = (session.amount_subtotal.to_i)/100
     puts "Customer email===== #{session.customer_email}"
+    user = User.find_by(email: session.customer_email)
+
     puts "Customer ===== #{session.customer}"
     puts "id ===== #{session.id}"
 
-    if amount_paid == 10
-      coins = 12000
-    elsif amount_paid == 25
-      coins = 20000
-    elsif amount_paid == 50
-      coins = 60000
-    elsif amount_paid == 75
-      coins = 90000
-    elsif amount_paid == 100
-      coins = 120000
+    puts "user by email ==== #{user}"  
+    
+    if amount_paid == 1
+      coins = 10000
+    elsif amount_paid == 3
+      coins = 30000
+    elsif amount_paid == 5
+      coins = 50000
+    elsif amount_paid == 10
+      coins = 100000
+    else
+      url_string = session.success_url
+      uri = URI.parse(url_string)
+      query_params = URI.decode_www_form(uri.query).to_h
+      url_amount = query_params['amount']
+      url_coins = query_params['coins']
+      coins = url_coins.to_i
     end
-    # coins = (params[:amount_to_be_paid].to_i * 100)/0.00083
+
     purshased_coins = coins
     puts "Purhased coins  == #{coins}"
-    puts " User coins  == #{@current_user}"
     if user.coins
     user_coin = user.coins 
     else
     user_coin = 0
     end
     puts "user_coin   == #{user_coin}"
-    coins += user_coin
+    coins = coins + user_coin
     puts "updated coins    == #{coins}"
     user.update(coins: coins)
     charge = Transaction.create!({
