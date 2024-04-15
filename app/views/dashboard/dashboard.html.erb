@@ -132,7 +132,7 @@
                     <% Transaction.all.each do |trans| %>
                       <% amount << trans.amount %>
                     <% end %>
-                    <span>$<%= number_to_human(amount.sum,  format: '%n%u' ,units: { thousand: 'K', million: 'M', billion: 'B' })%></span>
+                    <span>$<%= number_to_human(amount.compact.sum,  format: '%n%u' ,units: { thousand: 'K', million: 'M', billion: 'B' })%></span>
                     <a href="/transactions" class="btn_blk">
                       <button class="site_btn">View All Transactions</button>
                     </a>

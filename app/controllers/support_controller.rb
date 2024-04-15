@@ -56,7 +56,9 @@ class SupportController < ApplicationController
                                     message_id: @message.id,
                                     sender_id: current_admin_user.id,
                                     sender_name: current_admin_user.admin_user_name,
-                                    sender_image: current_admin_user.admin_profile_image.present? ?  current_admin_user.admin_profile_image.blob.url : '')
+                                    sender_image: current_admin_user.admin_profile_image.present? ?  current_admin_user.admin_profile_image.blob.url : '',
+                                    redirection_type: 'support'
+                                    )
             end
         else
             render json: { message: "No conversation present" }, status: :not_found

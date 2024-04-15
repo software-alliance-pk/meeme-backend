@@ -22,6 +22,16 @@ class Api::V1::AmazonCardsController < Api::V1::ApiController
       coin = card.coin_price
       UserMailer.amazon_purshase_card(@current_user, card.gift_card_number, card.coin_price).deliver_now
 
+      # Send a Notification for Admin 
+      Notification.create(title:"Gift Card #{card.gift_card_number} Purshased by #{@current_user.username}",
+      body: card.gift_card_number,
+      user_id: @current_user.id,
+      notification_type: 'admin_message',
+      sender_id: @current_user.id,
+      sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '',
+      redirection_type:'amazon_card'
+      )
+
       current_user.update(coins: current_user.coins - card.coin_price)
       card.destroy
   
