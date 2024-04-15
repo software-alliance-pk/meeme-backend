@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_29_112123) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_04_081221) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -236,6 +236,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_29_112123) do
     t.integer "sender_id"
     t.string "sender_name"
     t.string "sender_image"
+    t.string "redirection_type"
   end
 
   create_table "popups", force: :cascade do |t|
