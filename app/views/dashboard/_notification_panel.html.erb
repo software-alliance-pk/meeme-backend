@@ -43,13 +43,16 @@
 </div>
 
 <script>
-    function change_status(id) {
+    function change_status(id, redirectionType) {
         $.ajax({
             type: "GET",
             url: "notifications",
             data: {id: id},
             success: function (response) {
-                // location.reload()
+
+           if (redirectionType !== 'amazon_card' && redirectionType !== 'support') {
+                location.reload()
+            }
             }
         })
     }
@@ -77,7 +80,7 @@
 
     function handleNotificationClick(notificationId, redirectionType) {
       console.log("Hdnle redireciton ");
-      change_status(notificationId);
+      change_status(notificationId, redirectionType);
       
       if (redirectionType === 'amazon_card') {
          window.location.href = '/gift-rewards';
