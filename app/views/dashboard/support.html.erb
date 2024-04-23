@@ -114,6 +114,58 @@
 </main>
 
 <script>
+
+/**
+ * Open the conversation using coversationId on Notification Click
+ * */
+  $(document).ready(function() {
+    // Add click event to user blocks
+    $(".user_list").on('click', '.user_blk', function() {
+      $(".user_list .user_blk.active").removeClass("active");
+      $(this).addClass("active");
+    });
+
+    $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
+
+    $("#clicked").click(function() {
+      $(this).addClass("active");
+    });
+
+    // Check if conversation ID is present in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const conversationId = urlParams.get('conversationId');
+    console.log("Conversation Id on supoort page ====", conversationId);
+      if (conversationId) {
+      // Filter conversation based on conversationId
+      const conversation = <%= @conversation.to_json.html_safe %>.find(conv => conv.id == conversationId);
+      console.log('Conversation:', conversation);
+      
+      if (conversationId) {
+        const conversation = <%= @conversation.to_json.html_safe %>.find(conv => conv.id == conversationId);
+        console.log('Conversation:', conversation); // Log the conversation object
+        
+        if (conversation) {
+          fetch(`api/v1/users/get_sender_details/${conversation?.sender_id}`)
+          .then(response => response.json())
+          .then(data => {
+            const { username, email } = data;
+            console.log("response  === ", username , email);
+            open_conversation(conversation?.sender_id, conversationId, username, email);
+            get_image(email);
+            get_post(username);
+      })
+      .catch(error => {
+        console.error('Error fetching sender details:', error);
+      });
+        } else {
+          console.error('Conversation or sender not found');
+        }
+      }
+    }
+
+  });
+
+
     $("#clicked").click()
     $("#clicked").addClass("active")
     $(".user_list").on('click', '.user_blk', function () {
@@ -126,6 +178,7 @@
     })
 
     function open_conversation(sender_id, conversation_id, name, email) {
+        console.log("Open conversation click haseeb === ");
         var live_message_id = ".live_message_" + conversation_id
         $(live_message_id).attr("id", "under_message_" + conversation_id)
         $('#chat_list').data('id', conversation_id);

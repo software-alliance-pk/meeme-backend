@@ -359,7 +359,7 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def recent_posts
     @recent_posts = []
-    Post.where.not(tournament_meme: true).by_recently_created(2500000).each do |post|
+    Post.where.not(tournament_meme: true).by_recently_created(500).each do |post|
       user = post.user
       next unless user && !user.private_account? 
   

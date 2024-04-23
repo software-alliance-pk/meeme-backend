@@ -18,7 +18,7 @@
       <% notification.reverse.each do |notify| %>
         <% user = User.find(notify.user_id) %>
         <li>
-          <div class="item" style='cursor: pointer; background-color: <%= notify.status == "un_read" ? "#3a3b3c" : "transparent" %>' onclick="handleNotificationClick('<%= notify.id %>', '<%= notify.redirection_type %>')">
+          <div class="item" style='cursor: pointer; background-color: <%= notify.status == "un_read" ? "#3a3b3c" : "transparent" %>' onclick="handleNotificationClick('<%= notify.id %>', '<%= notify.redirection_type %>', '<%= notify.conversation_id %>')">
             <div class="detail_blk">
               <div class="img_blk">
                 <div class="img">
@@ -78,14 +78,14 @@
         })
     })
 
-    function handleNotificationClick(notificationId, redirectionType) {
+    function handleNotificationClick(notificationId, redirectionType, conversationId) {
       console.log("Hdnle redireciton ");
       change_status(notificationId, redirectionType);
       
       if (redirectionType === 'amazon_card') {
          window.location.href = '/gift-rewards';
       }else if(redirectionType === 'support'){
-         window.location.href = '/support';
+         window.location.href = `/support?conversationId=${conversationId}`;
       }
     }
 </script>
