@@ -1,5 +1,5 @@
 class Api::V1::UsersController < Api::V1::ApiController
-  before_action :authorize_request, except: %i[verify_otp create forgot_password reset_user_password email_validate, delete_user]
+  before_action :authorize_request, except: %i[verify_otp create forgot_password reset_user_password email_validate get_sender_details delete_user]
   before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_account delete_user search]
   # GET /users
   def index
@@ -22,6 +22,11 @@ class Api::V1::UsersController < Api::V1::ApiController
     username = params[:username]
     similar_users = User.where('lower(username) LIKE ?', "%#{username.downcase}%")
     render json: { similar_users: similar_users }
+  end
+
+  def get_sender_details
+    sender = User.find(params[:id])
+    render json: { username: sender.username, email: sender.email }
   end
 
   def delete_user

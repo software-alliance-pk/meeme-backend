@@ -54,6 +54,36 @@ ref_title = %w[black space common1 common4 common3 common2 common5 rare1 rare2 r
 #                             ['']
 # ]
 
+prices = {
+  'silky_black' => 150,
+  'space_theme' => 200,
+  'roygbiv_yellow' => 250,
+  'brownish' => 300,
+  'dark_blue' => 350,
+  'blackish' => 400,
+  'bluish' => 450,
+  'greenish_yellow' => 500,
+  'orangy_yellow' => 550,
+  'meteorite' => 600,
+  'black' => 650,
+  'dusk' => 700,
+  'banana' => 750,
+  'fire' => 800,
+  'water' => 850,
+  'blacksand' => 900,
+  'smoky' => 950,
+  'pink_polka' => 1000,
+  'camouflage' => 1050,
+  'flamingo' => 1100,
+  'samurai_head' => 1150,
+  'phsychedelic' => 1200,
+  'earth' => 1250,
+  'tricolor' => 1300,
+  'clouds' => 1350,
+  'geometric' => 1400,
+  'coin' => 1450
+}
+
 IMAGES_PATH = "app/assets/images/meme_themes"
 themes.keys.each do |key|
   themes[key].each do |value|
@@ -183,7 +213,7 @@ themes.keys.each do |key|
       title: value,
       theme_type: theme_type[key],
       ref: ref_title[key],
-      buy_price: 100
+      buy_price: prices[value] || 100 
     )
 
     images_and_icons.each do |attribute, path|

@@ -18,7 +18,7 @@
       <% notification.reverse.each do |notify| %>
         <% user = User.find(notify.user_id) %>
         <li>
-          <div class="item" style='cursor: pointer; background-color: <%= notify.status == "un_read" ? "#3a3b3c" : "transparent" %>' onclick="handleNotificationClick('<%= notify.id %>', '<%= notify.redirection_type %>')">
+          <div class="item" style='cursor: pointer; background-color: <%= notify.status == "un_read" ? "#3a3b3c" : "transparent" %>' onclick="handleNotificationClick('<%= notify.id %>', '<%= notify.redirection_type %>', '<%= notify.conversation_id %>')">
             <div class="detail_blk">
               <div class="img_blk">
                 <div class="img">
@@ -43,13 +43,16 @@
 </div>
 
 <script>
-    function change_status(id) {
+    function change_status(id, redirectionType) {
         $.ajax({
             type: "GET",
             url: "notifications",
             data: {id: id},
             success: function (response) {
-                // location.reload()
+
+           if (redirectionType !== 'amazon_card' && redirectionType !== 'support') {
+                location.reload()
+            }
             }
         })
     }
@@ -75,14 +78,14 @@
         })
     })
 
-    function handleNotificationClick(notificationId, redirectionType) {
+    function handleNotificationClick(notificationId, redirectionType, conversationId) {
       console.log("Hdnle redireciton ");
-      change_status(notificationId);
+      change_status(notificationId, redirectionType);
       
       if (redirectionType === 'amazon_card') {
          window.location.href = '/gift-rewards';
       }else if(redirectionType === 'support'){
-         window.location.href = '/support';
+         window.location.href = `/support?conversationId=${conversationId}`;
       }
     }
 </script>
