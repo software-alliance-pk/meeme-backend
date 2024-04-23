@@ -113,6 +113,7 @@ Rails.application.routes.draw do
           get :open_current_user
           get :open_some_other_user
           post :email_validate
+          post :update_user_theme
           get '/get_sender_details/:id', to: 'users#get_sender_details'
           post 'payments/add_user_to_stripe', to: "payments#add_user_to_stripe"
           post 'payments/add_a_card', to: "payments#add_a_card"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_04_081221) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_23_123208) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -430,6 +430,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_04_081221) do
     t.boolean "private_account", default: false
     t.integer "shared"
     t.integer "explored", default: 0
+    t.string "user_themes"
   end
 
   create_table "verification_tokens", force: :cascade do |t|

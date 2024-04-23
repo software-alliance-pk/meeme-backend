@@ -29,6 +29,14 @@ class Api::V1::UsersController < Api::V1::ApiController
     render json: { username: sender.username, email: sender.email }
   end
 
+  def update_user_theme
+    if @user.update(user_themes: params[:theme])
+      render json: { message: 'User theme updated successfully' }, status: :ok
+    else
+      render json: { error: @user.errors.full_messages.join(', ') }, status: :unprocessable_entity
+    end
+  end
+
   def delete_user
     user_id = params[:user_id]
     return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
