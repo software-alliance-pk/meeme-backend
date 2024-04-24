@@ -38,7 +38,7 @@
           <div class="user_list" id="main_user_list">
             <% if @conversation.present? %>
               <% @conversation.each do |conversation| %>
-                <div class="user_blk" id="clicked" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.email %>'); get_post('<%= conversation.sender.username %>')">
+                <div class="user_blk" id="clicked" data-conversation-id="<%= conversation.id %>" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.email %>'); get_post('<%= conversation.sender.username %>')">
                   <div class="ico fill round">
                     <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png") %>" alt="">
                   </div>
@@ -153,6 +153,8 @@
             open_conversation(conversation?.sender_id, conversationId, username, email);
             get_image(email);
             get_post(username);
+             // Highlight the opened chat block
+             $(`.user_list .user_blk[data-conversation-id="${conversationId}"]`).addClass("active");
       })
       .catch(error => {
         console.error('Error fetching sender details:', error);
