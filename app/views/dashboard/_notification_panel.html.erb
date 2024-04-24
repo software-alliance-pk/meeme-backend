@@ -15,7 +15,7 @@
   <h4>Recent Notification</h4>
   <ul class="list" id="notification_list">
     <% if notification.present? %>
-      <% notification.reverse.each do |notify| %>
+      <% notification.sort_by(&:created_at).reverse.each do |notify| %>
         <% user = User.find(notify.user_id) %>
         <li>
           <div class="item" style='cursor: pointer; background-color: <%= notify.status == "un_read" ? "#3a3b3c" : "transparent" %>' onclick="handleNotificationClick('<%= notify.id %>', '<%= notify.redirection_type %>', '<%= notify.conversation_id %>')">
