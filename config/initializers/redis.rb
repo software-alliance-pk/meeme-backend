@@ -7,6 +7,6 @@ def handle_redis_connection
   yield
 rescue Redis::BaseConnectionError => e
   Rails.logger.error "Redis connection error: #{e.message}"
-  sleep 1
+  sleep 100
   retry
 end
