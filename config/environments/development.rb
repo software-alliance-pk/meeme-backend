@@ -75,7 +75,8 @@ Rails.application.configure do
     :enable_starttls_auto => true
   }
 
-  config.action_cable.url = "wss://fb4a-139-135-32-171.in.ngrok.io/cable"
+  config.action_cable.url = "ws://localhost:3000/cable"
+  config.action_cable.disable_request_forgery_protection = true
   config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
   config.hosts << /.*\.ngrok\.io/
   config.web_console.permissions = '139.135.32.171'

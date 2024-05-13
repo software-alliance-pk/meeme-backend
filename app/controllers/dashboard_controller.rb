@@ -580,6 +580,26 @@ class DashboardController < ApplicationController
     end
   end
 
+  def getGiftCardRequest
+    @gift_card_requests = GiftCardRequest.all
+    render json: @gift_card_requests
+  end
+
+  def send_gift_card
+    @user = User.find_by(email: params[:email])
+    UserMailer.amazon_purshase_card(@user, params[:card_number], params[:coins]).deliver_now
+    coins_to_subtract = params[:coins].to_i
+    @user.update(coins: @user.coins - coins_to_subtract)
+    
+    request = GiftCardRequest.find_by(id: params[:requestId])
+    if request
+      request.update(status: 1)
+    end
+    
+    render json: { message: "Gift Card Sent Via Email" }, status: :ok
+  end
+  
+
   private
 
   def admin_user_params

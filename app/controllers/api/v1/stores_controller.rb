@@ -19,7 +19,7 @@ class Api::V1::StoresController < Api::V1::ApiController
     user_coin = @current_user.coins
     coins = user_coin - params[:amount].to_i
     if coins < 0
-      render json: { message: "Insufficient coins" }, status: :unauthorized
+      render json: { message: "Insufficient coins" }, status: :unprocessable_entity
     else
       @store = UserStore.new(user_id: @current_user.id,
                              name: params[:name],

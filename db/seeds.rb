@@ -18,19 +18,19 @@
 # }
 
 
-themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'], 6 => ['bluish'],
-           7 => ['greenish_yellow'], 8 => ['orangy_yellow'], 9 => ['meteorite'], 10 => ['black'], 11 => ['dusk'], 12 => ["banana"], 13 => ["fire"],
-           14 => ['water'], 15 => ['blacksand'], 16 => ['smoky'], 17 => ['pink_polka'], 18 => ['camouflage'], 19 => ['flamingo'], 20 => ['samurai_head'],
-           21 => ['phsychedelic'], 22 => ['earth'], 23 => ['tricolor'], 24 => ['clouds'], 25 => ['geometric'], 26 => ['coin']
-}
+# themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'], 6 => ['bluish'],
+#            7 => ['greenish_yellow'], 8 => ['orangy_yellow'], 9 => ['meteorite'], 10 => ['black'], 11 => ['dusk'], 12 => ["banana"], 13 => ["fire"],
+#            14 => ['water'], 15 => ['blacksand'], 16 => ['smoky'], 17 => ['pink_polka'], 18 => ['camouflage'], 19 => ['flamingo'], 20 => ['samurai_head'],
+#            21 => ['phsychedelic'], 22 => ['earth'], 23 => ['tricolor'], 24 => ['clouds'], 25 => ['geometric'], 26 => ['coin']
+# }
 
-# themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'] }
-theme_type = %w[default common common common common common common rare rare rare rare rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare
-                ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare
-]
-ref_title = %w[black space common1 common4 common3 common2 common5 rare1 rare2 rare3 rare4 rare5 ultra_rare1 ultra_rare2 ultra_rare3 ultra_rare4 ultra_rare5 ultra_rare6 ultra_rare7 ultra_rare8
-               ultra_rare9 ultra_rare10 ultra_rare11 ultra_rare12 ultra_rare13 ultra_rare14 ultra_rare15
-]
+# # themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'] }
+# theme_type = %w[default common common common common common common rare rare rare rare rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare
+#                 ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare ultra_rare
+# ]
+# ref_title = %w[black space common1 common4 common3 common2 common5 rare1 rare2 rare3 rare4 rare5 ultra_rare1 ultra_rare2 ultra_rare3 ultra_rare4 ultra_rare5 ultra_rare6 ultra_rare7 ultra_rare8
+#                ultra_rare9 ultra_rare10 ultra_rare11 ultra_rare12 ultra_rare13 ultra_rare14 ultra_rare15
+# ]
 # theme_type = %w[basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic basic
 #                 basic basic basic basic basic basic basic basic basic basic common common common common common rare rare rare rare rare
 # ]
@@ -54,180 +54,180 @@ ref_title = %w[black space common1 common4 common3 common2 common5 rare1 rare2 r
 #                             ['']
 # ]
 
-prices = {
-  'silky_black' => 150,
-  'space_theme' => 200,
-  'roygbiv_yellow' => 250,
-  'brownish' => 300,
-  'dark_blue' => 350,
-  'blackish' => 400,
-  'bluish' => 450,
-  'greenish_yellow' => 500,
-  'orangy_yellow' => 550,
-  'meteorite' => 600,
-  'black' => 650,
-  'dusk' => 700,
-  'banana' => 750,
-  'fire' => 800,
-  'water' => 850,
-  'blacksand' => 900,
-  'smoky' => 950,
-  'pink_polka' => 1000,
-  'camouflage' => 1050,
-  'flamingo' => 1100,
-  'samurai_head' => 1150,
-  'phsychedelic' => 1200,
-  'earth' => 1250,
-  'tricolor' => 1300,
-  'clouds' => 1350,
-  'geometric' => 1400,
-  'coin' => 1450
-}
+# prices = {
+#   'silky_black' => 150,
+#   'space_theme' => 200,
+#   'roygbiv_yellow' => 250,
+#   'brownish' => 300,
+#   'dark_blue' => 350,
+#   'blackish' => 400,
+#   'bluish' => 450,
+#   'greenish_yellow' => 500,
+#   'orangy_yellow' => 550,
+#   'meteorite' => 600,
+#   'black' => 650,
+#   'dusk' => 700,
+#   'banana' => 750,
+#   'fire' => 800,
+#   'water' => 850,
+#   'blacksand' => 900,
+#   'smoky' => 950,
+#   'pink_polka' => 1000,
+#   'camouflage' => 1050,
+#   'flamingo' => 1100,
+#   'samurai_head' => 1150,
+#   'phsychedelic' => 1200,
+#   'earth' => 1250,
+#   'tricolor' => 1300,
+#   'clouds' => 1350,
+#   'geometric' => 1400,
+#   'coin' => 1450
+# }
 
-IMAGES_PATH = "app/assets/images/meme_themes"
-themes.keys.each do |key|
-  themes[key].each do |value|
-    images = Dir.glob("#{IMAGES_PATH}/#{value}/theme_pngs/*.png")
-    selected_nav_icons = Dir.glob("#{IMAGES_PATH}/#{value}/selected_svgs/*.svg")
-    un_selected_nav_icons = Dir.glob("#{IMAGES_PATH}/#{value}/unselected_svgs/*.svg")
-    app_svgs = Dir.glob("#{IMAGES_PATH}/#{value}/app_svgs/*.svg")
+# IMAGES_PATH = "app/assets/images/meme_themes"
+# themes.keys.each do |key|
+#   themes[key].each do |value|
+#     images = Dir.glob("#{IMAGES_PATH}/#{value}/theme_pngs/*.png")
+#     selected_nav_icons = Dir.glob("#{IMAGES_PATH}/#{value}/selected_svgs/*.svg")
+#     un_selected_nav_icons = Dir.glob("#{IMAGES_PATH}/#{value}/unselected_svgs/*.svg")
+#     app_svgs = Dir.glob("#{IMAGES_PATH}/#{value}/app_svgs/*.svg")
 
-    images_and_icons = {
-      nav_add: images[0],
-      tab_bar: images[1],
-      background: nil,
-      nav_tournament_icon_selected: selected_nav_icons[0],
-      nav_explore_icon_selected: selected_nav_icons[1],
-      nav_home_icon_selected: selected_nav_icons[2],
-      nav_profile_icon_selected: selected_nav_icons[3],
-      nav_tournament_icon_unselected: un_selected_nav_icons[0],
-      nav_explore_icon_unselected: un_selected_nav_icons[1],
-      nav_home_icon_unselected: un_selected_nav_icons[2],
-      nav_profile_icon_unselected: un_selected_nav_icons[3],
-      filter_icon: nil,
-      filter_cross_icon: nil,
-      search_icon: nil,
-      backward_icon: nil,
-      comment_icon: nil,
-      dots_icon: nil,
-      edit_icon: nil,
-      forward_icon: nil,
-      gallery_icon: nil,
-      like_icon: nil,
-      main_back_icon: nil,
-      main_notification_icon: nil,
-      notification_icon: nil,
-      pending_requests_icon: nil,
-      profile_edit_icon: nil,
-      profile_notification_icon: nil,
-      send_icon: nil,
-      setting_icon: nil,
-      share_icon: nil,
-      shop_icon: nil,
-      tournament_forward_icon: nil
-    }
+#     images_and_icons = {
+#       nav_add: images[0],
+#       tab_bar: images[1],
+#       background: nil,
+#       nav_tournament_icon_selected: selected_nav_icons[0],
+#       nav_explore_icon_selected: selected_nav_icons[1],
+#       nav_home_icon_selected: selected_nav_icons[2],
+#       nav_profile_icon_selected: selected_nav_icons[3],
+#       nav_tournament_icon_unselected: un_selected_nav_icons[0],
+#       nav_explore_icon_unselected: un_selected_nav_icons[1],
+#       nav_home_icon_unselected: un_selected_nav_icons[2],
+#       nav_profile_icon_unselected: un_selected_nav_icons[3],
+#       filter_icon: nil,
+#       filter_cross_icon: nil,
+#       search_icon: nil,
+#       backward_icon: nil,
+#       comment_icon: nil,
+#       dots_icon: nil,
+#       edit_icon: nil,
+#       forward_icon: nil,
+#       gallery_icon: nil,
+#       like_icon: nil,
+#       main_back_icon: nil,
+#       main_notification_icon: nil,
+#       notification_icon: nil,
+#       pending_requests_icon: nil,
+#       profile_edit_icon: nil,
+#       profile_notification_icon: nil,
+#       send_icon: nil,
+#       setting_icon: nil,
+#       share_icon: nil,
+#       shop_icon: nil,
+#       tournament_forward_icon: nil
+#     }
 
-    if selected_nav_icons.length > 0
-      if images.length > 2
-        images_and_icons[:background] = images[0]
-        images_and_icons[:nav_add] = images[1]
-        images_and_icons[:tab_bar] = images[2]
-      end
-      if app_svgs.length == 0
-        images_and_icons.delete(:filter_icon)
-        images_and_icons.delete(:filter_cross_icon)
-      elsif app_svgs.length == 1
-        images_and_icons.delete(:filter_icon)
-        images_and_icons.delete(:filter_cross_icon)
-        if app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/search.svg"
-          images_and_icons[:search_icon] = app_svgs[0]
-        else
-          images_and_icons[:edit_icon] = app_svgs[0]
-        end
-      elsif app_svgs.length == 2
-        if app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/edit.svg" && app_svgs[1] == "#{IMAGES_PATH}/#{value}/app_svgs/gallery.svg"
-          images_and_icons[:edit_icon] = app_svgs[0]
-          images_and_icons[:gallery_icon] = app_svgs[1]
-        elsif app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/gallery.svg" && app_svgs[1] == "#{IMAGES_PATH}/#{value}/app_svgs/search.svg"
-          images_and_icons[:gallery_icon] = app_svgs[0]
-          images_and_icons[:search_icon] = app_svgs[1]
-        else
-          images_and_icons[:filter_icon] = app_svgs[0]
-          images_and_icons[:filter_cross_icon] = app_svgs[1]
-        end
-      elsif app_svgs.length == 3
-        images_and_icons[:filter_icon] = app_svgs[0]
-        images_and_icons[:filter_cross_icon] = app_svgs[1]
-        images_and_icons[:search_icon] = app_svgs[2]
-      elsif app_svgs.length == 4
-        images_and_icons[:filter_icon] = app_svgs[0]
-        images_and_icons[:filter_cross_icon] = app_svgs[1]
-        images_and_icons[:gallery_icon] = app_svgs[2]
-        images_and_icons[:search_icon] = app_svgs[3]
-      elsif app_svgs.length == 21
-        images_and_icons[:backward_icon] = app_svgs[0]
-        images_and_icons[:comment_icon] = app_svgs[1]
-        images_and_icons[:dots_icon] = app_svgs[2]
-        images_and_icons[:edit_icon] = app_svgs[3]
-        images_and_icons[:filter_icon] = app_svgs[4]
-        images_and_icons[:filter_cross_icon] = app_svgs[5]
-        images_and_icons[:forward_icon] = app_svgs[6]
-        images_and_icons[:gallery_icon] = app_svgs[7]
-        images_and_icons[:like_icon] = app_svgs[8]
-        images_and_icons[:main_back_icon] = app_svgs[9]
-        images_and_icons[:main_notification_icon] = app_svgs[10]
-        images_and_icons[:notification_icon] = app_svgs[11]
-        images_and_icons[:pending_requests_icon] = app_svgs[12]
-        images_and_icons[:profile_edit_icon] = app_svgs[13]
-        images_and_icons[:profile_notification_icon] = app_svgs[14]
-        images_and_icons[:search_icon] = app_svgs[15]
-        images_and_icons[:send_icon] = app_svgs[16]
-        images_and_icons[:setting_icon] = app_svgs[17]
-        images_and_icons[:share_icon] = app_svgs[18]
-        images_and_icons[:shop_icon] = app_svgs[19]
-        images_and_icons[:tournament_forward_icon] = app_svgs[20]
-      elsif app_svgs.length == 17
-        images_and_icons[:backward_icon] = app_svgs[0]
-        images_and_icons[:comment_icon] = app_svgs[1]
-        images_and_icons[:dots_icon] = app_svgs[2]
-        images_and_icons[:edit_icon] = app_svgs[3]
-        images_and_icons[:forward_icon] = app_svgs[4]
-        images_and_icons[:gallery_icon] = app_svgs[5]
-        images_and_icons[:like_icon] = app_svgs[6]
-        images_and_icons[:main_back_icon] = app_svgs[7]
-        images_and_icons[:main_notification_icon] = app_svgs[8]
-        images_and_icons[:notification_icon] = app_svgs[9]
-        images_and_icons[:pending_requests_icon] = app_svgs[10]
-        images_and_icons[:profile_notification_icon] = app_svgs[11]
-        images_and_icons[:search_icon] = app_svgs[12]
-        images_and_icons[:send_icon] = app_svgs[13]
-        images_and_icons[:share_icon] = app_svgs[14]
-        images_and_icons[:shop_icon] = app_svgs[15]
-        images_and_icons[:tournament_forward_icon] = app_svgs[16]
-      end
-    else
-      images_and_icons[:tab_bar] = images[0]
-    end
+#     if selected_nav_icons.length > 0
+#       if images.length > 2
+#         images_and_icons[:background] = images[0]
+#         images_and_icons[:nav_add] = images[1]
+#         images_and_icons[:tab_bar] = images[2]
+#       end
+#       if app_svgs.length == 0
+#         images_and_icons.delete(:filter_icon)
+#         images_and_icons.delete(:filter_cross_icon)
+#       elsif app_svgs.length == 1
+#         images_and_icons.delete(:filter_icon)
+#         images_and_icons.delete(:filter_cross_icon)
+#         if app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/search.svg"
+#           images_and_icons[:search_icon] = app_svgs[0]
+#         else
+#           images_and_icons[:edit_icon] = app_svgs[0]
+#         end
+#       elsif app_svgs.length == 2
+#         if app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/edit.svg" && app_svgs[1] == "#{IMAGES_PATH}/#{value}/app_svgs/gallery.svg"
+#           images_and_icons[:edit_icon] = app_svgs[0]
+#           images_and_icons[:gallery_icon] = app_svgs[1]
+#         elsif app_svgs[0] == "#{IMAGES_PATH}/#{value}/app_svgs/gallery.svg" && app_svgs[1] == "#{IMAGES_PATH}/#{value}/app_svgs/search.svg"
+#           images_and_icons[:gallery_icon] = app_svgs[0]
+#           images_and_icons[:search_icon] = app_svgs[1]
+#         else
+#           images_and_icons[:filter_icon] = app_svgs[0]
+#           images_and_icons[:filter_cross_icon] = app_svgs[1]
+#         end
+#       elsif app_svgs.length == 3
+#         images_and_icons[:filter_icon] = app_svgs[0]
+#         images_and_icons[:filter_cross_icon] = app_svgs[1]
+#         images_and_icons[:search_icon] = app_svgs[2]
+#       elsif app_svgs.length == 4
+#         images_and_icons[:filter_icon] = app_svgs[0]
+#         images_and_icons[:filter_cross_icon] = app_svgs[1]
+#         images_and_icons[:gallery_icon] = app_svgs[2]
+#         images_and_icons[:search_icon] = app_svgs[3]
+#       elsif app_svgs.length == 21
+#         images_and_icons[:backward_icon] = app_svgs[0]
+#         images_and_icons[:comment_icon] = app_svgs[1]
+#         images_and_icons[:dots_icon] = app_svgs[2]
+#         images_and_icons[:edit_icon] = app_svgs[3]
+#         images_and_icons[:filter_icon] = app_svgs[4]
+#         images_and_icons[:filter_cross_icon] = app_svgs[5]
+#         images_and_icons[:forward_icon] = app_svgs[6]
+#         images_and_icons[:gallery_icon] = app_svgs[7]
+#         images_and_icons[:like_icon] = app_svgs[8]
+#         images_and_icons[:main_back_icon] = app_svgs[9]
+#         images_and_icons[:main_notification_icon] = app_svgs[10]
+#         images_and_icons[:notification_icon] = app_svgs[11]
+#         images_and_icons[:pending_requests_icon] = app_svgs[12]
+#         images_and_icons[:profile_edit_icon] = app_svgs[13]
+#         images_and_icons[:profile_notification_icon] = app_svgs[14]
+#         images_and_icons[:search_icon] = app_svgs[15]
+#         images_and_icons[:send_icon] = app_svgs[16]
+#         images_and_icons[:setting_icon] = app_svgs[17]
+#         images_and_icons[:share_icon] = app_svgs[18]
+#         images_and_icons[:shop_icon] = app_svgs[19]
+#         images_and_icons[:tournament_forward_icon] = app_svgs[20]
+#       elsif app_svgs.length == 17
+#         images_and_icons[:backward_icon] = app_svgs[0]
+#         images_and_icons[:comment_icon] = app_svgs[1]
+#         images_and_icons[:dots_icon] = app_svgs[2]
+#         images_and_icons[:edit_icon] = app_svgs[3]
+#         images_and_icons[:forward_icon] = app_svgs[4]
+#         images_and_icons[:gallery_icon] = app_svgs[5]
+#         images_and_icons[:like_icon] = app_svgs[6]
+#         images_and_icons[:main_back_icon] = app_svgs[7]
+#         images_and_icons[:main_notification_icon] = app_svgs[8]
+#         images_and_icons[:notification_icon] = app_svgs[9]
+#         images_and_icons[:pending_requests_icon] = app_svgs[10]
+#         images_and_icons[:profile_notification_icon] = app_svgs[11]
+#         images_and_icons[:search_icon] = app_svgs[12]
+#         images_and_icons[:send_icon] = app_svgs[13]
+#         images_and_icons[:share_icon] = app_svgs[14]
+#         images_and_icons[:shop_icon] = app_svgs[15]
+#         images_and_icons[:tournament_forward_icon] = app_svgs[16]
+#       end
+#     else
+#       images_and_icons[:tab_bar] = images[0]
+#     end
 
-    theme = Theme.create!(
-      title: value,
-      theme_type: theme_type[key],
-      ref: ref_title[key],
-      buy_price: prices[value] || 100 
-    )
+#     theme = Theme.create!(
+#       title: value,
+#       theme_type: theme_type[key],
+#       ref: ref_title[key],
+#       buy_price: prices[value] || 100 
+#     )
 
-    images_and_icons.each do |attribute, path|
-      next unless path
+#     images_and_icons.each do |attribute, path|
+#       next unless path
 
-      attachment_name = "#{value}.png" if attribute.to_s.start_with?("nav", "tab", "background")
-      attachment_name = "#{value}.svg" if attribute.to_s.start_with?("nav_tournament", "nav_explore", "nav_home", "nav_profile")
-      attachment_name = "#{value}.svg" if attribute.to_s.start_with?("filter", "backward", "comment", "dots","pending_requests","edit", "forward", "gallery", "like", "main_back", "main_notification", "profile_edit", "profile_notification", "send", "setting", "share", "shop", "tournament_forward", "notification")
-      attachment_name = "#{value}.svg" if attribute.to_s.start_with?("search")
+#       attachment_name = "#{value}.png" if attribute.to_s.start_with?("nav", "tab", "background")
+#       attachment_name = "#{value}.svg" if attribute.to_s.start_with?("nav_tournament", "nav_explore", "nav_home", "nav_profile")
+#       attachment_name = "#{value}.svg" if attribute.to_s.start_with?("filter", "backward", "comment", "dots","pending_requests","edit", "forward", "gallery", "like", "main_back", "main_notification", "profile_edit", "profile_notification", "send", "setting", "share", "shop", "tournament_forward", "notification")
+#       attachment_name = "#{value}.svg" if attribute.to_s.start_with?("search")
 
-      theme.send("#{attribute}_image").attach(io: File.open(File.join(Rails.root, path)), filename: attachment_name)
-    end
-  end
-end
+#       theme.send("#{attribute}_image").attach(io: File.open(File.join(Rails.root, path)), filename: attachment_name)
+#     end
+#   end
+# end
 
 # tutorials = { 1 => ["Memee will have a monthly Tournament that users can join."],
 #               2 => ["The Tournament starts every first day of the month and winners are announced during the last day of each month."],
@@ -392,3 +392,11 @@ end
 # coin_prices_data.each do |data|
 #   CoinPrice.create!(coin: data[:coin], price: data[:price])
 # end
+
+# Clear existing records to avoid duplication if needed
+AmazonCard.destroy_all
+# Create 3 static Amazon gift cards
+AmazonCard.create(amount: 10, coin_price: 120000)
+AmazonCard.create(amount: 25, coin_price: 300000)
+AmazonCard.create(amount: 50, coin_price: 600000)
+puts "Amazon gift cards seeded successfully!"
