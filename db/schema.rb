@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_23_123208) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_10_102208) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -177,6 +177,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_23_123208) do
     t.integer "status", default: 0
   end
 
+  create_table "gift_card_requests", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "status"
+    t.decimal "amount"
+    t.integer "coins"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_email"
+  end
+
   create_table "gift_rewards", force: :cascade do |t|
     t.string "rank"
     t.string "card_number"
@@ -237,6 +247,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_23_123208) do
     t.string "sender_name"
     t.string "sender_image"
     t.string "redirection_type"
+    t.integer "request_id"
   end
 
   create_table "popups", force: :cascade do |t|

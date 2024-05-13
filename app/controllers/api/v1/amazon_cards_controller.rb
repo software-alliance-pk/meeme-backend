@@ -19,23 +19,32 @@ class Api::V1::AmazonCardsController < Api::V1::ApiController
         render json: { message: "Insufficient coins" }, status: :unprocessable_entity
         return
       end
-      coin = card.coin_price
-      UserMailer.amazon_purshase_card(@current_user, card.gift_card_number, card.coin_price).deliver_now
 
+      # Create a new record in the GiftCardRequest table
+      gift_card_request = GiftCardRequest.create(
+        user_id: current_user.id,
+        user_email: current_user.email,
+        status: 'pending',
+        amount: card.amount,
+        coins: card.coin_price
+      )
       # Send a Notification for Admin 
-      Notification.create(title:"Gift Card #{card.gift_card_number} Purshased by #{@current_user.username}",
+      Notification.create(title:" #{@current_user.username} Requested to Purchase £#{card.amount} Amazon Gift Card ",
       body: card.gift_card_number,
       user_id: @current_user.id,
       notification_type: 'admin_message',
       sender_id: @current_user.id,
       sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '',
-      redirection_type:'amazon_card'
+      redirection_type:'amazon_card',
+      request_id: gift_card_request.id,
       )
-
-      current_user.update(coins: current_user.coins - card.coin_price)
-      card.destroy
+      # coin = card.coin_price
+      # UserMailer.amazon_purshase_card(@current_user, card.gift_card_number, card.coin_price).deliver_now
+      
+      # current_user.update(coins: current_user.coins - card.coin_price)
+      # card.destroy
   
-      render json: { message: "Card purchased successfully" , coins_deducted: coin , user_coins: @current_user.coins}, status: :ok
+      render json: { message: "Amazon Gift will be sent to you in 24/48 hours"}, status: :ok
     end
   end
   
