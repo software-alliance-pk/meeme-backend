@@ -2,7 +2,8 @@ class ApplicationController < ActionController::Base
   # before_action :authenticate_admin_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_current_user, if: :admin_user_signed_in?
-
+  skip_before_action :verify_authenticity_token
+  
   protected
 
   def configure_permitted_parameters

@@ -26,5 +26,14 @@ module MemeeApp
     config.eager_load_paths << Rails.root.join("app/services")
     config.action_cable.disable_request_forgery_protection = true
     config.action_cable.url = "/cable"
+
+    # Add CORS middleware
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*' # Allow requests from any origin
+        resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options, :head]
+      end
+    end
+        config.action_controller.default_url_options = { host: 'stg.memeeapi.appscorridor.com' }
   end
 end
