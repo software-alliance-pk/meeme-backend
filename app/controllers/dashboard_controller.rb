@@ -148,6 +148,32 @@ class DashboardController < ApplicationController
     end
   end
 
+  def user_all_posts
+    @posts = Post.where(user_id: params[:user_id])
+    if @posts.present?
+      posts_with_images = @posts.map do |post|
+        {
+          id: post.id,
+          description: post.description,
+          dislikes: post.likes.where(status: "dislike").count,
+          likes: post.likes.where(is_judged: true).like.count,
+          created_at: post.created_at.strftime('%b %d, %Y'),
+          tournament_banner_id: post.tournament_banner_id,
+          post_image: post.post_image.attached? ? post.post_image.blob.url : nil
+        }
+      end
+      render json: { posts: posts_with_images }
+    else
+      render json: { message: "No posts for this particular user" }, status: :not_found
+    end
+  end
+
+  def delete_user_post
+    @post = Post.find(params[:id])
+    @post.destroy
+    render json: { message: "Post Deleted Successfully." }, status: :ok
+  end
+
   def user_tournament_posts
     @posts = Post.where(user_id: params[:user_id], tournament_banner_id: params[:tournament_banner_id])
     if @posts.present?
@@ -168,6 +194,8 @@ class DashboardController < ApplicationController
       render json: { message: "No posts for this particular user" }, status: :not_found
     end
   end
+
+ 
   
 
   def tournament_banner
