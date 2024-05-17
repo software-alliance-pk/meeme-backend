@@ -37,14 +37,18 @@ class Api::V1::UsersController < Api::V1::ApiController
     end
   end
 
+
   def delete_user
     user_id = params[:user_id]
-    return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
     user = User.find_by(id: user_id)
-    return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
-    user.destroy
+    if user.nil?
+      return render json: { error: 'User not found' }, status: :not_found
+    end
+    conversations = Conversation.where(sender_id: user_id).or(Conversation.where(receiver_id: user_id))
+    conversations.destroy_all;
     return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
   end
+  
 
   def open_profile
     @profile = User.find_by(id: params[:id])
