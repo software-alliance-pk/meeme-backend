@@ -282,25 +282,45 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   end
 
-  def user_search_tag
+  def post_search_user_and_tag
     @posts = []
     @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
-    if params[:tag] == ""
-      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").all
+  
+    if params[:tag].blank? && params[:username].blank?
+      render json: { message: "Tag or Username parameter is required" }, status: :bad_request
+      return
+    end
+  
+    # Fetch posts based on tag
+    if params[:tag].present?
+      tag_posts = Post.tagged_with(params[:tag], any: true)
+      @posts.concat(tag_posts)
+    end
+  
+    # Fetch posts based on username
+    if params[:username].present?
+      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%")
       if @users.present?
-      end
-    elsif params[:tag] == "#"
-      @posts = Posts.where(tournament_meme: false)
-      @users = []
-
-    else
-      @posts = Post.tagged_with(params[:tag], :any => true)
-      if @posts.present?
-      else
-        render json: { message: "No Post found against this tag " }, status: :not_found
+        @users.each do |user|
+          user_posts = user.posts
+          @posts.concat(user_posts)
+        end
       end
     end
+  
+    # Ensure @posts is unique
+    @posts.uniq!
+  
+    # Paginate @posts  
+    if @posts.present?
+      @posts = @posts.paginate(page: params[:page], per_page: 25)
+    else
+      render json: { message: "No Post found" }, status: :not_found
+    end
   end
+  
+  
+  
 
   def other_posts
     @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).uniq

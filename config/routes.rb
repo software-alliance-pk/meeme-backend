@@ -149,7 +149,7 @@ Rails.application.routes.draw do
           get :tags
           post :other_posts
           post :user_search_tags
-          post :user_search_tag
+          post :post_search_user_and_tag
           post :share_post
           delete :destroy_multiple
           post :create_downloadable_link
