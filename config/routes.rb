@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root to: 'home#index'
   root "dashboard#homepage"
+  get '/user_all_posts', to: "dashboard#user_all_posts"
+  get '/delete_user_post', to: "dashboard#delete_user_post"
   get '/dashboard', to: "dashboard#dashboard"
   get '/welcome', to: "dashboard#welcome"
   get '/signin', to: "dashboard#signin"
@@ -147,7 +149,7 @@ Rails.application.routes.draw do
           get :tags
           post :other_posts
           post :user_search_tags
-          post :user_search_tag
+          post :post_search_user_and_tag
           post :share_post
           delete :destroy_multiple
           post :create_downloadable_link

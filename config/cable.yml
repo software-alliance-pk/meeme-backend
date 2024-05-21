@@ -5,5 +5,4 @@ test:
   adapter: test
 
 production:
-  adapter: redis
-  url: rediss://default:AVNS_tjkgiVs0ubFNLpb8iKg@memee-redis-sfo3-57242-do-user-14425281-0.b.db.ondigitalocean.com:25061
+  adapter: async
