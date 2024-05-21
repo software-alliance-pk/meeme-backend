@@ -44,7 +44,7 @@ class Api::V1::AmazonCardsController < Api::V1::ApiController
       # current_user.update(coins: current_user.coins - card.coin_price)
       # card.destroy
   
-      render json: { message: "Amazon Gift will be sent to you in 24/48 hours"}, status: :ok
+      render json: { message: "Amazon Gift will be sent to you in 24-48 hours via Email"}, status: :ok
     end
   end
   
