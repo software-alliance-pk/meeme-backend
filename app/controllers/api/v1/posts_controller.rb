@@ -292,6 +292,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   
     # Fetch posts based on tag
+    # Post Controller comment
     if params[:tag].present?
       tag_posts = Post.tagged_with(params[:tag], any: true)
       @posts.concat(tag_posts)
