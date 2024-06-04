@@ -5,7 +5,8 @@ class Api::V1::PostsController < Api::V1::ApiController
   before_action :find_post, only: [:show, :update_posts, :destroy]
 
   def index
-    @posts = @current_user.posts.by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle
+    @user = User.find_by(id: params[:user_id])
+    @posts = @user.posts.where(tournament_meme: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle if @user.present?
     if @posts.present?
 
     else
@@ -470,6 +471,30 @@ class Api::V1::PostsController < Api::V1::ApiController
     temp_file.unlink
     rescue StandardError => e
     render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  def user_tournament_posts
+    if params[:user_id].present?
+      @user = User.find_by(id: params[:user_id])
+      @user_tournament_post = @user.posts.where(tournament_meme: true).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle if @user.present?
+      unless @user_tournament_post.present?
+        render json: { message: "No tournament posts for this particular user" }, status: :not_found
+      end
+    else
+      render json: { message: "Please provide user id" }, status: :not_found
+    end
+  end
+  
+  def post_comments
+    if params[:post_id].present?
+      @post = Post.find_by(id: params[:post_id])
+      @post_comments = @post.comments
+      unless @post_comments.present?
+        render json: { message: "No comments for this particular post" }, status: :not_found
+      end
+    else
+      render json: { message: "Please provide post id" }, status: :not_found
+    end
   end
 
   private
