@@ -1,6 +1,6 @@
-json.user_tournament_posts do
+json.current_user_tournament_posts do
   json.(@user_tournament_post) do |post|
-    like_by_current_user = post.likes.find_by(user_id: @user.id)
+    like_by_current_user = post.likes.find_by(user_id: @current_user.id)
     json.post_id post.id
     json.post_description post.description
     json.post_time post.created_at
