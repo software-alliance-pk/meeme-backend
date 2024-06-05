@@ -7,7 +7,7 @@ class Notification < ApplicationRecord
   belongs_to :conversation, optional: true
   belongs_to :message, optional: true
   # belongs_to :comment, optional: true
-
+  #comment added 
   def create_push_notification
     require 'fcm'
     fcm_client = FCM.new(ENV['FIREBASE_SERVER_KEY'])
