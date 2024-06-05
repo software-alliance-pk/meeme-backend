@@ -34,7 +34,6 @@ class Api::V1::AmazonCardsController < Api::V1::ApiController
       user_id: @current_user.id,
       notification_type: 'admin_message',
       sender_id: @current_user.id,
-      sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '',
       redirection_type:'amazon_card',
       request_id: gift_card_request.id,
       )

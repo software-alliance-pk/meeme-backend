@@ -44,8 +44,8 @@ class Api::V1::CommentsController < Api::V1::ApiController
                             user_id: @comment.post.user.id,
                             notification_type: 'comment',
                             sender_id: @current_user.id,
-                            sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                            sender_name: @current_user.username
+                            )
       end
       render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? @comment.comment_image.blob.url : '' }, status: :ok
     else
@@ -69,8 +69,8 @@ class Api::V1::CommentsController < Api::V1::ApiController
                             user_id: @comment.post.user.id,
                             notification_type: 'comment',
                             sender_id: @current_user.id,
-                            sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                            sender_name: @current_user.username
+                            )
       end
     else
       render_error_messages(@comment)
