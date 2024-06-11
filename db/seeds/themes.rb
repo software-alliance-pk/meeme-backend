@@ -1,7 +1,7 @@
 unless Theme.any?
   themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'], 6 => ['bluish'],
             7 => ['greenish_yellow'], 8 => ['orangy_yellow'], 9 => ['meteorite'], 10 => ['black'], 11 => ['dusk'], 12 => ["banana"], 13 => ["fire"],
-            14 => ['water'], 15 => ['blacks_and'], 16 => ['smoky'], 17 => ['pink_poca'], 18 => ['camouflage'], 19 => ['flamingo'], 20 => ['samurai_head'],
+            14 => ['water'], 15 => ['black_sand'], 16 => ['smoky'], 17 => ['pink_poca'], 18 => ['camouflage'], 19 => ['flamingo'], 20 => ['samurai_head'],
             21 => ['phsychedelic'], 22 => ['earth'], 23 => ['earth_tricolor'], 24 => ['clouds'], 25 => ['geometric'], 26 => ['coin']
   }
 
@@ -14,8 +14,11 @@ unless Theme.any?
     ]
 
 
-  ref_title = %w[black space common1 common4 common3 common2 common5 rare1 rare2 rare3 rare4 rare5 ultra_rare1 ultra_rare2 ultra_rare3 ultra_rare4 ultra_rare5 ultra_rare6 ultra_rare7 ultra_rare8
-                ultra_rare9 ultra_rare10 ultra_rare11 ultra_rare12 ultra_rare13 ultra_rare14 ultra_rare15
+  # ref_title = %w[black space common1 common4 common3 common2 common5 rare1 rare2 rare3 rare4 rare5 ultra_rare1 ultra_rare2 ultra_rare3 ultra_rare4 ultra_rare5 ultra_rare6 ultra_rare7 ultra_rare8
+  #               ultra_rare9 ultra_rare10 ultra_rare11 ultra_rare12 ultra_rare13 ultra_rare14 ultra_rare15
+  # ]
+  ref_title = %w[black space common1 common2 common3 common4 common5 common6 common7 common8 common9 common10 rare1 rare2 rare3 ultra_rare1 
+                 rare4 ultra_rare2 ultra_rare3 ultra_rare4 ultra_rare5 rare5 ultra_rare6 rare6 ultra_rare7 ultra_rare8 rare7
   ]
 
 
@@ -49,21 +52,21 @@ unless Theme.any?
     'bluish' => 30000,
     'greenish_yellow' => 30000,
     'orangy_yellow' => 30000,
-    'meteorite' => 600,
+    'meteorite' => 30000,
     'black' => 30000,
     'dusk' => 30000,
     'banana' => 50000,
     'fire' => 50000,
     'water' => 50000,
-    'blacksand' => 100000,
+    'black_sand' => 100000,
     'smoky' => 50000,
-    'pink_polka' => 100000,
+    'pink_poca' => 100000,
     'camouflage' => 100000,
     'flamingo' => 100000,
     'samurai_head' => 100000,
     'phsychedelic' => 50000,
     'earth' => 100000,
-    'tricolor' => 50000,
+    'earth_tricolor' => 50000,
     'clouds' => 100000,
     'geometric' => 100000,
     'coin' => 50000
