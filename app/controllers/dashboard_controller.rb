@@ -102,7 +102,7 @@ class DashboardController < ApplicationController
     @tournament_banner_name = params[:tournament_banner_id]
     @tournament_banner = Like.where(is_judged: true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true }).
       group(:post_id).count(:post_id).sort_by(&:last).sort_by(&:last).reverse.to_h
-    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
+    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).where(likes: {status: "like"}).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
     if params[:tournament_banner_id].present?
       @banner = TournamentBanner.find(params[:tournament_banner_id])
       session[:banner] = @banner
