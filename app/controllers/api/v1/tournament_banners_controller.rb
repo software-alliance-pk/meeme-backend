@@ -170,15 +170,15 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
 
   def find_tournament
     unless (@tournament = TournamentBanner.where(enable: true)
-      .where('end_date > ?', Time.zone.now.end_of_day)
+      .where('end_date >= ?', Time.zone.now.end_of_day.to_date)
       .first)
       return render json: { message: 'No Tournament is played at the moment' }, status: :not_found
     end
   end
 
   def check_expiration
-      @today_date = Time.zone.now.end_of_day.to_datetime
-      if @tournament.end_date <= @today_date
+      @today_date = Time.zone.now.end_of_day.to_date
+      if @tournament.end_date < @today_date
         return render json: { message: 'No Tournament is played at the moment' }, status: :not_found
       end
   end

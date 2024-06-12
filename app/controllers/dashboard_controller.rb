@@ -203,8 +203,6 @@ class DashboardController < ApplicationController
   end
 
   def tournament_banner_create
-    params[:start_date] = DateTime.parse("#{params[:start_date]} #{Time.now}")
-    params[:end_date] = DateTime.parse("#{params[:end_date]} #{"23:59:00"}")
     @banner = TournamentBanner.new(banner_params)
     @banner.enable = true
     existing_active_tournament = TournamentBanner.where(enable: true)
