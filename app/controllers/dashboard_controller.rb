@@ -244,8 +244,8 @@ class DashboardController < ApplicationController
     if params[:username].present?
       @user = User.find_by(username: params[:username])
       @user_image = @user.profile_image.attached? ? url_for(@user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
-      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"])
-      @post_image = @post[0].post_image.attached? ? url_for(@post[0].post_image) : ActionController::Base.helpers.asset_path('bg-img.jpg')
+      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"]).where(id: params[:post_id])
+      @post_image = @post&.post_image.attached? ? url_for(@post.post_image) : ActionController::Base.helpers.asset_path('bg-img.jpg')
       respond_to do |format|
         format.json { render json: { user_image: @user_image, post_image: @post_image } }
       end
