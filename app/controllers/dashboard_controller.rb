@@ -102,7 +102,7 @@ class DashboardController < ApplicationController
     @tournament_banner_name = params[:tournament_banner_id]
     @tournament_banner = Like.where(is_judged: true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true }).
       group(:post_id).count(:post_id).sort_by(&:last).sort_by(&:last).reverse.to_h
-    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
+    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).where(likes: {status: "like"}).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
     if params[:tournament_banner_id].present?
       @banner = TournamentBanner.find(params[:tournament_banner_id])
       session[:banner] = @banner
@@ -244,8 +244,8 @@ class DashboardController < ApplicationController
     if params[:username].present?
       @user = User.find_by(username: params[:username])
       @user_image = @user.profile_image.attached? ? url_for(@user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
-      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"])
-      @post_image = @post[0].post_image.attached? ? url_for(@post[0].post_image) : ActionController::Base.helpers.asset_path('bg-img.jpg')
+      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"]).where(id: params[:post_id])
+      @post_image = @post&.post_image.attached? ? url_for(@post.post_image) : ActionController::Base.helpers.asset_path('bg-img.jpg')
       respond_to do |format|
         format.json { render json: { user_image: @user_image, post_image: @post_image } }
       end
