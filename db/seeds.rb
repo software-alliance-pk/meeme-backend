@@ -4,9 +4,9 @@
 # #
 # #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 # #   Character.create(name: "Luke", movie: movies.first)
-# Dir[File.join(Rails.root, 'db', 'seeds', '*.rb')].sort.each do |seed|
-#   load seed
-# end
+Dir[File.join(Rails.root, 'db', 'seeds', '*.rb')].sort.each do |seed|
+  load seed
+end
 
 # tutorials = { 1 => ["Memee will have a monthly Tournament that users can join."],
 #               2 => ["The Tournament starts every first day of the month and winners are announced during the last day of each month."],
