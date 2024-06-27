@@ -30,6 +30,7 @@ json.profile do
   end
   json.all_post_count @user.posts.count
   json.profile_posts @user.posts.each do |post|
+    json.post_id post.id
     json.post_description post.description
     json.post_time post.created_at
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
