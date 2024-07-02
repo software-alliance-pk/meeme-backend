@@ -80,7 +80,7 @@ unless Theme.any?
     themes[key].each do |value|
       images = Dir.glob("#{IMAGES_PATH}/#{value}/theme_pngs/*.png")
       selected_nav_icons = Dir.glob("#{IMAGES_PATH}/#{value}/selected_svgs/*.svg")
-      un_selected_nav_icons = Dir.glob("#{IMAGES_PATH}/#{value}/unselected_svgs/*.svg")
+      un_selected_nav_icons = Dir.glob("#{IMAGES_PATH}/#{value}/unselected_svgs/*.png")
       app_svgs = Dir.glob("#{IMAGES_PATH}/#{value}/app_svgs/*.svg")
 
       images_and_icons = {
