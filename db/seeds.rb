@@ -174,7 +174,7 @@ end
 
 # Clear existing records to avoid duplication if needed
 AmazonCard.destroy_all
-Create 3 static Amazon gift cards
+# Create 3 static Amazon gift cards
 AmazonCard.create(amount: 10, coin_price: 120000)
 AmazonCard.create(amount: 25, coin_price: 300000)
 AmazonCard.create(amount: 50, coin_price: 600000)
