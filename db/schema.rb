@@ -10,9 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_10_102208) do
+ActiveRecord::Schema[7.0].define(version: 2024_07_03_104646) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
@@ -116,7 +115,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_10_102208) do
   end
 
   create_table "coin_prices", force: :cascade do |t|
-    t.string "coin"
+    t.string "coins"
     t.decimal "price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -422,6 +421,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_10_102208) do
     t.boolean "status", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "theme_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -440,8 +440,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_10_102208) do
     t.boolean "disabled", default: false
     t.boolean "checked", default: false
     t.boolean "private_account", default: false
-    t.integer "explored"
-    t.integer "shared", default: 0, null: false
+    t.integer "shared"
+    t.integer "explored", default: 0
     t.string "user_themes"
   end
 

@@ -3,17 +3,35 @@ class Api::V1::StoresController < Api::V1::ApiController
   before_action :check_item, only: :create
 
   def index
-    @store = UserStore.where(user_id: @current_user.id)
-    if @store.present?
-      render json: { items_bought: @store.count, store: @store, tournament: TournamentBanner.find_by(enable: true)&.title }, status: :ok
+    @stores = UserStore.where(user_id: @current_user.id).includes(:theme)
+  
+    if @stores.present?
+      stores_with_theme_paths = @stores.map do |store|
+        theme_image = ''
+        if store&.theme_id.present?
+          theme = store.theme
+          theme_image = theme.tab_bar_image.attached? ? theme.tab_bar_image.blob.url : ''
+        end
+        store_attributes = store.attributes
+        store_attributes['theme_image'] = theme_image
+        store_attributes
+      end
+  
+      render json: {
+        items_bought: @stores.count,
+        stores: stores_with_theme_paths,
+        tournament: TournamentBanner.find_by(enable: true)&.title
+      }, status: :ok
     else
       if TournamentBanner.find_by(enable: true).present?
-        render json: { message: "#{TournamentBanner.find_by(enable: true).title}" }, status: :not_found
+        render json: { message: TournamentBanner.find_by(enable: true).title }, status: :not_found
       else
         render json: { message: [] }, status: :not_found
       end
     end
   end
+  
+  
 
   def create
     user_coin = @current_user.coins
@@ -21,9 +39,14 @@ class Api::V1::StoresController < Api::V1::ApiController
     if coins < 0
       render json: { message: "Insufficient coins" }, status: :unprocessable_entity
     else
+      theme = Theme.find_by(ref: params[:name])
+      # if theme.present?
+      #   @theme
+      # end
       @store = UserStore.new(user_id: @current_user.id,
                              name: params[:name],
                              amount: params[:amount].to_i,
+                             theme_id: theme.id,
                              status: true)
 
       if @store.save
