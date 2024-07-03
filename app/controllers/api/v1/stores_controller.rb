@@ -19,7 +19,7 @@ class Api::V1::StoresController < Api::V1::ApiController
   
       render json: {
         items_bought: @stores.count,
-        stores: stores_with_theme_paths,
+        store: stores_with_theme_paths,
         tournament: TournamentBanner.find_by(enable: true)&.title
       }, status: :ok
     else
