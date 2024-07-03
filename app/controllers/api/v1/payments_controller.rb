@@ -15,7 +15,7 @@ class Api::V1::PaymentsController < Api::V1::ApiController
       line_items: [
           {
               price_data: {
-                  currency: 'GBP', 
+                  currency: 'usd', 
                   product_data: {
                       name: "#{params[:product_name]} Coins",
                   },
