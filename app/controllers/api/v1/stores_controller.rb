@@ -46,7 +46,7 @@ class Api::V1::StoresController < Api::V1::ApiController
       @store = UserStore.new(user_id: @current_user.id,
                              name: params[:name],
                              amount: params[:amount].to_i,
-                             theme_id: theme.id,
+                             theme_id: theme&.id || '',
                              status: true)
 
       if @store.save
