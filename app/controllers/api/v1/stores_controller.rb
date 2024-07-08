@@ -5,7 +5,13 @@ class Api::V1::StoresController < Api::V1::ApiController
   def index
     @store = UserStore.where(user_id: @current_user.id)
     if @store.present?
-      render json: { items_bought: @store.count, store: @store, tournament: TournamentBanner.find_by(enable: true)&.title }, status: :ok
+      render json: {
+        items_bought: @store.count,  # Assuming you want to count the number of items in @store
+        store: @store.map do |store|
+          store.as_json.merge(theme_image: store.theme&.tab_bar_image&.blob&.url)
+        end,
+        tournament: TournamentBanner.find_by(enable: true)&.title
+      }, status: :ok
     else
       if TournamentBanner.find_by(enable: true).present?
         render json: { message: "#{TournamentBanner.find_by(enable: true).title}" }, status: :not_found
