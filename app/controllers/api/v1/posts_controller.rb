@@ -5,7 +5,8 @@ class Api::V1::PostsController < Api::V1::ApiController
   before_action :find_post, only: [:show, :update_posts, :destroy]
 
   def index
-    @posts = @current_user.posts.by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle
+    @user = User.find_by(id: params[:user_id])
+    @posts = @user.posts.where(tournament_meme: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle if @user.present?
     if @posts.present?
 
     else
@@ -213,32 +214,34 @@ class Api::V1::PostsController < Api::V1::ApiController
   def explore
     @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
     @posts = []
+    blocked_user_ids = @current_user.blocked_users.pluck(:blocked_user_id)
     if params[:tag] == ""
-      Post.where(tournament_meme: false).by_recently_created(200).each do |post|
-        if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
-        else
-          @posts << post
-        end
-      end
-      if @posts.present?
-        @posts = @posts.paginate(page: params[:page], per_page: 25)
-        # @posts=Post.all.paginate(page: params[:page], per_page: 2)
-      else
-        render json: { message: "No Post found against this tag " }, status: :not_found
-      end
+      # Post.where(tournament_meme: false).by_recently_created(200).each do |post|
+      #   if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
+      #   else
+      #     @posts << post
+      #   end
+      # end
+      @posts = Post.includes(:user).where(tournament_meme: false)
+             .where.not(user_id: blocked_user_ids)
+             .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+             .by_recently_created(200)  
     else
-      Post.tagged_with(params[:tag], :any => true).each do |post|
-        if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
-        else
-          @posts << post
-        end
-      end
-      if @posts.present?
-        @posts = @posts.paginate(page: params[:page], per_page: 25)
-      else
-        # @posts=Post.all.paginate(page: params[:page], per_page: 25)
-        render json: { message: "No Post found against this tag " }, status: :not_found
-      end
+      # Post.tagged_with(params[:tag], :any => true).each do |post|
+      #   if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
+      #   else
+      #     @posts << post
+      #   end
+      # end
+      @posts = Post.includes(:user).tagged_with(params[:tag], any: true)
+              .where.not(user_id: blocked_user_ids)
+              .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+    end
+    if @posts.present?
+      @posts = @posts.paginate(page: params[:page], per_page: 25)
+    else
+      # @posts=Post.all.paginate(page: params[:page], per_page: 25)
+      render json: { message: "No Post found against this tag " }, status: :not_found
     end
   end
 
@@ -380,15 +383,22 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def recent_posts
     @recent_posts = []
-    Post.where.not(tournament_meme: true).by_recently_created(500).each do |post|
-      user = post.user
-      next unless user && !user.private_account? 
+    # Post.where.not(tournament_meme: true).by_recently_created(500).each do |post|
+    #   user = post.user
+    #   next unless user && !user.private_account? 
   
-      if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(user.id)
-      else
-        @recent_posts << post
-      end
-    end
+    #   if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(user.id)
+    #   else
+    #     @recent_posts << post
+    #   end
+    # end
+    blocked_user_ids = @current_user.blocked_users.pluck(:blocked_user_id)
+    @recent_posts = Post.includes(:user)
+      .where(tournament_meme: false)
+      .where.not(user_id: blocked_user_ids)
+      .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+      .where(users: { private_account: false })
+      .by_recently_created(500)
     @recent_posts = @recent_posts.paginate(page: params[:page], per_page: 25)
     # @recent_posts = Post.where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
     # @today_post = Post.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
@@ -470,6 +480,13 @@ class Api::V1::PostsController < Api::V1::ApiController
     temp_file.unlink
     rescue StandardError => e
     render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  def current_user_tournament_posts
+    @user_tournament_post = @current_user.posts.where(tournament_meme: true).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle
+    unless @user_tournament_post.present?
+      render json: { message: "No tournament posts for this particular user" }, status: :not_found
+    end
   end
 
   private

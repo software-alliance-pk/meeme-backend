@@ -156,6 +156,7 @@ Rails.application.routes.draw do
           post :search_posts_by_tag
           post :search_tags_trending_post
           get :increase_explore_count
+          get :current_user_tournament_posts
         end
       end
       resources :comments do
