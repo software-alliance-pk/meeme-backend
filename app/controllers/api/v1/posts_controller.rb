@@ -6,7 +6,7 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def index
     @user = User.find_by(id: params[:user_id])
-    @posts = @user.posts.where(tournament_meme: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle if @user.present?
+    @posts = params[:page].present? ? @user.posts.where(tournament_meme: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @user.posts.where(tournament_meme: false).by_recently_created(200) if @user.present?
     if @posts.present?
 
     else
@@ -483,7 +483,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def current_user_tournament_posts
-    @user_tournament_post = @current_user.posts.where(tournament_meme: true).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle
+    @user_tournament_post = params[:page].present? ? @current_user.posts.where(tournament_meme: true).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @current_user.posts.where(tournament_meme: true).by_recently_created(200)
     unless @user_tournament_post.present?
       render json: { message: "No tournament posts for this particular user" }, status: :not_found
     end
