@@ -4,9 +4,9 @@
 # #
 # #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 # #   Character.create(name: "Luke", movie: movies.first)
-# Dir[File.join(Rails.root, 'db', 'seeds', '*.rb')].sort.each do |seed|
-#   load seed
-# end
+Dir[File.join(Rails.root, 'db', 'seeds', '*.rb')].sort.each do |seed|
+  load seed
+end
 
 # tutorials = { 1 => ["Memee will have a monthly Tournament that users can join."],
 #               2 => ["The Tournament starts every first day of the month and winners are announced during the last day of each month."],
@@ -173,9 +173,9 @@
 # end
 
 # Clear existing records to avoid duplication if needed
-# AmazonCard.destroy_all
+AmazonCard.destroy_all
 # Create 3 static Amazon gift cards
-# AmazonCard.create(amount: 10, coin_price: 120000)
-# AmazonCard.create(amount: 25, coin_price: 300000)
-# AmazonCard.create(amount: 50, coin_price: 600000)
-# puts "Amazon gift cards seeded successfully!"
+AmazonCard.create(amount: 10, coin_price: 120000)
+AmazonCard.create(amount: 25, coin_price: 300000)
+AmazonCard.create(amount: 50, coin_price: 600000)
+puts "Amazon gift cards seeded successfully!"

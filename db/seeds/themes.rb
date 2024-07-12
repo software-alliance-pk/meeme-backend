@@ -1,3 +1,4 @@
+Theme.destroy_all if Theme.any?
 unless Theme.any?
   themes = { 0 => ['silky_black'], 1 => ['space_theme'] ,2 => ['roygbiv_yellow'], 3 => ['brownish'], 4 => ['dark_blue'], 5 => ['blackish'], 6 => ['bluish'],
             7 => ['greenish_yellow'], 8 => ['orangy_yellow'], 9 => ['meteorite'], 10 => ['black'], 11 => ['dusk'], 12 => ["banana"], 13 => ["fire"],
@@ -154,7 +155,7 @@ unless Theme.any?
           images_and_icons[:filter_cross_icon] = app_svgs[1]
           images_and_icons[:gallery_icon] = app_svgs[2]
           images_and_icons[:search_icon] = app_svgs[3]
-        elsif app_svgs.length == 21
+        elsif app_svgs.length == 18
           images_and_icons[:backward_icon] = app_svgs[0]
           images_and_icons[:comment_icon] = app_svgs[1]
           images_and_icons[:dots_icon] = app_svgs[2]
@@ -165,18 +166,15 @@ unless Theme.any?
           images_and_icons[:gallery_icon] = app_svgs[7]
           images_and_icons[:like_icon] = app_svgs[8]
           images_and_icons[:main_back_icon] = app_svgs[9]
-          images_and_icons[:main_notification_icon] = app_svgs[10]
-          images_and_icons[:notification_icon] = app_svgs[11]
-          images_and_icons[:pending_requests_icon] = app_svgs[12]
-          images_and_icons[:profile_edit_icon] = app_svgs[13]
-          images_and_icons[:profile_notification_icon] = app_svgs[14]
-          images_and_icons[:search_icon] = app_svgs[15]
-          images_and_icons[:send_icon] = app_svgs[16]
-          images_and_icons[:setting_icon] = app_svgs[17]
-          images_and_icons[:share_icon] = app_svgs[18]
-          images_and_icons[:shop_icon] = app_svgs[19]
-          images_and_icons[:tournament_forward_icon] = app_svgs[20]
-        elsif app_svgs.length == 17
+          images_and_icons[:pending_requests_icon] = app_svgs[10]
+          images_and_icons[:profile_edit_icon] = app_svgs[11]
+          images_and_icons[:profile_notification_icon] = app_svgs[12]
+          images_and_icons[:search_icon] = app_svgs[13]
+          images_and_icons[:send_icon] = app_svgs[14]
+          images_and_icons[:setting_icon] = app_svgs[15]
+          images_and_icons[:share_icon] = app_svgs[16]
+          images_and_icons[:tournament_forward_icon] = app_svgs[17]
+        elsif app_svgs.length == 14
           images_and_icons[:backward_icon] = app_svgs[0]
           images_and_icons[:comment_icon] = app_svgs[1]
           images_and_icons[:dots_icon] = app_svgs[2]
@@ -185,15 +183,12 @@ unless Theme.any?
           images_and_icons[:gallery_icon] = app_svgs[5]
           images_and_icons[:like_icon] = app_svgs[6]
           images_and_icons[:main_back_icon] = app_svgs[7]
-          images_and_icons[:main_notification_icon] = app_svgs[8]
-          images_and_icons[:notification_icon] = app_svgs[9]
-          images_and_icons[:pending_requests_icon] = app_svgs[10]
-          images_and_icons[:profile_notification_icon] = app_svgs[11]
-          images_and_icons[:search_icon] = app_svgs[12]
-          images_and_icons[:send_icon] = app_svgs[13]
-          images_and_icons[:share_icon] = app_svgs[14]
-          images_and_icons[:shop_icon] = app_svgs[15]
-          images_and_icons[:tournament_forward_icon] = app_svgs[16]
+          images_and_icons[:pending_requests_icon] = app_svgs[8]
+          images_and_icons[:profile_notification_icon] = app_svgs[9]
+          images_and_icons[:search_icon] = app_svgs[10]
+          images_and_icons[:send_icon] = app_svgs[11]
+          images_and_icons[:share_icon] = app_svgs[12]
+          images_and_icons[:tournament_forward_icon] = app_svgs[13]
         end
       else
         images_and_icons[:tab_bar] = images[0]

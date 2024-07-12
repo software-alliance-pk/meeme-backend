@@ -66,8 +66,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             message_id: @message.id,
                             notification_type: 'message',
                             sender_id: @current_user.id,
-                            sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                            sender_name: @current_user.username)
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -90,7 +89,6 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             notification_type: 'admin_message',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '',
                             redirection_type: 'support'
                             )
       end
@@ -117,7 +115,6 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             notification_type: 'admin_message',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '',
                             redirection_type: 'support'
                             )
       end
