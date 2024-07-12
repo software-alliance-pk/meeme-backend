@@ -5,7 +5,7 @@ Rails.application.configure do
   # Code is not reloaded between requests.
 # config/environments/production.rb
   config.cache_classes = true
-  config.action_controller.asset_host = 'https://stg.memeeapi.appscorridor.com/'
+  config.action_controller.asset_host = 'https://admin.stg2.memee.app/'
   config.hosts.clear
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers
@@ -87,7 +87,7 @@ Rails.application.configure do
   config.action_cable.url = ENV['ACTION_CABLE_URL']
 
   config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
-  config.action_mailer.default_url_options = { host: 'https://v2.meeme.appscorridor.com'}
+  config.action_mailer.default_url_options = { host: 'https://admin.stg2.memee.app'}
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
