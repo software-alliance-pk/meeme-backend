@@ -28,7 +28,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       if @post.post_image.attached? || @post.post_image.video?
         if @post.post_image.video?
           # Generate a thumbnail for the video
-          thumbnail = generate_video_thumbnail(@post.post_image)
+          thumbnail = params[:thumbnail].present? ? params[:thumbnail] : generate_video_thumbnail(@post.post_image)
         end
         if @post.post_image
           video_preview = @post.compress
