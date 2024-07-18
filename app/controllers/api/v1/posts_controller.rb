@@ -28,7 +28,16 @@ class Api::V1::PostsController < Api::V1::ApiController
       if @post.post_image.attached? || @post.post_image.video?
         if @post.post_image.video?
           # Generate a thumbnail for the video
-          thumbnail = params[:thumbnail].present? ? params[:thumbnail] : generate_video_thumbnail(@post.post_image)
+          if params[:thumbnail].present?
+            thumbnail_blob = ActiveStorage::Blob.create_and_upload!(
+              io: params[:thumbnail].open, # Use 'open' to get the file object
+              filename: params[:thumbnail].original_filename,
+              content_type: params[:thumbnail].content_type
+            )
+            thumbnail = thumbnail_blob&.url
+          else
+            thumbnail = generate_video_thumbnail(@post.post_image)
+          end
         end
         if @post.post_image
           video_preview = @post.compress
