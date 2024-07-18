@@ -8,7 +8,7 @@ class Api::V1::StoresController < Api::V1::ApiController
       render json: {
         items_bought: @store.count,  # Assuming you want to count the number of items in @store
         store: @store.map do |store|
-          store.as_json.merge(theme_image: store.theme&.tab_bar_image&.blob&.url)
+          store.as_json.merge(theme_image: store.theme.present? ? store.theme.tab_bar_image&.blob&.url : Theme.find_by(ref: store[:name])&.tab_bar_image&.blob&.url)
         end,
         tournament: TournamentBanner.find_by(enable: true)&.title
       }, status: :ok
