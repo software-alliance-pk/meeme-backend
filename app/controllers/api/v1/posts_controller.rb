@@ -34,7 +34,7 @@ class Api::V1::PostsController < Api::V1::ApiController
               filename: params[:thumbnail].original_filename,
               content_type: params[:thumbnail].content_type
             )
-            thumbnail = thumbnail_blob.url
+            thumbnail = thumbnail_blob.variant(resize_to_limit: [512, 512],quality:50).processed.url
           else
             thumbnail = generate_video_thumbnail(@post.post_image)
           end
