@@ -362,6 +362,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     end
   end
 
+  #changes on tags
   def tags
     @tags = ActsAsTaggableOn::Tag.joins(:taggings)
                                  .where('taggings.taggable_type = ?', 'Post')
