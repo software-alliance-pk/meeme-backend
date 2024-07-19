@@ -37,7 +37,7 @@ class Post < ApplicationRecord
 
   def  compress
     if self.post_image.present? && self.post_image.content_type[0...5] == "image"
-      @image = self.post_image.variant(resize_to_limit: [512, 512],quality:80).processed.url
+      @image = self.post_image.variant(resize_to_limit: [512, 512],quality:65).processed.url
       self.update(compress_image: @image)
     end
   end
