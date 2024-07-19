@@ -30,11 +30,11 @@ class Api::V1::PostsController < Api::V1::ApiController
           # Generate a thumbnail for the video
           if params[:thumbnail].present?
             thumbnail_blob = ActiveStorage::Blob.create_and_upload!(
-              io: params[:thumbnail].open, # Use 'open' to get the file object
+              io: params[:thumbnail], # Use 'open' to get the file object
               filename: params[:thumbnail].original_filename,
               content_type: params[:thumbnail].content_type
             )
-            thumbnail = thumbnail_blob&.url
+            thumbnail = thumbnail_blob.url
           else
             thumbnail = generate_video_thumbnail(@post.post_image)
           end
@@ -363,13 +363,22 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def tags
-    @tags = ActsAsTaggableOn::Tag.where.not(taggings_count: 0).pluck(:name).map { |item| item.split("dup").first }.uniq
+    @tags = ActsAsTaggableOn::Tag.joins(:taggings)
+                                 .where('taggings.taggable_type = ?', 'Post')
+                                 .where('taggings.taggable_id IN (?)', Post.pluck(:id))
+                                 .where('taggings_count > 0')
+                                 .limit(20)
+                                 .pluck(:name)
+                                 .map { |item| item.split("dup").first }
+                                 .uniq
+  
     if @tags.present?
       render json: { tags: @tags }, status: :ok
     else
       render json: { tags: [] }, status: :ok
     end
   end
+  
 
   def following_posts
     @following_posts = []
