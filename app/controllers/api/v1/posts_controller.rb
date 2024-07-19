@@ -363,22 +363,26 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def tags
-    # Fetch tags associated with existing posts
-    @tags = ActsAsTaggableOn::Tag.joins(:taggings)
-                                 .joins("INNER JOIN posts ON posts.id = taggings.taggable_id AND taggings.taggable_type = 'Post'")
-                                 .where('posts.id IS NOT NULL') # Ensures posts exist
-                                 .where('taggings_count > 0')   # Ensures the tags have associated taggings
-                                 .limit(250)                     # Limits the number of tags to 250
-                                 .pluck(:name)                  # Extract tag names
-                                 .map { |item| item.split("dup").first } # Apply your splitting logic
-                                 .uniq                          # Remove duplicate tags
+    # Subquery to find tags associated with at least one existing post
+    subquery = ActsAsTaggableOn::Tag.joins(:taggings)
+                                    .joins("INNER JOIN posts ON posts.id = taggings.taggable_id AND taggings.taggable_type = 'Post'")
+                                    .where('posts.id IS NOT NULL')  # Ensures posts exist
+                                    .where('taggings_count > 0')    # Ensures the tags have associated taggings
+                                    .group('tags.id')               # Group by tag ID
+                                    .having('COUNT(posts.id) > 0')  # Ensure there is at least one associated post
+                                    .limit(250)                     # Limits the number of tags to 250
+                                    .pluck('tags.name')             # Extract tag names
   
-    if @tags.present?
-      render json: { tags: @tags }, status: :ok
-    else
-      render json: { tags: [] }, status: :ok
-    end
+    # Process tags
+    @tags = subquery.map { |item| item.split("dup").first } # Apply your splitting logic
+                    .uniq                           # Remove duplicate tags
+                    .first(250)                     # Limit to 250 tags
+  
+    render json: { tags: @tags }, status: :ok
   end
+  
+  
+  
   
   
 
