@@ -418,40 +418,40 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def trending_posts
     @trending_posts = []
-    @likes = Like.where(status: 1, is_liked: true, is_judged: false)
-                 .joins(:post)
-                 .where(post: { tournament_meme: false })
-                 .group(:post_id)
-                 .count(:post_id)
-                 .sort_by(&:last)
-                 .reverse
-                 .to_h
   
-    @likes.keys.each do |key|
-      @post = Post.find_by(id: key)
+    # Fetch likes and associated post_ids in a single query
+    likes = Like.where(status: 1, is_liked: true, is_judged: false)
+                .joins(:post)
+                .where(posts: { tournament_meme: false })
+                .group(:post_id)
+                .count
   
-      # Check if the post and its user exist
-      if @post && @post.user
-        puts "ALL POSTS on Trending #{@post.inspect}"
+    # Sort likes by count in descending order
+    sorted_likes = likes.sort_by { |_, count| -count }.to_h
   
-        if @post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(@post.user.id)
-          next  # Skip the current iteration if the post is flagged or the user is blocked
-        end
+    # Preload posts and users in a single query
+    post_ids = sorted_likes.keys
+    posts = Post.includes(:user, :comments)
+                .where(id: post_ids)
+                .where.not(user_id: @current_user.blocked_users.pluck(:blocked_user_id))
+                .reject { |post| post.flagged_by_user.include?(@current_user.id) }
   
-        # Only add the post to trending_posts if the user and post are present
-        @trending_posts << [@post, (@post.comments.count + @post.comments.count)]
-      end
-    end
+    # Collect posts with their respective scores
+    @trending_posts = posts.map do |post|
+      [post, post.comments.count * 2]
+    end.to_h
   
-    @trending_posts = @trending_posts.to_h
-                     .sort_by { |k, v| v }
-                     .reverse
-                     .paginate(page: params[:page], per_page: 25)
+    # Sort the posts by their scores in descending order
+    @trending_posts = @trending_posts.sort_by { |_, score| -score }
+  
+    # Paginate the results
+    @trending_posts = @trending_posts.paginate(page: params[:page], per_page: 10)
   
     if @trending_posts
       # Do something with @trending_posts
     end
   end
+  
 
   def share_post
     @share_post = Post.find_by(id: params[:post_id])
