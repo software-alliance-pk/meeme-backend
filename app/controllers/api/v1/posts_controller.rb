@@ -30,11 +30,11 @@ class Api::V1::PostsController < Api::V1::ApiController
           # Generate a thumbnail for the video
           if params[:thumbnail].present?
             thumbnail_blob = ActiveStorage::Blob.create_and_upload!(
-              io: params[:thumbnail].tempfile, # Use 'open' to get the file object
+              io: params[:thumbnail], # Use 'open' to get the file object
               filename: params[:thumbnail].original_filename,
               content_type: params[:thumbnail].content_type
             )
-            thumbnail = thumbnail_blob.service_url
+            thumbnail = thumbnail_blob.url
           else
             thumbnail = generate_video_thumbnail(@post.post_image)
           end
@@ -364,20 +364,20 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def tags
     # Fetch tags associated with existing posts
-    # @tags = ActsAsTaggableOn::Tag.joins(:taggings)
-    #                              .joins("INNER JOIN posts ON posts.id = taggings.taggable_id AND taggings.taggable_type = 'Post'")
-    #                              .where('posts.id IS NOT NULL') # Ensures posts exist
-    #                              .where('taggings_count > 0')   # Ensures the tags have associated taggings
-    #                              .limit(25)                     # Limits the number of tags to 25
-    #                              .pluck(:name)                  # Extract tag names
-    #                              .map { |item| item.split("dup").first } # Apply your splitting logic
-    #                              .uniq                          # Remove duplicate tags
+    @tags = ActsAsTaggableOn::Tag.joins(:taggings)
+                                 .joins("INNER JOIN posts ON posts.id = taggings.taggable_id AND taggings.taggable_type = 'Post'")
+                                 .where('posts.id IS NOT NULL') # Ensures posts exist
+                                 .where('taggings_count > 0')   # Ensures the tags have associated taggings
+                                 .limit(25)                     # Limits the number of tags to 25
+                                 .pluck(:name)                  # Extract tag names
+                                 .map { |item| item.split("dup").first } # Apply your splitting logic
+                                 .uniq                          # Remove duplicate tags
   
-    # if @tags.present?
-    #   render json: { tags: @tags }, status: :ok
-    # else
-    #   render json: { tags: [] }, status: :ok
-    # end
+    if @tags.present?
+      render json: { tags: @tags }, status: :ok
+    else
+      render json: { tags: [] }, status: :ok
+    end
   end
   
   
