@@ -368,7 +368,7 @@ class Api::V1::PostsController < Api::V1::ApiController
                                  .joins("INNER JOIN posts ON posts.id = taggings.taggable_id AND taggings.taggable_type = 'Post'")
                                  .where('posts.id IS NOT NULL') # Ensures posts exist
                                  .where('taggings_count > 0')   # Ensures the tags have associated taggings
-                                 .limit(25)                     # Limits the number of tags to 25
+                                 .limit(250)                     # Limits the number of tags to 250
                                  .pluck(:name)                  # Extract tag names
                                  .map { |item| item.split("dup").first } # Apply your splitting logic
                                  .uniq                          # Remove duplicate tags
