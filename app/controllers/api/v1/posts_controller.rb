@@ -370,7 +370,7 @@ class Api::V1::PostsController < Api::V1::ApiController
                                      .where('taggings_count > 0')
                                      .group('tags.id', 'tags.name')
                                      .having('COUNT(posts.id) > 0')
-                                     .limit(250)
+                                     .limit(25)
                                      .to_sql
     
     puts sql_query  # Print the SQL query for debugging
@@ -382,7 +382,7 @@ class Api::V1::PostsController < Api::V1::ApiController
                                  .where('taggings_count > 0')
                                  .group('tags.id', 'tags.name')
                                  .having('COUNT(posts.id) > 0')
-                                 .limit(250)
+                                 .limit(25)
                                  .pluck('tags.name')
   
     # Process tags
