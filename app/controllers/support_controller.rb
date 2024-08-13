@@ -8,7 +8,14 @@ class SupportController < ApplicationController
             @conversation.messages.each do |message|
                 if message.message_images.attached?
                     message.message_images.blobs.each do |image|
-                        @image << url_for(image)
+                        # @image << url_for(image)
+                        if image.content_type.start_with?('image/')
+                            @image << { type: 'image', url: url_for(image) }
+                        elsif image.content_type.start_with?('video/')
+                            @image << { type: 'video', url: url_for(image) }
+                        else
+                            @image << { type: 'other', url: url_for(image) } # for other types of files
+                        end
                     end
                 else
                     @image << ""
