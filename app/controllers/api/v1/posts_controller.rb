@@ -402,7 +402,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   def following_posts
     @following_posts = []
     @following = Follower.where(follower_user_id: @current_user.id , is_following: true , status: "following_added" || "follower_added" ).pluck(:user_id)
-    @following = User.where(id: @following).paginate(page: params[:page], per_page: 110)
+    @following = params[:per_page].present? ? User.where(id: @following).paginate(page: params[:page], per_page: params[:per_page]) : User.where(id: @following).paginate(page: params[:page], per_page: 110)
     @following.each do |user|
       user.posts.where(tournament_meme: false).each do |post|
         if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
@@ -436,7 +436,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
       .where(users: { private_account: false })
       .by_recently_created(500)
-    @recent_posts = @recent_posts.paginate(page: params[:page], per_page: 25)
+    @recent_posts = params[:per_page].present? ? @recent_posts.paginate(page: params[:page], per_page: params[:per_page]) : @recent_posts.paginate(page: params[:page], per_page: 25)
     # @recent_posts = Post.where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
     # @today_post = Post.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
     # @random_posts = Post.where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).paginate(page: params[:page], per_page: 25).shuffle
@@ -473,7 +473,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     @trending_posts = @trending_posts.sort_by { |_, score| -score }
   
     # Paginate the results
-    @trending_posts = @trending_posts.paginate(page: params[:page], per_page: 10)
+    @trending_posts = params[:per_page].present? ? @trending_posts.paginate(page: params[:page], per_page: params[:page]) : @trending_posts.paginate(page: params[:page], per_page: 10)
   
     if @trending_posts
       # Do something with @trending_posts

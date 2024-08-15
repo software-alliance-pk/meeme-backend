@@ -265,11 +265,12 @@
         }else {
             div1.setAttribute('class', 'txt w-50 h-50')
             if (images.length === 1) {
-                if (images[0].split('.').pop().toLowerCase() === 'mp4'){
+              
+                if (images[0].type === 'video'){
                     var image_div = document.createElement("div")
                     image_div.setAttribute('class', 'w-40 h-40 float-end')
                     var videoSource = document.createElement("source")
-                    videoSource.setAttribute("src", `${images[0]}`)
+                    videoSource.setAttribute("src", `${images[0].url}`)
                     videoSource.setAttribute("type", "video/mp4");
                     var video = document.createElement('video')
                     video.setAttribute("controls", true)
@@ -280,16 +281,17 @@
                     var image_div = document.createElement("div")
                     var message_img = document.createElement("img");
                     message_img.setAttribute('class', 'w-40 h-40 float-end')
-                    message_img.src = images
+                    message_img.src = images[0].url
                     image_div.appendChild(message_img)
                 }
             }else {
                 var image_div = document.createElement("div")
                 images.forEach(function (image) {
-                    if(image.split('.').pop().toLowerCase() === 'mp4'){
+                  
+                    if(image.type === 'video'){
                         image_div.setAttribute('class', 'w-40 h-40 float-end')
                         var videoSource = document.createElement("source")
-                        videoSource.setAttribute("src", `${image}`)
+                        videoSource.setAttribute("src", `${image.url}`)
                         videoSource.setAttribute("type", "video/mp4");
                         var video = document.createElement('video')
                         video.setAttribute("controls", true)
@@ -299,7 +301,7 @@
                     }else{
                         var message_img = document.createElement("img");
                         message_img.setAttribute('class', 'w-40 h-40 float-end mb-1')
-                        message_img.src = image
+                        message_img.src = image.url
                         image_div.appendChild(message_img)
                     }
                 })
