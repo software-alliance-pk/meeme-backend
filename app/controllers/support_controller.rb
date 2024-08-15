@@ -10,11 +10,11 @@ class SupportController < ApplicationController
                     message.message_images.blobs.each do |image|
                         # @image << url_for(image)
                         if image.content_type.start_with?('image/')
-                            @image << { type: 'image', url: url_for(image) }
+                            @image << { type: 'image', url: image.url }
                         elsif image.content_type.start_with?('video/')
-                            @image << { type: 'video', url: url_for(image) }
+                            @image << { type: 'video', url: image.url }
                         else
-                            @image << { type: 'other', url: url_for(image) } # for other types of files
+                            @image << { type: 'other', url: image.url } # for other types of files
                         end
                     end
                 else
