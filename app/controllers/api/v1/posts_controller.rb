@@ -15,7 +15,7 @@ class Api::V1::PostsController < Api::V1::ApiController
         @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i)
       end
         if params[:page].present?
-        @posts = @posts.paginate(page: params[:page], per_page: 25).shuffle
+        @posts = @posts.paginate(page: params[:page], per_page: 16).shuffle
       end
   
       if @posts.any?
@@ -488,7 +488,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     @trending_posts = @trending_posts.sort_by { |_, score| -score }
   
     # Paginate the results
-    @trending_posts = params[:per_page].present? ? @trending_posts.paginate(page: params[:page], per_page: params[:page]) : @trending_posts.paginate(page: params[:page], per_page: 10)
+    @trending_posts = params[:per_page].present? ? @trending_posts.paginate(page: params[:page], per_page: params[:per_page]) : @trending_posts.paginate(page: params[:page], per_page: 10)
   
     if @trending_posts
       # Do something with @trending_posts
