@@ -21,7 +21,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       if @posts.any?
         # Respond with the posts (assuming a view or serializer is in place)
       else
-        render json: { message: "No posts found for this particular user" }, status: :not_found
+       @posts = []
       end
     else
       render json: { message: "User not found" }, status: :not_found
