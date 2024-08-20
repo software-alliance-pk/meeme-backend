@@ -1,3 +1,4 @@
+json.post_count @posts.count.to_i
 json.user_posts do
   json.(@posts) do |post|
     like_by_current_user = post.likes.find_by(user_id: @user.id)

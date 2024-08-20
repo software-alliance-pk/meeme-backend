@@ -2,10 +2,15 @@ development:
   encoding: unicode
   pool: 5
   adapter: postgresql
-  host: localhost
+  host: memee-db-stg.cpiy86gec3zu.eu-north-1.rds.amazonaws.com
   username: postgres
-  password: haseeb1234
-  database: memee-stg
+  password: Cruxosoft1997798
+  database: memeedbstg
+  
+  # host: localhost
+  # username: postgres
+  # password: haseeb1234
+  # database: memee-stg
 
 
 production:

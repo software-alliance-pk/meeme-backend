@@ -6,13 +6,28 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def index
     @user = User.find_by(id: params[:user_id])
-    @posts = params[:page].present? ? @user.posts.where(tournament_meme: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @user.posts.where(tournament_meme: false).by_recently_created(200) if @user.present?
-    if @posts.present?
-
+    
+    if @user.present?
+      @posts = @user.posts.where(tournament_meme: false)
+      @posts = @posts.by_recently_created(200)
+      
+        if params[:month].present?
+        @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i)
+      end
+        if params[:page].present?
+        @posts = @posts.paginate(page: params[:page], per_page: 25).shuffle
+      end
+  
+      if @posts.any?
+        # Respond with the posts (assuming a view or serializer is in place)
+      else
+        render json: { message: "No posts found for this particular user" }, status: :not_found
+      end
     else
-      render json: { message: "No posts for this particular user" }, status: :not_found
+      render json: { message: "User not found" }, status: :not_found
     end
   end
+  
 
   def show
     render json: { post: @current_user.posts.by_recently_created },
