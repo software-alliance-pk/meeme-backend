@@ -50,8 +50,11 @@ class Api::V1::PostsController < Api::V1::ApiController
               content_type: params[:thumbnail].content_type
             )
             thumbnail = thumbnail_blob.variant(resize_to_limit: [512, 512],quality:50).processed.url
+            @post.video_thumbnail.attach(thumbnail_blob)
           else
-            thumbnail = generate_video_thumbnail(@post.post_image)
+            thumbnail_blob = generate_video_thumbnail(@post.post_image)
+            thumbnail = thumbnail_blob.url
+            @post.video_thumbnail.attach(thumbnail_blob)
           end
         end
         if @post.post_image
@@ -62,7 +65,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       else
         @post.update(duplicate_tags: @tags)
       end
-      render json: { user: @post.attributes.except('tag_list'), post_image: @post.post_image.attached? ? @post.post_image.blob.url : '', post_type: @post.post_image.content_type,thumbnail: thumbnail, message: 'Post created successfully' }, status: :ok
+      render json: { user: @post.attributes.except('tag_list'), post_image: @post.post_image.attached? ? @post.post_image.blob.url : '', post_type: @post.post_image.content_type,thumbnail: @post.video_thumbnail.attached? ? @post.video_thumbnail.blob.url : thumbnail, message: 'Post created successfully' }, status: :ok
     else
       render_error_messages(@post)
     end
@@ -109,6 +112,7 @@ class Api::V1::PostsController < Api::V1::ApiController
         rescue StandardError => e
           puts "Error while generating video thumbnail: #{e.message}"
           thumbnail = nil # Indicate that an error occurred
+          thumbnail_blob = nil
         ensure
           # Delete both temporary files after processing
           File.delete(thumbnail_path) if File.exist?(thumbnail_path)
@@ -119,13 +123,15 @@ class Api::V1::PostsController < Api::V1::ApiController
         # Handle the case where FFmpeg is not available
         # You might want to log an error or use a default thumbnail
         thumbnail = nil # Indicate that an error occurred
+        thumbnail_blob = nil
       end
     rescue StandardError => e
       puts "Error: #{e.message}"
       thumbnail = nil # Indicate that an error occurred
+      thumbnail_blob = nil
     end
   
-    thumbnail
+    thumbnail_blob
   end
   
 
