@@ -21,13 +21,14 @@
             <div class="d-flex gap-3">
               <div class="trans_blk">
                 <span>From: </span>
-                <input type="date" name="start_date" onchange="submit()" value=<%= params[:start_date] if present? %>></input>
+                <input type="date" id="start_date" name="start_date" onchange="updateEndDateMin(); this.form.submit();" value="<%= params[:start_date] if params[:start_date].present? %>">
                 <% start_date = params[:start_date] if params[:start_date].present? %>
               </div>
               <div class="trans_blk">
                 <span>To: </span>
-                <input type="date" name="end_date" onchange="submit()" value=<%= params[:end_date] if present? %>></input>
+                <input type="date" id="end_date" name="end_date" onchange="this.form.submit();" value="<%= params[:end_date] if params[:end_date].present? %>">
                 <% end_date = params[:end_date] if params[:end_date].present? %>
+                <%= hidden_field_tag :search, params[:search].present? ? params[:search] : "" %>
               </div>
             </div>
             <%= submit_tag "", hidden: true ,:name => nil %>
@@ -38,6 +39,8 @@
               <img src= "<%= asset_path("icon-search.svg")%>">
               <%= text_field_tag :search, params[:search], class: "input" , :autocomplete => :off  ,placeholder: "Search", value: params[:search] if present? %>
               <% search_value = params[:search] %>
+                <%= hidden_field_tag :start_date, params[:start_date].present? ? params[:start_date] : "" %>
+                <%= hidden_field_tag :end_date, params[:end_date].present? ? params[:end_date] : "" %>
               <%= submit_tag "" , type: :image ,:name => nil %>
             </div>
           <% end %>
@@ -169,4 +172,21 @@
     function close_transaction_details(){
         document.getElementById("trans_modal").style.display = "none";
     }
+
+  function updateEndDateMin() {
+    const startDate = document.getElementById('start_date').value;
+    const endDateField = document.getElementById('end_date');
+
+    if (startDate) {
+      endDateField.min = startDate;
+    } else {
+      endDateField.removeAttribute('min');
+    }
+  }
+
+  // Ensure the correct min date is set on page load
+  document.addEventListener("DOMContentLoaded", function() {
+    updateEndDateMin();
+  });
+
 </script>

@@ -78,7 +78,7 @@
                   </td>
                   <td>
                     <div class="name">
-                      <p class="f-16" style="cursor: pointer" onclick="open_post('<%= user_details.id  %>')"><%= user_details.username %></p>
+                      <p class="f-16"><%= user_details.username %></p>
                       <p class="f-13" id="user_mail"><%= user_details.email %></p>
                     </div>
                   </td>
@@ -120,11 +120,7 @@
                   <td>
                     <div class="action">
                       <% if user_details.disabled === false %>
-                        <button class="show btn pop_btn" data-popup="btn_post" onclick="open_enable_dialog('<%= user_details.id %>')" style="background-color: green">
-                          <div class="ico">
-                            <img src="<%= asset_path("Show.svg") %>" alt="">
-                          </div>
-                        </button>
+                        
                         <button class="hide btn pop_btn" data-popup="btn_disable" onclick="open_disable_dialog('<%= user_details.id %>')">
                           <div class="ico">
                             <img src="<%= asset_path("Hide.svg") %>" alt="">
@@ -143,12 +139,7 @@
                           <div class="ico">
                             <img src="<%= asset_path("Show.svg") %>" alt="">
                           </div>
-                        </button>
-                        <button class="hide btn pop_btn" data-popup="btn_disable" onclick="open_disable_dialog('<%= user_details.id %>')" style="background-color: red">
-                          <div class="ico">
-                            <img src="<%= asset_path("Hide.svg") %>" alt="">
-                          </div>
-                        </button>
+                        </button>      
                       <% end %>
 
                     </div>
@@ -507,7 +498,20 @@ width: 65%;
   }
 
     function generateSidebarHTML(item , ind){
-    
+      const mediaType = item?.image_type // 'image' or 'video'
+
+      let mediaHTML = '';
+
+      if (mediaType === 'image') {
+          mediaHTML = `<img style="width: 200px; height: 200px" src="${item?.post_image}" alt="Image">`;
+      } else if (mediaType === 'video') {
+          mediaHTML = `
+              <video style="width: 200px; height: 200px" controls>
+                  <source src="${item?.post_image}" type="${item?.image_type}">
+                  Your browser does not support the video tag.
+              </video>
+          `;
+      }
          return  `
                 <div class="text-white mb-3" id="post_${item?.id}">
                     <div style="color:white">Date Posted</div>
@@ -515,7 +519,7 @@ width: 65%;
                     <div class="detail_blk mt-0" style="align-items: flex-start">
                         <div class="right_blk position-relative">
                             <div class="img" >
-                                <img style="width: 200px; height: 200px" src="${item?.post_image}" alt="">
+                            ${mediaHTML}
                                 <button onclick="deleteImage('${item?.id}')" class="delete-button" style="position: absolute;top: 12px;right: 12px; background: transparent">
                                     <img style="width: 20px; height: 30px" src="<%= asset_path("delete-icon.png") %>" alt="Delete">
                                 </button>
