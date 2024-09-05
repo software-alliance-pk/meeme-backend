@@ -507,7 +507,7 @@ width: 65%;
       } else if (mediaType === 'video') {
           mediaHTML = `
               <video style="width: 200px; height: 200px" controls>
-                  <source src="${item?.post_image}" type="${item?.image_type}">
+                  <source src="${item?.post_image}" type="video/mp4">
                   Your browser does not support the video tag.
               </video>
           `;
