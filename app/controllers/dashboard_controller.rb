@@ -74,12 +74,8 @@ class DashboardController < ApplicationController
     if @admin.present?
       if params[:password] == "" && params[:admin_profile_image] == nil && params[:full_name].present? && params[:admin_user_name]
         if AdminUser.first.present?
-          if params[:full_name] == @admin.full_name && params[:admin_user_name] == @admin.admin_user_name
-            @updated = false
-          else
             current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
             @updated = true
-          end
         end
       elsif params[:old_password].present? && current_admin_user.valid_password?(params[:old_password]) == false
         flash[:old_password] = "Old Password is wrong"
@@ -159,8 +155,9 @@ class DashboardController < ApplicationController
           likes: post.likes.where(is_judged: true).like.count,
           created_at: post.created_at.strftime('%b %d, %Y'),
           tournament_banner_id: post.tournament_banner_id,
-          post_image: post.post_image.attached? ? post.post_image.blob.url : nil
-        }
+          post_image: post.post_image.attached? ? post.post_image.blob.url : nil,
+          image_type: post.post_image.content_type.split('/').first
+        }   
       end
       render json: { posts: posts_with_images }
     else
@@ -436,7 +433,7 @@ class DashboardController < ApplicationController
   def user_enable
     if params[:id].present?
       @user = User.find(params[:id])
-      @user.update(disabled: false)
+      @user.update(disabled: false, status: true)
     end
   end
 
@@ -449,8 +446,17 @@ class DashboardController < ApplicationController
     @card = AmazonCard.find(params[:id])
   end
 
-  def transactions
-    if params[:search]
+  def transactions   
+    if params[:search] && params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
+      @transactions_list = Transaction.search(params[:search])
+      @transactions_list =  @transactions_list.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
+    elsif params[:search] && params[:start_date].present? && params[:end_date] == "" && params[:start_date] != "false"
+      @transactions_list = Transaction.search(params[:search])
+      @transactions_list = @transactions_list.start_date_filter(params[:start_date]).search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
+    elsif params[:search] && params[:end_date].present? && params[:start_date] == "" 
+      @transactions_list = Transaction.search(params[:search])
+      @transactions_list = @transactions_list.end_date_filter(params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
+    elsif params[:search]
       @transactions_list = Transaction.search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     elsif params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
       @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
