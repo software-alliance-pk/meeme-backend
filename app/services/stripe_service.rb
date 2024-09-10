@@ -165,7 +165,7 @@ class StripeService
                               amount: charge.amount * 0.01,
                               balance_transaction_id: charge.balance_transaction,
                               card_number: charge.payment_method,
-                              brand: charge.source.brand,
+                              brand: 'Stripe',
                               currency: charge.currency,
                               user_id: user.id,
                               username: user.username,
@@ -237,6 +237,7 @@ class StripeService
                           amount: amount_paid,
                           balance_transaction_id: session.id,
                           user_id: user.id,
+                          brand: 'Stripe',
                           coins: purshased_coins,
                           username: user.username,
                           customer_id: session.customer
