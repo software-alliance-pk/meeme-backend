@@ -15,7 +15,11 @@ class Api::V1::PostsController < Api::V1::ApiController
         @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i)
       end
         if params[:page].present?
-        @posts = @posts.paginate(page: params[:page], per_page: 16).shuffle
+        if params[:per_page].present? 
+          @posts = @posts.paginate(page: params[:page], per_page: params[:per_page].to_i).shuffle
+        elsif
+          @posts = @posts.paginate(page: params[:page], per_page: 16).shuffle
+        end
       end
   
       if @posts.any?
@@ -267,10 +271,13 @@ class Api::V1::PostsController < Api::V1::ApiController
               .where.not(user_id: blocked_user_ids)
               .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
     end
-    if @posts.present?
-      @posts = @posts.paginate(page: params[:page], per_page: 25)
+      if @posts.present?
+        if params[:per_page].present? 
+        @posts = @posts.paginate(page: params[:page], per_page: params[:per_page].to_i)
+      elsif
+        @posts = @posts.paginate(page: params[:page], per_page: 25)
+        end
     else
-      # @posts=Post.all.paginate(page: params[:page], per_page: 25)
       render json: { message: "No Post found against this tag " }, status: :not_found
     end
   end
