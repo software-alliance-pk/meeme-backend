@@ -24,6 +24,7 @@ json.notifications do
             json.sender_id notif.sender_id
             json.sender_name notif.sender_name
             json.sender_image sender&.profile_image&.attached? ? sender.profile_image.blob.url : ''
+            json.sender_private_account sender&.private_account
             if Follower.where(user_id: notif.sender_id, follower_user_id: @current_user.id, status: 'follower_added').present? && Follower.where(user_id: @current_user.id, follower_user_id: notif.sender_id, status: 'following_added').present?
               json.follow_each_other true
             elsif Follower.where(user_id: notif.sender_id, follower_user_id: @current_user.id, status: 'follower_added').present?
