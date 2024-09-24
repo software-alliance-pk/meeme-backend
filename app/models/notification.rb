@@ -49,7 +49,7 @@ def create_push_notification
     if user.notifications_enabled?
       registration_ids.each do |registration_id|
         options[:message][:token] = registration_id
-s        puts "----------------------------------------------"
+        puts "----------------------------------------------"
         puts "------ Options ----------- #{options}"
         puts "----------------------------------------------"
        
