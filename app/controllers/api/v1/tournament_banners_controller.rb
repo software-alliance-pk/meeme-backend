@@ -75,7 +75,8 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
         if @tournament_post.post_image.attached? && @tournament_post.post_image.video?
           @tournament_post.update(duplicate_tags: @tags)
           thumbnail_blob = generate_video_thumbnail(@tournament_post.post_image)
-            @tournament_post.video_thumbnail.attach(thumbnail_blob) if thumbnail_blob.present?
+            thumbnail = thumbnail_blob.url
+            @tournament_post.video_thumbnail.attach(thumbnail_blob)
         else
           @tournament_post.update(duplicate_tags: @tags)
         end
