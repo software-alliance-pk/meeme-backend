@@ -75,15 +75,14 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
         if @tournament_post.post_image.attached? && @tournament_post.post_image.video?
           @tournament_post.update(duplicate_tags: @tags)
           thumbnail_blob = generate_video_thumbnail(@tournament_post.post_image)
-            thumbnail = thumbnail_blob.url
-            @tournament_post.video_thumbnail.attach(thumbnail_blob)
+            @tournament_post.video_thumbnail.attach(thumbnail_blob) if thumbnail_blob.present?
         else
           @tournament_post.update(duplicate_tags: @tags)
         end
         render json: { tournament: @tournament_post.attributes.except('tag_list'),
-                       tournament_banner_image: @tournament_post.post_image.attached? ? @tournament_post.post_image.blob.url : '',
-                       tournament_banner_image_content_type: @tournament_post.post_image.content_type,
-                       tournament_banner_thumbnail: @tournament_post.video_thumbnail.attached? ? @tournament_post.video_thumbnail.blob.url : ''
+                       tournament_post: @tournament_post.post_image.attached? ? @tournament_post.post_image.blob.url : '',
+                       tournament_post_type: @tournament_post.post_image.content_type,
+                       tournament_post_thumbnail: @tournament_post.video_thumbnail.attached? ? @tournament_post.video_thumbnail.blob.url : ''
         }, status: :ok
         PostBadgeJob.perform_now(@tournament_post)
       else
@@ -119,7 +118,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
             # Generate the thumbnail using FFmpeg with a unique output filename
             thumbnail_output_filename = "thumbnail_#{SecureRandom.hex(16)}.jpg"
             thumbnail_output_path = File.join('/tmp', thumbnail_output_filename)
-            system("ffmpeg -i #{thumbnail_path} -ss 5 -vframes 1 -f image2 #{thumbnail_output_path}")
+            system("ffmpeg -i #{thumbnail_path} -ss 1 -vframes 1 -f image2 #{thumbnail_output_path}")
   
             # Check if the generated thumbnail path contains null bytes
             if thumbnail_output_path.include?("\x00")
