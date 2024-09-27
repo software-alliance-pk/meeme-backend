@@ -30,10 +30,26 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def update_user_theme
-    if @user.update(user_themes: params[:theme])
-      render json: { message: 'User theme updated successfully' }, status: :ok
+    if params[:theme].present?
+      if @user.update(user_themes: params[:theme])
+        render json: { message: 'User theme updated successfully' }, status: :ok
+      else
+        render json: { error: @user.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      end
+    elsif params[:font].present?
+      if @user.update(font: params[:font])
+        render json: { message: 'User font updated successfully' }, status: :ok
+      else
+        render json: { error: @user.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      end
+    elsif params[:backgroung_image].present?
+      if @user.update(backgroung_image: params[:backgroung_image])
+        render json: { message: 'User backgroung image updated successfully' }, status: :ok
+      else
+        render json: { error: @user.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      end
     else
-      render json: { error: @user.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      render json: { error: "Please provide theme or font or background image." }, status: :unprocessable_entity
     end
   end
 

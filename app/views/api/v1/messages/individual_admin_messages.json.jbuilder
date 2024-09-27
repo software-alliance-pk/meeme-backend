@@ -10,7 +10,14 @@ json.messages @messages.each do |message|
   json.created_at message.created_at
   json.message_images_count message.message_images.count
   json.message_images message.message_images.each do |message_image|
-    json.message_image message_image.present? ? message_image.blob.url : ''
+  if message_image.present?
+    json.message_image message_image.blob.url
+    json.content_type message_image.blob.content_type
+  else
+    json.message_image ''
+    json.content_type ''
+  end
+
   end
   json.sender_id message.sender_id
   json.sender_name message.sender.present? ? message.sender.username : ''
