@@ -1,5 +1,6 @@
 json.messages_count @messages.count
 json.messages @messages.each do |message|
+  post = Post.find_by(id: message.post_id)
   json.id message.id
   json.body message.body
   json.subject message.subject
@@ -13,6 +14,7 @@ json.messages @messages.each do |message|
   if message_image.present?
     json.message_image message_image.blob.url
     json.content_type message_image.blob.content_type
+    json.thumbnail post&.video_thumbnail&.attached? ? post&.video_thumbnail&.blob&.url : ''
   else
     json.message_image ''
     json.content_type ''
