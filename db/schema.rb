@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_07_03_104646) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_30_113756) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -138,6 +138,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_03_104646) do
     t.integer "sender_id"
     t.integer "admin_user_id"
     t.integer "status", default: 0
+    t.integer "unread_id"
   end
 
   create_table "daily_coins", force: :cascade do |t|
@@ -245,7 +246,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_03_104646) do
     t.integer "notification_type", default: 0
     t.integer "sender_id"
     t.string "sender_name"
-    t.string "sender_image"
     t.string "redirection_type"
     t.integer "request_id"
   end

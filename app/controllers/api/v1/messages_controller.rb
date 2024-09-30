@@ -28,6 +28,18 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
   end
 
+  def change_status_to_read
+    @conversation = Conversation.find_by(id: params[:conversation_id])
+    if @conversation.present?
+        # Setting unread_id to 0 means Both Sender and Reciever read the chat and No Unread message for both.
+      @conversation.update(unread_id: 0)
+      render json: { message: "Conversation status updated successfully" }, status: :ok
+    else
+      render json: { message: "No converation present" }, status: :not_found
+    end
+    
+  end
+
   def individual_messages
     @messages = (((Message.where(sender_id: @current_user.id, receiver_id: params[:receiver_id])) + (Message.where(receiver_id: @current_user.id, sender_id: params[:receiver_id]))).sort_by &:created_at).reverse
     if @messages.present?
@@ -58,6 +70,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
     if @conversation.present?
       @message = @conversation.messages.new(message_params)
       if @message.save
+        @conversation.update(unread_id: @message.receiver_id)
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
         Notification.create(title:"Message from #{@message.sender.username}",
                             body: @message.body,

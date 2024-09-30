@@ -222,6 +222,7 @@ Rails.application.routes.draw do
           post :support_chat
           get :fetch_all_users
           get :all_support_chats
+          post :change_status_to_read
         end
       end
       resources :badges do
