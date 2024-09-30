@@ -221,6 +221,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_30_113756) do
     t.integer "admin_user_id"
     t.integer "subject", default: 0
     t.string "message_ticket"
+    t.integer "post_id"
   end
 
   create_table "mobile_devices", force: :cascade do |t|
@@ -443,6 +444,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_30_113756) do
     t.integer "shared"
     t.integer "explored", default: 0
     t.string "user_themes"
+    t.string "backgroung_image"
+    t.string "font"
   end
 
   create_table "verification_tokens", force: :cascade do |t|
