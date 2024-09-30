@@ -14,6 +14,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
         render json: { message: 'This user does not exist' }
       end
     elsif params[:type] == 'report'
+      @post = Post.find_by(id: params[:post_id])
       create_support_ticket
     elsif params[:type] == 'flag'
       @post = Post.find_by(id: params[:post_id])
@@ -35,6 +36,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
       @message.subject = 'Abuse'
       @message.message_ticket = SecureRandom.hex(5)
       @message.body = "#{@current_user.username} report #{@user.username} as doing abusive activity"
+      @message.post_id = params[:post_id] if params[:post_id].present?
       if @message.save
         ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message) })
         Notification.create(title:"#{@message.sender.username} generated a support ticket",
