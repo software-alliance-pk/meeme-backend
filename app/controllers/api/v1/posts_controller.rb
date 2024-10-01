@@ -16,9 +16,9 @@ class Api::V1::PostsController < Api::V1::ApiController
       end
         if params[:page].present?
         if params[:per_page].present? 
-          @posts = @posts.paginate(page: params[:page], per_page: params[:per_page].to_i).shuffle
+          @posts = @posts.paginate(page: params[:page], per_page: params[:per_page].to_i).sort_by(&:created_at)
         elsif
-          @posts = @posts.paginate(page: params[:page], per_page: 16).shuffle
+          @posts = @posts.paginate(page: params[:page], per_page: 16).sort_by(&:created_at)
         end
       end
   
