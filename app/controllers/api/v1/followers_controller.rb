@@ -43,7 +43,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
       @user = User.find_by(id: params[:follower_user_id])
       if @follower.save
         if @user.private_account?
-          send_notification('Friend Request', @current_user, "#{@current_user.username} wants to follows you",@follower.id, params[:follower_user_id], 'request_send')
+          send_notification('Friend Request', @current_user, "#{@current_user.username} sent you friend request.",@follower.id, params[:follower_user_id], 'request_send')
           render json: { user: @current_user, is_private: @user.private_account, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.user_id).username} " }, status: :ok
         else
           @follower.update(status: 'following_added')

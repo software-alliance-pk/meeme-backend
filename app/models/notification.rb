@@ -27,19 +27,20 @@ def create_push_notification
 
   # FCM HTTP v1 Endpoint
   uri = URI.parse("https://fcm.googleapis.com/v1/projects/memee-app-368013/messages:send")
-  
+  reciever = User.find_by(id: user_id)
+  sender = User.find_by(id: sender_id)
   # Notification payload
   options = {
     message: {
       token: "", # Token to be set below
       notification: { body: self.body, title: self.title },
-      data: { notification_type: self.notification_type }
+      data: { notification_type: self.notification_type, conversation_id: self.conversation_id.to_s, sender_id: self.sender_id.to_s, sender_name: self.sender_name, reciever_id: self.user_id.to_s, reciever_name: reciever.username, sender_image: sender.profile_image.attached? ? sender.profile_image.blob.url : '', reciever_image: reciever.profile_image.attached? ? reciever.profile_image.blob.url : ''},   
     }
   }
   # send_fcm_notification(uri, options, token)
 
   if notification_type == 'comment'
-    CommentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id, user.id)
+    CommentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id, user.id, self.post_id)
   end
 
   if notification_type != 'admin_message' && notification_type != 'push_notification' && notification_type != 'comment'

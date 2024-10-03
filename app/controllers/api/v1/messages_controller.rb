@@ -72,7 +72,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
       if @message.save
         @conversation.update(unread_id: @message.receiver_id)
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
-        Notification.create(title:"Message from #{@message.sender.username}",
+        Notification.create(title:"New Message from #{@message.sender.username}",
                             body: @message.body,
                             conversation_id: @conversation.id,
                             user_id: @message.receiver_id,
@@ -120,7 +120,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
       if @message.save
         # @message.update(subject: subject[0], message_ticket: subject[1])
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
-        Notification.create(title:"Message from #{@message.sender.username}",
+        Notification.create(title:"New Message from #{@message.sender.username}",
                             body: @message.body,
                             conversation_id: @conversation.id,
                             user_id: @message.sender_id,
