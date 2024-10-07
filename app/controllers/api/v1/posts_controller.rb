@@ -102,7 +102,7 @@ class Api::V1::PostsController < Api::V1::ApiController
             # Generate the thumbnail using FFmpeg with a unique output filename
             thumbnail_output_filename = "thumbnail_#{SecureRandom.hex(16)}.jpg"
             thumbnail_output_path = File.join('/tmp', thumbnail_output_filename)
-            system("ffmpeg -i #{thumbnail_path} -ss 5 -vframes 1 -f image2 #{thumbnail_output_path}")
+            system("ffmpeg -i #{thumbnail_path} -ss 1 -vframes 1 -f image2 #{thumbnail_output_path}")
   
             # Check if the generated thumbnail path contains null bytes
             if thumbnail_output_path.include?("\x00")
