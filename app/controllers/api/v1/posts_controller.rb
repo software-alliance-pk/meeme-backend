@@ -12,7 +12,10 @@ class Api::V1::PostsController < Api::V1::ApiController
       @posts = @posts.by_recently_created(200)
       
         if params[:month].present?
-        @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i)
+          @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i)
+          @posts_count = @posts.count.to_i
+        else
+          @posts_count = @posts.count.to_i
       end
         if params[:page].present?
         if params[:per_page].present? 
