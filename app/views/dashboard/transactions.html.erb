@@ -184,9 +184,26 @@
     }
   }
 
+  function updateStartDateMax() {
+  const endDate = document.getElementById('end_date').value;
+  const startDateField = document.getElementById('start_date');
+
+  if (endDate) {
+    // Set the max date for start date to the selected end date
+    startDateField.max = endDate;
+  } else {
+    // Remove the max attribute if no end date is selected
+    startDateField.removeAttribute('max');
+  }
+}
+
+// Add event listener to update the max date for the start date when the end date changes
+document.getElementById('end_date').addEventListener('change', updateStartDateMax);
+
   // Ensure the correct min date is set on page load
   document.addEventListener("DOMContentLoaded", function() {
     updateEndDateMin();
+    updateStartDateMax();
   });
 
 </script>
