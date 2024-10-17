@@ -9,6 +9,8 @@ json.notifications do
           json.child! do
             json.id notif.id
             json.body notif.body
+            json.post_id notif.post_id
+            json.is_opened notif.is_opened ? notif.is_opened : false
             json.status notif.status
             json.alert notif.alert
             json.user_id notif.sender_id

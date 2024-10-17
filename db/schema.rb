@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_09_30_113756) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_17_123312) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -115,7 +115,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_30_113756) do
   end
 
   create_table "coin_prices", force: :cascade do |t|
-    t.string "coins"
+    t.string "coin"
     t.decimal "price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -249,6 +249,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_30_113756) do
     t.string "sender_name"
     t.string "redirection_type"
     t.integer "request_id"
+    t.integer "post_id"
+    t.boolean "is_opened"
   end
 
   create_table "popups", force: :cascade do |t|
@@ -442,7 +444,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_30_113756) do
     t.boolean "checked", default: false
     t.boolean "private_account", default: false
     t.integer "shared"
-    t.integer "explored", default: 0
+    t.integer "explored"
     t.string "user_themes"
     t.string "backgroung_image"
     t.string "font"
