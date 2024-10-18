@@ -96,7 +96,7 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   def email_validate
     if User.exists?(username: params[:username])
-      render json: { username: 'Username already taken' }, status: :unprocessable_entity
+      render json: { username: 'Username already taken', username_status: true }, status: :ok
     else
       @user = User.find_by_email(params[:email])
       if @user.present?
