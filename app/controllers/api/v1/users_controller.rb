@@ -81,10 +81,6 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   # POST /users
   def create
-    # Check if username already exists
-    if User.exists?(username: params[:username])
-      render json: { message: 'Username already taken' }, status: :unprocessable_entity
-    else
       @user = User.new(user_params)
       if @user.save
         render json: { user: @user,
@@ -95,17 +91,20 @@ class Api::V1::UsersController < Api::V1::ApiController
       else
         render_error_messages(@user)
       end
-    end
   end
   
 
   def email_validate
-    @user = User.find_by_email(params[:email])
-    if @user.present?
-      return render json: { message: 'Email present', email_status: true }, status: :ok
+    if User.exists?(username: params[:username])
+      render json: { username: 'Username already taken' }, status: :unprocessable_entity
     else
-      return render json: { message: 'Email not present', email_status: false }, status: :not_found
-    end
+      @user = User.find_by_email(params[:email])
+      if @user.present?
+        return render json: { message: 'Email present', email_status: true }, status: :ok
+      else
+        return render json: { message: 'Email not present', email_status: false }, status: :not_found
+      end
+   end
   end
 
   # PUT /users/{username}
