@@ -14,16 +14,16 @@
                 </div>
             </div>
             <div class="inner_blk">
-                <ul class="tabs_nav nav" id="gift">
+                <ul class="tabs_nav nav" id="gift"> 
                     <li>
-                        <a href="#reward" data-bs-toggle="tab" class="nav-link active">Reward</a>
+                        <a href="#reward" data-bs-toggle="tab" class="nav-link">Reward</a>
                     </li>
                     <li>
                         <a href="#inventory" data-bs-toggle="tab" class="nav-link">Gift Card Requests</a>
                     </li>
                 </ul>
                 <div class="tab-content">
-                    <div id="reward" class="tab-pane fade active show">
+                    <div id="reward" class="tab-pane fade">
                       <div class="top_blk">
                         <h6>REMAINING STOCKS</h6>
                         <div class="blks">
@@ -430,9 +430,19 @@
         $('a[data-bs-toggle="tab"]').on('show.bs.tab', function(e) {
             localStorage.setItem('activeTab', $(e.target).attr('href'));
         });
+        // Check if there is a saved active tab in localStorage
         var activeTab = localStorage.getItem('activeTab');
-        if(activeTab){
+        if (activeTab) {
+            // Show the saved tab
             $('#gift a[href="' + activeTab + '"]').tab('show');
+
+            // Also make sure the corresponding tab content is shown
+            $('.tab-pane').removeClass('active show');
+            $(activeTab).addClass('active show');
+        } else {
+            // If no active tab is saved, show the default tab (e.g. #reward)
+            $('#gift a[href="#reward"]').tab('show');
+            $('#reward').addClass('active show');
         }
     });
 

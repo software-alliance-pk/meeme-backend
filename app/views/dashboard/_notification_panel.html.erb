@@ -83,6 +83,7 @@
       change_status(notificationId, redirectionType);
       
       if (redirectionType === 'amazon_card') {
+         localStorage.setItem('activeTab', '#inventory');
          window.location.href = '/gift-rewards';
       }else if(redirectionType === 'support'){
          window.location.href = `/support?conversationId=${conversationId}`;
