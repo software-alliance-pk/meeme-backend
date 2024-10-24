@@ -10,9 +10,6 @@
           </div>
         </div>
         <div class="d-flex align-items-center">
-          <a href="/tournament-banner" class="site_btn prime_btn round px me-3">
-            Add Banners
-          </a>
           <%=render "dashboard/notification_panel" %>
         </div>
       </div>
@@ -22,18 +19,29 @@
             <h4 class="mb-0">Tournament Season</h4>
             <div class="form_blk">
               <%= form_for :post, :url => { :controller => 'dashboard', :action => 'tournament' }, :html => { :method => 'get', class: 'form_blk' } do |f| %>
-                <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onchange: "submit()" %>
+                <% if TournamentBanner.exists? %>
+                  <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onchange: "submit()" %>
+                <% else %>
+                  <%= select_tag :tournament_banner_id, 
+                                options_for_select([['No tournament found', '']]), 
+                                class: "input", 
+                                disabled: false %>
+                <% end %>
               <% end %>
             </div>
-            <p class="ms-3"> Participants: <span id = "joined" style="font-size: 2.4rem"><%= if @banner.present?
-                                                                                               @banner.tournament_users.count
-                                                                                             else
-                                                                                               TournamentBanner.first.present? ? TournamentBanner.first.tournament_users.count : ""
-                                                                                             end %> Joined</span></p>
-          </div>
-          <h4 class="fw_400 mb-0">
-            <a href="/tournament-winner-list" id = "banner_id">Tournament Winners</a>
-          </h4>
+            <% if TournamentBanner.exists? %>
+              <p class="ms-3"> Participants: <span id = "joined" style="font-size: 2.4rem"><%= if @banner.present?
+                                                                                                @banner.tournament_users.count
+                                                                                              else
+                                                                                                TournamentBanner.first.present? ? TournamentBanner.first.tournament_users.count : ""
+                                                                                            end %> </span></p>
+            <%end%>  
+            </div>
+            <% if TournamentBanner.exists? %>
+              <h4 class="fw_400 mb-0">
+                <a href="/tournament-winner-list" id = "banner_id">Tournament Winners</a>
+              </h4>
+            <%end%>
         </div>
         <div id="table_blk">
           <table id="tournament_table">

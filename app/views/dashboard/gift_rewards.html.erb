@@ -16,7 +16,7 @@
             <div class="inner_blk">
                 <ul class="tabs_nav nav" id="gift"> 
                     <li>
-                        <a href="#reward" data-bs-toggle="tab" class="nav-link">Reward</a>
+                        <a href="#reward" data-bs-toggle="tab" class="nav-link">Rewards</a>
                     </li>
                     <li>
                         <a href="#inventory" data-bs-toggle="tab" class="nav-link">Gift Card Requests</a>
@@ -40,7 +40,7 @@
                             <h3><%= @rewards.where("rank = (?) AND status = (?)", "3rd Place", 0).count %></h3>
                           </div>
                           <button type="button" class="site_btn prime_btn round pop_btn" data-popup="add_gift" onclick="add_card()">Add
-                            Gift Cards</button>
+                            Gift Card</button>
                         </div>
                       </div>
                         <div id="table_blk">
