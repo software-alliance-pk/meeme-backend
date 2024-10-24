@@ -23,7 +23,7 @@
                   <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onchange: "submit()" %>
                 <% else %>
                   <%= select_tag :tournament_banner_id, 
-                                options_for_select([['No tournament found', '']]), 
+                                options_for_select([['No active tournament', '']]), 
                                 class: "input", 
                                 disabled: false %>
                 <% end %>

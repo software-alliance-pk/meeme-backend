@@ -271,7 +271,7 @@
               <h4>Daily Coin Reward For Judging</h4>
               <form action="/set_coins">
                 <div class="btn_blk">
-                  <input class="site_btn bg_dark round" name="daily_coins_reward" required value = <%= DailyCoin.first.daily_coins_reward if DailyCoin.first.present? %>>
+                  <input class="site_btn bg_dark round" id="daily_coins_reward" name="daily_coins_reward" required value = <%= DailyCoin.first.daily_coins_reward if DailyCoin.first.present? %>>
                   </input>
                 </div>
                 <div class="btn_blk">
@@ -296,4 +296,13 @@
     function close_modal(){
         document.getElementById("coin_reward_modal").style.display = "none"
     }
+    const inputField = document.getElementById('daily_coins_reward');
+    // Attach keypress event listener
+    inputField.addEventListener('keypress', function (e) {
+      const charCode = (e.which) ? e.which : e.keyCode;
+      // Check for minus sign (-)
+      if (charCode < 48 || charCode > 57) {
+          e.preventDefault(); // Prevent the default action of adding the character   
+      }
+  });  
 </script>
