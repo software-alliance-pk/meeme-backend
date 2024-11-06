@@ -155,9 +155,27 @@
             open_conversation(conversation?.sender_id, conversationId, username, email);
             get_image(email);
             get_post(username);
-             // Highlight the opened chat block
-             $(`.user_list .user_blk[data-conversation-id="${conversationId}"]`).addClass("active");
-      })
+            const conversationElement = $(`.user_list .user_blk[data-conversation-id="${conversationId}"]`);
+      
+        // Check if element exists
+            if (conversationElement.length > 0) {
+              conversationElement.addClass("active");
+
+              // Remove active class from other conversation blocks
+              $(".user_list .user_blk").not(conversationElement).removeClass("active");
+
+              // Scroll only the sidebar into view (not the whole page)
+              const sidebar = $(".user_list"); // The sidebar container
+
+              sidebar.animate({
+                scrollTop: conversationElement.offset().top - sidebar.offset().top + sidebar.scrollTop() - 100
+              }, 'smooth');
+            } else {
+              console.error("Conversation element not found");
+            }
+              // Highlight the opened chat block
+              //  $(`.user_list .user_blk[data-conversation-id="${conversationId}"]`).addClass("active");
+        })
       .catch(error => {
         console.error('Error fetching sender details:', error);
       });
@@ -318,7 +336,8 @@
         message_div.appendChild(div)
         message_div.appendChild(div1)
         topDiv.appendChild(message_div)
-        $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
+        $(".chat_list").animate({ scrollTop: $(".chat_list").prop("scrollHeight") }, "fast");
+
     }
 
     // function message_design(message, images, user_image, admin_image) {

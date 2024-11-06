@@ -121,9 +121,9 @@ class Api::V1::PaymentsController < Api::V1::ApiController
 
   def show_transactions_history
     if params[:platform] == 'ios'
-      @history = Transaction.where(user_id: @current_user.id, customer_id: nil)
+      @history = Transaction.where(user_id: @current_user.id, customer_id: nil).order('created_at DESC')
     else
-      @history = Transaction.where(user_id: @current_user.id)
+      @history = Transaction.where(user_id: @current_user.id).order('created_at DESC')
     end
     if @history.present?
       render json: { transaction_count: @history.count, total_history: @history }, status: :ok
