@@ -284,106 +284,90 @@
         });
     }, { threshold: 1.0 }); // Set threshold to 1 to observe full visibility
 
-    function message_design(message, images, user_image, admin_image) {
-        var chat_list_id = document.getElementsByClassName("chat_list")[0].id
-        var topDiv = document.getElementById(chat_list_id)
-        var admindiv = document.getElementById("admin_div")
-        document.getElementById("num_id").innerHTML = message.message_ticket
-        var message_div = document.createElement("div")
-        if (message.sender_id !== null) {
-            message_div.setAttribute('class', 'chat_blk')
-        }else{
-            message_div.setAttribute('class', 'chat_blk memee')
-        }
-        var div = document.createElement("div")
-        div.setAttribute('class', 'ico fill round')
-        var img = document.createElement("img");
-        if (message.sender_id !== null) {
-            img.src = user_image
-            div.appendChild(img)
-        }else{
-            img.setAttribute("style", "border-radius: 50%; object-fit: cover")
-            img.src = admin_image
-            div.appendChild(img)
-        }
-        var div1 = document.createElement("div")
-        if (images[0] === "") {
-            div1.setAttribute('class', 'txt')
-            var p = document.createElement("p")
-            if (message.sender_id !== null){
-                p.setAttribute("class", "bottom")
-            }
-            div1.appendChild(p.appendChild(document.createTextNode(message.body)))
-        }else {
-            div1.setAttribute('class', 'txt w-50 h-50')
-            if (images.length === 1) {
-              
-                if (images[0].type === 'video'){
-                    var image_div = document.createElement("div")
-                    image_div.setAttribute('class', 'w-40 h-40 float-end')
-                    var videoSource = document.createElement("source")
-                    videoSource.setAttribute("src", `${images[0].url}`)
-                    videoSource.setAttribute("type", "video/mp4");
-                    var video = document.createElement('video')
-                    video.setAttribute("controls", true)
-                    video.setAttribute('class', 'w-100 h-100');
-                    video.append(videoSource)
-                    image_div.append(video);
-                }else{
-                    var image_div = document.createElement("div")
-                    var message_img = document.createElement("img");
-                    message_img.setAttribute('class', 'w-40 h-40 float-end')
-                    message_img.src = images[0].url
-                    image_div.appendChild(message_img)
-                }
-            }else {
-                var image_div = document.createElement("div")
-                images.forEach(function (image) {
-                  
-                    if(image.type === 'video'){
-                        image_div.setAttribute('class', 'w-40 h-40 float-end')
-                        var videoSource = document.createElement("source")
-                        videoSource.setAttribute("src", `${image.url}`)
-                        videoSource.setAttribute("type", "video/mp4");
-                        var video = document.createElement('video')
-                        video.setAttribute("controls", true)
-                        video.setAttribute('class', 'w-100 h-100');
-                        video.append(videoSource)
-                        image_div.append(video);
-                    }else{
-                        var message_img = document.createElement("img");
-                        message_img.setAttribute('class', 'w-40 h-40 float-end mb-1')
-                        message_img.src = image.url
-                        image_div.appendChild(message_img)
-                    }
-                })
-            }
-            div1.appendChild(image_div)
-            var p_div = document.createElement("div")
-            var p = document.createElement("p")
-            if (message.sender_id === null){
-                p_div.setAttribute("class", "float-end")
-            }
-            p_div.appendChild(p.appendChild(document.createTextNode(message.body)))
-            div1.appendChild(p_div)
-        }
-        message_div.appendChild(div)
-        message_div.appendChild(div1)
-        topDiv.appendChild(message_div)
-        const lastMessage = $(".chat_list .chat_blk:last-child");
-          if (lastMessage.length > 0) {
-              observer.disconnect(); // Disconnect previous observer
-              observer.observe(lastMessage[0]); // Observe new last message
-          }
+  function message_design(message, images, user_image, admin_image) {
+    var chat_list_id = document.getElementsByClassName("chat_list")[0].id;
+    var topDiv = document.getElementById(chat_list_id);
+    document.getElementById("num_id").innerHTML = message.message_ticket;
+    var message_div = document.createElement("div");
 
-          // Scroll to the new message if the user isn't manually scrolling
-          if (!isUserScrolling) {
-              scrollToLastMessage();
-          }
-
-        // $(".chat_list").animate({ scrollTop: $(".chat_list").prop("scrollHeight") }, "fast");
-
+    if (message.sender_id !== null) {
+        message_div.setAttribute('class', 'chat_blk');
+    } else {
+        message_div.setAttribute('class', 'chat_blk memee');
     }
+
+    var div = document.createElement("div");
+    div.setAttribute('class', 'ico fill round');
+    var img = document.createElement("img");
+
+    img.src = message.sender_id !== null ? user_image : admin_image;
+    img.style.borderRadius = "50%";
+    img.style.objectFit = "cover";
+    div.appendChild(img);
+
+    var div1 = document.createElement("div");
+    if (images[0] === "") {
+        div1.setAttribute('class', 'txt');
+        var p = document.createElement("p");
+        if (message.sender_id !== null) {
+            p.setAttribute("class", "bottom");
+        }
+        div1.appendChild(p.appendChild(document.createTextNode(message.body)));
+    } else {
+        div1.setAttribute('class', 'txt w-50 h-50');
+        var image_div = document.createElement("div");
+
+        images.forEach((image) => {
+            if (image.type === 'video') {
+                var video = document.createElement("video");
+                video.setAttribute("controls", true);
+                video.setAttribute("class", 'w-100 h-100');
+                var videoSource = document.createElement("source");
+                videoSource.setAttribute("src", image.url);
+                videoSource.setAttribute("type", "video/mp4");
+                video.append(videoSource);
+                image_div.append(video);
+            } else {
+                var message_img = document.createElement("img");
+                message_img.setAttribute('class', 'w-40 h-40 float-end mb-1');
+                message_img.src = image.url;
+
+                // Add load event to ensure scrolling after image loads
+                message_img.onload = scrollToLastMessage;
+                image_div.appendChild(message_img);
+            }
+        });
+
+        div1.appendChild(image_div);
+        var p_div = document.createElement("div");
+        var p = document.createElement("p");
+        if (message.sender_id === null) {
+            p_div.setAttribute("class", "float-end");
+        }
+        p_div.appendChild(p.appendChild(document.createTextNode(message.body)));
+        div1.appendChild(p_div);
+    }
+
+    message_div.appendChild(div);
+    message_div.appendChild(div1);
+    topDiv.appendChild(message_div);
+
+    const lastMessage = $(".chat_list .chat_blk:last-child");
+    if (lastMessage.length > 0) {
+        observer.disconnect();
+        observer.observe(lastMessage[0]);
+    }
+
+    if (!isUserScrolling) {
+        scrollToLastMessage();
+    }
+}
+
+// Helper function to scroll to the bottom of the chat
+function scrollToLastMessage() {
+    $(".chat_list").animate({ scrollTop: $(".chat_list").prop("scrollHeight") }, "fast");
+}
+
   $(".chat_list").on('scroll', debounce(function() {
     const chatList = $(this);
     const scrollTop = chatList.scrollTop();
