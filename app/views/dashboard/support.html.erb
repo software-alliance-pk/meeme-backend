@@ -250,6 +250,40 @@
 
     }
 
+   let isUserScrolling = false; // Flag to detect manual scroll
+
+    // Function to scroll to the last message
+    function scrollToLastMessage() {
+        const chatList = $(".chat_list");
+        const lastMessage = $(".chat_list .chat_blk:last-child");
+
+        if (lastMessage.length > 0) {
+            chatList.animate({
+                scrollTop: lastMessage[0].offsetTop + lastMessage.outerHeight() - chatList.height()
+            }, "fast", function() {
+                isUserScrolling = false; // Reset flag after reaching bottom
+            });
+        }
+    }
+
+    // Debounce function to limit scroll events
+    function debounce(func, wait) {
+        let timeout;
+        return function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(func, wait);
+        };
+    }
+
+    // Observer to handle auto-scroll when a new message is added
+    let observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting && !isUserScrolling) {
+                scrollToLastMessage();
+            }
+        });
+    }, { threshold: 1.0 }); // Set threshold to 1 to observe full visibility
+
     function message_design(message, images, user_image, admin_image) {
         var chat_list_id = document.getElementsByClassName("chat_list")[0].id
         var topDiv = document.getElementById(chat_list_id)
@@ -336,9 +370,29 @@
         message_div.appendChild(div)
         message_div.appendChild(div1)
         topDiv.appendChild(message_div)
-        $(".chat_list").animate({ scrollTop: $(".chat_list").prop("scrollHeight") }, "fast");
+        const lastMessage = $(".chat_list .chat_blk:last-child");
+          if (lastMessage.length > 0) {
+              observer.disconnect(); // Disconnect previous observer
+              observer.observe(lastMessage[0]); // Observe new last message
+          }
+
+          // Scroll to the new message if the user isn't manually scrolling
+          if (!isUserScrolling) {
+              scrollToLastMessage();
+          }
+
+        // $(".chat_list").animate({ scrollTop: $(".chat_list").prop("scrollHeight") }, "fast");
 
     }
+  $(".chat_list").on('scroll', debounce(function() {
+    const chatList = $(this);
+    const scrollTop = chatList.scrollTop();
+    const scrollHeight = chatList[0].scrollHeight;
+    const clientHeight = chatList[0].clientHeight;
+
+    // Detect if the user has scrolled up
+    isUserScrolling = scrollTop + clientHeight < scrollHeight - 5;
+}, 50));
 
     // function message_design(message, images, user_image, admin_image) {
     //     var chat_list_id = document.getElementsByClassName("chat_list")[0].id
