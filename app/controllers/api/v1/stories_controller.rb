@@ -4,7 +4,7 @@ class Api::V1::StoriesController < Api::V1::ApiController
   before_action :find_valid_user, only: :destroy
 
   def index
-    followed_user_ids = Follower.where(follower_user_id: @current_user.id, status: [:follower_added, :following_added]).pluck(:user_id).uniq
+    followed_user_ids = Follower.where(follower_user_id: @current_user.id, status: [:following_added]).pluck(:user_id).uniq
     # Include the current user's ID in the followed_user_ids
     followed_user_ids << @current_user.id
     user_stories = Story.where(user_id: followed_user_ids).recently_created.paginate(page: params[:page], per_page: 25)
