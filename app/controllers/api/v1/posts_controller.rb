@@ -2,7 +2,7 @@ require 'tempfile'
 require 'securerandom'
 class Api::V1::PostsController < Api::V1::ApiController
   before_action :authorize_request
-  before_action :find_post, only: [:show, :update_posts, :destroy]
+  before_action :find_post, only: [:update_posts, :destroy]
 
   def index
     @user = User.find_by(id: params[:user_id])
@@ -38,8 +38,10 @@ class Api::V1::PostsController < Api::V1::ApiController
   
 
   def show
-    render json: { post: @current_user.posts.by_recently_created },
-           status: :ok
+    @post = Post.find_by(id: params[:id])  
+    unless @post
+      render json: { message: "Post not found" }, status: :not_found
+    end
   end
 
   def create
@@ -561,6 +563,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   private
 
   def find_post
+    
     unless (@post = @current_user.posts.find_by(id: params[:post_id]))
       return render json: { message: 'Post Not found' }
     end
