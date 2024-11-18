@@ -81,29 +81,30 @@ class Api::V1::UsersController < Api::V1::ApiController
 
   # POST /users
   def create
-    @user = User.new(user_params)
-    if @user.save
-      render json: { user: @user,
-                     profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
-                     wallet: @user.get_wallet,
-                     message: 'User created successfully' }, status: :ok
-      MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
-      # Notification.create(title: "Sign Up",
-      #                     body: 'You have successfully signed up for the MEMEE App',
-      #                     user_id: @user.id,
-      #                     notification_type: 'sign_up')
-    else
-      render_error_messages(@user)
-    end
+      @user = User.new(user_params)
+      if @user.save
+        render json: { user: @user,
+                       profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
+                       wallet: @user.get_wallet,
+                       message: 'User created successfully' }, status: :ok
+        MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
+      else
+        render_error_messages(@user)
+      end
   end
+  
 
   def email_validate
-    @user = User.find_by_email(params[:email])
-    if @user.present?
-      return render json: { message: 'Email present', email_status: true }, status: :ok
+    if User.exists?(username: params[:username])
+      render json: { username: 'Username already taken', username_status: true }, status: :ok
     else
-      return render json: { message: 'Email not present', email_status: false }, status: :not_found
-    end
+      @user = User.find_by_email(params[:email])
+      if @user.present?
+        return render json: { message: 'Email present', email_status: true }, status: :ok
+      else
+        return render json: { message: 'Email not present', email_status: false }, status: :not_found
+      end
+   end
   end
 
   # PUT /users/{username}

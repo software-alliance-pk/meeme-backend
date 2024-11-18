@@ -244,7 +244,8 @@ Rails.application.routes.draw do
       resources :notifications do
         collection do
           get :user_notifications
-
+          get :unread_count
+          post :change_opened_status
         end
       end
 
