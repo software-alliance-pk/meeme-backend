@@ -66,7 +66,8 @@ class Api::V1::FollowersController < Api::V1::ApiController
         Notification.create(title: 'Request Rejected',
                             body: "Follower request has been rejected by #{@current_user.username}",
                             follow_request_id: @follower.id,
-                            user_id: params[:follower_user_id])
+                            user_id: params[:follower_user_id],
+                            sender_id: @current_user.id)
         @follower.destroy
         render json: { message: 'User removed from pending' }, status: :ok
       else

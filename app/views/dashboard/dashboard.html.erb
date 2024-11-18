@@ -27,7 +27,32 @@
                     <div class="d-flex justify-content-end px-5 pt-4">
                       <p class="text-white"><strong>Last 24 hours</strong></p>
                     </div>
-                    <%= column_chart activeusers.group_by_hour(:created_at, format: "%-l %P", range: 24.hours.ago..Time.current).count , discrete: true, ytitle: "Users" ,library: {backgroundColor: "transparent" , tooltip: {color: "#3D3A3A"},vAxis: {  minValue: 0  ,format: "#" ,baselineColor: "transparent" ,gridlines: { color: "transparent"}, titleTextStyle: { color: "#fff"}}} ,colors: ["#FFFF00"] ,width: "100%", height: "275px"%>
+                  <% hour_counts = (0..23).map do |h| %>
+                    <% count = activeusers.where(created_at: (Time.current - (h + 1).hours)..(Time.current - h.hours)).count %>
+                    <% [(Time.current - h.hours).strftime("%-I %p"), count] %>
+                  <% end.reverse.to_h %>
+
+                  <%= column_chart hour_counts.to_a,
+                    discrete: true,
+                    ytitle: "Users",
+                    library: {
+                      backgroundColor: "transparent",
+                      tooltip: { color: "#3D3A3A" },
+                      vAxis: {
+                        minValue: 0,
+                        format: "#",
+                        baselineColor: "transparent",
+                        gridlines: { color: "transparent" },
+                        titleTextStyle: { color: "#fff" }
+                      },
+                      hAxis: {
+                        format: "h a",  # 12-hour format with AM/PM
+                      }
+                    },
+                    colors: ["#FFFF00"],
+                    width: "100%",
+                    height: "275px"
+                  %>
                   </div>
                   <div class="item_row row">
                     <div class="col-3 p-0">
@@ -246,7 +271,7 @@
               <h4>Daily Coin Reward For Judging</h4>
               <form action="/set_coins">
                 <div class="btn_blk">
-                  <input class="site_btn bg_dark round" name="daily_coins_reward" required value = <%= DailyCoin.first.daily_coins_reward if DailyCoin.first.present? %>>
+                  <input class="site_btn bg_dark round" id="daily_coins_reward" name="daily_coins_reward" required value = <%= DailyCoin.first.daily_coins_reward if DailyCoin.first.present? %>>
                   </input>
                 </div>
                 <div class="btn_blk">
@@ -271,4 +296,13 @@
     function close_modal(){
         document.getElementById("coin_reward_modal").style.display = "none"
     }
+    const inputField = document.getElementById('daily_coins_reward');
+    // Attach keypress event listener
+    inputField.addEventListener('keypress', function (e) {
+      const charCode = (e.which) ? e.which : e.keyCode;
+      // Check for minus sign (-)
+      if (charCode < 48 || charCode > 57) {
+          e.preventDefault(); // Prevent the default action of adding the character   
+      }
+  });  
 </script>

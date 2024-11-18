@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[verify_otp create forgot_password reset_user_password email_validate get_sender_details delete_user]
-  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_account delete_user search]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_account delete_user search get_admin_user]
   # GET /users
   def index
     @users = User.all
@@ -50,6 +50,13 @@ class Api::V1::UsersController < Api::V1::ApiController
       end
     else
       render json: { error: "Please provide theme or font or background image." }, status: :unprocessable_entity
+    end
+  end
+
+   def get_admin_user
+    @admin = AdminUser.last
+    unless @admin.present?
+      render json: { message: "No Admin user present" }, status: :not_found
     end
   end
 

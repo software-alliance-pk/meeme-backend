@@ -46,7 +46,8 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
                             message_id: @message.id,
                             notification_type: 'admin_message',
                             sender_id: @current_user.id,
-                            sender_name: @current_user.username)
+                            sender_name: @current_user.username,
+                            redirection_type: 'support')
         # render json: { report_details: { conversation: @conversation, message: @message } }
       end
     else

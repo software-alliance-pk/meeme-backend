@@ -15,7 +15,7 @@
   <div id="tournament_winner" class="main_side">
     <div id="top_header">
       <div class="left_blk">
-        <h1>Tournament Winner</h1>
+        <h1>Tournament Winners</h1>
         <div class="img">
           <img src="<%= asset_path("medal.svg")%>" alt="">
         </div>
@@ -214,7 +214,7 @@
                         <div class="col-12">
                           <h6 class="form_label">Coin</h6>
                           <div class="form_blk">
-                            <input type="number" id="single_user_coins" class="input" placeholder="Enter Coins" name="coins">
+                            <input type="number" id="single_user_coins" class="input" placeholder="Enter Coins" name="coins" min="0">
                           </div>
                         </div>
                         <div class="btn_blk">
@@ -240,6 +240,16 @@
 </html>
 
 <script>
+  const inputField = document.getElementById('single_user_coins');
+  // Attach keypress event listener
+  inputField.addEventListener('keypress', function (e) {
+      const charCode = (e.which) ? e.which : e.keyCode;
+      // Check for minus sign (-)
+      if (charCode === 45) {
+          e.preventDefault(); // Prevent the default action of adding the character   
+      }
+  });  
+  
   $('#send_form').on('submit', function (){
       event.preventDefault()
       var name = $('#place')[0].value
