@@ -34,7 +34,7 @@ def create_push_notification
     message: {
       token: "", # Token to be set below
       notification: { body: self.body, title: self.title },
-      data: { notification_type: self.notification_type, conversation_id: self.conversation_id.to_s, sender_id: self.sender_id.to_s, sender_name: self.sender_name, reciever_id: self.user_id.to_s, reciever_name: reciever.username, sender_image: sender.profile_image.attached? ? sender.profile_image.blob.url : '', reciever_image: reciever.profile_image.attached? ? reciever.profile_image.blob.url : ''},   
+      data: { notification_type: self.notification_type, conversation_id: self.conversation_id.to_s, sender_id: self.sender_id.to_s, sender_name: self.sender_name, reciever_id: self.user_id.to_s, reciever_name: reciever.username, sender_image: sender&.profile_image&.attached? ? sender.profile_image.blob.url : '', reciever_image: reciever.profile_image.attached? ? reciever.profile_image.blob.url : ''},   
     }
   }
   # send_fcm_notification(uri, options, token)

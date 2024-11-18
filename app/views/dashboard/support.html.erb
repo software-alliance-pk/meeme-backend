@@ -251,6 +251,7 @@
     }
 
    let isUserScrolling = false; // Flag to detect manual scroll
+   let lastScrollTop = 0;  
 
     // Function to scroll to the last message
     function scrollToLastMessage() {
@@ -352,31 +353,54 @@
     message_div.appendChild(div1);
     topDiv.appendChild(message_div);
 
-    const lastMessage = $(".chat_list .chat_blk:last-child");
+   const lastMessage = $(".chat_list .chat_blk:last-child");
     if (lastMessage.length > 0) {
-        observer.disconnect();
-        observer.observe(lastMessage[0]);
+        observer.disconnect(); // Disconnect the observer to avoid repetitive calls
+        observer.observe(lastMessage[0]); // Observe the last message
     }
 
+    // Scroll to the last message only if the user is not scrolling up
     if (!isUserScrolling) {
+        console.log("User not scrolling, scrolling to the last message...");
         scrollToLastMessage();
+    } else {
+        console.log("User scrolling, avoiding auto-scroll...");
     }
 }
 
 // Helper function to scroll to the bottom of the chat
-function scrollToLastMessage() {
-    $(".chat_list").animate({ scrollTop: $(".chat_list").prop("scrollHeight") }, "fast");
-}
+    function scrollToLastMessage() {
+        $(".chat_list").animate({ scrollTop: $(".chat_list").prop("scrollHeight") }, "fast");
+    }
 
-  $(".chat_list").on('scroll', debounce(function() {
-    const chatList = $(this);
-    const scrollTop = chatList.scrollTop();
-    const scrollHeight = chatList[0].scrollHeight;
-    const clientHeight = chatList[0].clientHeight;
+  $(".chat_list").on("scroll", debounce(function () {
+      const chatList = $(this);
+      const scrollTop = chatList.scrollTop();
 
-    // Detect if the user has scrolled up
-    isUserScrolling = scrollTop + clientHeight < scrollHeight - 5;
-}, 50));
+      // Determine if the user is scrolling up
+      if (scrollTop < lastScrollTop) {
+          console.log("Scrolling up...");
+          isUserScrolling = true;  // User is scrolling up
+      } else {
+          console.log("Scrolling down...");
+          isUserScrolling = true;  // User is scrolling down
+      }
+
+      lastScrollTop = scrollTop;  // Update last scroll position
+
+  }, 50));
+// Prevent page scroll when the chat_list can scroll
+  $(".chat_list").on("wheel", function (e) {
+      const chatList = this;
+      const atTop = chatList.scrollTop === 0;
+      const atBottom = chatList.scrollTop + chatList.clientHeight === chatList.scrollHeight;
+
+      if ((e.originalEvent.deltaY < 0 && atTop) || (e.originalEvent.deltaY > 0 && atBottom)) {
+          // Prevent scrolling the page when at top or bottom of chat_list
+          e.preventDefault();
+      }
+  });
+
 
     // function message_design(message, images, user_image, admin_image) {
     //     var chat_list_id = document.getElementsByClassName("chat_list")[0].id
