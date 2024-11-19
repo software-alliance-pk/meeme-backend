@@ -447,16 +447,16 @@ class DashboardController < ApplicationController
   end
 
   def transactions   
-    if params[:search] && params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
+    if params[:search].present? && params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
       @transactions_list = Transaction.search(params[:search])
       @transactions_list =  @transactions_list.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
-    elsif params[:search] && params[:start_date].present? && params[:end_date] == "" && params[:start_date] != "false"
+    elsif params[:search].present? && params[:start_date].present? && params[:end_date] == "" && params[:start_date] != "false"
       @transactions_list = Transaction.search(params[:search])
       @transactions_list = @transactions_list.start_date_filter(params[:start_date]).search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
-    elsif params[:search] && params[:end_date].present? && params[:start_date] == "" 
+    elsif params[:search].present? && params[:end_date].present? && params[:start_date] == "" 
       @transactions_list = Transaction.search(params[:search])
       @transactions_list = @transactions_list.end_date_filter(params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
-    elsif params[:search]
+    elsif params[:search].present? 
       @transactions_list = Transaction.search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     elsif params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
       @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
