@@ -20,9 +20,9 @@ class Api::V1::PostsController < Api::V1::ApiController
       end
         if params[:page].present?
         if params[:per_page].present? 
-          @posts = @posts.paginate(page: params[:page], per_page: params[:per_page].to_i).sort_by(&:created_at)
+          @posts = @posts.paginate(page: params[:page], per_page: params[:per_page].to_i).sort_by(&:created_at).reverse
         elsif
-          @posts = @posts.paginate(page: params[:page], per_page: 10).sort_by(&:created_at)
+          @posts = @posts.paginate(page: params[:page], per_page: 10).sort_by(&:created_at).reverse
         end
       end
   
