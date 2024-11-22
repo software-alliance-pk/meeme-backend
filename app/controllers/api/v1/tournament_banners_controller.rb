@@ -1,3 +1,5 @@
+require 'tempfile'
+require 'securerandom'
 class Api::V1::TournamentBannersController < Api::V1::ApiController
   before_action :authorize_request
   before_action :find_tournament ,except: [:create_tournament]
@@ -71,13 +73,16 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
       if @tournament_post.save
         @tags = @tournament_post.tag_list.map { |item| item&.split("dup")&.first }
         if @tournament_post.post_image.attached? && @tournament_post.post_image.video?
-          @tournament_post.update(duplicate_tags: @tags, thumbnail: @tournament_post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
+          @tournament_post.update(duplicate_tags: @tags)
+          thumbnail_blob = generate_video_thumbnail(@tournament_post.post_image)
+            @tournament_post.video_thumbnail.attach(thumbnail_blob) if thumbnail_blob.present?
         else
           @tournament_post.update(duplicate_tags: @tags)
         end
         render json: { tournament: @tournament_post.attributes.except('tag_list'),
-                       tournament_banner_image: @tournament_post.post_image.attached? ? @tournament_post.post_image.blob.url : '',
-                       tournament_banner_image_content_type: @tournament_post.post_image.content_type
+                       tournament_post: @tournament_post.post_image.attached? ? @tournament_post.post_image.blob.url : '',
+                       tournament_post_type: @tournament_post.post_image.content_type,
+                       tournament_post_thumbnail: @tournament_post.video_thumbnail.attached? ? @tournament_post.video_thumbnail.blob.url : ''
         }, status: :ok
         PostBadgeJob.perform_now(@tournament_post)
       else
@@ -86,6 +91,67 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     else
       render json: { message: "User is not enrolled in tournament" }, status: :not_found
     end
+  end
+  def generate_video_thumbnail(video_attachment)
+    thumbnail = ''
+  
+    begin
+      # Check if FFmpeg is available
+      if system('ffmpeg -version > /dev/null 2>&1')
+  
+        begin
+          # Generate a random unique filename for the thumbnail
+          thumbnail_filename = "thumbnail_#{SecureRandom.hex(16)}.jpg"
+          thumbnail_path = File.join('/tmp', thumbnail_filename)
+          video_blob = video_attachment.blob
+  
+          # Check if the video_blob content is nil
+          if video_blob.nil?
+            puts "Error: Video content is nil."
+            thumbnail = nil # Indicate that an error occurred
+          else
+            # Download the video blob content to the tempfile
+            File.open(thumbnail_path, 'wb') do |thumbnail_file|
+              thumbnail_file.write(video_blob.download)
+            end
+  
+            # Generate the thumbnail using FFmpeg with a unique output filename
+            thumbnail_output_filename = "thumbnail_#{SecureRandom.hex(16)}.jpg"
+            thumbnail_output_path = File.join('/tmp', thumbnail_output_filename)
+            system("ffmpeg -i #{thumbnail_path} -ss 1 -vframes 1 -f image2 #{thumbnail_output_path}")
+  
+            # Check if the generated thumbnail path contains null bytes
+            if thumbnail_output_path.include?("\x00")
+              puts "Error: Thumbnail path contains null byte."
+              thumbnail = nil # Indicate that an error occurred
+            else
+              thumbnail_blob = ActiveStorage::Blob.create_and_upload!(io: File.open(thumbnail_output_path), filename: "thumbnail.jpg")
+              thumbnail = thumbnail_blob.url
+            end
+          end
+        rescue StandardError => e
+          puts "Error while generating video thumbnail: #{e.message}"
+          thumbnail = nil # Indicate that an error occurred
+          thumbnail_blob = nil
+        ensure
+          # Delete both temporary files after processing
+          File.delete(thumbnail_path) if File.exist?(thumbnail_path)
+          File.delete(thumbnail_output_path) if File.exist?(thumbnail_output_path)
+        end
+      else
+        puts "FFmpeg is not available or there was an error."
+        # Handle the case where FFmpeg is not available
+        # You might want to log an error or use a default thumbnail
+        thumbnail = nil # Indicate that an error occurred
+        thumbnail_blob = nil
+      end
+    rescue StandardError => e
+      puts "Error: #{e.message}"
+      thumbnail = nil # Indicate that an error occurred
+      thumbnail_blob = nil
+    end
+  
+    thumbnail_blob
   end
 
   def create_tournament
@@ -99,25 +165,27 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
 
   def like_unlike_a_tournament_post
     if @tournament.posts.find_by(id: params[:post_id]).present?
-      if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
+      # if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
         response = TournamentLikeService.new(params[:post_id], @current_user.id).create_for_tournament
         render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
-      else
-        render json: { message: "User is not enrolled in this tournament" }, status: :not_found
-      end
+      # else
+        # render json: { message: "User is not enrolled in this tournament" }, status: :not_found
+      # end
     else
       render json: { message: "Post is not in this tournament" }, status: :not_found
     end
   end
 
+  
+# To like and Dislike the post creatd in Tournament
   def dislike_a_tournament_post
     if @tournament.posts.find_by(id: params[:post_id]).present?
-      if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
+      # if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
         response = TournamentLikeService.new(params[:post_id], @current_user.id).dislike_for_tournament
         render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
-      else
-        render json: { message: "User is not enrolled in this tournament" }, status: :not_found
-      end
+      # else
+        # render json: { message: "User is not enrolled in this tournament" }, status: :not_found
+      # end
     else
       render json: { message: "Post is not in this tournament" }, status: :not_found
     end
@@ -167,15 +235,17 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   private
 
   def find_tournament
-    unless (@tournament = TournamentBanner.find_by(enable: true))
-      return render json: { message: 'No Tournament is played at the moment' }, status: :not_found
+    unless (@tournament = TournamentBanner.where(enable: true)
+      .where('end_date >= ?', Time.zone.now.end_of_day.to_date)
+      .first)
+      return render json: { message: 'No Tournament Active' }, status: :not_found
     end
   end
 
   def check_expiration
-      @today_date = Time.zone.now.end_of_day.to_datetime
-      if @tournament.end_date <= @today_date
-        return render json: { message: 'No Tournament is played at the moment' }, status: :not_found
+      @today_date = Time.zone.now.end_of_day.to_date
+      if @tournament.end_date < @today_date
+        return render json: { message: 'No Tournament Active' }, status: :not_found
       end
   end
 

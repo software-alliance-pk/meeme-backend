@@ -24,18 +24,9 @@ json.profile do
   json.badges_count  @user.badges.count
   json.badges  @user.badges.all.each do |badge|
     json.title badge.title
+    json.badge_type badge.badge_type
     json.rarity badge.rarity
     json.badge_image badge.badge_image.attached? ? badge.badge_image.blob.url : ''
   end
   json.all_post_count @user.posts.count
-  json.profile_posts @user.posts.each do |post|
-    json.post_description post.description
-    json.post_time post.created_at
-    json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
-    json.post_likes post.likes.like.count
-    json.post_dislikes post.likes.dislike.count
-    json.post_share_count post.share_count
-    json.post_type post.post_image.content_type
-    json.post_thumbnail post.thumbnail
-  end
 end

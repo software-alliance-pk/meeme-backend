@@ -15,7 +15,7 @@
   <div id="tournament_winner" class="main_side">
     <div id="top_header">
       <div class="left_blk">
-        <h1>Tournament Winner</h1>
+        <h1>Tournament Winners</h1>
         <div class="img">
           <img src="<%= asset_path("medal.svg")%>" alt="">
         </div>
@@ -27,7 +27,7 @@
           <button class="site_btn prime_btn round" onclick="reward_payout()">Reward Payout</button>
         </div>
       </div>
-      <div id="table_blk">
+      <div id="table_blk" style="overflow:visible !important;">
         <table>
           <thead>
           <tr>
@@ -72,10 +72,11 @@
                         </div>
                       <% end %>
                     </td>
-                    <td onclick="open_details('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.count %>',
-                      '<%= tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.created_at&.strftime('%F') rescue ""%>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.where(status: "dislike")&.count%>')"><%= tournament_user.user.username %></td>
+                    <% post = get_most_liked_post(tournament_user, banner["id"])%>
+                    <td onclick="open_details('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=post&.likes&.like&.count %>',
+                    '<%= post&.created_at&.strftime('%F') rescue ""%>', '<%=post&.likes&.where(status: "dislike")&.count%>', '<%= post.id%>' )"><%= tournament_user.user.username %></td>
                     <td><%= tournament_user.user.email %></td>
-                    <td><%= tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
+                    <td><%= post&.likes&.like.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
                     <td><%= tournament_user.created_at.strftime("%F") %></td>
                     <td>
                       <% if i < 4 %>
@@ -90,8 +91,8 @@
                               </button>
                             </li>
                             <li>
-                              <button type="button" onclick="open_tormnt_modal('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.where(status: "like")&.count%>',
-                                '<%= tournament_user.user.created_at.strftime('%b %d, %Y') %>', '<%=tournament_user.user.posts.where(tournament_banner_id: banner["id"])[0]&.likes&.where(status: "dislike")&.count%>,', '<%= i %>') ; image('<%=tournament_user.user.username%>')">Reward
+                              <button type="button" onclick="open_tormnt_modal('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=post&.likes&.where(status: "like")&.count%>',
+                                '<%= tournament_user.user.created_at.strftime('%b %d, %Y') %>', '<%=post&.likes&.where(status: "dislike")&.count%>,', '<%= i %>') ; image('<%=tournament_user.user.username%>')">Reward
                               </button>
                             </li>
                           </ul>
@@ -213,7 +214,7 @@
                         <div class="col-12">
                           <h6 class="form_label">Coin</h6>
                           <div class="form_blk">
-                            <input type="number" id="single_user_coins" class="input" placeholder="Enter Coins" name="coins">
+                            <input type="number" id="single_user_coins" class="input" placeholder="Enter Coins" name="coins" min="0">
                           </div>
                         </div>
                         <div class="btn_blk">
@@ -239,6 +240,16 @@
 </html>
 
 <script>
+  const inputField = document.getElementById('single_user_coins');
+  // Attach keypress event listener
+  inputField.addEventListener('keypress', function (e) {
+      const charCode = (e.which) ? e.which : e.keyCode;
+      // Check for minus sign (-)
+      if (charCode === 45) {
+          e.preventDefault(); // Prevent the default action of adding the character   
+      }
+  });  
+  
   $('#send_form').on('submit', function (){
       event.preventDefault()
       var name = $('#place')[0].value
@@ -254,7 +265,7 @@
       })
   })
 
-  function open_details(name, email, likes, created, dislike){
+  function open_details(name, email, likes, created, dislike, post){
     document.getElementById("winner_modal").style.display="block"
     document.getElementById("name").innerHTML= name
     document.getElementById("email").innerHTML= email
@@ -262,10 +273,11 @@
     document.getElementById("likes").innerHTML= likes
     document.getElementById("dislike").innerHTML= dislike
     document.getElementById("post_by").innerHTML= "Memes Posts by " + name;
+    console.log(post.id);
     $.ajax({
       type: "GET",
       url: "tournament-winner-list",
-      data: {username: name},
+      data: {username: name, post_id: post},
       success: function(response){
         document.getElementById("user_image").src = response.user_image
           $('#post_image').css({

@@ -1,0 +1,45 @@
+<div class="mb-3">
+  <div style="color: #939394">Date Posted</div>
+  <div class="text-white mb-3">Jan 5, 2022</div>
+  <div class="detail_blk mt-0" style="align-items: flex-start">
+    <div class="right_blk">
+      <div class="img">
+        <img style="width:200px; height:200px" src="<%=
+        asset_path("tr-1.jpg")%>" alt="">
+      </div>
+    </div>
+    <div class="right_blk custom-right-side">
+      <div class="vote_blk">
+        <span class="vote" style="padding-right: 25px">
+          <img src="<%= asset_path("icon-vote-up.svg") %>" alt="">
+          <span id="user_likes" style="text-decoration: underline">5555</span>
+          <div
+            class="btn-group"
+            style="position: absolute; right: 0; flex-direction: column"
+          >
+            <a id="up-btn">
+              <img style="width:35px; cursor:pointer;margin-bottom:3px;"
+              src="<%= asset_path("up-btn.png") %>" alt="">
+            </a>
+            <img style="width:35px; cursor:pointer;" src="<%=
+            asset_path("down-btn.png") %>" alt="">
+          </div>
+        </span>
+        <span class="vote vote_down" style="padding-right: 25px">
+          <img src="<%= asset_path("icon-vote-down.svg") %>" alt="">
+          <span id="user_dislikes" style="text-decoration: underline"
+            >5555</span
+          >
+          <div
+            class="btn-group"
+            style="position: absolute; right: 0; flex-direction: column"
+          >
+            <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%=
+            asset_path("up-btn.png") %>" alt=""> <img style="width:35px;
+            cursor:pointer;" src="<%= asset_path("down-btn.png") %>" alt="">
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

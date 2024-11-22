@@ -1,7 +1,37 @@
 # frozen_string_literal: true
 class Api::V1::PaymentsController < Api::V1::ApiController
-  before_action :authorize_request
+  before_action :authorize_request, except: :webhook
   require "stripe"
+
+
+  def create_checkout_session
+    Stripe.api_key =  Rails.configuration.stripe[:secret_key]
+    buy_amount = params[:amount]
+    product_name = params[:product_name]
+    unit_amount_cents = (buy_amount * 100).to_i
+
+    session = Stripe::Checkout::Session.create(
+      payment_method_types: ['card'],
+      line_items: [
+          {
+              price_data: {
+                  currency: 'gbp', 
+                  product_data: {
+                      name: "#{params[:product_name]} Coins",
+                  },
+                  unit_amount: unit_amount_cents, 
+              },
+              quantity: 1,
+          },
+      ],
+      mode: 'payment',
+      customer_email: @current_user.email,
+      success_url: "#{ENV['FRONTEND_URL']}/BuyCoin?amount=#{buy_amount}&coins=#{product_name}",
+      cancel_url: "#{ENV['FRONTEND_URL']}"
+    )
+
+    render json: { sessionId: session.id, session_url: session.url }
+  end
 
   def add_user_to_stripe
     response = StripeService.find_or_create_customer(@current_user)
@@ -12,16 +42,26 @@ class Api::V1::PaymentsController < Api::V1::ApiController
     end
   end
 
+  def webhook
+    response = StripeService.webhook(request, @current_user)
+    render json: { message: "Webhook hit" }, status: :ok
+      
+  end
+
   def add_a_card
-    if @current_user.user_cards.find_by(number: params[:number].to_i).present?
+    if @current_user.user_cards.find_by(user_id: @current_user.id).present?
       render json: { message: "Card already exits" }, status: :bad_request
     else
+      begin
       response = StripeService.create_stripe_customer_card(@current_user, params)
       return render json: { card:[] ,message: response}, status: :unprocessable_entity if response.class == String
       if response.present?
         render json: { card: response }, status: :ok
       else
         render json: { card: [], message: "Card not added" }, status: :not_found
+      end
+      rescue => e
+        render json: { card: [], message: e.message }, status: :not_found
       end
     end
   end
@@ -81,9 +121,9 @@ class Api::V1::PaymentsController < Api::V1::ApiController
 
   def show_transactions_history
     if params[:platform] == 'ios'
-      @history = Transaction.where(user_id: @current_user.id, customer_id: nil)
+      @history = Transaction.where(user_id: @current_user.id, customer_id: nil).order('created_at DESC')
     else
-      @history = Transaction.where(user_id: @current_user.id)
+      @history = Transaction.where(user_id: @current_user.id).order('created_at DESC')
     end
     if @history.present?
       render json: { transaction_count: @history.count, total_history: @history }, status: :ok
@@ -104,16 +144,16 @@ class Api::V1::PaymentsController < Api::V1::ApiController
   def apple_pay
     payment_intent = StripeService.retrieve_payment_intent(params[:payment_intent])
     if payment_intent.status == "succeeded"
-      if params[:amount_to_be_paid].to_i == 10
-        coins = 12000
-      elsif params[:amount_to_be_paid].to_i == 25
-        coins = 20000
-      elsif params[:amount_to_be_paid].to_i == 50
-        coins = 60000
-      elsif params[:amount_to_be_paid].to_i == 75
-        coins = 90000
-      elsif params[:amount_to_be_paid].to_i == 100
-        coins = 120000
+      if params[:amount_to_be_paid].to_i == 1
+        coins = 10000
+      elsif params[:amount_to_be_paid].to_i == 3
+        coins = 30000
+      elsif params[:amount_to_be_paid].to_i == 5
+        coins = 50000
+      elsif params[:amount_to_be_paid].to_i == 10
+        coins = 100000
+      elsif params[:coins].present?
+        coins = params[:coins]
       end
       # coins = (params[:amount_to_be_paid].to_i * 100)/0.00083
       user_coin = @current_user.coins

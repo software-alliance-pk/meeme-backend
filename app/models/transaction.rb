@@ -10,14 +10,14 @@ class Transaction < ApplicationRecord
   end
 
   def self.date_filter(start_date, end_date)
-    Transaction.where("Date(created_at) >= (?) AND Date(created_at) <= (?)", start_date.to_date, end_date.to_date)
+    Transaction.where("Date(transactions.created_at) >= (?) AND Date(transactions.created_at) <= (?)", start_date.to_date, end_date.to_date)
   end
 
   def self.start_date_filter(start_date)
-    Transaction.where("DATE(created_at) >= (?)", start_date.to_date)
+    Transaction.where("DATE(transactions.created_at) >= (?)", start_date.to_date)
   end
 
   def self.end_date_filter(end_date)
-    Transaction.where("DATE(created_at) = (?)", end_date.to_date)
+    Transaction.where("DATE(transactions.created_at) = (?)", end_date.to_date)
   end
 end

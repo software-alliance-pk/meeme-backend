@@ -14,6 +14,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
         render json: { message: 'This user does not exist' }
       end
     elsif params[:type] == 'report'
+      @post = Post.find_by(id: params[:post_id])
       create_support_ticket
     elsif params[:type] == 'flag'
       @post = Post.find_by(id: params[:post_id])
@@ -22,7 +23,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
       return render json: { message: 'Post not found' }, status: :not_found unless @post.present?
 
       @flagged << @current_user.id
-      return render json: { error: @post.errors.full_messages }, status: :bad_request unless @post.update(flagged_by_user: @flagged)
+      return render json: { error: @post.errors.full_messages }, status: :bad_request unless @post.update(flagged_by_user: @flagged, flag_message: params[:message])
 
       render json: { message: 'Post flagged successfully' }
     end
@@ -35,6 +36,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
       @message.subject = 'Abuse'
       @message.message_ticket = SecureRandom.hex(5)
       @message.body = "#{@current_user.username} report #{@user.username} as doing abusive activity"
+      @message.post_id = params[:post_id] if params[:post_id].present?
       if @message.save
         ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message) })
         Notification.create(title:"#{@message.sender.username} generated a support ticket",
@@ -45,7 +47,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
                             notification_type: 'admin_message',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                            redirection_type: 'support')
         # render json: { report_details: { conversation: @conversation, message: @message } }
       end
     else

@@ -45,7 +45,8 @@ class Api::V1::CommentsController < Api::V1::ApiController
                             notification_type: 'comment',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                            post_id: params[:post_id]
+                            )
       end
       render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? @comment.comment_image.blob.url : '' }, status: :ok
     else
@@ -69,14 +70,15 @@ class Api::V1::CommentsController < Api::V1::ApiController
                             user_id: @comment.post.user.id,
                             notification_type: 'comment',
                             sender_id: @current_user.id,
-                            sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                            sender_name: @current_user.username
+                            )
       end
     else
       render_error_messages(@comment)
     end
   end
 
+  # To update the single comment 
   def update_comments
     unless @comment.update(comment_params)
       render_error_messages(@comment)
@@ -109,6 +111,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     render json: { message: "Comment successfully destroyed" }, status: :ok
   end
 
+  # To delete the child comments
   def child_comment_destroy
     @child_comment = Comment.find_by(id: params[:comment_id])
     if @child_comment.present?

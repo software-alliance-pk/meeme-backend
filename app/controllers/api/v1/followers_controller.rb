@@ -43,7 +43,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
       @user = User.find_by(id: params[:follower_user_id])
       if @follower.save
         if @user.private_account?
-          send_notification('Friend Request', @current_user, "#{@current_user.username} wants to follows you",@follower.id, params[:follower_user_id], 'request_send')
+          send_notification('Friend Request', @current_user, "#{@current_user.username} sent you friend request.",@follower.id, params[:follower_user_id], 'request_send')
           render json: { user: @current_user, is_private: @user.private_account, follower: @follower, message: "#{@current_user.username} sent a follow request to #{User.find_by(id: @follower.user_id).username} " }, status: :ok
         else
           @follower.update(status: 'following_added')
@@ -66,7 +66,8 @@ class Api::V1::FollowersController < Api::V1::ApiController
         Notification.create(title: 'Request Rejected',
                             body: "Follower request has been rejected by #{@current_user.username}",
                             follow_request_id: @follower.id,
-                            user_id: params[:follower_user_id])
+                            user_id: params[:follower_user_id],
+                            sender_id: @current_user.id)
         @follower.destroy
         render json: { message: 'User removed from pending' }, status: :ok
       else
@@ -87,8 +88,7 @@ class Api::V1::FollowersController < Api::V1::ApiController
                         user_id: follower_user_id,
                         notification_type: notification_type,
                         sender_id: current_user.id,
-                        sender_name: current_user.username,
-                        sender_image: current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                        sender_name: current_user.username)
   end
 
   def un_follow_user

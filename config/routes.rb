@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
+  get 'coin_prices/index'
   get 'privacy-policy', to: 'privacy_policy#privacy_policy'
+  get 'deletion', to: 'privacy_policy#deletion'
   devise_for :admin_users, :controllers => {:registrations => "registrations", :passwords => "passwords"}
   mount ActionCable.server => "/cable"
   require 'sidekiq/web'
@@ -9,6 +11,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root to: 'home#index'
   root "dashboard#homepage"
+  get '/user_all_posts', to: "dashboard#user_all_posts"
+  get '/delete_user_post', to: "dashboard#delete_user_post"
   get '/dashboard', to: "dashboard#dashboard"
   get '/welcome', to: "dashboard#welcome"
   get '/signin', to: "dashboard#signin"
@@ -18,6 +22,7 @@ Rails.application.routes.draw do
   get '/forgot-password', to: "dashboard#forgot_password"
   get '/reset-password', to: "dashboard#reset_password"
   get '/follower_count', to: "dashboard#follower_count"
+  get '/get_gift_card_request', to: "dashboard#getGiftCardRequest"
   get '/verification', to: "dashboard#verification"
   get '/notifications', to: "dashboard#notifications"
   post '/notifications', to: "notification#create_notification"
@@ -37,6 +42,17 @@ Rails.application.routes.draw do
   get '/transaction-export', to: 'dashboard#transaction_export'
   get '/show_user_profile', to: "dashboard#show_user_profile"
   get '/user_disable', to: "dashboard#user_disable"
+
+  get '/increase_post_like_count', to: "dashboard#increase_post_like_count"
+  get '/decrease_post_like_count', to: "dashboard#decrease_post_like_count"
+  
+  get '/increase_post_dislike_count', to: "dashboard#increase_post_dislike_count"
+  get '/decrease_post_dislike_count', to: "dashboard#decrease_post_dislike_count"
+  get '/user_tournament_posts', to: "dashboard#user_tournament_posts"
+
+  get '/flag_tournament_post', to: "dashboard#flag_tournament_post"
+
+
   get '/user_enable', to: "dashboard#user_enable"
   get '/specific_user_transactions', to: "dashboard#specific_user_transactions"
   get '/inventory', to: "dashboard#gift_rewards", as: "card_inventory"
@@ -78,6 +94,7 @@ Rails.application.routes.draw do
   get '/tournament-winner-list', to: "dashboard#tournament_winner_list"
   get '/add_reward', to: "dashboard#add_reward"
   get '/winner-reward', to: "dashboard#winner_reward"
+  get '/send_gift_card', to: "dashboard#send_gift_card"
   get '/post-images', to: "dashboard#post_images"
   get '/set_coins', to: "dashboard#set_coins"
   get '/get_user_post', to: "dashboard#get_user_post"
@@ -85,9 +102,12 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      get '/coin_prices', to: 'coin_prices#index'
       resources :users do
         collection do
-          get:delete_user
+          get :get_admin_user
+          post :delete_user
+          get :search
           put :update_user
           post :forgot_password
           post :forgot_password_web
@@ -98,6 +118,8 @@ Rails.application.routes.draw do
           get :open_current_user
           get :open_some_other_user
           post :email_validate
+          post :update_user_theme
+          get '/get_sender_details/:id', to: 'users#get_sender_details'
           post 'payments/add_user_to_stripe', to: "payments#add_user_to_stripe"
           post 'payments/add_a_card', to: "payments#add_a_card"
           get 'payments/fetch_all_card', to: "payments#fetch_all_card"
@@ -106,6 +128,8 @@ Rails.application.routes.draw do
           get 'payments/show_transactions_history', to: "payments#show_transactions_history"
           post 'payments/payment_intent', to: "payments#payment_intent"
           post 'payments/apple_pay', to: "payments#apple_pay"
+          post 'payments/create_checkout_session', to: "payments#create_checkout_session"
+          post 'payments/webhook', to: "payments#webhook"
           post :active_status_change
           post :notification_settings
           put :private_account
@@ -125,9 +149,15 @@ Rails.application.routes.draw do
           get :trending_posts
           get :tags
           post :other_posts
-          post :user_search_tag
+          post :user_search_tags
+          post :post_search_user_and_tag
           post :share_post
-
+          delete :destroy_multiple
+          post :create_downloadable_link
+          post :search_posts_by_tag
+          post :search_tags_trending_post
+          get :increase_explore_count
+          get :current_user_tournament_posts
         end
       end
       resources :comments do
@@ -137,6 +167,7 @@ Rails.application.routes.draw do
           put :update_child_comments
           delete :child_comment_destroy
           post :create_child_comment
+          delete :destroy
         end
       end
       resources :likes do
@@ -192,11 +223,13 @@ Rails.application.routes.draw do
           post :support_chat
           get :fetch_all_users
           get :all_support_chats
+          post :change_status_to_read
         end
       end
       resources :badges do
         collection do
           get :current_user_badges
+          get :current_user_badges_stats
           get :rarity_1_badges
           get :rarity_2_badges
           get :rarity_3_badges
@@ -212,13 +245,27 @@ Rails.application.routes.draw do
       resources :notifications do
         collection do
           get :user_notifications
-
+          get :unread_count
+          post :change_opened_status
         end
       end
 
       resources :themes do
         collection do
           get :set_theme
+        end
+      end
+
+      resources :audits do
+        collection do
+          get :type
+        end
+      end
+
+      resources :amazon_cards do
+        collection do
+          get :index
+          post :purchase_card
         end
       end
 

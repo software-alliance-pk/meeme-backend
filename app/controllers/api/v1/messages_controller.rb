@@ -28,6 +28,18 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
   end
 
+  def change_status_to_read
+    @conversation = Conversation.find_by(id: params[:conversation_id])
+    if @conversation.present?
+        # Setting unread_id to 0 means Both Sender and Reciever read the chat and No Unread message for both.
+      @conversation.update(unread_id: 0)
+      render json: { message: "Conversation status updated successfully" }, status: :ok
+    else
+      render json: { message: "No converation present" }, status: :not_found
+    end
+    
+  end
+
   def individual_messages
     @messages = (((Message.where(sender_id: @current_user.id, receiver_id: params[:receiver_id])) + (Message.where(receiver_id: @current_user.id, sender_id: params[:receiver_id]))).sort_by &:created_at).reverse
     if @messages.present?
@@ -58,16 +70,16 @@ class Api::V1::MessagesController < Api::V1::ApiController
     if @conversation.present?
       @message = @conversation.messages.new(message_params)
       if @message.save
+        @conversation.update(unread_id: @message.receiver_id)
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
-        Notification.create(title:"Message from #{@message.sender.username}",
+        Notification.create(title:"New Message from #{@message.sender.username}",
                             body: @message.body,
                             conversation_id: @conversation.id,
                             user_id: @message.receiver_id,
                             message_id: @message.id,
                             notification_type: 'message',
                             sender_id: @current_user.id,
-                            sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                            sender_name: @current_user.username)
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -90,7 +102,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             notification_type: 'admin_message',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                            redirection_type: 'support'
+                            )
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -107,7 +120,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
       if @message.save
         # @message.update(subject: subject[0], message_ticket: subject[1])
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
-        Notification.create(title:"Message from #{@message.sender.username}",
+        Notification.create(title:"New Message from #{@message.sender.username}",
                             body: @message.body,
                             conversation_id: @conversation.id,
                             user_id: @message.sender_id,
@@ -115,7 +128,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
                             notification_type: 'admin_message',
                             sender_id: @current_user.id,
                             sender_name: @current_user.username,
-                            sender_image: @current_user.profile_image.present? ? @current_user.profile_image.blob.url : '')
+                            redirection_type: 'support'
+                            )
       end
     else
       render json: { message: "No conversation present" }, status: :not_found
@@ -160,8 +174,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
         subject: message.subject.split("_").join(" "),
         conversation_id: message.conversation_id,
         admin_user_id: message.admin_user_id.present? ? message.admin_user_id : '',
-        admin_user_name: message.admin_user.admin_user_name.present? ? message.admin_user.admin_user_name : '',
-        admin_user_email: message.admin_user.email.present? ? message.admin_user.email : '',
+        admin_user_name: 1,
+        admin_user_email: '',
         sender_id: message.sender_id,
         sender_name: message.sender.username,
         created_at: message.created_at,

@@ -33,4 +33,5 @@ class Theme < ApplicationRecord
   has_one_attached :share_icon_image, dependent: :destroy
   has_one_attached :shop_icon_image, dependent: :destroy
   has_one_attached :notification_icon_image, dependent: :destroy
+  has_many :user_stores
 end

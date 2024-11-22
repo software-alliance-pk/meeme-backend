@@ -78,7 +78,7 @@
                   </td>
                   <td>
                     <div class="name">
-                      <p class="f-16" style="cursor: pointer" onclick="open_post('<%= user_details.id  %>')"><%= user_details.username %></p>
+                      <p class="f-16"><%= user_details.username %></p>
                       <p class="f-13" id="user_mail"><%= user_details.email %></p>
                     </div>
                   </td>
@@ -120,27 +120,26 @@
                   <td>
                     <div class="action">
                       <% if user_details.disabled === false %>
-                        <button class="show btn pop_btn" data-popup="btn_post" onclick="open_enable_dialog('<%= user_details.id %>')" style="background-color: green">
-                          <div class="ico">
-                            <img src="<%= asset_path("Show.svg") %>" alt="">
-                          </div>
-                        </button>
+                        
                         <button class="hide btn pop_btn" data-popup="btn_disable" onclick="open_disable_dialog('<%= user_details.id %>')">
                           <div class="ico">
                             <img src="<%= asset_path("Hide.svg") %>" alt="">
                           </div>
                         </button>
+
+
+                        <button class="hide btn pop_btn" data-popup="btn_disable" onclick="openSidebar('<%= user_details.id %>', '<%= user_details.username %>','<%= user_details.email %>',)">
+                          <div class="ico">
+                            <img src="<%= asset_path("image-icon.png") %>" alt="">
+                          </div>
+                        </button>
+                        
                       <% elsif user_details.disabled === true %>
                         <button class="show btn pop_btn" data-popup="btn_post" onclick="open_enable_dialog('<%= user_details.id %>')">
                           <div class="ico">
                             <img src="<%= asset_path("Show.svg") %>" alt="">
                           </div>
-                        </button>
-                        <button class="hide btn pop_btn" data-popup="btn_disable" onclick="open_disable_dialog('<%= user_details.id %>')" style="background-color: red">
-                          <div class="ico">
-                            <img src="<%= asset_path("Hide.svg") %>" alt="">
-                          </div>
-                        </button>
+                        </button>      
                       <% end %>
 
                     </div>
@@ -246,8 +245,15 @@
                   <button type="button" class="x_btn" onclick="close_profile()"></button>
                   <div class="top_blk">
                     <h4>User Profile</h4>
-                    <div>
-                      <img src="" alt="" id="image" style="width: 100px;height: 100px;-webkit-border-radius: 100px;-webkit-background-clip: padding-box;-moz-border-radius: 100px;-moz-background-clip: padding;border-radius: 100px;background-clip: padding-box;margin: 7px 0 0 5px;float: left;">
+                    <div style="height: 11rem;
+                      width: 11rem;
+                      margin-right: 0rem;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      border-radius: 100px;
+                      overflow: hidden;">
+                        <img src="" alt="image" id="image" >
                     </div>
                     <h5 id="profile_username"></h5>
 
@@ -326,10 +332,212 @@
         </div>
       </div>
     </div>
+
+<div id="cart-box" class="sidebar">
+        <div id="tormnt_modal">
+      <h3>All Posts</h3>
+      <button type="button" class="x_btn" onclick="closeSidebar()"></button>
+      <div class="detail_blk">
+          <div class="left_blk" style="width:100%">
+              <table>
+                  <thead>
+                      <tr>
+                          <th style="width: 13rem;">Name</th>
+                          <th style="width: 22rem;">Email</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td id="sidebar_user_name"></td>
+                          <td id="sidebar_user_email"></td>
+                      </tr>
+                  </tbody>
+              </table>
+              <%# <div class="text-white mb-5">4 of 999 ...</div> %>
+          </div>
+
+
+  </div>
+      <div class="sibarPosts">
+          
+      </div>
+      
+
   </section>
 </main>
 
+<style>
+.sidebar {
+  height: 100%;
+  width: -400px;
+  position: fixed;
+  top: 0;
+  right: -400px;
+  border-radius: 40px 0px 0px 40px;
+  border: 2px solid #5D5D5D;
+  border-right:none;
+  background: #201E23;
+  overflow-x: hidden;
+  transition: 0.5s;
+  z-index:99;
+}
+
+.sidebar table {
+  max-width:75%;
+}
+.sidebar #tormnt_modal {
+  padding: 20px;
+}
+.sidebar .x_btn{
+min-width: 38px !important;
+width: 38px !important;
+height: 39px !important;
+top: 12px !important;
+right: 12px !important;
+}
+.sidebar .x_btn::before{
+width:25% !important;
+height:25% !important;
+}
+
+.sidebar #tormnt_modal .detail_blk .right_blk{
+width: 65%;
+}
+.sidebar #tormnt_modal .detail_blk .right_blk.custom-right-side{
+  background:transparent;
+  padding-top:0;
+  width:35%
+}
+.sidebar #tormnt_modal .detail_blk .right_blk.custom-right-side .vote_blk{
+  flex-direction: column !important;
+  align-items: flex-start;
+}
+</style>
+
+
 <script>
+
+      function open_tormnt_modal(name, email, likes, created, dislike, url, rank, postId){
+        document.getElementById("tormnt_modal").style.display="block"
+        console.log("Modal click");
+    }
+
+  function openSidebar(userId ,username , email) {
+
+    document.getElementById("cart-box").style.right = "0px"; 
+    document.getElementById("sidebar_user_name").innerHTML= username
+    document.getElementById("sidebar_user_email").innerHTML= email
+  
+      $.ajax({
+      type: "GET",
+      url: "user_all_posts",
+      data: {user_id: userId },
+      success: function(response) {
+        if (response) {
+          console.log("Response of the posts in sidebar --- ",response );
+
+        $('.sibarPosts').html('');
+        response?.posts?.forEach((item , ind)=>{
+          // console.log("Inside the loop === ", item);
+          var sidebarHTML = generateSidebarHTML(item , ind) ;
+          // console.log(sidebarHTML);
+           $('.sibarPosts').append(sidebarHTML);
+
+        })
+
+        } else {
+          response.posts.forEach(function(post) {
+            $("#userPosts").append("<p>" + post.title + "</p>");
+          });
+        }
+      },
+      error: function(error) {
+        console.log("Error fetching user posts: ", error);
+        $('.sibarPosts').html('');
+        const exception = `
+                  <div class="text-white mb-3">
+                  <p>Nothing Posted Yet</p>
+                  </div>`
+
+        $('.sibarPosts').append(exception);
+
+      }
+    });
+  }
+
+  function deleteImage(imageId) {
+
+    try {
+      $.ajax({
+      type: "GET",
+      url: "delete_user_post",
+      data: {id: imageId },
+      success: function(response) {
+        if (response) {
+          console.log("Response of the Delete Post--- ",response );
+            const postElement = document.getElementById(`post_${imageId}`);
+            console.log("Post Element --", postElement);
+            if (postElement) {
+                postElement.remove();
+            }
+          //  document.getElementById("cart-box").style.right = "-400px";
+
+        } else {
+          response.posts.forEach(function(post) {
+            $("#userPosts").append("<p>" + post.title + "</p>");
+          });
+        }
+      },
+      error: function(error) {
+        console.log("Error fetching user posts: ", error);
+      }
+    });
+    } catch (error) {
+      console.log("Error on Delete post =", error);
+      
+    }
+}
+
+  function closeSidebar() {
+    document.getElementById("cart-box").style.right = "-400px";
+    // location.reload();
+
+  }
+
+    function generateSidebarHTML(item , ind){
+      const mediaType = item?.image_type // 'image' or 'video'
+
+      let mediaHTML = '';
+
+      if (mediaType === 'image') {
+          mediaHTML = `<img style="width: 200px; height: 200px" src="${item?.post_image}" alt="Image">`;
+      } else if (mediaType === 'video') {
+          mediaHTML = `
+              <video style="width: 200px; height: 200px" controls>
+                  <source src="${item?.post_image}" type="video/mp4">
+                  Your browser does not support the video tag.
+              </video>
+          `;
+      }
+         return  `
+                <div class="text-white mb-3" id="post_${item?.id}">
+                    <div style="color:white">Date Posted</div>
+                    <div class="text-white mb-3">${item?.created_at}</div>
+                    <div class="detail_blk mt-0" style="align-items: flex-start">
+                        <div class="right_blk position-relative">
+                            <div class="img" >
+                            ${mediaHTML}
+                                <button onclick="deleteImage('${item?.id}')" class="delete-button" style="position: absolute;top: 12px;right: 12px; background: transparent">
+                                    <img style="width: 20px; height: 30px" src="<%= asset_path("delete-icon.png") %>" alt="Delete">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+  }
+
     function open_profile(user_email, id) {
         document.getElementById("user_modal").style.display = "block";
         $.ajax({

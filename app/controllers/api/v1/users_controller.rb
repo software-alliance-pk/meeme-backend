@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
-  before_action :authorize_request, except: %i[create forgot_password reset_user_password email_validate verify_otp, delete_user]
-  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_accoun, delete_user]
+  before_action :authorize_request, except: %i[verify_otp create forgot_password reset_user_password email_validate get_sender_details delete_user]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_account delete_user search get_admin_user]
   # GET /users
   def index
     @users = User.all
@@ -18,52 +18,100 @@ class Api::V1::UsersController < Api::V1::ApiController
     @posts = Post.where(tournament_meme: false).order('updated_at DESC').paginate(page: params[:page], per_page: 25)
   end
 
+  def search
+    username = params[:username]
+    similar_users = User.where('lower(username) LIKE ?', "%#{username.downcase}%")
+    render json: { similar_users: similar_users }
+  end
+
+  def get_sender_details
+    sender = User.find(params[:id])
+    render json: { username: sender.username, email: sender.email }
+  end
+
+  def update_user_theme
+    if params[:theme].present?
+      if @user.update(user_themes: params[:theme])
+        render json: { message: 'User theme updated successfully' }, status: :ok
+      else
+        render json: { error: @user.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      end
+    elsif params[:font].present?
+      if @user.update(font: params[:font])
+        render json: { message: 'User font updated successfully' }, status: :ok
+      else
+        render json: { error: @user.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      end
+    elsif params[:backgroung_image].present?
+      if @user.update(backgroung_image: params[:backgroung_image])
+        render json: { message: 'User backgroung image updated successfully' }, status: :ok
+      else
+        render json: { error: @user.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: "Please provide theme or font or background image." }, status: :unprocessable_entity
+    end
+  end
+
+   def get_admin_user
+    @admin = AdminUser.last
+    unless @admin.present?
+      render json: { message: "No Admin user present" }, status: :not_found
+    end
+  end
+
+
   def delete_user
     user_id = params[:user_id]
-    return render json: { error: "User Id is missing in params." }, status: :ok unless user_id.present?
     user = User.find_by(id: user_id)
-    return render json: { error: "User with this Id is not present." }, status: :ok unless user.present?
+    if user.nil?
+      return render json: { error: 'User not found' }, status: :not_found
+    end
+    conversations = Conversation.where(sender_id: user_id).or(Conversation.where(receiver_id: user_id))
+    conversations.destroy_all;
     user.destroy
-    return render json: { message: "User has been deleted successfully." }, status: :ok
+    return render json: { url: "#{ENV['BACKEND_URL']}/deletion" , confirmation_code: 786734 }, status: :ok
   end
+  
 
   def open_profile
     @profile = User.find_by(id: params[:id])
     return render json: { message: "User not found" }, status: :not_found unless @profile
   end
 
-  # GET /users/{username}
-  def show
-    render json: { user: @user,
-                   profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '' },
-           status: :ok
-  end
+  # # GET /users/{username}
+  # def show
+  #   render json: { user: @user,
+  #                  profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '' },
+  #          status: :ok
+  # end
 
   # POST /users
   def create
-    @user = User.new(user_params)
-    if @user.save
-      render json: { user: @user,
-                     profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
-                     wallet: @user.get_wallet,
-                     message: 'User created successfully' }, status: :ok
-      MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
-      # Notification.create(title: "Sign Up",
-      #                     body: 'You have successfully signed up for the MEMEE App',
-      #                     user_id: @user.id,
-      #                     notification_type: 'sign_up')
-    else
-      render_error_messages(@user)
-    end
+      @user = User.new(user_params)
+      if @user.save
+        render json: { user: @user,
+                       profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
+                       wallet: @user.get_wallet,
+                       message: 'User created successfully' }, status: :ok
+        MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
+      else
+        render_error_messages(@user)
+      end
   end
+  
 
   def email_validate
-    @user = User.find_by_email(params[:email])
-    if @user.present?
-      return render json: { message: 'Email present', email_status: true }, status: :ok
+    if User.exists?(username: params[:username])
+      render json: { username: 'Username already taken', username_status: true }, status: :ok
     else
-      return render json: { message: 'Email not present', email_status: false }, status: :not_found
-    end
+      @user = User.find_by_email(params[:email])
+      if @user.present?
+        return render json: { message: 'Email present', email_status: true }, status: :ok
+      else
+        return render json: { message: 'Email not present', email_status: false }, status: :not_found
+      end
+   end
   end
 
   # PUT /users/{username}

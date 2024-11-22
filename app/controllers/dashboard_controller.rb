@@ -7,7 +7,7 @@ class DashboardController < ApplicationController
   def dashboard
     @user = User.order("id DESC").limit(4)
   end
-
+ 
   def welcome
   end
 
@@ -74,12 +74,8 @@ class DashboardController < ApplicationController
     if @admin.present?
       if params[:password] == "" && params[:admin_profile_image] == nil && params[:full_name].present? && params[:admin_user_name]
         if AdminUser.first.present?
-          if params[:full_name] == @admin.full_name && params[:admin_user_name] == @admin.admin_user_name
-            @updated = false
-          else
             current_admin_user.update(full_name: params[:full_name], admin_user_name: params[:admin_user_name])
             @updated = true
-          end
         end
       elsif params[:old_password].present? && current_admin_user.valid_password?(params[:old_password]) == false
         flash[:old_password] = "Old Password is wrong"
@@ -102,7 +98,7 @@ class DashboardController < ApplicationController
     @tournament_banner_name = params[:tournament_banner_id]
     @tournament_banner = Like.where(is_judged: true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true }).
       group(:post_id).count(:post_id).sort_by(&:last).sort_by(&:last).reverse.to_h
-    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
+    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).where(likes: {status: "like"}).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
     if params[:tournament_banner_id].present?
       @banner = TournamentBanner.find(params[:tournament_banner_id])
       session[:banner] = @banner
@@ -111,6 +107,94 @@ class DashboardController < ApplicationController
     end
   end
 
+  def increase_post_like_count
+    like = Like.new(post_id: params[:post_id] , user_id: '1', is_liked: true,is_judged: true,status: 1)
+    like.save
+    render json: { message: "Liked tournament Post" }, status: :ok
+  end
+
+  def decrease_post_like_count
+    post_id = params[:post_id]
+    like_to_delete = Like.where(post_id: post_id,is_liked: true).last
+  
+    if like_to_delete
+      like_to_delete.destroy
+      render json: { message: "Decreased like count for the post by one" }, status: :ok
+    else
+      render json: { error: "No like found for the specified post" }, status: :not_found
+    end
+  end
+
+  # Dislike Post
+  def increase_post_dislike_count
+    like = Like.new(post_id: params[:post_id] , user_id: '1', is_liked: false,is_judged: true,status: 2)
+    like.save
+    render json: { message: "Disliked tournament Post" }, status: :ok
+  end
+
+  def decrease_post_dislike_count
+    post_id = params[:post_id]
+    like_to_delete = Like.where(post_id: post_id,is_liked: false).last
+  
+    if like_to_delete
+      like_to_delete.destroy
+      render json: { message: "Decreased like count for the post by one" }, status: :ok
+    else
+      render json: { error: "No like found for the specified post" }, status: :not_found
+    end
+  end
+
+  def user_all_posts
+    @posts = Post.where(user_id: params[:user_id])
+    if @posts.present?
+      posts_with_images = @posts.map do |post|
+        {
+          id: post.id,
+          description: post.description,
+          dislikes: post.likes.where(status: "dislike").count,
+          likes: post.likes.where(is_judged: true).like.count,
+          created_at: post.created_at.strftime('%b %d, %Y'),
+          tournament_banner_id: post.tournament_banner_id,
+          post_image: post.post_image.attached? ? post.post_image.blob.url : nil,
+          image_type: post.post_image.content_type.split('/').first
+        }   
+      end
+      render json: { posts: posts_with_images }
+    else
+      render json: { message: "No posts for this particular user" }, status: :not_found
+    end
+  end
+
+  def delete_user_post
+    @post = Post.find(params[:id])
+    @post.destroy
+    render json: { message: "Post Deleted Successfully." }, status: :ok
+  end
+
+  def user_tournament_posts
+    @posts = Post.where(user_id: params[:user_id], tournament_banner_id: params[:tournament_banner_id])
+    if @posts.present?
+      posts_with_images = @posts.map do |post|
+        {
+          id: post.id,
+          description: post.description,
+          dislikes: post.likes.where(status: "dislike").count,
+          likes: post.likes.where(is_judged: true).like.count,
+          likes: post.likes.where(is_judged: true).like.count,
+          created_at: post.user.tournament_users.first.created_at.strftime('%b %d, %Y'),
+          tournament_banner_id: post.tournament_banner_id,
+          post_image: post.post_image.attached? ? url_for(post.post_image) : nil
+        }
+      end
+      render json: { posts: posts_with_images }
+    else
+      render json: { message: "No posts for this particular user" }, status: :not_found
+    end
+  end
+
+ 
+  
+
   def tournament_banner
     @tournament_banner = TournamentBanner.all
   end
@@ -118,7 +202,10 @@ class DashboardController < ApplicationController
   def tournament_banner_create
     @banner = TournamentBanner.new(banner_params)
     @banner.enable = true
-    if TournamentBanner.where(enable: true).present?
+    existing_active_tournament = TournamentBanner.where(enable: true)
+    .where('end_date > ?', Time.zone.now.end_of_day)
+    
+    if existing_active_tournament.present?
       flash[:alert] = "Cannot add another because Tournament
                      #{TournamentBanner.where(enable: true).first.title} is being played."
       redirect_to tournament_banner_path
@@ -154,8 +241,8 @@ class DashboardController < ApplicationController
     if params[:username].present?
       @user = User.find_by(username: params[:username])
       @user_image = @user.profile_image.attached? ? url_for(@user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
-      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"])
-      @post_image = @post[0].post_image.attached? ? url_for(@post[0].post_image) : ActionController::Base.helpers.asset_path('bg-img.jpg')
+      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"]).where(id: params[:post_id])
+      @post_image = @post&.post_image.attached? ? url_for(@post.post_image) : ActionController::Base.helpers.asset_path('bg-img.jpg')
       respond_to do |format|
         format.json { render json: { user_image: @user_image, post_image: @post_image } }
       end
@@ -187,6 +274,13 @@ class DashboardController < ApplicationController
     else
       redirect_to tournament_path
     end
+  end
+
+  def flag_tournament_post
+    @user = User.find(params[:user_id])
+    puts "user email --------#{@user.inspect}"
+    UserMailer.flag_tournament_post(@user ,@user.email).deliver_now
+    render json: { message: "Flagged Email Sent" }, status: :ok
   end
 
   def show_top_10
@@ -339,7 +433,7 @@ class DashboardController < ApplicationController
   def user_enable
     if params[:id].present?
       @user = User.find(params[:id])
-      @user.update(disabled: false)
+      @user.update(disabled: false, status: true)
     end
   end
 
@@ -352,8 +446,17 @@ class DashboardController < ApplicationController
     @card = AmazonCard.find(params[:id])
   end
 
-  def transactions
-    if params[:search]
+  def transactions   
+    if params[:search].present? && params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
+      @transactions_list = Transaction.search(params[:search])
+      @transactions_list =  @transactions_list.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
+    elsif params[:search].present? && params[:start_date].present? && params[:end_date] == "" && params[:start_date] != "false"
+      @transactions_list = Transaction.search(params[:search])
+      @transactions_list = @transactions_list.start_date_filter(params[:start_date]).search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
+    elsif params[:search].present? && params[:end_date].present? && params[:start_date] == "" 
+      @transactions_list = Transaction.search(params[:search])
+      @transactions_list = @transactions_list.end_date_filter(params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
+    elsif params[:search].present? 
       @transactions_list = Transaction.search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     elsif params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
       @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
@@ -510,6 +613,26 @@ class DashboardController < ApplicationController
       format.json { render json: { followers: @follower_count, following: @following_count, posts: @posts_count } }
     end
   end
+
+  def getGiftCardRequest
+    @gift_card_requests = GiftCardRequest.all
+    render json: @gift_card_requests
+  end
+
+  def send_gift_card
+    @user = User.find_by(email: params[:email])
+    UserMailer.amazon_purshase_card(@user, params[:card_number], params[:coins]).deliver_now
+    coins_to_subtract = params[:coins].to_i
+    @user.update(coins: @user.coins - coins_to_subtract)
+    
+    request = GiftCardRequest.find_by(id: params[:requestId])
+    if request
+      request.update(status: 1)
+    end
+    
+    render json: { message: "Gift Card Sent Via Email" }, status: :ok
+  end
+  
 
   private
 

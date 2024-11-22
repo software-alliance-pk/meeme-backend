@@ -38,25 +38,27 @@
           <div class="user_list" id="main_user_list">
             <% if @conversation.present? %>
               <% @conversation.each do |conversation| %>
-                <div class="user_blk" id="clicked" onclick="open_conversation('<%= conversation.sender.id %>', '<%= conversation.id %>', '<%= conversation.sender.username %>', '<%= conversation.sender.email %>'); get_image('<%= conversation.sender.email %>'); get_post('<%= conversation.sender.username %>')">
-                  <div class="ico fill round">
-                    <img src="<%= conversation.sender.profile_image.attached? ? conversation.sender.profile_image.blob.url : asset_path("user.png") %>" alt="">
-                  </div>
-                  <div class="inr w-100">
-                    <div class="title">
-                      <h5><%= conversation.sender.username %></h5>
-                      <% if conversation.messages.first.present? %>
-                        <% time = Time.now.to_datetime %>
-                        <% created = conversation.messages.first.created_at.to_datetime %>
-                        <% calculated_time = ((time - created) * 24 * 60).to_i %>
-                        <span class="time"><%= distance_of_time_in_words(0, calculated_time.minutes) %></span>
-                      <% end %>
+                <% unless conversation.sender.nil? %> 
+                  <div class="user_blk" id="clicked" data-conversation-id="<%= conversation.id %>" onclick="open_conversation('<%= conversation.sender&.id %>', '<%= conversation.id %>', '<%= conversation.sender&.username %>', '<%= conversation.sender&.email %>'); get_image('<%= conversation.sender&.email %>'); get_post('<%= conversation.sender&.username %>')">
+                    <div class="ico fill round">
+                      <img src="<%= conversation.sender&.profile_image&.attached? ? conversation.sender&.profile_image&.blob&.url : asset_path("user.png") %>" alt="">
                     </div>
-                    <div class="txt">
-                      <p class="live_message_<%= conversation.id %>"><%= conversation.messages.first.body if conversation.messages.first.present? %></p>
+                    <div class="inr w-100">
+                      <div class="title">
+                        <h5><%= conversation.sender&.username %></h5>
+                        <% if conversation.messages.first.present? %>
+                          <% time = Time.now.to_datetime %>
+                          <% created = conversation.messages.first.created_at.to_datetime %>
+                          <% calculated_time = ((time - created) * 24 * 60).to_i %>
+                          <span class="time"><%= distance_of_time_in_words(0, calculated_time.minutes) %></span>
+                        <% end %>
+                      </div>
+                      <div class="txt">
+                        <p class="live_message_<%= conversation.id %>"><%= conversation.messages.first.body if conversation.messages.first.present? %></p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                <%end%>  
               <% end %>
             <% end %>
           </div>
@@ -114,6 +116,78 @@
 </main>
 
 <script>
+
+/**
+ * Open the conversation using coversationId on Notification Click
+ * */
+  $(document).ready(function() {
+    // Add click event to user blocks
+    $(".user_list").on('click', '.user_blk', function() {
+      $(".user_list .user_blk.active").removeClass("active");
+      $(this).addClass("active");
+    });
+
+    $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
+
+    $("#clicked").click(function() {
+      $(this).addClass("active");
+    });
+
+    // Check if conversation ID is present in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const conversationId = urlParams.get('conversationId');
+    console.log("Conversation Id on supoort page ====", conversationId);
+      if (conversationId) {
+      // Filter conversation based on conversationId
+      const conversation = <%= @conversation.to_json.html_safe %>.find(conv => conv.id == conversationId);
+      console.log('Conversation:', conversation);
+      
+      if (conversationId) {
+        const conversation = <%= @conversation.to_json.html_safe %>.find(conv => conv.id == conversationId);
+        console.log('Conversation:', conversation); // Log the conversation object
+        
+        if (conversation) {
+          fetch(`api/v1/users/get_sender_details/${conversation?.sender_id}`)
+          .then(response => response.json())
+          .then(data => {
+            const { username, email } = data;
+            console.log("response  === ", username , email);
+            open_conversation(conversation?.sender_id, conversationId, username, email);
+            get_image(email);
+            get_post(username);
+            const conversationElement = $(`.user_list .user_blk[data-conversation-id="${conversationId}"]`);
+      
+        // Check if element exists
+            if (conversationElement.length > 0) {
+              conversationElement.addClass("active");
+
+              // Remove active class from other conversation blocks
+              $(".user_list .user_blk").not(conversationElement).removeClass("active");
+
+              // Scroll only the sidebar into view (not the whole page)
+              const sidebar = $(".user_list"); // The sidebar container
+
+              sidebar.animate({
+                scrollTop: conversationElement.offset().top - sidebar.offset().top + sidebar.scrollTop() - 100
+              }, 'smooth');
+            } else {
+              console.error("Conversation element not found");
+            }
+              // Highlight the opened chat block
+              //  $(`.user_list .user_blk[data-conversation-id="${conversationId}"]`).addClass("active");
+        })
+      .catch(error => {
+        console.error('Error fetching sender details:', error);
+      });
+        } else {
+          console.error('Conversation or sender not found');
+        }
+      }
+    }
+
+  });
+
+
     $("#clicked").click()
     $("#clicked").addClass("active")
     $(".user_list").on('click', '.user_blk', function () {
@@ -176,92 +250,157 @@
 
     }
 
-    function message_design(message, images, user_image, admin_image) {
-        var chat_list_id = document.getElementsByClassName("chat_list")[0].id
-        var topDiv = document.getElementById(chat_list_id)
-        var admindiv = document.getElementById("admin_div")
-        document.getElementById("num_id").innerHTML = message.message_ticket
-        var message_div = document.createElement("div")
-        if (message.sender_id !== null) {
-            message_div.setAttribute('class', 'chat_blk')
-        }else{
-            message_div.setAttribute('class', 'chat_blk memee')
+   let isUserScrolling = false; // Flag to detect manual scroll
+   let lastScrollTop = 0;  
+
+    // Function to scroll to the last message
+    function scrollToLastMessage() {
+        const chatList = $(".chat_list");
+        const lastMessage = $(".chat_list .chat_blk:last-child");
+
+        if (lastMessage.length > 0) {
+            chatList.animate({
+                scrollTop: lastMessage[0].offsetTop + lastMessage.outerHeight() - chatList.height()
+            }, "fast", function() {
+                isUserScrolling = false; // Reset flag after reaching bottom
+            });
         }
-        var div = document.createElement("div")
-        div.setAttribute('class', 'ico fill round')
-        var img = document.createElement("img");
-        if (message.sender_id !== null) {
-            img.src = user_image
-            div.appendChild(img)
-        }else{
-            img.setAttribute("style", "border-radius: 50%; object-fit: cover")
-            img.src = admin_image
-            div.appendChild(img)
-        }
-        var div1 = document.createElement("div")
-        if (images[0] === "") {
-            div1.setAttribute('class', 'txt')
-            var p = document.createElement("p")
-            if (message.sender_id !== null){
-                p.setAttribute("class", "bottom")
-            }
-            div1.appendChild(p.appendChild(document.createTextNode(message.body)))
-        }else {
-            div1.setAttribute('class', 'txt w-50 h-50')
-            if (images.length === 1) {
-                if (images[0].split('.').pop().toLowerCase() === 'mp4'){
-                    var image_div = document.createElement("div")
-                    image_div.setAttribute('class', 'w-40 h-40 float-end')
-                    var videoSource = document.createElement("source")
-                    videoSource.setAttribute("src", `${images[0]}`)
-                    videoSource.setAttribute("type", "video/mp4");
-                    var video = document.createElement('video')
-                    video.setAttribute("controls", true)
-                    video.setAttribute('class', 'w-100 h-100');
-                    video.append(videoSource)
-                    image_div.append(video);
-                }else{
-                    var image_div = document.createElement("div")
-                    var message_img = document.createElement("img");
-                    message_img.setAttribute('class', 'w-40 h-40 float-end')
-                    message_img.src = images
-                    image_div.appendChild(message_img)
-                }
-            }else {
-                var image_div = document.createElement("div")
-                images.forEach(function (image) {
-                    if(image.split('.').pop().toLowerCase() === 'mp4'){
-                        image_div.setAttribute('class', 'w-40 h-40 float-end')
-                        var videoSource = document.createElement("source")
-                        videoSource.setAttribute("src", `${image}`)
-                        videoSource.setAttribute("type", "video/mp4");
-                        var video = document.createElement('video')
-                        video.setAttribute("controls", true)
-                        video.setAttribute('class', 'w-100 h-100');
-                        video.append(videoSource)
-                        image_div.append(video);
-                    }else{
-                        var message_img = document.createElement("img");
-                        message_img.setAttribute('class', 'w-40 h-40 float-end mb-1')
-                        message_img.src = image
-                        image_div.appendChild(message_img)
-                    }
-                })
-            }
-            div1.appendChild(image_div)
-            var p_div = document.createElement("div")
-            var p = document.createElement("p")
-            if (message.sender_id === null){
-                p_div.setAttribute("class", "float-end")
-            }
-            p_div.appendChild(p.appendChild(document.createTextNode(message.body)))
-            div1.appendChild(p_div)
-        }
-        message_div.appendChild(div)
-        message_div.appendChild(div1)
-        topDiv.appendChild(message_div)
-        $(".chat_list").scrollTop($(".chat_list").prop("scrollHeight"));
     }
+
+    // Debounce function to limit scroll events
+    function debounce(func, wait) {
+        let timeout;
+        return function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(func, wait);
+        };
+    }
+
+    // Observer to handle auto-scroll when a new message is added
+    let observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting && !isUserScrolling) {
+                scrollToLastMessage();
+            }
+        });
+    }, { threshold: 1.0 }); // Set threshold to 1 to observe full visibility
+
+  function message_design(message, images, user_image, admin_image) {
+    var chat_list_id = document.getElementsByClassName("chat_list")[0].id;
+    var topDiv = document.getElementById(chat_list_id);
+    document.getElementById("num_id").innerHTML = message.message_ticket;
+    var message_div = document.createElement("div");
+
+    if (message.sender_id !== null) {
+        message_div.setAttribute('class', 'chat_blk');
+    } else {
+        message_div.setAttribute('class', 'chat_blk memee');
+    }
+
+    var div = document.createElement("div");
+    div.setAttribute('class', 'ico fill round');
+    var img = document.createElement("img");
+
+    img.src = message.sender_id !== null ? user_image : admin_image;
+    img.style.borderRadius = "50%";
+    img.style.objectFit = "cover";
+    div.appendChild(img);
+
+    var div1 = document.createElement("div");
+    if (images[0] === "") {
+        div1.setAttribute('class', 'txt');
+        var p = document.createElement("p");
+        if (message.sender_id !== null) {
+            p.setAttribute("class", "bottom");
+        }
+        div1.appendChild(p.appendChild(document.createTextNode(message.body)));
+    } else {
+        div1.setAttribute('class', 'txt w-50 h-50');
+        var image_div = document.createElement("div");
+
+        images.forEach((image) => {
+            if (image.type === 'video') {
+                var video = document.createElement("video");
+                video.setAttribute("controls", true);
+                video.setAttribute("class", 'w-100 h-100');
+                var videoSource = document.createElement("source");
+                videoSource.setAttribute("src", image.url);
+                videoSource.setAttribute("type", "video/mp4");
+                video.append(videoSource);
+                image_div.append(video);
+            } else {
+                var message_img = document.createElement("img");
+                message_img.setAttribute('class', 'w-40 h-40 float-end mb-1');
+                message_img.src = image.url;
+
+                // Add load event to ensure scrolling after image loads
+                message_img.onload = scrollToLastMessage;
+                image_div.appendChild(message_img);
+            }
+        });
+
+        div1.appendChild(image_div);
+        var p_div = document.createElement("div");
+        var p = document.createElement("p");
+        if (message.sender_id === null) {
+            p_div.setAttribute("class", "float-end");
+        }
+        p_div.appendChild(p.appendChild(document.createTextNode(message.body)));
+        div1.appendChild(p_div);
+    }
+
+    message_div.appendChild(div);
+    message_div.appendChild(div1);
+    topDiv.appendChild(message_div);
+
+   const lastMessage = $(".chat_list .chat_blk:last-child");
+    if (lastMessage.length > 0) {
+        observer.disconnect(); // Disconnect the observer to avoid repetitive calls
+        observer.observe(lastMessage[0]); // Observe the last message
+    }
+
+    // Scroll to the last message only if the user is not scrolling up
+    if (!isUserScrolling) {
+        console.log("User not scrolling, scrolling to the last message...");
+        scrollToLastMessage();
+    } else {
+        console.log("User scrolling, avoiding auto-scroll...");
+    }
+}
+
+// Helper function to scroll to the bottom of the chat
+    function scrollToLastMessage() {
+        $(".chat_list").animate({ scrollTop: $(".chat_list").prop("scrollHeight") }, "fast");
+    }
+
+  $(".chat_list").on("scroll", debounce(function () {
+      const chatList = $(this);
+      const scrollTop = chatList.scrollTop();
+
+      // Determine if the user is scrolling up
+      if (scrollTop < lastScrollTop) {
+          console.log("Scrolling up...");
+          isUserScrolling = true;  // User is scrolling up
+      } else {
+          console.log("Scrolling down...");
+          isUserScrolling = true;  // User is scrolling down
+      }
+
+      lastScrollTop = scrollTop;  // Update last scroll position
+
+  }, 50));
+// Prevent page scroll when the chat_list can scroll
+  $(".chat_list").on("wheel", function (e) {
+      const chatList = this;
+      const atTop = chatList.scrollTop === 0;
+      const atBottom = chatList.scrollTop + chatList.clientHeight === chatList.scrollHeight;
+
+      if ((e.originalEvent.deltaY < 0 && atTop) || (e.originalEvent.deltaY > 0 && atBottom)) {
+          // Prevent scrolling the page when at top or bottom of chat_list
+          e.preventDefault();
+      }
+  });
+
 
     // function message_design(message, images, user_image, admin_image) {
     //     var chat_list_id = document.getElementsByClassName("chat_list")[0].id

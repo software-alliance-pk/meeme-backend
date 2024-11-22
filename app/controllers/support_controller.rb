@@ -8,7 +8,14 @@ class SupportController < ApplicationController
             @conversation.messages.each do |message|
                 if message.message_images.attached?
                     message.message_images.blobs.each do |image|
-                        @image << url_for(image)
+                        # @image << url_for(image)
+                        if image.content_type.start_with?('image/')
+                            @image << { type: 'image', url: image.url }
+                        elsif image.content_type.start_with?('video/')
+                            @image << { type: 'video', url: image.url }
+                        else
+                            @image << { type: 'other', url: image.url } # for other types of files
+                        end
                     end
                 else
                     @image << ""
@@ -49,14 +56,15 @@ class SupportController < ApplicationController
             @message.user_id = params[:user_id]
             if @message.save
                 ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
-                Notification.create(title:"Message from #{@message.admin_user.admin_user_name}",
+                Notification.create(title:"New Message from #{@message.admin_user.admin_user_name}",
                                     body: @message.body,
                                     conversation_id: @conversation.id,
                                     user_id: params[:user_id],
                                     message_id: @message.id,
                                     sender_id: current_admin_user.id,
                                     sender_name: current_admin_user.admin_user_name,
-                                    sender_image: current_admin_user.admin_profile_image.present? ?  current_admin_user.admin_profile_image.blob.url : '')
+                                    redirection_type: 'support'
+                                    )
             end
         else
             render json: { message: "No conversation present" }, status: :not_found

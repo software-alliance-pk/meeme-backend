@@ -11,7 +11,7 @@ json.open_profile_of do
       json.post_comments_count post.comments.count
       json.post_share_count post.share_count
       json.post_type post.post_image.content_type
-      json.post_thumbnail post.thumbnail
+      json.post_thumbnail post.video_thumbnail.attached? ? post.video_thumbnail.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : post.thumbnail
 
 
       json.post_comments post.comments.each do |comment|

@@ -1,11 +1,18 @@
 json.trending_posts do
   json.(@trending_posts.to_h.keys) do |post|
-    json.user_id post.user.id
-    json.username post.user.username
-    json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
+    if post.user.present?
+      json.user_id post.user.id
+      json.username post.user.username
+      json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
+    else
+      json.user_id nil
+      json.username ''
+      json.user_image ''
+    end
+
     json.post post
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
-    json.post_thumbnail post.thumbnail
+    json.post_thumbnail post.video_thumbnail.attached? ? post.video_thumbnail.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : post.thumbnail
     json.post_type post.post_image.content_type
     json.compress_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false

@@ -22,6 +22,12 @@ class UserMailer < ApplicationMailer
     mail(to: @email, subject: 'Winner' )
   end
 
+  def flag_tournament_post(user,email)
+    @email = email
+    @user = user
+    mail(to: @email, subject: 'Flagged Tournament Post' )
+  end
+
   def winner_email_for_coin(user,email,coins,rank)
     @user = user
     @email=  email
@@ -42,5 +48,12 @@ class UserMailer < ApplicationMailer
     @user = user
     @coins = coins
     mail(to: @user.email, subject: 'Added Total Judged Coins' )
+  end
+
+  def amazon_purshase_card(user, card, coins)
+    @user = user
+    @card = card
+    @coins = coins
+    mail(to: @user.email, subject: 'Amazon Card Purshase' )
   end
 end

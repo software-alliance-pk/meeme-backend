@@ -1,16 +1,25 @@
 json.messages_count @messages.count
 json.messages @messages.each do |message|
+  post = Post.find_by(id: message.post_id)
   json.id message.id
   json.body message.body
-  json.subject message.subject.split("_").join(" ")
+  json.subject message.subject
   json.message_ticket message.message_ticket
   json.conversation_id message.conversation_id
-  json.admin_user_id message.admin_user.id
-  json.admin_user_name message.admin_user.admin_user_name.present? ? message.admin_user.admin_user_name : ''
+  json.admin_user_id message.admin_user_id
+  json.admin_user_name 1
   json.created_at message.created_at
   json.message_images_count message.message_images.count
   json.message_images message.message_images.each do |message_image|
-    json.message_image message_image.present? ? message_image.blob.url : ''
+  if message_image.present?
+    json.message_image message_image.blob.url
+    json.content_type message_image.blob.content_type
+    json.thumbnail post&.video_thumbnail&.attached? ? post&.video_thumbnail&.blob&.url : ''
+  else
+    json.message_image ''
+    json.content_type ''
+  end
+
   end
   json.sender_id message.sender_id
   json.sender_name message.sender.present? ? message.sender.username : ''
