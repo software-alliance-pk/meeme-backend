@@ -16,6 +16,6 @@ json.messages @messages.each do |record|
         json.message_image message_image.present? ? message_image.blob.url : ''
     end
     # json.message_image record.message_image&.attached? ? record&.message_image.blob.url : ''
-    json.sender_image record&.sender&.profile_image&.attached? ? record.sender.profile_image.blob.url : ''
-    json.receiver_image record&.receiver&.profile_image&.attached? ? record.receiver.profile_image.blob.url : ''
+    json.sender_image record&.sender&.profile_image&.attached? ? record.sender.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
+    json.receiver_image record&.receiver&.profile_image&.attached? ? record.receiver.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
 end

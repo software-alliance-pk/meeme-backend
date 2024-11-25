@@ -1,7 +1,7 @@
 json.post do
   json.user_id @post.user.id
   json.username @post.user.username
-  json.user_image @post.user.profile_image.attached? ? @post.user.profile_image.blob.url : ''
+  json.user_image @post.user.profile_image.attached? ? @post.user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
   json.post do
     like_by_current_user = @post.likes.find_by(user_id: @current_user.id)
     json.post_id @post.id

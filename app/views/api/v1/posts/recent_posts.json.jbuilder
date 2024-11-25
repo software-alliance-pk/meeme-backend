@@ -3,7 +3,7 @@ json.recent_posts do
       json.post post rescue ""
       json.pending_requests @current_user.followers.pending.count
       json.username post.user.username
-      json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
+      json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
       json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
       json.post_thumbnail post.video_thumbnail.attached? ? post.video_thumbnail.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : post.thumbnail
       json.post_type post.post_image.content_type

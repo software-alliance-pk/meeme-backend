@@ -3,7 +3,7 @@ json.trending_posts do
     if post.user.present?
       json.user_id post.user.id
       json.username post.user.username
-      json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
+      json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
     else
       json.user_id nil
       json.username ''

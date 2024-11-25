@@ -26,7 +26,7 @@ json.messages @messages.each do |message|
   json.sender_active_status message.sender.present? ? message.sender.status : ''
 
   if message.sender.present?
-    json.sender_image message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : ''
+    json.sender_image message.sender.profile_image.attached? ? message.sender.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
   else
     json.sender_image message.admin_user.admin_profile_image.attached? ? message.admin_user.admin_profile_image.blob.url : ''
   end

@@ -9,7 +9,7 @@ json.user_stories user_stories_map.map do |user_id, user_stories|
     json.user_id user_id
     json.username story.user.username
     json.liked_by_current_user Like.exists?(story_id: story.id, status: 'like', user_id: @current_user.id)
-    json.user_image story.user.profile_image.attached? ? story.user.profile_image.blob.url : ''
+    json.user_image story.user.profile_image.attached? ? story.user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
     json.story_created story.created_at
     json.description story.description
     json.story_image story.story_image.attached? ? story.story_image.blob.url : ''
