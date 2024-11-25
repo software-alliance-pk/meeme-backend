@@ -16,5 +16,6 @@ json.user_posts do
     json.post_comments_count post.comments.count
     json.like_by_current_user like_by_current_user.present? ? true : false
     json.compress_image post.compress_image
+    json.tournament_meme post.tournament_meme
   end
 end
