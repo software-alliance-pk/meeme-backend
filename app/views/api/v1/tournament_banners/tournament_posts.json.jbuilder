@@ -9,7 +9,7 @@ json.tournament_posts do
     json.likes post.likes.where(is_liked: true).count
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.post_type post.post_image.content_type
-    json.compress_image post.compress_image
+    json.compress_image post.post_image.attached? && post.post_image&.image? ? post.post_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
     json.thumbnail post.video_thumbnail.attached? ? post.video_thumbnail.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : post.thumbnail
     json.post_judged_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present?
     current_user_post_status = @current_user.likes.where(post_id: post.id)
