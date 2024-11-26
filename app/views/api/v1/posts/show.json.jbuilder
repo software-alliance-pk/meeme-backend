@@ -16,7 +16,7 @@ json.post do
     json.post_share_count @post.share_count
     json.post_thumbnail @post.video_thumbnail.attached? ? @post.video_thumbnail.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : @post.thumbnail
     json.post_comments_count @post.comments.count
-    json.like_by_current_user like_by_current_user.present? ? true : false
+    json.liked_by_current_user like_by_current_user.present? ? true : false
 
     json.compress_image @post.compress_image
   end
