@@ -35,6 +35,7 @@
             <th style="width: 19rem">Name</th>
             <th style="width: 26rem">Email</th>
             <th style="width: 12rem">Up Vote</th>
+            <th style="width: 12rem">Down Vote</th>
             <th style="width: 14rem">Date Joined</th>
             <th style="width: 15rem">Reward</th>
           </tr>
@@ -42,8 +43,37 @@
           <tbody>
             <% banner = session[:banner] %>
             <% if banner.present? %>
-              <% users = TournamentBanner.find(banner["id"]).tournament_users.joins(user: {posts:  :likes}).where(likes: {is_judged: true}).group("tournament_users.id").order("COUNT(likes.id) DESC").limit(10) %>
-            <% end %>
+                <%users = TournamentUser.find_by_sql("
+                    SELECT ranked_users.*
+                    FROM (
+                      SELECT tu.*, 
+                        user_ranks.max_rank,
+                        ROW_NUMBER() OVER (PARTITION BY tu.user_id ORDER BY user_ranks.max_rank DESC) AS rn
+                      FROM tournament_users tu
+                      JOIN (
+                        SELECT p.user_id, MAX(likes_count - dislikes_count) AS max_rank
+                        FROM posts p
+                        JOIN (
+                          SELECT post_id, 
+                            COUNT(CASE WHEN status = 1 THEN 1 END) AS likes_count, 
+                            COUNT(CASE WHEN status = 2 THEN 1 END) AS dislikes_count
+                          FROM likes
+                          WHERE is_judged = true
+                          GROUP BY post_id
+                        ) AS like_dislike_counts
+                        ON like_dislike_counts.post_id = p.id
+                        WHERE p.tournament_banner_id = #{banner['id']} 
+                        AND p.tournament_meme = true
+                        GROUP BY p.user_id
+                      ) AS user_ranks
+                      ON user_ranks.user_id = tu.user_id
+                    ) AS ranked_users
+                    WHERE ranked_users.rn = 1
+                    ORDER BY ranked_users.max_rank DESC
+                    LIMIT 10
+                  ")%>
+
+              <% end %>
             <% i = 0 %>
             <% if users.present? %>
               <% users.each do |tournament_user| %>
@@ -74,9 +104,10 @@
                     </td>
                     <% post = get_most_liked_post(tournament_user, banner["id"])%>
                     <td onclick="open_details('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=post&.likes&.like&.count %>',
-                    '<%= post&.created_at&.strftime('%F') rescue ""%>', '<%=post&.likes&.where(status: "dislike")&.count%>', '<%= post.id%>' )"><%= tournament_user.user.username %></td>
+                    '<%= post&.created_at&.strftime('%F') rescue ""%>', '<%=post&.likes&.where(status: "dislike")&.count%>', '<%= post&.id%>' )"><%= tournament_user.user.username %></td>
                     <td><%= tournament_user.user.email %></td>
-                    <td><%= post&.likes&.like.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
+                    <td><%= post&.likes&.like&.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
+                    <td><%= post&.likes&.dislike&.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
                     <td><%= tournament_user.created_at.strftime("%F") %></td>
                     <td>
                       <% if i < 4 %>

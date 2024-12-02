@@ -159,7 +159,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     @today_date = Time.zone.now.end_of_day.to_datetime
     @tournament_end_date = @tournament_banner.end_date.strftime("%a, %d %b %Y").to_datetime
     @tournamnet_days = (@tournament_end_date - @today_date).to_i
-    TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @tournament_banner.id)
+    # TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @tournament_banner.id)
     render json: { tournament_banner: @tournament_banner }, status: :ok
   end
 
@@ -167,6 +167,17 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     if @tournament.posts.find_by(id: params[:post_id]).present?
       # if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
         response = TournamentLikeService.new(params[:post_id], @current_user.id).create_for_tournament
+        start_of_day = Time.current.beginning_of_day
+        end_of_day = Time.current.end_of_day
+        daily_likes_count = Like.where(user_id: @current_user.id, created_at: start_of_day..end_of_day).count
+        if daily_likes_count == 100
+          @current_user.update(coins: 50)
+          Notification.create(title: "Judge Reward",
+                          body: "Congratulations you have won 50 coins for completing judgment of 100 posts.",
+                          user_id: @current_user.id,
+                          notification_type: 'tournament',  
+                          )  
+        end
         render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
       # else
         # render json: { message: "User is not enrolled in this tournament" }, status: :not_found
@@ -182,6 +193,17 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     if @tournament.posts.find_by(id: params[:post_id]).present?
       # if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
         response = TournamentLikeService.new(params[:post_id], @current_user.id).dislike_for_tournament
+        start_of_day = Time.current.beginning_of_day
+        end_of_day = Time.current.end_of_day
+        daily_likes_count = Like.where(user_id: @current_user.id, created_at: start_of_day..end_of_day).count
+        if daily_likes_count == 100
+          @current_user.update(coins: 50)
+          Notification.create(title: "Judge Reward",
+                          body: "Congratulations you have won 50 coins for completing judgment of 100 posts.",
+                          user_id: @current_user.id,
+                          notification_type: 'tournament',  
+                          )  
+        end
         render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
       # else
         # render json: { message: "User is not enrolled in this tournament" }, status: :not_found

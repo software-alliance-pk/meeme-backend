@@ -2,7 +2,7 @@ class Notification < ApplicationRecord
   after_create :create_push_notification
   enum status: { un_read: 0, read: 1 }
   enum alert: { enabled: 0, disabled: 1 }
-  enum notification_type: { no_type: 0, message: 1, request_send: 2, request_accepted: 3, coin_buy: 4,admin_message: 5, in_app_purchase: 6,sign_up: 7,comment: 8, push_notification: 9 }
+  enum notification_type: { no_type: 0, message: 1, request_send: 2, request_accepted: 3, coin_buy: 4,admin_message: 5, in_app_purchase: 6,sign_up: 7,comment: 8, push_notification: 9, tournament: 10 }
   belongs_to :user, optional: true
   belongs_to :conversation, optional: true
   belongs_to :message, optional: true
@@ -43,7 +43,11 @@ def create_push_notification
     CommentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id, user.id, self.post_id)
   end
 
-  if notification_type != 'admin_message' && notification_type != 'push_notification' && notification_type != 'comment'
+  if notification_type == 'tournament'
+    TournamentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id)
+  end
+
+  if notification_type != 'admin_message' && notification_type != 'push_notification' && notification_type != 'comment' && notification_type != 'tournament'
     registration_ids = self.user.mobile_devices.pluck(:mobile_token) if self.user.present?
     puts "User: #{self.user.inspect}" 
     puts "Mobile Tokens: #{registration_ids.inspect}" 

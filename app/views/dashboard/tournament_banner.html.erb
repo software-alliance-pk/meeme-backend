@@ -46,6 +46,7 @@
                 </div>
                 <div class="bottom banner_date">
                   <p><%=tournament_banner.start_date.present? ? tournament_banner.start_date.strftime("%B %Y"): "No date added" %></p>
+                  <p><%= "Ended" if tournament_banner.end_date < Date.today %></p>
                 </div>
               </div>
             </div>

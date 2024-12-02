@@ -67,10 +67,10 @@ class Api::V1::PostsController < Api::V1::ApiController
             @post.video_thumbnail.attach(thumbnail_blob)
           end
         end
-        if @post.post_image
-          video_preview = @post.compress
-          # thumbnail = video_preview.processed.url if video_preview.processed.present?
-        end
+        # if @post.post_image
+        #   video_preview = @post.compress
+        #   # thumbnail = video_preview.processed.url if video_preview.processed.present?
+        # end
         @post.update(duplicate_tags: @tags, thumbnail: thumbnail)
       else
         @post.update(duplicate_tags: @tags)

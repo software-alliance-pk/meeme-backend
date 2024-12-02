@@ -96,9 +96,11 @@ class DashboardController < ApplicationController
 
   def tournament
     @tournament_banner_name = params[:tournament_banner_id]
-    @tournament_banner = Like.where(is_judged: true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true }).
-      group(:post_id).count(:post_id).sort_by(&:last).sort_by(&:last).reverse.to_h
-    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).where(likes: {status: "like"}).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
+    @tournament_banner = Like.where(is_judged: true).joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true })
+      .group(:post_id).select('post_id, COUNT(CASE WHEN status = 1 THEN 1 END) AS likes, COUNT(CASE WHEN status = 2 THEN 1 END) AS dislikes').map { |record| [record.post_id, record.likes - record.dislikes] }.to_h.sort_by { |_, v| -v }.to_h
+    ordered_ids = @tournament_banner.keys
+    @posts = Post.where(id: ordered_ids).order(Arel.sql("array_position(ARRAY[#{ordered_ids.join(',')}], id)")).paginate(page: params[:page], per_page: 10)
+
     if params[:tournament_banner_id].present?
       @banner = TournamentBanner.find(params[:tournament_banner_id])
       session[:banner] = @banner
@@ -202,6 +204,7 @@ class DashboardController < ApplicationController
   def tournament_banner_create
     @banner = TournamentBanner.new(banner_params)
     @banner.enable = true
+    @banner.end_date = params[:end_date].to_date.end_of_day
     existing_active_tournament = TournamentBanner.where(enable: true)
     .where('end_date > ?', Time.zone.now.end_of_day)
     
@@ -214,7 +217,7 @@ class DashboardController < ApplicationController
         @today_date = Time.zone.now.end_of_day.to_datetime
         @tournament_end_date = @banner.end_date.strftime("%a, %d %b %Y").to_datetime
         @tournamnet_days = (@tournament_end_date - @today_date).to_i
-        TournamentWorker.perform_in((Time.now + @tournamnet_days.days))
+        # TournamentWorker.perform_in((Time.now + @tournamnet_days.days))
         # TournamentWorker.perform_in((Time.now + 1.minute))
         redirect_to tournament_banner_path
       end
@@ -223,7 +226,7 @@ class DashboardController < ApplicationController
 
   def tournament_banner_destroy
     @banner = TournamentBanner.find(params[:id])
-    SendJudgeCoinWorker.perform_in(Time.now, @banner.id)
+    # SendJudgeCoinWorker.perform_in(Time.now, @banner.id)
     if @banner.destroy
       redirect_to tournament_banner_path
     end
@@ -236,6 +239,11 @@ class DashboardController < ApplicationController
     if params[:coins].present? && params[:user_id].present?
       @user = User.find(params[:user_id])
       @user.update(coins: @user.coins + params[:coins].to_i)
+      Notification.create(title: "Winner Coins",
+                            body: "Congratulations you have won #{params[:coins].to_i} coins.",
+                            user_id: params[:user_id],
+                            notification_type: 'tournament',  
+                            )
       UserMailer.winner_email_for_coin(@user,@user.email, params[:coins], params[:rank]).deliver_now
     end
     if params[:username].present?
@@ -269,6 +277,12 @@ class DashboardController < ApplicationController
       @tournament_winner = false
       UserMailer.winner_email(@user ,@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
     end
+    Notification.create(title: "Winner Coins",
+                            body: "Congratulations you have won a gift card #{params[:card_number]} and #{params[:coins].to_i} coins.",
+                            user_id: @user.id,
+                            notification_type: 'tournament',  
+                            )
+
     if @tournament_winner
       redirect_to tournament_winner_list_path
     else
