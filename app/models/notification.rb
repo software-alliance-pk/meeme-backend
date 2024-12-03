@@ -43,11 +43,11 @@ def create_push_notification
     CommentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id, user.id, self.post_id)
   end
 
-  if notification_type == 'tournament'
+  if notification_type == 'tournament_winner' || notification_type == 'tournament_judge'
     TournamentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id)
   end
 
-  if notification_type != 'admin_message' && notification_type != 'push_notification' && notification_type != 'comment' && notification_type != 'tournament'
+  if notification_type != 'admin_message' && notification_type != 'push_notification' && notification_type != 'comment' && notification_type != 'tournament_winner' && notification_type != 'tournament_judge'
     registration_ids = self.user.mobile_devices.pluck(:mobile_token) if self.user.present?
     puts "User: #{self.user.inspect}" 
     puts "Mobile Tokens: #{registration_ids.inspect}" 
