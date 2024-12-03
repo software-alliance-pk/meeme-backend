@@ -242,7 +242,7 @@ class DashboardController < ApplicationController
       Notification.create(title: "Winner Coins",
                             body: "Congratulations you have won #{params[:coins].to_i} coins.",
                             user_id: params[:user_id],
-                            notification_type: 'tournament',  
+                            notification_type: 'tournament_winner',  
                             )
       UserMailer.winner_email_for_coin(@user,@user.email, params[:coins], params[:rank]).deliver_now
     end
@@ -282,7 +282,7 @@ class DashboardController < ApplicationController
     Notification.create(title: "Winner Coins",
                             body: "Congratulations you have won a gift card #{params[:card_number]} and #{params[:coins].to_i} coins.",
                             user_id: @user.id,
-                            notification_type: 'tournament',  
+                            notification_type: 'tournament_winner',  
                             )
 
     if @tournament_winner

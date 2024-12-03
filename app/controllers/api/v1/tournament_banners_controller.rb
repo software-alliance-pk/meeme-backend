@@ -175,7 +175,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
           Notification.create(title: "Judge Reward",
                           body: "Congratulations you have won 50 coins for completing judgment of 100 posts.",
                           user_id: @current_user.id,
-                          notification_type: 'tournament',  
+                          notification_type: 'tournament_judge',  
                           )  
         end
         render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
