@@ -97,7 +97,7 @@
                 <td><%=post.user.likes.where(tournament_banner_id: banner_id).count %></td>
                 <td>
                   <div class="img">
-                    <img src="<%= post.post_image.attached? && post.post_image.content_type.split('/').first == "image" ? post.post_image.blob.url : post.video_thumbnail.blob.url %> " alt="">
+                    <img src="<%= post.post_image.attached? && post.post_image.content_type.split('/').first == "image" ? post.post_image.blob.url : post&.video_thumbnail&.blob&.url %> " alt="">
                   </div>
                 </td>
                 <% if @banner.present? %>
