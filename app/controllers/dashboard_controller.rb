@@ -247,12 +247,14 @@ class DashboardController < ApplicationController
       UserMailer.winner_email_for_coin(@user,@user.email, params[:coins], params[:rank]).deliver_now
     end
     if params[:username].present?
+      
       @user = User.find_by(username: params[:username])
-      @user_image = @user.profile_image.attached? ? url_for(@user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
-      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"]).where(id: params[:post_id])
-      @post_image = @post&.post_image.attached? ? url_for(@post.post_image) : ActionController::Base.helpers.asset_path('bg-img.jpg')
+      @user_image = @user.profile_image.attached? ?  @user.profile_image.blob.url : ActionController::Base.helpers.asset_path('user.png')
+      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"]).where(id: params[:post_id]).first
+      @post_image = @post&.post_image&.attached? ? @post&.post_image&.blob&.url : ActionController::Base.helpers.asset_path('bg-img.jpg')
+      @content_type = @post&.post_image&.present? ? @post&.post_image&.content_type&.split('/')&.first : ""
       respond_to do |format|
-        format.json { render json: { user_image: @user_image, post_image: @post_image } }
+        format.json { render json: { user_image: @user_image, post_image: @post_image, content_type: @content_type } }
       end
     end
   end

@@ -97,7 +97,7 @@
                 <td><%=post.user.likes.where(tournament_banner_id: banner_id).count %></td>
                 <td>
                   <div class="img">
-                    <img src="<%= post.post_image.attached? ? post.post_image.blob.url : asset_path("tr-1.jpg")%>" alt="">
+                    <img src="<%= post.post_image.attached? && post.post_image.content_type.split('/').first == "image" ? post.post_image.blob.url : post.video_thumbnail.blob.url %> " alt="">
                   </div>
                 </td>
                 <% if @banner.present? %>
@@ -119,10 +119,11 @@
                         <% created = post.user.tournament_users&.first&.created_at.strftime('%b %d, %Y') %>
                         <% dislikes = post.likes.where(status: "dislike").count %>
                         <% url = post.post_image.present? ? post.post_image.blob.url : asset_path("tr-1.jpg") %>
+                        <% content_type = post.post_image.present? ? post.post_image.content_type.split('/').first : "" %>
                         <% joined_tournaments_count = TournamentUser.where(user_id: post.user.id).count %>
 
                         <button type="button" class="pop_btn"
-                                data-popup="trans_profile" onclick="open_tormnt_modal('<%=username %>', '<%= email%>', '<%= likes%>', '<%=created %>', '<%= dislikes%>', '<%= url %>','<%= counter %>','<%= post.id%>')">Edit Standing</button>
+                                data-popup="trans_profile" onclick="open_tormnt_modal('<%=username %>', '<%= email%>', '<%= likes%>', '<%=created %>', '<%= dislikes%>', '<%= url %>','<%= counter %>','<%= post.id%>', '<%= content_type%>')">Edit Standing</button>
                       </li>
                     </ul>
                   </div>
@@ -191,6 +192,9 @@
                     <div class="right_blk">
                       <div class="img">
                         <img src="" alt="" id="image">
+                         <video controls>
+                            <source src="" type="video/mp4" alt="" id="video">
+                          </video>
                       </div>
                       <div class="vote_blk">
                         <span class="vote" style="padding-right:25px">
@@ -636,15 +640,23 @@ if(currentLikes){
 }
 
 
-    function open_tormnt_modal(name, email, likes, created, dislike, url, rank, postId){
+    function open_tormnt_modal(name, email, likes, created, dislike, url, rank, postId, content_type){
+        console.log("content type:" , content_type)
         document.getElementById("tormnt_modal").style.display="block"
         document.getElementById("tournament_user_name").innerHTML= name
         document.getElementById("tournament_user_email").innerHTML= email
         document.getElementById("tournament_user_joined").innerHTML= created
         document.getElementById("user_likes").innerHTML= likes
         document.getElementById("user_dislikes").innerHTML= dislike
-        document.getElementById("image").src = url
-        document.getElementById('up-btn').setAttribute('onclick', 'increaseLikeCount(' + postId + ')')
+        if (content_type === 'image')
+        {
+          document.getElementById("image").src = url
+        }
+        else
+        {        
+          document.getElementById("video").src = url
+        }
+                document.getElementById('up-btn').setAttribute('onclick', 'increaseLikeCount(' + postId + ')')
         document.getElementById('down-btn').setAttribute('onclick', 'decreaseLikeCount(' + postId + ')')
         
         document.getElementById('dislike-up-btn').setAttribute('onclick', 'increaseDislikeCount(' + postId + ')')
