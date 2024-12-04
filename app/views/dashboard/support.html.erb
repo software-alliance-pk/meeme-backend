@@ -89,6 +89,18 @@
               <div class="chat_blk memee" id="admin_div">
               </div>
             </div>
+            <div id="file-preview" style="display: none; position: relative; display: inline-block;">
+              <!-- Cross icon to remove the preview -->
+              <div id="remove-preview" style="position: absolute; top: 5px; right: 5px; cursor: pointer; display: none; z-index: 10;">
+                  <img src="<%= asset_path('cross-icon.svg') %>" alt="Remove" style="width: 20px; height: 20px;">
+              </div>
+
+              <!-- Blur background behind the preview content -->
+              <div id="blur-background" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1;"></div>
+
+              <!-- Preview content (image or video will go here) -->
+              <div id="preview-content" style="position: relative; z-index: 5;"></div>
+          </div>
 
             <%= form_with do |form| %>
               <div class="form_inside">
@@ -121,6 +133,64 @@
  * Open the conversation using coversationId on Notification Click
  * */
   $(document).ready(function() {
+    const fileInput = document.getElementById('file-btn');
+    const previewContainer = document.getElementById('file-preview');
+    const previewContent = document.getElementById('preview-content');
+    const removePreview = document.getElementById('remove-preview');
+    const blurBackground = document.getElementById('blur-background');
+
+    // Handle file selection and preview display
+    fileInput.addEventListener('change', function(event) {
+        const files = event.target.files;
+
+        // Clear previous previews
+        previewContent.innerHTML = '';
+
+        // Loop through each selected file and display a preview
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            // If it's an image, show image preview
+            if (file.type.startsWith('image')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '200px';  // Limit size for preview
+                    img.style.maxHeight = '200px';
+                    previewContent.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // If it's a video, show video preview
+            else if (file.type.startsWith('video')) {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.controls = true;
+                video.style.maxWidth = '200px';  // Limit size for preview
+                previewContent.appendChild(video);
+            }
+        }
+
+        // Show the preview container and cross icon
+        previewContainer.style.display = 'inline-block';
+        removePreview.style.display = 'block';
+    });
+
+    // Add event listener to the remove preview button (cross icon)
+    removePreview.addEventListener('click', function() {
+        // Clear the preview content
+        previewContent.innerHTML = '';
+
+        // Hide the preview container
+        previewContainer.style.display = 'none';
+
+        // Hide the cross icon
+        removePreview.style.display = 'none';
+    });
+
+
     // Add click event to user blocks
     $(".user_list").on('click', '.user_blk', function() {
       $(".user_list .user_blk.active").removeClass("active");

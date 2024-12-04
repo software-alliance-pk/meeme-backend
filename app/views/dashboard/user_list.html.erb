@@ -263,15 +263,15 @@
                     <h5>Personal Information</h5>
                     <div class="detail">
                       <div class="row">
-                        <div class="col-1">
+                        <div class="col-2">
                           <div class="left_blk">
                             <p class="mb-4">Phone</p>
-                            <p>Bio</p>
+                            <p class="mb-4">Bio</p>
                           </div>
                         </div>
-                        <div class="col-11">
-                          <p class="mb-4" id="profile_phone"></p>
-                          <p id="profile_bio"></p>
+                        <div class="col-10">
+                            <p class="mb-4" id="profile_phone"></p>
+                            <p class="mb-4" id="profile_bio"></p>
                         </div>
                       </div>
                     </div>
@@ -367,6 +367,9 @@
 </main>
 
 <style>
+  #profile_phone, #profile_bio {
+  min-height: 26px; /* Ensures there's space even if the content is empty */
+}
 .sidebar {
   height: 100%;
   width: -400px;

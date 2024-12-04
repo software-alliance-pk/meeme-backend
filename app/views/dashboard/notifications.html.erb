@@ -120,7 +120,18 @@
         document.getElementById("notify_confirm").style.display = "none"
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        flatpickr('.datepicker');
+    document.addEventListener('DOMContentLoaded', function() { 
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        const formattedDate = `${year}-${month}-${day}`;
+        console.log("formattedDate: ", formattedDate)
+
+        document.querySelector('input[name="send_date"]').setAttribute('min', formattedDate);
+        flatpickr('.datepicker', {
+          minDate: formattedDate  // Set the minimum date to today
+        });
+
     })
 </script>

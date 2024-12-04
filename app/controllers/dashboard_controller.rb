@@ -371,11 +371,11 @@ class DashboardController < ApplicationController
     if User.first.present?
       User.all.where(checked: true).update(checked: false)
     end
-    @users = User.paginate(page: params[:page], per_page: 10)
+    @users = User.all.order("created_at DESC").paginate(page: params[:page], per_page: 10)
     if params[:search]
       @users = User.search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     else
-      @users = User.paginate(page: params[:page], per_page: 10)
+      @users = User.all.order("created_at DESC").paginate(page: params[:page], per_page: 10)
     end
   end
 
