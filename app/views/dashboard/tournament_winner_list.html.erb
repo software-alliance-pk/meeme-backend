@@ -311,9 +311,42 @@
       data: {username: name, post_id: post},
       success: function(response){
         document.getElementById("user_image").src = response.user_image
-          $('#post_image').css({
-              'background-image': 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(' + response.post_image + ')'
-          })
+          if (response.content_type === 'image') {
+            console.log("image")
+            // Set background image for image content
+            $('#post_image')
+                .css({
+                    'background-image': 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(' + response.post_image + ')',
+                    'background-size': 'cover',
+                    'background-position': 'center'
+                })
+                .find('.detail').show().css({
+            'height': '100%' // Apply style to the detail div here
+        }); ; // Ensure .detail is visible for images
+
+            // Remove any video if it's present
+            $('#post_image video').remove(); 
+          } else  {
+            console.log("video")
+              // Clear background image when displaying video
+              $('#post_image')
+                  .css({
+                      'background-image': 'none'
+                  })
+                  .find('.detail').show().css({
+            'height': 'auto' // Apply style to the detail div here
+        }); ; // Ensure .detail is visible for video
+
+              // Append the video without removing existing content
+              if ($('#post_image video').length === 0) {
+                  $('#post_image').prepend(
+                      '<video controls style="width: 100%; height: auto; margin-bottom: 10px; display: block; margin-top: 0;">' +                      '<source src="' + response.post_image + '" type="video/mp4">' +
+                      'Your browser does not support the video tag.' +
+                      '</video>'
+                  );
+              }
+          }
+
       }
     })
   }
