@@ -421,8 +421,10 @@ class DashboardController < ApplicationController
         @badge_images << ActionController::Base.helpers.asset_path('user.png')
       end
     end
+    @tournament_banners = []
+    @tournament_banners = @specific_user.tournament_banners.present? ? @specific_user.tournament_banners.pluck(:title): []
     respond_to do |format|
-      format.json { render json: { user: @user, image: @image, title: @badge_title, badge_images: @badge_images } }
+      format.json { render json: { user: @user, image: @image, title: @badge_title, tournament_banners: @tournament_banners, badge_images: @badge_images } }
     end
   end
 
