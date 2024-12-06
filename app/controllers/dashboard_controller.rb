@@ -185,7 +185,8 @@ class DashboardController < ApplicationController
           likes: post.likes.where(is_judged: true).like.count,
           created_at: post.user.tournament_users.first.created_at.strftime('%b %d, %Y'),
           tournament_banner_id: post.tournament_banner_id,
-          post_image: post.post_image.attached? ? url_for(post.post_image) : nil
+          post_image: post.post_image.attached? ? post.post_image.blob.url : nil,
+          image_type: post.post_image.attached? ? post.post_image.content_type.split('/').first : ''
         }
       end
       render json: { posts: posts_with_images }

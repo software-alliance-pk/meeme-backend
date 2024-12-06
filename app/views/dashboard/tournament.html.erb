@@ -54,7 +54,6 @@
               <th style="width: 10.6rem">Up Vote</th>
               <th style="width: 13rem">Down Vote</th>
               <th style="width: 13rem">Date Joined</th>
-              <th style="width: 12rem">Participated</th>
               <th style="width: 10rem">Image</th>
               <th style="width: 8rem">Status</th>
               <th style="width: 2rem"></th>
@@ -89,22 +88,20 @@
                 </td>
                 <td><%= post.user.try(:username) %></td>
                 <td><%=post.user.try(:email) %></td>
-                <td onclick="openSidebar('<%=post.user.username %>','<%=post.user.email %>','<%=post.user.id %>', '<%= post.tournament_banner_id %>')"><%=TournamentUser.where(user_id: post.user.id).count%>  </td>
+                <td style="cursor: pointer;" onclick="openSidebar('<%=post.user.username %>','<%=post.user.email %>','<%=post.user.id %>', '<%= post.tournament_banner_id %>')"><%= @banner.present? ? @banner.posts.where(user_id: post&.user&.id).count : TournamentBanner.first.posts.where(user_id: post.user.id).count %>  </td>
                 <td class="like-count" ><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).dislike.count%></td>
                 <td><%=post.user.tournament_users.first.created_at.strftime('%b %d, %Y') %></td>
                 <% banner_id = @banner.present? ? @banner.id : TournamentBanner&.first&.id %>
-                <td><%=post.user.likes.where(tournament_banner_id: banner_id).count %></td>
                 <td>
                   <div class="img">
                     <img src="<%= post.post_image.attached? && post.post_image.content_type.split('/').first == "image" ? post.post_image.blob.url : post&.video_thumbnail&.blob&.url %> " alt="">
                   </div>
                 </td>
-                <% if @banner.present? %>
-                  <td><%=  @banner&.end_date&.strftime('%b,%d,%y') > Time.now.strftime('%b,%d,%y') ? "ongoing" : "finished" %></td>
-              <%else %>
-                  <td><%= "finished" %></td>
-              <%end%>
+                <% @tournament = @banner.present? ? @banner : TournamentBanner&.first%>
+                <% if @tournament.present? %>
+                  <td><%=  @tournament&.end_date&.strftime('%b,%d,%y') >= Time.now.strftime('%b,%d,%y') ? "ongoing" : "finished" %></td>
+                <%end%>
                 <td>
                   <div class="dropdown">
                     <button class="btn drop_btn" data-bs-toggle="dropdown">
@@ -432,8 +429,13 @@ width: 65%;
     });
   }
 
-  function generateSidebarHTML(item , ind){
-    
+  function generateSidebarHTML(item, ind){
+        const mediaHTML = item.image_type === "video"
+          ? `<video controls style="width: 200px; height: 200px;">
+              <source src="${item?.post_image}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>`
+          : `<img style="width: 200px; height: 300px; object-fit: fill !important" src="${item?.post_image}" alt="">`;
           return  `
                   <div class="mb-3">
                     <div style="color: #939394">Date Posted</div>
@@ -441,7 +443,7 @@ width: 65%;
                     <div class="detail_blk mt-0" style="align-items: flex-start">
                       <div class="right_blk">
                         <div class="img">
-                         <img style="width: 200px; height: 200px" src="${item?.post_image}" alt="">
+                          ${mediaHTML}
                         </div>
                       </div>
                       <div class="right_blk custom-right-side">

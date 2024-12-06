@@ -103,7 +103,7 @@
                       <% end %>
                     </td>
                     <% post = get_most_liked_post(tournament_user, banner["id"])%>
-                    <td onclick="open_details('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=post&.likes&.like&.count %>',
+                    <td style="cursor: pointer;" onclick="open_details('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=post&.likes&.like&.count %>',
                     '<%= post&.created_at&.strftime('%F') rescue ""%>', '<%=post&.likes&.where(status: "dislike")&.count%>', '<%= post&.id%>' )"><%= tournament_user.user.username %></td>
                     <td><%= tournament_user.user.email %></td>
                     <td><%= post&.likes&.like&.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
@@ -116,14 +116,14 @@
                             Gift Card
                           </button>
                           <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                              <button type="button" onclick="disable_user('<%= tournament_user.user.id %>')">Disable
-                                Account
-                              </button>
-                            </li>
+                            <%# <li> %>
+                              <%# <button type="button" onclick="disable_user('<%= tournament_user.user.id  %>
+                                <%# Disable Account %>
+                              <%# </button> %>
+                            <%# </li> %>
                             <li>
                               <button type="button" onclick="open_tormnt_modal('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=post&.likes&.where(status: "like")&.count%>',
-                                '<%= tournament_user.user.created_at.strftime('%b %d, %Y') %>', '<%=post&.likes&.where(status: "dislike")&.count%>,', '<%= i %>') ; image('<%=tournament_user.user.username%>')">Reward
+                                '<%= tournament_user.user.created_at.strftime('%b %d, %Y') %>', '<%=post&.likes&.where(status: "dislike")&.count%>', '<%= i %>', '<%=post&.post_image&.blob&.url%>','<%=post&.post_image&.content_type&.split('/')&.first%>')">Reward
                               </button>
                             </li>
                           </ul>
@@ -198,6 +198,9 @@
                                 <div class="right_blk">
                                     <div class="img">
                                         <img src="" alt="" id="image">
+                                        <video controls>
+                                          <source src="" type="video/mp4" alt="" id="video">
+                                        </video>
                                     </div>
                                     <div class="vote_blk">
                                         <span class="vote">
@@ -355,13 +358,21 @@
     document.getElementById("winner_modal").style.display="none"
   }
 
-  function open_tormnt_modal(name, email, likes, created, dislike, rank){
+  function open_tormnt_modal(name, email, likes, created, dislike, rank, image, content_type){
     document.getElementById("tormnt_modal").style.display="block"
     document.getElementById("tournament_user_name").innerHTML= name
     document.getElementById("tournament_user_email").innerHTML= email
     document.getElementById("tournament_user_joined").innerHTML= created
     document.getElementById("user_likes").innerHTML= likes
     document.getElementById("user_dislikes").innerHTML= dislike
+    if (content_type === 'image') {
+      document.getElementById("video").src = ''
+      document.getElementById("image").src = image
+    }
+    else{
+      document.getElementById("image").src = ''
+      document.getElementById("video").src = image
+    }
     $('#user_rank')[0].value = rank
   }
 

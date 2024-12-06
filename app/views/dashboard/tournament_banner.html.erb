@@ -188,7 +188,21 @@
     })
 
     document.addEventListener('DOMContentLoaded', function() {
-        flatpickr('.datepicker');
+      const flatpickrOptions = {
+        minDate: 'today', // Prevent past dates
+        dateFormat: 'Y-m-d' // Ensure consistent date format
+      };
+
+      // Initialize Flatpickr for both fields
+      const startPicker = flatpickr('#start_date', {
+        ...flatpickrOptions, // Common options
+        onChange: function(selectedDates, dateStr) {
+          // When a start_date is selected, update the minDate for end_date
+          endPicker.set('minDate', dateStr);
+        }
+      });
+
+      const endPicker = flatpickr('#end_date', flatpickrOptions);
     })
 
 </script>
