@@ -1,7 +1,7 @@
 class TournamentNotificationWorker
   include Sidekiq::Worker
 
-  def perform(*args, body, title, type ,user_id)
+  def perform(*args, body, title, type ,user_id, sender_name)
     require 'googleauth'
     require 'net/http'
     require 'uri'
@@ -30,7 +30,7 @@ class TournamentNotificationWorker
     message: {
       token: "", # Token to be set below
       notification: { body: body, title: title },
-      data: { notification_type: type, user_id: user_id.to_s }
+      data: { notification_type: type, user_id: user_id.to_s, sender_name: sender_name}
     }
   }
   

@@ -119,8 +119,6 @@
                         <% content_type = post.post_image.present? ? post.post_image.content_type.split('/').first : "" %>
                         <% joined_tournaments_count = TournamentUser.where(user_id: post.user.id).count %>
 
-                        <button type="button" class="pop_btn"
-                                data-popup="trans_profile" onclick="open_tormnt_modal('<%=username %>', '<%= email%>', '<%= likes%>', '<%=created %>', '<%= dislikes%>', '<%= url %>','<%= counter %>','<%= post.id%>', '<%= content_type%>')">Edit Standing</button>
                       </li>
                     </ul>
                   </div>

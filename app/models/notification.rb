@@ -44,7 +44,7 @@ def create_push_notification
   end
 
   if notification_type == 'tournament_winner' || notification_type == 'tournament_judge'
-    TournamentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id)
+    TournamentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id, self.sender_name)
   end
 
   if notification_type != 'admin_message' && notification_type != 'push_notification' && notification_type != 'comment' && notification_type != 'tournament_winner' && notification_type != 'tournament_judge'

@@ -207,7 +207,7 @@ class DashboardController < ApplicationController
     @banner.enable = true
     @banner.end_date = params[:end_date].to_date.end_of_day
     existing_active_tournament = TournamentBanner.where(enable: true)
-    .where('end_date > ?', Time.zone.now.end_of_day)
+    .where('end_date >= ?', Time.zone.now.end_of_day)
     
     if existing_active_tournament.present?
       flash[:alert] = "Cannot add another because Tournament
@@ -243,6 +243,8 @@ class DashboardController < ApplicationController
       Notification.create(title: "Winner Coins",
                             body: "Congratulations you have won #{params[:coins].to_i} coins.",
                             user_id: params[:user_id],
+                            sender_id: @current_admin_user.id,
+                            sender_name: @current_admin_user.admin_user_name,
                             notification_type: 'tournament_winner',  
                             )
       UserMailer.winner_email_for_coin(@user,@user.email, params[:coins], params[:rank]).deliver_now
@@ -283,6 +285,8 @@ class DashboardController < ApplicationController
     Notification.create(title: "Winner Coins",
                             body: "Congratulations you have won a gift card #{params[:card_number]} and #{params[:coins].to_i} coins.",
                             user_id: @user.id,
+                            sender_id: @current_admin_user.id,
+                            sender_name: @current_admin_user.admin_user_name,
                             notification_type: 'tournament_winner',  
                             )
 

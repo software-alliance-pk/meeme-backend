@@ -175,6 +175,8 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
           Notification.create(title: "Judge Reward",
                           body: "Congratulations you have won 50 coins for completing judgment of 100 posts.",
                           user_id: @current_user.id,
+                          sender_id: @current_admin_user.id,
+                          sender_name: @current_admin_user.admin_user_name,
                           notification_type: 'tournament_judge',  
                           )  
         end
@@ -201,6 +203,8 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
           Notification.create(title: "Judge Reward",
                           body: "Congratulations you have won 50 coins for completing judgment of 100 posts.",
                           user_id: @current_user.id,
+                          sender_id: @current_admin_user.id,
+                          sender_name: @current_admin_user.admin_user_name,
                           notification_type: 'tournament',  
                           )  
         end
