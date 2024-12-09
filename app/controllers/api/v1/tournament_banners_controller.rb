@@ -18,7 +18,8 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
   end
 
   def tournament_posts
-    @tournament_posts = @tournament.posts.where.not(user_id: @current_user.id).paginate(page: params[:page], per_page: 25)
+    # @tournament_posts = @tournament.posts.where.not(user_id: @current_user.id).paginate(page: params[:page], per_page: 25)
+    @tournament_posts = @tournament.posts.where.not(user_id: @current_user.id).all
     if @tournament_posts.present?
     else
     end
