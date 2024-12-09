@@ -130,7 +130,7 @@
                         </div>
                       <% else %>
                         <%= form_with(method: "get") do |f| %>
-                          <%= f.text_field :coins, class: "input", value: "", data: { numeric: true }, id: "rank_user_coins", placeholder: "1000", required: true %>
+                          <%= f.text_field :coins, class: "input", data: { numeric: true }, id: "rank_user_coins", placeholder: "1000", required: true %>
                           <%= f.text_field :user_id, hidden: true, value: tournament_user.user_id %>
                           <%= f.text_field :rank, hidden: true, value: i %>
                           <%= f.submit "", hidden: true %>
@@ -269,13 +269,16 @@
 </main>
 
 <script src="assets/js/main.js"></script>
+<style>
+  #rank_user_coins::placeholder {
+    color: #857d7d !important; /* Light gray */
+    opacity: 1;
+    }  
+</style>
+
 </body>
 
 </html>
-<style>
-  #rank_user_coins::placeholder {
-    color: #e0e0e0; /* Light gray */}
-</style>
 
 <script>
   const inputField = document.getElementById('single_user_coins');
