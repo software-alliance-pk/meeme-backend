@@ -109,7 +109,7 @@
                       <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                      <li><button type="button" onclick="flagTournamentPost('<%= post.user.id %>')">Flag User</button></li>
+                      <li><button type="button" onclick="flagTournamentPost('<%= post.user.id %>', '<%= post.id %>')">Flag User</button></li>
                       <li>
                         <% username = post.user.username %>
                         <% email = post.user.email %>
@@ -529,15 +529,16 @@ width: 65%;
         document.getElementById("tormnt_modal").style.display="block"
     }
 
-   function flagTournamentPost(id) {
+   function flagTournamentPost(id, post_id) {
     $.ajax({
         type: "GET",
         url: "flag_tournament_post",
-        data: { user_id: id },
+        data: { user_id: id, post_id: post_id },
         success: function(response) {
           console.log("success");
             // Show a toast message on success
             showToast("Tournament post flagged successfully!");
+            location.reload();
         },
         error: function(xhr, status, error) {
             // Show a toast message on error
@@ -559,8 +560,11 @@ function showToast(message, isError = false) {
     toast.style.display = "block";
 
     // Automatically hide the toast after 3 seconds
-    setTimeout(() => {
+   setTimeout(() => {
         toast.style.display = "none";
+        if (typeof callback === "function") {
+            callback(); // Execute the callback function
+        }
     }, 3000);
 }
 

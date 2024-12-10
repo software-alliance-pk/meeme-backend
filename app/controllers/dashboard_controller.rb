@@ -300,6 +300,8 @@ class DashboardController < ApplicationController
   def flag_tournament_post
     @user = User.find(params[:user_id])
     puts "user email --------#{@user.inspect}"
+    @post = Post.find_by(id: params[:post_id])
+    @post.destroy
     UserMailer.flag_tournament_post(@user ,@user.email).deliver_now
     render json: { message: "Flagged Email Sent" }, status: :ok
   end
