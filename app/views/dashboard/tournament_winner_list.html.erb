@@ -108,7 +108,8 @@
                     <td><%= tournament_user.user.email %></td>
                     <td><%= post&.likes&.like&.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
                     <td><%= post&.likes&.dislike&.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
-                    <td><%= tournament_user.created_at.strftime("%F") %></td>
+                    <%tournament_user_created_at = TournamentUser.where(user_id: tournament_user.user_id, tournament_banner_id: banner["id"]).first.created_at.strftime("%F") %>
+                    <td><%= tournament_user_created_at %></td>
                     <td>
                       <% if i < 4 %>
                         <div class="dropdown">

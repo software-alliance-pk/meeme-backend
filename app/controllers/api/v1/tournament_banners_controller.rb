@@ -172,7 +172,8 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
         end_of_day = Time.current.end_of_day
         daily_likes_count = Like.where(user_id: @current_user.id, created_at: start_of_day..end_of_day).count
         if daily_likes_count == 100
-          @current_user.update(coins: 50)
+          current_coins = @current_user.coins.to_i + 50
+          @current_user.update(coins: current_coins)
           Notification.create(title: "Judge Reward",
                           body: "Congratulations you have won 50 coins for completing judgment of 100 posts.",
                           user_id: @current_user.id,
@@ -200,13 +201,14 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
         end_of_day = Time.current.end_of_day
         daily_likes_count = Like.where(user_id: @current_user.id, created_at: start_of_day..end_of_day).count
         if daily_likes_count == 100
-          @current_user.update(coins: 50)
+          current_coins = @current_user.coins.to_i + 50
+          @current_user.update(coins: current_coins)
           Notification.create(title: "Judge Reward",
                           body: "Congratulations you have won 50 coins for completing judgment of 100 posts.",
                           user_id: @current_user.id,
                           sender_id: @current_admin_user.id,
                           sender_name: @current_admin_user.admin_user_name,
-                          notification_type: 'tournament',  
+                          notification_type: 'tournament_judge',  
                           )  
         end
         render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
