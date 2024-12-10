@@ -210,8 +210,8 @@ class DashboardController < ApplicationController
     .where('end_date >= ?', Time.zone.now.end_of_day)
     
     if existing_active_tournament.present?
-      flash[:alert] = "Cannot add another because Tournament
-                     #{TournamentBanner.where(enable: true).first.title} is being played."
+      flash[:alert] = "Cannot add another because Tournament named 
+                     #{TournamentBanner.where(enable: true).last.title} is being played."
       redirect_to tournament_banner_path
     else
       if @banner.save
