@@ -248,6 +248,7 @@ class DashboardController < ApplicationController
                             notification_type: 'tournament_winner',  
                             )
       UserMailer.winner_email_for_coin(@user,@user.email, params[:coins], params[:rank]).deliver_now
+      flash[:success] = "#{params[:coins]} coins sent to #{@user.username} successfully."
     end
     if params[:username].present?
       
@@ -291,7 +292,8 @@ class DashboardController < ApplicationController
                             )
 
     if @tournament_winner
-      redirect_to tournament_winner_list_path
+      render json: { user_name: params[:name], coins: params[:coins], gift_card: params[:card_number] }
+      # redirect_to tournament_winner_list_path
     else
       redirect_to tournament_path
     end
@@ -309,7 +311,35 @@ class DashboardController < ApplicationController
   def show_top_10
     @name, @email, @joined = [], [], []
     if params[:banner_id].present?
-      @users = TournamentBanner.find(params[:banner_id]).tournament_users.joins(user: {posts:  :likes}).where(likes: {is_judged: true}).group("tournament_users.id").order("COUNT(likes.id) DESC").limit(10)
+      @users = TournamentUser.find_by_sql("
+                    SELECT ranked_users.*
+                    FROM (
+                      SELECT tu.*, 
+                        user_ranks.max_rank,
+                        ROW_NUMBER() OVER (PARTITION BY tu.user_id ORDER BY user_ranks.max_rank DESC) AS rn
+                      FROM tournament_users tu
+                      JOIN (
+                        SELECT p.user_id, MAX(likes_count - dislikes_count) AS max_rank
+                        FROM posts p
+                        JOIN (
+                          SELECT post_id, 
+                            COUNT(CASE WHEN status = 1 THEN 1 END) AS likes_count, 
+                            COUNT(CASE WHEN status = 2 THEN 1 END) AS dislikes_count
+                          FROM likes
+                          WHERE is_judged = true
+                          GROUP BY post_id
+                        ) AS like_dislike_counts
+                        ON like_dislike_counts.post_id = p.id
+                        WHERE p.tournament_banner_id = #{params[:banner_id]} 
+                        AND p.tournament_meme = true
+                        GROUP BY p.user_id
+                      ) AS user_ranks
+                      ON user_ranks.user_id = tu.user_id
+                    ) AS ranked_users
+                    WHERE ranked_users.rn = 1
+                    ORDER BY ranked_users.max_rank DESC
+                    LIMIT 10
+                  ")
       if @users.present?
         @users.each do |user|
           @name << user.user.username
@@ -333,13 +363,27 @@ class DashboardController < ApplicationController
         if @gift_card.present?
           @gift_card.update(status: 1)
         end
-        redirect_to tournament_winner_list_path
+        Notification.create(title: "Winner Coins",
+                            body: "Congratulations you have won a gift card #{params[:card]} and #{params[:coins].to_i} coins.",
+                            user_id: @user.id,
+                            sender_id: @current_admin_user.id,
+                            sender_name: @current_admin_user.admin_user_name,
+                            notification_type: 'tournament_winner',  
+                            )
+        render json: { user_name: params[:name], coins: params[:coins], gift_card: params[:card] }
       end
     elsif params[:name].present? && params[:coins].present?
       @user = User.find_by(username: params[:name])
       if @user.present?
         @user.update(coins: @user.coins + params[:coins].to_i)
-        redirect_to tournament_winner_list_path
+         Notification.create(title: "Winner Coins",
+                            body: "Congratulations you have won #{params[:coins].to_i} coins.",
+                            user_id: @user.id,
+                            sender_id: @current_admin_user.id,
+                            sender_name: @current_admin_user.admin_user_name,
+                            notification_type: 'tournament_winner',  
+                            )
+        render json: { user_name: params[:name], coins: params[:coins] }
       end
     end
   end

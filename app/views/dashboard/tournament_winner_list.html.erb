@@ -13,6 +13,8 @@
   <%=render "dashboard/sidebar" %>
   <?php require_once 'includes/sidebar.php'; ?>
   <div id="tournament_winner" class="main_side">
+    <div id="toast" class="toast_message success" style="display: none;"></div>
+
     <div id="top_header">
       <div class="left_blk">
         <h1>Tournament Winners</h1>
@@ -27,6 +29,9 @@
           <button class="site_btn prime_btn round" onclick="reward_payout()">Reward Payout</button>
         </div>
       </div>
+        <% if flash[:success].present? %>
+          <div id="success_message" class="toast_message success" style="display: block;"><%= flash[:success] %></div>
+        <% end %>
       <div id="table_blk" style="overflow:visible !important;">
         <table>
           <thead>
@@ -275,6 +280,41 @@
     color: #857d7d !important; /* Light gray */
     opacity: 1;
     }  
+  .toast_message {
+  display: block; /* Ensures toast is visible when created */
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50; /* Green for success */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: fade-in-out 10s forwards;
+
+}
+
+.toast_message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast_message.success {
+  background-color: #4caf50;
+}
+
+.toast_message.error {
+  background-color: #f44336; /* Red for error */
+}
+/* Keyframes for fade-in-out */
+@keyframes fade-in-out {
+    0% { opacity: 0; transform: translateY(20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(20px); }
+}
+
 </style>
 
 </body>
@@ -282,6 +322,26 @@
 </html>
 
 <script>
+ $(document).ready(function(){
+        console.log("hiiiii");
+  const successMessage = document.getElementById("success_message");
+  console.log(successMessage)
+  successMessage.style.display = "block";
+
+    // Automatically hide the toast after 3 seconds
+   setTimeout(() => {
+        successMessage.style.display = "none";
+    }, 3000);
+  
+});
+
+  const selectElement = document.getElementById('place');
+   selectElement.addEventListener('change', function () {
+    const selectedUserName = selectElement.options[selectElement.selectedIndex].textContent;
+    console.log("Selected User Name: " + selectedUserName);
+  });
+
+
   const inputField = document.getElementById('single_user_coins');
   // Attach keypress event listener
   inputField.addEventListener('keypress', function (e) {
@@ -293,6 +353,7 @@
   });  
   
   $('#send_form').on('submit', function (){
+    console.log("form sending----------------");
       event.preventDefault()
       var name = $('#place')[0].value
       var card = $('#single_user_card')[0].value
@@ -303,6 +364,12 @@
           url: "add_reward",
           data: {name: name, card: card, coins: coins},
           success: function(response) {
+            if (response.card_number){
+              showToast(response.coins + " coins and gift card " + response.card_number + " sent to " + response.user_name + " successfully.");
+            }else
+            {
+              showToast(response.coins + " coins sent to " + response.user_name + " successfully.");
+            }
           }
       })
   })
@@ -351,7 +418,7 @@
               // Append the video without removing existing content
               if ($('#post_image video').length === 0) {
                   $('#post_image').prepend(
-                      '<video controls style="width: 100%; height: auto; margin-bottom: 10px; display: block; margin-top: 0;">' +                      '<source src="' + response.post_image + '" type="video/mp4">' +
+                      '<video controls style="width: 100%; height: 200px; margin-bottom: 10px; display: block; margin-top: 0;">' +                      '<source src="' + response.post_image + '" type="video/mp4">' +
                       'Your browser does not support the video tag.' +
                       '</video>'
                   );
@@ -430,12 +497,30 @@
             type: "GET",
             url: "winner-reward",
             data: {name: name, card_number: card_number, coins: coins, tournament_winner: tournament_winner, rank: rank},
-            success: function () {
+            success: function (response) {
                 document.getElementById("tormnt_modal").style.display = "none"
+                showToast(response.coins + " coins and gift card " + response.gift_card + " sent to " + response.user_name + " successfully.");
             }
         })
     }
   }
+
+  function showToast(message, isError = false) {
+    console.log("Inside toast");
+    const toast = document.getElementById("toast");
+
+    // Set the message and class
+    toast.innerText = message;
+    
+    // Show the toast
+    toast.style.display = "block";
+
+    // Automatically hide the toast after 3 seconds
+   setTimeout(() => {
+        toast.style.display = "none";
+        
+    }, 3000);
+}
 
   function close_tormnt_modal(){
     document.getElementById("tormnt_modal").style.display="none"
