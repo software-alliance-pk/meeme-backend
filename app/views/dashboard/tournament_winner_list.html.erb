@@ -322,6 +322,11 @@
 </html>
 
 <script>
+  $(document).on('change', '#place', function () {
+  const selectedUserName = $(this).find('option:selected').text();
+  console.log("Selected User Name: " + selectedUserName);
+});
+
  $(document).ready(function(){
         console.log("hiiiii");
 
@@ -348,14 +353,7 @@
     //   }, 3500);
       }
   
-});
-
-  const selectElement = document.getElementById('place');
-   selectElement.addEventListener('change', function () {
-    const selectedUserName = selectElement.options[selectElement.selectedIndex].textContent;
-    console.log("Selected User Name: " + selectedUserName);
-  });
-
+});  
 
   const inputField = document.getElementById('single_user_coins');
   // Attach keypress event listener
@@ -367,31 +365,33 @@
       }
   });  
   
-  $('#send_form').on('submit', function (){
-    console.log("form sending----------------");
-      event.preventDefault()
-      var name = $('#place')[0].value
-      var card = $('#single_user_card')[0].value
-      var coins = $('#single_user_coins')[0].value
-      document.getElementById("add_gift").style.display="none"
-      $.ajax({
-          type: "GET",
-          url: "add_reward",
-          data: {name: name, card: card, coins: coins},
-          success: function(response) {
-            if (response.card_number){
-              const successMessage = document.getElementById("success_message");
-                if (successMessage){successMessage.remove();}
-              showToast(response.coins + " coins and gift card " + response.card_number + " sent to " + response.user_name + " successfully.");
-            }else
-            {
-              const successMessage = document.getElementById("success_message");
-               if (successMessage){successMessage.remove();}
-                           showToast(response.coins + " coins sent to " + response.user_name + " successfully.");
-            }
-          }
-      })
-  })
+  $(document).on('submit', '#send_form', function (e) {
+    e.preventDefault(); // Prevent the default form submission behavior
+    console.log("Form sending----------------");
+
+    var name = $('#place').val(); // Get the value of the #place element
+    var card = $('#single_user_card').val(); // Get the value of the #single_user_card element
+    console.log("card-----------", card);
+    var coins = $('#single_user_coins').val(); // Get the value of the #single_user_coins element
+
+    document.getElementById("add_gift").style.display = "none";
+
+    $.ajax({
+        type: "GET",
+        url: "add_reward",
+        data: { name: name, card: card, coins: coins },
+        success: function (response) {
+          $('#place').empty()
+          $('#single_user_card, #single_user_coins, #place').val('')
+          $('#place').append('<option value="">' + 'Select User' + '</option>');
+
+            showToast(response.coins + " coins and gift card " + response.gift_card + " sent to " + response.user_name + " successfully.");
+        },
+        error: function () {
+            showToast("Failed to send reward. Please try again.", true);
+        }
+    });
+});
 
   function open_details(name, email, likes, created, dislike, post){
     document.getElementById("winner_modal").style.display="block"
@@ -506,7 +506,6 @@
   }
 
   function get_user_name(event){
-    event.preventDefault();
     var name = document.getElementById("tournament_user_name").innerHTML
     var card_number = document.getElementById("gift_card_number").value
     var coins = document.getElementById("coins").value
@@ -519,8 +518,6 @@
             data: {name: name, card_number: card_number, coins: coins, tournament_winner: tournament_winner, rank: rank},
             success: function (response) {
                 document.getElementById("tormnt_modal").style.display = "none"
-                const successMessage = document.getElementById("success_message");
-              if (successMessage){successMessage.remove(); }
                 showToast(response.coins + " coins and gift card " + response.gift_card + " sent to " + response.user_name + " successfully.");
             }
         })
