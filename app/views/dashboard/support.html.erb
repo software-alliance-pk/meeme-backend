@@ -181,18 +181,19 @@
     });
 
     // Add event listener to the remove preview button (cross icon)
-    removePreview.addEventListener('click', function() {
-        // Clear the preview content
-        previewContent.innerHTML = '';
+      $(document).on('click', '#remove-preview', function() {
+      // Clear the preview content
+        $('#preview-content').html(''); // Clear the preview content
         console.log("removing image");
-        fileInput.value = ''
 
-        // Hide the preview container
-        previewContainer.style.display = 'none';
+        // Reset the file input
+        $('#file-btn')[0].value = '';
 
-        // Hide the cross icon
-        removePreview.style.display = 'none';
+        // Hide the preview container and cross icon
+        $('#file-preview').hide();
+        $('#remove-preview').hide();
     });
+
 
     $('form').on('submit', function () {
         // Hide the file preview container when the form is submitted
