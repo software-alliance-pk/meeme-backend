@@ -132,15 +132,17 @@
 /**
  * Open the conversation using coversationId on Notification Click
  * */
-  $(document).ready(function() {
     const fileInput = document.getElementById('file-btn');
     const previewContainer = document.getElementById('file-preview');
     const previewContent = document.getElementById('preview-content');
     const removePreview = document.getElementById('remove-preview');
     const blurBackground = document.getElementById('blur-background');
+    
 
     // Handle file selection and preview display
-    fileInput.addEventListener('change', function(event) {
+    $(document).on('change', '#file-btn', function(event) {
+      console.log("file changing");
+      
         const files = event.target.files;
 
         // Clear previous previews
@@ -182,6 +184,7 @@
     removePreview.addEventListener('click', function() {
         // Clear the preview content
         previewContent.innerHTML = '';
+        console.log("removing image");
         fileInput.value = ''
 
         // Hide the preview container
@@ -191,6 +194,21 @@
         removePreview.style.display = 'none';
     });
 
+    $('form').on('submit', function () {
+        // Hide the file preview container when the form is submitted
+        
+        previewContent.innerHTML = '';
+
+        // Hide the preview container
+        previewContainer.style.display = 'none';
+
+        // Hide the cross icon
+        removePreview.style.display = 'none';
+    });
+
+
+  $(document).ready(function() {
+    
 
     // Add click event to user blocks
     $(".user_list").on('click', '.user_blk', function() {
