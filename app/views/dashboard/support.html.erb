@@ -19,7 +19,7 @@
             <div class="dropdown form_blk" id="support_dropDown">
               <button type="button" class="dropdown-toggle site_btn chevron w-100" data-bs-auto-close="outside" data-bs-toggle="dropdown"><%= @header_value.present? ? @header_value : "" %></button>
               <ul class="dropdown-menu w-100">
-                <li><button selected type="button" onclick="submission(this.innerText)">Nothing_Happened</button></li>
+                <li><button selected type="button" onclick="submission(this.innerText)">All</button></li>
                 <li><button type="button" onclick="submission(this.innerText)">Abuse <span class="dot"></span></button></li>
                 <%= f.text_field :subject, hidden: true, id: "subject" %>
                 <li><button type="button" onclick="submission(this.innerText)">Payment</button></li>
