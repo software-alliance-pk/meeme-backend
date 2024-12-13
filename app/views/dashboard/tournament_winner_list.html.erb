@@ -29,8 +29,8 @@
           <button class="site_btn prime_btn round" onclick="reward_payout()">Reward Payout</button>
         </div>
       </div>
-        <% if flash[:success].present? %>
-          <div id="success_message" class="toast_message success" style="display: block;"><%= flash[:success] %></div>
+        <% if flash[:notice].present? %>
+          <div id="success_message" class="toast_message success" style="display: block;"><%= flash[:notice] %></div>
         <% end %>
       <div id="table_blk" style="overflow:visible !important;">
         <table>
@@ -324,14 +324,29 @@
 <script>
  $(document).ready(function(){
         console.log("hiiiii");
+
   const successMessage = document.getElementById("success_message");
   console.log(successMessage)
-  successMessage.style.display = "block";
+  if (success_message){
+    successMessage.style.display = "block";
+    setTimeout(function () {
+          
+          
+            $('#success_message').remove();
 
-    // Automatically hide the toast after 3 seconds
-   setTimeout(() => {
-        successMessage.style.display = "none";
-    }, 3000);
+            
+          
+        }, 3000);
+
+      // Automatically hide the toast after 3 seconds
+    // setTimeout(() => {
+    //       successMessage.style.display = "none";
+    //   }, 3000);
+    //   setTimeout(() => {
+    //     console.log("removed")
+    //     successMessage.remove(); // Remove from DOM after animation
+    //   }, 3500);
+      }
   
 });
 
@@ -365,10 +380,14 @@
           data: {name: name, card: card, coins: coins},
           success: function(response) {
             if (response.card_number){
+              const successMessage = document.getElementById("success_message");
+                if (successMessage){successMessage.remove();}
               showToast(response.coins + " coins and gift card " + response.card_number + " sent to " + response.user_name + " successfully.");
             }else
             {
-              showToast(response.coins + " coins sent to " + response.user_name + " successfully.");
+              const successMessage = document.getElementById("success_message");
+               if (successMessage){successMessage.remove();}
+                           showToast(response.coins + " coins sent to " + response.user_name + " successfully.");
             }
           }
       })
@@ -486,7 +505,8 @@
     })
   }
 
-  function get_user_name(){
+  function get_user_name(event){
+    event.preventDefault();
     var name = document.getElementById("tournament_user_name").innerHTML
     var card_number = document.getElementById("gift_card_number").value
     var coins = document.getElementById("coins").value
@@ -499,6 +519,8 @@
             data: {name: name, card_number: card_number, coins: coins, tournament_winner: tournament_winner, rank: rank},
             success: function (response) {
                 document.getElementById("tormnt_modal").style.display = "none"
+                const successMessage = document.getElementById("success_message");
+              if (successMessage){successMessage.remove(); }
                 showToast(response.coins + " coins and gift card " + response.gift_card + " sent to " + response.user_name + " successfully.");
             }
         })

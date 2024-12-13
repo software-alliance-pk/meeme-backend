@@ -248,7 +248,7 @@ class DashboardController < ApplicationController
                             notification_type: 'tournament_winner',  
                             )
       UserMailer.winner_email_for_coin(@user,@user.email, params[:coins], params[:rank]).deliver_now
-      flash[:success] = "#{params[:coins]} coins sent to #{@user.username} successfully."
+      flash.now.notice = "#{params[:coins]} coins sent to #{@user.username} successfully."
     end
     if params[:username].present?
       

@@ -12,7 +12,7 @@ class Api::V1::NotificationsController < Api::V1::ApiController
   end
 
   def unread_count
-    unread_count= @current_user.notifications.where(notification_type: [1,2,3,8], status:'un_read').count
+    unread_count= @current_user.notifications.where(notification_type: [0,2,3,8,10,11], status:'un_read').count
     render json: { unread_notification_count: unread_count }, status: :ok
   end
 
