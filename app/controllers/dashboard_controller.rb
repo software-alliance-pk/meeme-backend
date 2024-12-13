@@ -207,11 +207,11 @@ class DashboardController < ApplicationController
     @banner.enable = true
     @banner.end_date = params[:end_date].to_date.end_of_day
     existing_active_tournament = TournamentBanner.where(enable: true)
-    .where('end_date >= ?', Time.zone.now.end_of_day)
-    
-    if existing_active_tournament.present?
-      flash[:alert] = "Cannot add another because Tournament named 
-                     #{TournamentBanner.where(enable: true).last.title} is being played."
+      .where('start_date <= ? AND end_date >= ?', @banner.end_date, params[:start_date].to_date)
+    if existing_active_tournament.exists?
+      overlapping_tournament = existing_active_tournament.last
+      flash[:alert] = "Cannot add another tournament because Tournament named 
+                      #{overlapping_tournament.title} overlaps with the selected dates."
       redirect_to tournament_banner_path
     else
       if @banner.save

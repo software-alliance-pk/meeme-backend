@@ -205,4 +205,23 @@
       const endPicker = flatpickr('#end_date', flatpickrOptions);
     })
 
+    document.querySelector('form').addEventListener('submit', function (e) {
+    const endDateField = document.getElementById('end_date');
+    const startDateField = document.getElementById('start_date');
+    
+    if (!startDateField.value) {
+        e.preventDefault();
+        alert('Please select a start date.');
+        startDateField.focus();
+        return; // Prevent further execution
+    }
+    
+    if (!endDateField.value) {
+        e.preventDefault();
+        alert('Please select an end date.');
+        endDateField.focus();
+        return; // Prevent further execution
+    }
+});
+
 </script>
