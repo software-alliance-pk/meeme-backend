@@ -24,6 +24,7 @@ def create_push_notification
     scope: scope
   )
   token = authorizer.fetch_access_token!
+  puts("----------------------token: #{token}----------------")
 
   # FCM HTTP v1 Endpoint
   uri = URI.parse("https://fcm.googleapis.com/v1/projects/memee-app-368013/messages:send")
