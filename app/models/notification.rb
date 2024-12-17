@@ -1,5 +1,5 @@
 class Notification < ApplicationRecord
-  after_create :create_push_notification
+  after_create :create_push_notification, if: :not_push_notifications?
   enum status: { un_read: 0, read: 1 }
   enum alert: { enabled: 0, disabled: 1 }
   enum notification_type: { no_type: 0, message: 1, request_send: 2, request_accepted: 3, coin_buy: 4,admin_message: 5, in_app_purchase: 6,sign_up: 7,comment: 8, push_notification: 9, tournament_winner: 10, tournament_judge: 11 }
@@ -9,7 +9,10 @@ class Notification < ApplicationRecord
   # belongs_to :comment, optional: true
   #comment added 
 
-def create_push_notification
+  def not_push_notifications?
+    self.notification_type != "push_notification"
+  end
+  def create_push_notification
   require 'googleauth'
   require 'net/http'
   require 'uri'
