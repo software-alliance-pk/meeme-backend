@@ -14,6 +14,7 @@
         </div>
       </div>
       <div class="outter">
+        <div id="toast" class="toast" style="display: none;"></div>
         <div class="left_blk">
           <%= form_with(model: @notification, local: true, html: {id: 'form'}) do |form| %>
             <div class="top">
@@ -58,13 +59,15 @@
           <div class="list_outter">
             <ul class="list">
               <% if Notification.any? %>
-                <% Notification.where(send_all: true).reverse.each do |history| %>
-                  <li>
-                    <div class="item">
-                      <p class="date"><%= history.created_at.strftime("%m/%d/%Y") %></p>
-                      <p class="txt">Notification was sent</p>
-                    </div>
-                  </li>
+                <% Notification.where(send_all: true).order(created_at: :desc).each do |history| %>
+                  <% if history.send_date.present? && history.send_date.to_date <= Date.today ||  history.send_date.empty?%>
+                    <li>
+                      <div class="item">
+                        <p class="date"><%= history.created_at.strftime("%m/%d/%Y") %></p>
+                        <p class="txt">Notification was sent</p>
+                      </div>
+                    </li>
+                  <%end%>  
                 <% end %>
               <% end %>
             </ul>
@@ -96,6 +99,39 @@
   </section>
 </main>
 
+<style>
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: white;
+    border-radius: 5px;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fade-in-out 10s forwards;
+}
+
+/* Success toast background */
+.toast.success {
+    background-color: #198754;
+}
+
+/* Error toast background */
+.toast.error {
+    background-color: #dc3545;
+}
+
+/* Keyframes for fade-in-out */
+@keyframes fade-in-out {
+    0% { opacity: 0; transform: translateY(20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(20px); }
+}
+</style>
+
 <script>
     $("#form").on('submit', function(event){
         event.preventDefault()
@@ -105,6 +141,7 @@
     function save(){
         var event = jQuery.Event( "submit" );
         $( "#form" ).first().trigger( event );
+        var sendDate = document.querySelector('.datepicker').value; // Select the input by class name
         if ( event.isDefaultPrevented() ) {
             event.currentTarget.submit();
             document.getElementById("notify_confirm").style.display = "none"
@@ -114,6 +151,32 @@
         $("#link")[0].value = ""
         $("#body")[0].value = ""
         $("#send_all").prop("checked", false)
+        if (!sendDate) {
+          showToast("Notification sent successfully.");
+        }
+        else {
+           showToast("Notification scheduled successfully.");
+        }
+    }
+
+    function showToast(message, isError = false) {
+      console.log("Inside toast");
+      const toast = document.getElementById("toast");
+
+      // Set the message and class
+      toast.innerText = message;
+      toast.className = `toast ${isError ? "error" : "success"}`;
+
+      // Show the toast
+      toast.style.display = "block";
+
+      // Automatically hide the toast after 3 seconds
+      setTimeout(() => {
+          toast.style.display = "none";
+          if (typeof callback === "function") {
+              callback(); // Execute the callback function
+          }
+      }, 3000);
     }
 
     function cancel(){

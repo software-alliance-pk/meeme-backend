@@ -12,7 +12,13 @@ json.user_stories user_stories_map.map do |user_id, user_stories|
     json.user_image story.user.profile_image.attached? ? story.user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
     json.story_created story.created_at
     json.description story.description
-    json.story_image story.story_image.attached? ? story.story_image.blob.url : ''
+    if story.story_image.attached? && story.story_image.image?
+      json.story_image story.story_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url
+    elsif story.story_image.attached? && story.story_image.video?
+      json.story_image story.story_image.blob.url
+    else 
+      json.story_image ''
+    end
     json.story_type story.story_image.content_type
     json.story_likes story.likes.count
   end
