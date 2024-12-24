@@ -142,7 +142,7 @@ Rails.application.routes.draw do
       get '/tutorials', to: 'tutorials#tutorial'
       resources :posts do
         collection do
-          put :update_posts
+          patch :update_posts
           post :explore
           get :following_posts
           get :recent_posts
