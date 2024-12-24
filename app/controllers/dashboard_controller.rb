@@ -690,16 +690,18 @@ class DashboardController < ApplicationController
 
   def send_gift_card
     @user = User.find_by(email: params[:email])
-    UserMailer.amazon_purshase_card(@user, params[:card_number], params[:coins]).deliver_now
-    coins_to_subtract = params[:coins].to_i
-    @user.update(coins: @user.coins - coins_to_subtract)
-    
     request = GiftCardRequest.find_by(id: params[:requestId])
-    if request
+    if request && @user.coins >= request.coins
       request.update(status: 1)
+      UserMailer.amazon_purshase_card(@user, params[:card_number], params[:coins]).deliver_now
+      coins_to_subtract = params[:coins].to_i
+      @user.update(coins: @user.coins - coins_to_subtract)
+      render json: { message: "Gift Card Sent Via Email" }, status: :ok
+    else 
+        render json: { message: "Failed to send Gift Card" }, status: :unprocessable_entity
     end
     
-    render json: { message: "Gift Card Sent Via Email" }, status: :ok
+    
   end
   
 
