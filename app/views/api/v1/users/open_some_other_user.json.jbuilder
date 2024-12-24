@@ -28,5 +28,5 @@ json.profile do
     json.rarity badge.rarity
     json.badge_image badge.badge_image.attached? ? badge.badge_image.blob.url : ''
   end
-  json.all_post_count @user.posts.count
+  json.all_post_count @user.posts.where(tournament_meme:false).count
 end
