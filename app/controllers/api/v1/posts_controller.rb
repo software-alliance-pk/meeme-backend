@@ -216,6 +216,10 @@ class Api::V1::PostsController < Api::V1::ApiController
       @post.update(post_params)
       # Post.add_image_variant_update(@post)
       @post.update(duplicate_tags: @tags) if @tags.present?
+      if params[:tag_list] == "[]"
+        @tags = []
+        @post.update(duplicate_tags: @tags)
+      end
       if params[:post_image].present?
         if params[:post_image].content_type[0..4]=="video"
           @post.update(thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
