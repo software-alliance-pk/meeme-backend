@@ -155,7 +155,7 @@
                                                     <%= f.text_field :rank, id: "user_rank", hidden: true %>
                                                 </div>
                                                  <div class="btn_blk mt-5">
-                                            <button class="site_btn prime_btn round w-100" onclick="get_user_name()">Send</button>
+                                            <button class="site_btn prime_btn round w-100" onclick="get_user_name(event)">Send</button>
                                           </div>
                                             </div>
                                          
@@ -486,7 +486,8 @@
         document.getElementById("user_joined").innerHTML= created
   }
 
-  function get_user_name(){
+  function get_user_name(e){
+    e.preventDefault();
     var card_number = document.getElementById("gift_card_number").value
     var coins = document.getElementById("user_coins").innerText
     var email = document.getElementById("user_email").innerText
@@ -503,7 +504,7 @@
             },
             error: function (xhr, status, error) {
                 console.log("Card send error == ", xhr.responseJSON);
-                showToast("User has nnsufficient coins.", true);
+                showToast("User has insufficient coins.", true);
             }
         })
     }
@@ -522,11 +523,8 @@
 
       // Automatically hide the toast after 3 seconds
       setTimeout(() => {
-          toast.style.display = "none";
-          if (typeof callback === "function") {
-              callback(); // Execute the callback function
-          }
-      }, 3000);
+          toast.style.display = "none";  
+      }, 5000);
     }
 
    function close_tormnt_modal(){
