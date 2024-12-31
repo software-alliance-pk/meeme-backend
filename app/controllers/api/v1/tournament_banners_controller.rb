@@ -2,8 +2,8 @@ require 'tempfile'
 require 'securerandom'
 class Api::V1::TournamentBannersController < Api::V1::ApiController
   before_action :authorize_request
-  before_action :find_tournament ,except: [:create_tournament]
-  before_action :check_expiration, except: [:create_tournament]
+  before_action :find_tournament ,except: [:create_tournament, :future_tournament]
+  before_action :check_expiration, except: [:create_tournament, :future_tournament]
   before_action :check_user_is_in_tournament, only: [:enroll_in_tournament]
   before_action :find_post, only: [:forwarding_memee_to_tournament]
   before_action :find_tournament_rule, only: :show_tournament_rules
@@ -269,6 +269,24 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     render json: { forwarded_meme: @tournament_meme, post_type: @tournament_meme.post_image.content_type, message: 'Meme Forwarded Successfully' }, status: :ok
   end
 
+  def future_tournament  
+     @tournament = TournamentBanner.where(enable: true)
+    .where('start_date > ?', Time.zone.now.end_of_day.to_date)
+    .first
+
+    if @tournament
+      render json: { 
+        tournament: @tournament,
+        tournament_banner_image: @tournament.tournament_banner_photo.attached? ? @tournament.tournament_banner_photo.blob.url : '',
+        tournament_users_count: @tournament.tournament_users.count,
+        tournament_posts_count: @tournament.posts.count,
+        is_current_user_enrolled: @tournament.users.find_by(id: @current_user.id).present?
+      }, status: :ok
+    else
+      render json: { message: 'No Future Tournament' }, status: :not_found
+    end
+  end
+  
   private
 
   def find_tournament
