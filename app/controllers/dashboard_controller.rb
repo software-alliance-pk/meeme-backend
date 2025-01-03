@@ -199,7 +199,7 @@ class DashboardController < ApplicationController
   
 
   def tournament_banner
-    @tournament_banner = TournamentBanner.all
+    @tournament_banner = TournamentBanner.order(start_date: :desc)
   end
 
   def tournament_banner_create
