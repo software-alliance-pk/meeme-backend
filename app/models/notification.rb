@@ -2,7 +2,7 @@ class Notification < ApplicationRecord
   after_create :create_push_notification, if: :not_push_notifications?
   enum status: { un_read: 0, read: 1 }
   enum alert: { enabled: 0, disabled: 1 }
-  enum notification_type: { no_type: 0, message: 1, request_send: 2, request_accepted: 3, coin_buy: 4,admin_message: 5, in_app_purchase: 6,sign_up: 7,comment: 8, push_notification: 9, tournament_winner: 10, tournament_judge: 11 }
+  enum notification_type: { no_type: 0, message: 1, request_send: 2, request_accepted: 3, coin_buy: 4,admin_message: 5, in_app_purchase: 6,sign_up: 7,comment: 8, push_notification: 9, tournament_winner: 10, tournament_judge: 11, admin_chat: 12 }
   belongs_to :user, optional: true
   belongs_to :conversation, optional: true
   belongs_to :message, optional: true

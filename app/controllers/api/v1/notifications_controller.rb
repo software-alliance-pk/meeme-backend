@@ -2,8 +2,8 @@ class Api::V1::NotificationsController < Api::V1::ApiController
   before_action :authorize_request
 
   def user_notifications
-    @notifications=@current_user.notifications.where(notification_type: [2,3,8,10,11]).order(created_at: :desc)
-    @current_user.notifications.where(notification_type: [2,3,8,10,11]).update_all(status: 'read')
+    @notifications=@current_user.notifications.where(notification_type: [2,3,8,10,11,12]).order(created_at: :desc)
+    @current_user.notifications.where(notification_type: [2,3,8,10,11,12]).update_all(status: 'read')
     @notifications=@notifications.group_by{ |x| x.created_at.strftime('%d,%m,%Y') }
     if @notifications.present?
     else
@@ -12,7 +12,7 @@ class Api::V1::NotificationsController < Api::V1::ApiController
   end
 
   def unread_count
-    unread_count= @current_user.notifications.where(notification_type: [2,3,8,10,11], status:'un_read').count
+    unread_count= @current_user.notifications.where(notification_type: [2,3,8,10,11,12], status:'un_read').count
     render json: { unread_notification_count: unread_count }, status: :ok
   end
 
