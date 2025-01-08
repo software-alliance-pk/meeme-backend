@@ -64,7 +64,8 @@ class SupportController < ApplicationController
                                     sender_id: current_admin_user.id,
                                     sender_name: current_admin_user.admin_user_name,
                                     redirection_type: 'support',
-                                    notification_type: 'admin_chat'
+                                    notification_type: 'admin_chat',
+                                    message_ticket:  @message_ticket
                                     )
             end
         else
