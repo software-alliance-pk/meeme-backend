@@ -96,7 +96,7 @@ class DashboardController < ApplicationController
 
   def tournament
     @tournament_banner_name = params[:tournament_banner_id]
-    @tournament_banner = Like.where(is_judged: true).joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true })
+    @tournament_banner = Like.where(is_judged: true).joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true, flagged_by_user: [] })
       .group(:post_id).select('post_id, COUNT(CASE WHEN status = 1 THEN 1 END) AS likes, COUNT(CASE WHEN status = 2 THEN 1 END) AS dislikes').map { |record| [record.post_id, record.likes - record.dislikes] }.to_h.sort_by { |_, v| -v }.to_h
     ordered_ids = @tournament_banner.keys
     @posts = Post.where(id: ordered_ids).order(Arel.sql("array_position(ARRAY[#{ordered_ids.join(',')}], id)")).paginate(page: params[:page], per_page: 10)
@@ -303,7 +303,9 @@ class DashboardController < ApplicationController
     @user = User.find(params[:user_id])
     puts "user email --------#{@user.inspect}"
     @post = Post.find_by(id: params[:post_id])
-    @post.destroy
+    @flagged = @post.flagged_by_user
+    @flagged << @current_admin_user.id
+    @post.update(flagged_by_user: @flagged, flag_message: 'Post flagged by admin') 
     UserMailer.flag_tournament_post(@user ,@user.email).deliver_now
     render json: { message: "Flagged Email Sent" }, status: :ok
   end
@@ -332,6 +334,7 @@ class DashboardController < ApplicationController
                         ON like_dislike_counts.post_id = p.id
                         WHERE p.tournament_banner_id = #{params[:banner_id]} 
                         AND p.tournament_meme = true
+                        AND p.flagged_by_user.length == 0
                         GROUP BY p.user_id
                       ) AS user_ranks
                       ON user_ranks.user_id = tu.user_id

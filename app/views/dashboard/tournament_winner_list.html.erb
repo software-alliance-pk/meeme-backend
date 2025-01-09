@@ -69,6 +69,7 @@
                         ON like_dislike_counts.post_id = p.id
                         WHERE p.tournament_banner_id = #{banner['id']} 
                         AND p.tournament_meme = true
+                        AND (p.flagged_by_user = '{}' OR array_length(p.flagged_by_user, 1) IS NULL)
                         GROUP BY p.user_id
                       ) AS user_ranks
                       ON user_ranks.user_id = tu.user_id
