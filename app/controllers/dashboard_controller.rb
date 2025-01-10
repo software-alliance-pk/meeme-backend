@@ -96,7 +96,7 @@ class DashboardController < ApplicationController
 
   def tournament
     @tournament_banner_name = params[:tournament_banner_id]
-    @tournament_banner = Like.where(is_judged: true).joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true, flagged_by_user: [] })
+    @tournament_banner = Like.where(is_judged: true).joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true, flagged_by_user: [], deleted_by_user: false})
       .group(:post_id).select('post_id, COUNT(CASE WHEN status = 1 THEN 1 END) AS likes, COUNT(CASE WHEN status = 2 THEN 1 END) AS dislikes').map { |record| [record.post_id, record.likes - record.dislikes] }.to_h.sort_by { |_, v| -v }.to_h
     ordered_ids = @tournament_banner.keys
     @posts = Post.where(id: ordered_ids).order(Arel.sql("array_position(ARRAY[#{ordered_ids.join(',')}], id)")).paginate(page: params[:page], per_page: 10)
@@ -334,6 +334,7 @@ class DashboardController < ApplicationController
                         ON like_dislike_counts.post_id = p.id
                         WHERE p.tournament_banner_id = #{params[:banner_id]} 
                         AND p.tournament_meme = true
+                        AND p.deleted_by_user = false
                         AND (p.flagged_by_user = '{}' OR array_length(p.flagged_by_user, 1) IS NULL)
                         GROUP BY p.user_id
                       ) AS user_ranks

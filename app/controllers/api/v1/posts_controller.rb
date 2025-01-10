@@ -246,8 +246,9 @@ class Api::V1::PostsController < Api::V1::ApiController
 
     post_ids.each do |post_id|
       post = Post.find_by(id: post_id)
-      if post.present?
-        post.destroy
+      if post.present? 
+        post.destroy if post.tournament_meme == false
+        post.update(deleted_by_user: true) if post.tournament_meme == true
         deleted_posts << post_id
       end
     end
@@ -558,7 +559,8 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def current_user_tournament_posts
-    @user_tournament_post = params[:page].present? ? @current_user.posts.where(tournament_meme: true).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @current_user.posts.where(tournament_meme: true).by_recently_created(200)
+    
+    @user_tournament_post = params[:page].present? ? @current_user.posts.where(tournament_meme: true, deleted_by_user: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @current_user.posts.where(tournament_meme: true).by_recently_created(200)
     unless @user_tournament_post.present?
       render json: { message: "No tournament posts for this particular user" }, status: :not_found
     end
