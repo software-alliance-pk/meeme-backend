@@ -370,7 +370,7 @@
     e.preventDefault(); // Prevent the default form submission behavior
     console.log("Form sending----------------");
 
-    var name = $('#place').val(); // Get the value of the #place element
+    var email = $('#place').val(); // Get the value of the #place element
     var card = $('#single_user_card').val(); // Get the value of the #single_user_card element
     console.log("card-----------", card);
     var coins = $('#single_user_coins').val(); // Get the value of the #single_user_coins element
@@ -380,7 +380,7 @@
     $.ajax({
         type: "GET",
         url: "add_reward",
-        data: { name: name, card: card, coins: coins },
+        data: { email: email, card: card, coins: coins },
         success: function (response) {
           $('#place').empty()
           $('#single_user_card, #single_user_coins, #place').val('')
@@ -479,17 +479,15 @@
           url: "show_top_10",
           data: {banner_id: banner_id},
           success: function(response) {
-              var i = 0;
-              response.names.forEach(function (name){
-                  // var clas = 'radio_' + (i + 1)
-                  // var id = 'check_' + (i + 1)
-                  // $("#table_head").append("<tr><td><input type='radio'/></td><td>" + (i + 1) + "</td><td>" + name + "</td><td>" + response.emails[i] + "</td><td>" + response.joined[i] + "</td></tr>");
-                  // $('tr td:first-child').attr('class', clas)
-                  // $(clas).attr('id', id)
-                  // i+=1;
-                  $('#place').append('<option value="' + name + '">' + name + '</option>');
-                  i+=1
-              })
+            if (response.names && response.emails) {
+              console.log(response.emails)
+              for (var i = 0; i < response.names.length; i++) {
+                var name = response.names[i];
+                var email = response.emails[i];
+                // Append option with name and email
+                $('#place').append('<option value="' + email + '" data-name="' + name + '">' + name + '</option>');
+              }
+            }
           }
       })
   }
@@ -511,12 +509,13 @@
     var card_number = document.getElementById("gift_card_number").value
     var coins = document.getElementById("coins").value
     var rank =  document.getElementById("user_rank").value
+    var email = document.getElementById("tournament_user_email").innerHTML
     var tournament_winner = "Tournament_winner"
     if(card_number !== "" && coins !== "") {
         $.ajax({
             type: "GET",
             url: "winner-reward",
-            data: {name: name, card_number: card_number, coins: coins, tournament_winner: tournament_winner, rank: rank},
+            data: {name: name, card_number: card_number, coins: coins, tournament_winner: tournament_winner, rank: rank, email: email},
             success: function (response) {
                 document.getElementById("tormnt_modal").style.display = "none"
                 showToast(response.coins + " coins and gift card " + response.gift_card + " sent to " + response.user_name + " successfully.");

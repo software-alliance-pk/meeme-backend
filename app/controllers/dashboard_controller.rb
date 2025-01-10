@@ -264,21 +264,21 @@ class DashboardController < ApplicationController
   end
 
   def winner_reward
-    if params[:name].present? && params[:coins].present? && params[:card_number].present? && params[:tournament_winner].present?
+    if params[:email].present? && params[:coins].present? && params[:card_number].present? && params[:tournament_winner].present?
       @gift_card = GiftReward.find_by(card_number: params[:card_number])
       if @gift_card.present?
         @gift_card.update(status: 1)
       end
-      @user = User.find_by(username: params[:name])
+      @user = User.find_by(email: params[:email])
       @user.update(coins: @user.coins + params[:coins].to_i)
       @tournament_winner = true
       UserMailer.winner_email(@user ,@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
-    elsif params[:name].present? && params[:coins].present? && params[:card_number].present? && params[:tournament].present?
+    elsif params[:email].present? && params[:coins].present? && params[:card_number].present? && params[:tournament].present?
       @gift_card = GiftReward.find_by(card_number: params[:card_number])
       if @gift_card.present?
         @gift_card.update(status: 1)
       end
-      @user = User.find_by(username: params[:name])
+      @user = User.find_by(email: params[:email])
       @user.update(coins: @user.coins + params[:coins].to_i)
       @tournament_winner = false
       UserMailer.winner_email(@user ,@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
@@ -334,7 +334,7 @@ class DashboardController < ApplicationController
                         ON like_dislike_counts.post_id = p.id
                         WHERE p.tournament_banner_id = #{params[:banner_id]} 
                         AND p.tournament_meme = true
-                        AND p.flagged_by_user.length == 0
+                        AND (p.flagged_by_user = '{}' OR array_length(p.flagged_by_user, 1) IS NULL)
                         GROUP BY p.user_id
                       ) AS user_ranks
                       ON user_ranks.user_id = tu.user_id
@@ -357,8 +357,8 @@ class DashboardController < ApplicationController
   end
 
   def add_reward
-    if params[:name].present? && params[:coins].present? && params[:card].present?
-      @user = User.find_by(username: params[:name])
+    if params[:email].present? && params[:coins].present? && params[:card].present?
+      @user = User.find_by(email: params[:email])
       if @user.present?
         @user.update(coins: @user.coins + params[:coins].to_i)
         UserMailer.reward_payout(@user,@user.email, params[:coins], params[:card]).deliver_now
@@ -373,10 +373,10 @@ class DashboardController < ApplicationController
                             sender_name: @current_admin_user.admin_user_name,
                             notification_type: 'tournament_winner',  
                             )
-        render json: { user_name: params[:name], coins: params[:coins], gift_card: params[:card] }
+        render json: { user_name: @user.username, coins: params[:coins], gift_card: params[:card] }
       end
-    elsif params[:name].present? && params[:coins].present?
-      @user = User.find_by(username: params[:name])
+    elsif params[:email].present? && params[:coins].present?
+      @user = User.find_by(email: params[:email])
       if @user.present?
         @user.update(coins: @user.coins + params[:coins].to_i)
          Notification.create(title: "Winner Coins",
@@ -386,7 +386,7 @@ class DashboardController < ApplicationController
                             sender_name: @current_admin_user.admin_user_name,
                             notification_type: 'tournament_winner',  
                             )
-        render json: { user_name: params[:name], coins: params[:coins] }
+        render json: { user_name: @user.username, coins: params[:coins] }
       end
     end
   end
