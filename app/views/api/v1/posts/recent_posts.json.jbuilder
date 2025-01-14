@@ -1,5 +1,6 @@
 json.recent_posts do
   json.(@recent_posts) do |post|
+    begin
       json.post post rescue ""
       json.pending_requests @current_user.followers.pending.count
       json.username post.user.username
@@ -11,6 +12,9 @@ json.recent_posts do
       json.liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false
       json.post_likes post.likes.count
       json.post_comments_count post.comments.count
+    rescue => e
+      Rails.logger.error("Error processing post with ID #{post.id}: #{e.message}")
+    end 
     end
 end
 json.coins @current_user.coins
