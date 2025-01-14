@@ -3,6 +3,7 @@ if @posts.present?
   json.post_count @posts.count
   json.explore_posts do
     json.(@posts) do |post|
+      begin
       json.user_id post.user.id
       json.username post.user.username
       json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
@@ -14,6 +15,9 @@ if @posts.present?
       json.liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false
       json.post_likes post.likes.count
       json.post_comments_count post.comments.count
+      rescue => e
+        Rails.logger.error("Skipping post ID #{post.id} due to error: #{e.message}")
+      end
     end
   end
 else

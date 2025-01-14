@@ -1,5 +1,6 @@
 json.following_posts do
   json.(@following_posts) do |post|
+    begin
     json.post post rescue ""
     json.username post.user.username
     json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
@@ -22,6 +23,9 @@ json.following_posts do
         json.parent_id child_comment.parent_id
         json.child_comment_likes child_comment.likes.count
       end
+    end
+    rescue => e
+      Rails.logger.error("Skipping post ID #{post.id} due to error: #{e.message}")
     end
   end
 end

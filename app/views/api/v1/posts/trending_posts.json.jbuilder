@@ -1,5 +1,6 @@
 json.trending_posts do
   json.(@trending_posts.to_h.keys) do |post|
+    begin
     if post.user.present?
       json.user_id post.user.id
       json.username post.user.username
@@ -30,6 +31,9 @@ json.trending_posts do
         json.parent_id child_comment.parent_id
         json.child_comment_likes child_comment.likes.count
       end
+    end
+    rescue => e
+      Rails.logger.error("Skipping post ID #{post.id} due to error: #{e.message}")
     end
   end
 end
