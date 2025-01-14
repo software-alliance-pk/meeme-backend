@@ -266,12 +266,12 @@
                         <div class="col-1">
                           <div class="left_blk">
                             <p class="mb-4">Phone</p>
-                            <p>Bio</p>
+                            <p class="mb-4">Bio</p>
                           </div>
                         </div>
                         <div class="col-11">
-                          <p class="mb-4" id="profile_phone"></p>
-                          <p id="profile_bio"></p>
+                            <p class="mb-4" id="profile_phone"></p>
+                            <p class="mb-4" id="profile_bio"></p>
                         </div>
                       </div>
                     </div>
@@ -302,26 +302,10 @@
                       </div>
                     </div>
                     <div class="col-6">
-                      <div class="outter ">
+                      <div class="outter h_20">
                         <h5>Tournament Entry</h5>
-                        <div class="detail">
-                          <div class="row">
-                            <div class="col-3">
-                              <div class="left_blk">
-                                <p class="mb-4">1. Season 1: </p>
-                                <p class="mb-4">2. Season 2: </p>
-                                <p class="mb-4">3. Season 3: </p>
-                              </div>
-                            </div>
-                            <div class="col-9">
-                              <a href="#" class="mb-4">https://bit.ly/3VTSVlZ</a>
-                              <a href="#" class="mb-4">https://bit.ly/3VTSVlZ</a>
-                              <a href="#" class="mb-4">https://bit.ly/3VTSVlZ</a>
-
-                            </div>
-                          </div>
+                        <div class="detail" id="tournament_blk">
                         </div>
-
                       </div>
                     </div>
                   </div>
@@ -367,6 +351,9 @@
 </main>
 
 <style>
+  #profile_phone, #profile_bio {
+  min-height: 26px; /* Ensures there's space even if the content is empty */
+}
 .sidebar {
   height: 100%;
   width: -400px;
@@ -549,6 +536,7 @@ width: 65%;
                 var i = 0
                 data.user.forEach(function (user) {
                     $('#badge_blk').empty();
+                    $('#tournament_blk').empty();
                     if (user.email === user_email) {
                         document.getElementById("profile_username").innerHTML = user.username;
                         document.getElementById("profile_email").innerHTML = user.email;
@@ -578,6 +566,17 @@ width: 65%;
                         parent_div.appendChild(div1)
                         i++;
                     })
+                }
+                if (data.tournament_banners.length !== 0) {
+                  data.tournament_banners.forEach(function (tournament_title, index) {
+                    var parent_div = document.getElementById("tournament_blk");
+                    // Create a wrapper div for each entry
+                    var wrapperDiv = document.createElement("div");
+                    var span = document.createElement("span");
+                    span.innerHTML = (index + 1) + ". " + tournament_title; // Add index + 1 before the title
+                    wrapperDiv.appendChild(span);
+                    parent_div.appendChild(wrapperDiv);
+                  });
                 }
             },
         });

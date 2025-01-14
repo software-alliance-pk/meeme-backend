@@ -50,7 +50,7 @@ class Api::V1::PaymentsController < Api::V1::ApiController
 
   def add_a_card
     if @current_user.user_cards.find_by(user_id: @current_user.id).present?
-      render json: { message: "Card already exits" }, status: :bad_request
+      render json: { message: "Card already exists." }, status: :bad_request
     else
       begin
       response = StripeService.create_stripe_customer_card(@current_user, params)

@@ -45,7 +45,8 @@
                   </div>
                 </div>
                 <div class="bottom banner_date">
-                  <p><%=tournament_banner.start_date.present? ? tournament_banner.start_date.strftime("%B %Y"): "No date added" %></p>
+                    <p><%= tournament_banner.start_date.present? ? "#{tournament_banner.start_date.strftime('%d %b %Y')} - #{tournament_banner.end_date.strftime('%d %b %Y')}" : "No date added" %></p>                  
+                      <p><%= "Ended" if tournament_banner.end_date < Date.today %></p>
                 </div>
               </div>
             </div>
@@ -187,7 +188,40 @@
     })
 
     document.addEventListener('DOMContentLoaded', function() {
-        flatpickr('.datepicker');
+      const flatpickrOptions = {
+        minDate: 'today', // Prevent past dates
+        dateFormat: 'Y-m-d' // Ensure consistent date format
+      };
+
+      // Initialize Flatpickr for both fields
+      const startPicker = flatpickr('#start_date', {
+        ...flatpickrOptions, // Common options
+        onChange: function(selectedDates, dateStr) {
+          // When a start_date is selected, update the minDate for end_date
+          endPicker.set('minDate', dateStr);
+        }
+      });
+
+      const endPicker = flatpickr('#end_date', flatpickrOptions);
     })
+
+    document.querySelector('form').addEventListener('submit', function (e) {
+    const endDateField = document.getElementById('end_date');
+    const startDateField = document.getElementById('start_date');
+    
+    if (!startDateField.value) {
+        e.preventDefault();
+        alert('Please select a start date.');
+        startDateField.focus();
+        return; // Prevent further execution
+    }
+    
+    if (!endDateField.value) {
+        e.preventDefault();
+        alert('Please select an end date.');
+        endDateField.focus();
+        return; // Prevent further execution
+    }
+});
 
 </script>

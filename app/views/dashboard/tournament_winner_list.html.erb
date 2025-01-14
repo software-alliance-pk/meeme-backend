@@ -13,6 +13,8 @@
   <%=render "dashboard/sidebar" %>
   <?php require_once 'includes/sidebar.php'; ?>
   <div id="tournament_winner" class="main_side">
+    <div id="toast" class="toast_message success" style="display: none;"></div>
+
     <div id="top_header">
       <div class="left_blk">
         <h1>Tournament Winners</h1>
@@ -27,7 +29,10 @@
           <button class="site_btn prime_btn round" onclick="reward_payout()">Reward Payout</button>
         </div>
       </div>
-      <div id="table_blk">
+        <% if flash[:notice].present? %>
+          <div id="success_message" class="toast_message success" style="display: block;"><%= flash[:notice] %></div>
+        <% end %>
+      <div id="table_blk" style="overflow:visible !important;">
         <table>
           <thead>
           <tr>
@@ -35,6 +40,7 @@
             <th style="width: 19rem">Name</th>
             <th style="width: 26rem">Email</th>
             <th style="width: 12rem">Up Vote</th>
+            <th style="width: 12rem">Down Vote</th>
             <th style="width: 14rem">Date Joined</th>
             <th style="width: 15rem">Reward</th>
           </tr>
@@ -42,8 +48,39 @@
           <tbody>
             <% banner = session[:banner] %>
             <% if banner.present? %>
-              <% users = TournamentBanner.find(banner["id"]).tournament_users.joins(user: {posts:  :likes}).where(likes: {is_judged: true}).group("tournament_users.id").order("COUNT(likes.id) DESC").limit(10) %>
-            <% end %>
+                <%users = TournamentUser.find_by_sql("
+                    SELECT ranked_users.*
+                    FROM (
+                      SELECT tu.*, 
+                        user_ranks.max_rank,
+                        ROW_NUMBER() OVER (PARTITION BY tu.user_id ORDER BY user_ranks.max_rank DESC) AS rn
+                      FROM tournament_users tu
+                      JOIN (
+                        SELECT p.user_id, MAX(likes_count - dislikes_count) AS max_rank
+                        FROM posts p
+                        JOIN (
+                          SELECT post_id, 
+                            COUNT(CASE WHEN status = 1 THEN 1 END) AS likes_count, 
+                            COUNT(CASE WHEN status = 2 THEN 1 END) AS dislikes_count
+                          FROM likes
+                          WHERE is_judged = true
+                          GROUP BY post_id
+                        ) AS like_dislike_counts
+                        ON like_dislike_counts.post_id = p.id
+                        WHERE p.tournament_banner_id = #{banner['id']} 
+                        AND p.tournament_meme = true
+                        AND p.deleted_by_user = false
+                        AND (p.flagged_by_user = '{}' OR array_length(p.flagged_by_user, 1) IS NULL)
+                        GROUP BY p.user_id
+                      ) AS user_ranks
+                      ON user_ranks.user_id = tu.user_id
+                    ) AS ranked_users
+                    WHERE ranked_users.rn = 1
+                    ORDER BY ranked_users.max_rank DESC
+                    LIMIT 10
+                  ")%>
+
+              <% end %>
             <% i = 0 %>
             <% if users.present? %>
               <% users.each do |tournament_user| %>
@@ -73,11 +110,13 @@
                       <% end %>
                     </td>
                     <% post = get_most_liked_post(tournament_user, banner["id"])%>
-                    <td onclick="open_details('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=post&.likes&.like&.count %>',
-                    '<%= post&.created_at&.strftime('%F') rescue ""%>', '<%=post&.likes&.where(status: "dislike")&.count%>', '<%= post.id%>' )"><%= tournament_user.user.username %></td>
+                    <td style="cursor: pointer;" onclick="open_details('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=post&.likes&.like&.count %>',
+                    '<%= post&.created_at&.strftime('%F') rescue ""%>', '<%=post&.likes&.where(status: "dislike")&.count%>', '<%= post&.id%>' )"><%= tournament_user.user.username %></td>
                     <td><%= tournament_user.user.email %></td>
-                    <td><%= post&.likes&.like.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
-                    <td><%= tournament_user.created_at.strftime("%F") %></td>
+                    <td><%= post&.likes&.like&.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
+                    <td><%= post&.likes&.dislike&.count if tournament_user.user.posts.where(tournament_banner_id: banner["id"]).present? %></td>
+                    <%tournament_user_created_at = TournamentUser.where(user_id: tournament_user.user_id, tournament_banner_id: banner["id"]).first.created_at.strftime("%F") %>
+                    <td><%= tournament_user_created_at %></td>
                     <td>
                       <% if i < 4 %>
                         <div class="dropdown">
@@ -85,21 +124,21 @@
                             Gift Card
                           </button>
                           <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                              <button type="button" onclick="disable_user('<%= tournament_user.user.id %>')">Disable
-                                Account
-                              </button>
-                            </li>
+                            <%# <li> %>
+                              <%# <button type="button" onclick="disable_user('<%= tournament_user.user.id  %>
+                                <%# Disable Account %>
+                              <%# </button> %>
+                            <%# </li> %>
                             <li>
                               <button type="button" onclick="open_tormnt_modal('<%=tournament_user.user.username%>', '<%=tournament_user.user.email%>', '<%=post&.likes&.where(status: "like")&.count%>',
-                                '<%= tournament_user.user.created_at.strftime('%b %d, %Y') %>', '<%=post&.likes&.where(status: "dislike")&.count%>,', '<%= i %>') ; image('<%=tournament_user.user.username%>')">Reward
+                                '<%= tournament_user.user.created_at.strftime('%b %d, %Y') %>', '<%=post&.likes&.where(status: "dislike")&.count%>', '<%= i %>', '<%=post&.post_image&.blob&.url%>','<%=post&.post_image&.content_type&.split('/')&.first%>')">Reward
                               </button>
                             </li>
                           </ul>
                         </div>
                       <% else %>
                         <%= form_with(method: "get") do |f| %>
-                          <%= f.text_field :coins, class: "input", value: "1000", data: { numeric: true }, id: "rank_user_coins" %>
+                          <%= f.text_field :coins, class: "input", data: { numeric: true }, id: "rank_user_coins", placeholder: "1000", required: true %>
                           <%= f.text_field :user_id, hidden: true, value: tournament_user.user_id %>
                           <%= f.text_field :rank, hidden: true, value: i %>
                           <%= f.submit "", hidden: true %>
@@ -167,6 +206,9 @@
                                 <div class="right_blk">
                                     <div class="img">
                                         <img src="" alt="" id="image">
+                                        <video controls>
+                                          <source src="" type="video/mp4" alt="" id="video">
+                                        </video>
                                     </div>
                                     <div class="vote_blk">
                                         <span class="vote">
@@ -235,11 +277,86 @@
 </main>
 
 <script src="assets/js/main.js"></script>
+<style>
+  #rank_user_coins::placeholder {
+    color: #857d7d !important; /* Light gray */
+    opacity: 1;
+    }  
+  .toast_message {
+  display: block; /* Ensures toast is visible when created */
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50; /* Green for success */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: fade-in-out 10s forwards;
+
+}
+
+.toast_message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast_message.success {
+  background-color: #4caf50;
+}
+
+.toast_message.error {
+  background-color: #f44336; /* Red for error */
+}
+/* Keyframes for fade-in-out */
+@keyframes fade-in-out {
+    0% { opacity: 0; transform: translateY(20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(20px); }
+}
+
+</style>
+
 </body>
 
 </html>
 
 <script>
+  $(document).on('change', '#place', function () {
+  const selectedUserName = $(this).find('option:selected').text();
+  console.log("Selected User Name: " + selectedUserName);
+});
+
+ $(document).ready(function(){
+        console.log("hiiiii");
+
+  const successMessage = document.getElementById("success_message");
+  console.log(successMessage)
+  if (success_message){
+    successMessage.style.display = "block";
+    setTimeout(function () {
+          
+          
+            $('#success_message').remove();
+
+            
+          
+        }, 3000);
+
+      // Automatically hide the toast after 3 seconds
+    // setTimeout(() => {
+    //       successMessage.style.display = "none";
+    //   }, 3000);
+    //   setTimeout(() => {
+    //     console.log("removed")
+    //     successMessage.remove(); // Remove from DOM after animation
+    //   }, 3500);
+      }
+  
+});  
+
   const inputField = document.getElementById('single_user_coins');
   // Attach keypress event listener
   inputField.addEventListener('keypress', function (e) {
@@ -250,20 +367,33 @@
       }
   });  
   
-  $('#send_form').on('submit', function (){
-      event.preventDefault()
-      var name = $('#place')[0].value
-      var card = $('#single_user_card')[0].value
-      var coins = $('#single_user_coins')[0].value
-      document.getElementById("add_gift").style.display="none"
-      $.ajax({
-          type: "GET",
-          url: "add_reward",
-          data: {name: name, card: card, coins: coins},
-          success: function(response) {
-          }
-      })
-  })
+  $(document).on('submit', '#send_form', function (e) {
+    e.preventDefault(); // Prevent the default form submission behavior
+    console.log("Form sending----------------");
+
+    var email = $('#place').val(); // Get the value of the #place element
+    var card = $('#single_user_card').val(); // Get the value of the #single_user_card element
+    console.log("card-----------", card);
+    var coins = $('#single_user_coins').val(); // Get the value of the #single_user_coins element
+
+    document.getElementById("add_gift").style.display = "none";
+
+    $.ajax({
+        type: "GET",
+        url: "add_reward",
+        data: { email: email, card: card, coins: coins },
+        success: function (response) {
+          $('#place').empty()
+          $('#single_user_card, #single_user_coins, #place').val('')
+          $('#place').append('<option value="">' + 'Select User' + '</option>');
+
+            showToast(response.coins + " coins and gift card " + response.gift_card + " sent to " + response.user_name + " successfully.");
+        },
+        error: function () {
+            showToast("Failed to send reward. Please try again.", true);
+        }
+    });
+});
 
   function open_details(name, email, likes, created, dislike, post){
     document.getElementById("winner_modal").style.display="block"
@@ -280,9 +410,42 @@
       data: {username: name, post_id: post},
       success: function(response){
         document.getElementById("user_image").src = response.user_image
-          $('#post_image').css({
-              'background-image': 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(' + response.post_image + ')'
-          })
+          if (response.content_type === 'image') {
+            console.log("image")
+            // Set background image for image content
+            $('#post_image')
+                .css({
+                    'background-image': 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(' + response.post_image + ')',
+                    'background-size': 'cover',
+                    'background-position': 'center'
+                })
+                .find('.detail').show().css({
+            'height': '100%' // Apply style to the detail div here
+        }); ; // Ensure .detail is visible for images
+
+            // Remove any video if it's present
+            $('#post_image video').remove(); 
+          } else  {
+            console.log("video")
+              // Clear background image when displaying video
+              $('#post_image')
+                  .css({
+                      'background-image': 'none'
+                  })
+                  .find('.detail').show().css({
+            'height': 'auto' // Apply style to the detail div here
+        }); ; // Ensure .detail is visible for video
+
+              // Append the video without removing existing content
+              if ($('#post_image video').length === 0) {
+                  $('#post_image').prepend(
+                      '<video controls style="width: 100%; height: 200px; margin-bottom: 10px; display: block; margin-top: 0;">' +                      '<source src="' + response.post_image + '" type="video/mp4">' +
+                      'Your browser does not support the video tag.' +
+                      '</video>'
+                  );
+              }
+          }
+
       }
     })
   }
@@ -291,13 +454,21 @@
     document.getElementById("winner_modal").style.display="none"
   }
 
-  function open_tormnt_modal(name, email, likes, created, dislike, rank){
+  function open_tormnt_modal(name, email, likes, created, dislike, rank, image, content_type){
     document.getElementById("tormnt_modal").style.display="block"
     document.getElementById("tournament_user_name").innerHTML= name
     document.getElementById("tournament_user_email").innerHTML= email
     document.getElementById("tournament_user_joined").innerHTML= created
     document.getElementById("user_likes").innerHTML= likes
     document.getElementById("user_dislikes").innerHTML= dislike
+    if (content_type === 'image') {
+      document.getElementById("video").src = ''
+      document.getElementById("image").src = image
+    }
+    else{
+      document.getElementById("image").src = ''
+      document.getElementById("video").src = image
+    }
     $('#user_rank')[0].value = rank
   }
 
@@ -309,17 +480,15 @@
           url: "show_top_10",
           data: {banner_id: banner_id},
           success: function(response) {
-              var i = 0;
-              response.names.forEach(function (name){
-                  // var clas = 'radio_' + (i + 1)
-                  // var id = 'check_' + (i + 1)
-                  // $("#table_head").append("<tr><td><input type='radio'/></td><td>" + (i + 1) + "</td><td>" + name + "</td><td>" + response.emails[i] + "</td><td>" + response.joined[i] + "</td></tr>");
-                  // $('tr td:first-child').attr('class', clas)
-                  // $(clas).attr('id', id)
-                  // i+=1;
-                  $('#place').append('<option value="' + name + '">' + name + '</option>');
-                  i+=1
-              })
+            if (response.names && response.emails) {
+              console.log(response.emails)
+              for (var i = 0; i < response.names.length; i++) {
+                var name = response.names[i];
+                var email = response.emails[i];
+                // Append option with name and email
+                $('#place').append('<option value="' + email + '" data-name="' + name + '">' + name + '</option>');
+              }
+            }
           }
       })
   }
@@ -336,23 +505,42 @@
     })
   }
 
-  function get_user_name(){
+  function get_user_name(event){
     var name = document.getElementById("tournament_user_name").innerHTML
     var card_number = document.getElementById("gift_card_number").value
     var coins = document.getElementById("coins").value
     var rank =  document.getElementById("user_rank").value
+    var email = document.getElementById("tournament_user_email").innerHTML
     var tournament_winner = "Tournament_winner"
     if(card_number !== "" && coins !== "") {
         $.ajax({
             type: "GET",
             url: "winner-reward",
-            data: {name: name, card_number: card_number, coins: coins, tournament_winner: tournament_winner, rank: rank},
-            success: function () {
+            data: {name: name, card_number: card_number, coins: coins, tournament_winner: tournament_winner, rank: rank, email: email},
+            success: function (response) {
                 document.getElementById("tormnt_modal").style.display = "none"
+                showToast(response.coins + " coins and gift card " + response.gift_card + " sent to " + response.user_name + " successfully.");
             }
         })
     }
   }
+
+  function showToast(message, isError = false) {
+    console.log("Inside toast");
+    const toast = document.getElementById("toast");
+
+    // Set the message and class
+    toast.innerText = message;
+    
+    // Show the toast
+    toast.style.display = "block";
+
+    // Automatically hide the toast after 3 seconds
+   setTimeout(() => {
+        toast.style.display = "none";
+        
+    }, 3000);
+}
 
   function close_tormnt_modal(){
     document.getElementById("tormnt_modal").style.display="none"

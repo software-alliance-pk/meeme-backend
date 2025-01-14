@@ -2,7 +2,7 @@ class LikeBadgeJob < ApplicationJob
   queue_as :default
 
   def perform(message)
-    if User.find(message.user_id).likes.where.not(post_id: nil).where(is_liked: true).count == 40   #ToDo limit to 1000
+    if User.find(message.user_id).likes.where.not(post_id: nil).where(is_liked: true).count == 1000  #ToDo limit to 1000
       @badge = Badge.find_by(title: "Likeable Bronze")
       @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
       if @check.present?

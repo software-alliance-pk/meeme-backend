@@ -70,7 +70,8 @@ class Api::V1::CommentsController < Api::V1::ApiController
                             user_id: @comment.post.user.id,
                             notification_type: 'comment',
                             sender_id: @current_user.id,
-                            sender_name: @current_user.username
+                            sender_name: @current_user.username,
+                            post_id: params[:post_id]
                             )
       end
     else

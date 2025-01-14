@@ -19,7 +19,7 @@
             <div class="dropdown form_blk" id="support_dropDown">
               <button type="button" class="dropdown-toggle site_btn chevron w-100" data-bs-auto-close="outside" data-bs-toggle="dropdown"><%= @header_value.present? ? @header_value : "" %></button>
               <ul class="dropdown-menu w-100">
-                <li><button selected type="button" onclick="submission(this.innerText)">Nothing_Happened</button></li>
+                <li><button selected type="button" onclick="submission(this.innerText)">All</button></li>
                 <li><button type="button" onclick="submission(this.innerText)">Abuse <span class="dot"></span></button></li>
                 <%= f.text_field :subject, hidden: true, id: "subject" %>
                 <li><button type="button" onclick="submission(this.innerText)">Payment</button></li>
@@ -89,6 +89,18 @@
               <div class="chat_blk memee" id="admin_div">
               </div>
             </div>
+            <div id="file-preview" style="display: none; position: relative; display: inline-block;">
+              <!-- Cross icon to remove the preview -->
+              <div id="remove-preview" style="position: absolute; top: 5px; right: 5px; cursor: pointer; display: none; z-index: 10;">
+                  <img src="<%= asset_path('cross-icon.svg') %>" alt="Remove" style="width: 20px; height: 20px;">
+              </div>
+
+              <!-- Blur background behind the preview content -->
+              <div id="blur-background" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1;"></div>
+
+              <!-- Preview content (image or video will go here) -->
+              <div id="preview-content" style="position: relative; z-index: 5;"></div>
+          </div>
 
             <%= form_with do |form| %>
               <div class="form_inside">
@@ -120,7 +132,85 @@
 /**
  * Open the conversation using coversationId on Notification Click
  * */
+    const fileInput = document.getElementById('file-btn');
+    const previewContainer = document.getElementById('file-preview');
+    const previewContent = document.getElementById('preview-content');
+    const removePreview = document.getElementById('remove-preview');
+    const blurBackground = document.getElementById('blur-background');
+    
+
+    // Handle file selection and preview display
+    $(document).on('change', '#file-btn', function(event) {
+      console.log("file changing");
+      
+        const files = event.target.files;
+
+        // Clear previous previews
+        previewContent.innerHTML = '';
+
+        // Loop through each selected file and display a preview
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            // If it's an image, show image preview
+            if (file.type.startsWith('image')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '200px';  // Limit size for preview
+                    img.style.maxHeight = '200px';
+                    previewContent.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // If it's a video, show video preview
+            else if (file.type.startsWith('video')) {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.controls = true;
+                video.style.maxWidth = '200px';  // Limit size for preview
+                previewContent.appendChild(video);
+            }
+        }
+
+        // Show the preview container and cross icon
+        previewContainer.style.display = 'inline-block';
+        removePreview.style.display = 'block';
+    });
+
+    // Add event listener to the remove preview button (cross icon)
+      $(document).on('click', '#remove-preview', function() {
+      // Clear the preview content
+        $('#preview-content').html(''); // Clear the preview content
+        console.log("removing image");
+
+        // Reset the file input
+        $('#file-btn')[0].value = '';
+
+        // Hide the preview container and cross icon
+        $('#file-preview').hide();
+        $('#remove-preview').hide();
+    });
+
+
+    $('form').on('submit', function () {
+        // Hide the file preview container when the form is submitted
+        
+        previewContent.innerHTML = '';
+
+        // Hide the preview container
+        previewContainer.style.display = 'none';
+
+        // Hide the cross icon
+        removePreview.style.display = 'none';
+    });
+
+
   $(document).ready(function() {
+    
+
     // Add click event to user blocks
     $(".user_list").on('click', '.user_blk', function() {
       $(".user_list .user_blk.active").removeClass("active");
@@ -251,6 +341,7 @@
     }
 
    let isUserScrolling = false; // Flag to detect manual scroll
+   let lastScrollTop = 0;  
 
     // Function to scroll to the last message
     function scrollToLastMessage() {
@@ -352,31 +443,54 @@
     message_div.appendChild(div1);
     topDiv.appendChild(message_div);
 
-    const lastMessage = $(".chat_list .chat_blk:last-child");
+   const lastMessage = $(".chat_list .chat_blk:last-child");
     if (lastMessage.length > 0) {
-        observer.disconnect();
-        observer.observe(lastMessage[0]);
+        observer.disconnect(); // Disconnect the observer to avoid repetitive calls
+        observer.observe(lastMessage[0]); // Observe the last message
     }
 
+    // Scroll to the last message only if the user is not scrolling up
     if (!isUserScrolling) {
+        console.log("User not scrolling, scrolling to the last message...");
         scrollToLastMessage();
+    } else {
+        console.log("User scrolling, avoiding auto-scroll...");
     }
 }
 
 // Helper function to scroll to the bottom of the chat
-function scrollToLastMessage() {
-    $(".chat_list").animate({ scrollTop: $(".chat_list").prop("scrollHeight") }, "fast");
-}
+    function scrollToLastMessage() {
+        $(".chat_list").animate({ scrollTop: $(".chat_list").prop("scrollHeight") }, "fast");
+    }
 
-  $(".chat_list").on('scroll', debounce(function() {
-    const chatList = $(this);
-    const scrollTop = chatList.scrollTop();
-    const scrollHeight = chatList[0].scrollHeight;
-    const clientHeight = chatList[0].clientHeight;
+  $(".chat_list").on("scroll", debounce(function () {
+      const chatList = $(this);
+      const scrollTop = chatList.scrollTop();
 
-    // Detect if the user has scrolled up
-    isUserScrolling = scrollTop + clientHeight < scrollHeight - 5;
-}, 50));
+      // Determine if the user is scrolling up
+      if (scrollTop < lastScrollTop) {
+          console.log("Scrolling up...");
+          isUserScrolling = true;  // User is scrolling up
+      } else {
+          console.log("Scrolling down...");
+          isUserScrolling = true;  // User is scrolling down
+      }
+
+      lastScrollTop = scrollTop;  // Update last scroll position
+
+  }, 50));
+// Prevent page scroll when the chat_list can scroll
+  $(".chat_list").on("wheel", function (e) {
+      const chatList = this;
+      const atTop = chatList.scrollTop === 0;
+      const atBottom = chatList.scrollTop + chatList.clientHeight === chatList.scrollHeight;
+
+      if ((e.originalEvent.deltaY < 0 && atTop) || (e.originalEvent.deltaY > 0 && atBottom)) {
+          // Prevent scrolling the page when at top or bottom of chat_list
+          e.preventDefault();
+      }
+  });
+
 
     // function message_design(message, images, user_image, admin_image) {
     //     var chat_list_id = document.getElementsByClassName("chat_list")[0].id

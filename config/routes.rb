@@ -197,6 +197,7 @@ Rails.application.routes.draw do
           get :judge
           get :top_10_positions
           post :forwarding_memee_to_tournament
+          get :future_tournament
         end
       end
       resources :stories do

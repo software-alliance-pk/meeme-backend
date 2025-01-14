@@ -3,7 +3,7 @@ json.posts do
   json.(@posts) do |post|
     json.user_id post.user.id
     json.username post.user.username
-    json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.url : ''
+    json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
     json.post post.attributes.except('tag_list')
     json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
     json.post_thumbnail post.video_thumbnail.attached? ? post.video_thumbnail.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : post.thumbnail

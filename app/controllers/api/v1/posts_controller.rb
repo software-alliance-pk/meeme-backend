@@ -20,9 +20,9 @@ class Api::V1::PostsController < Api::V1::ApiController
       end
         if params[:page].present?
         if params[:per_page].present? 
-          @posts = @posts.paginate(page: params[:page], per_page: params[:per_page].to_i).sort_by(&:created_at)
+          @posts = @posts.paginate(page: params[:page], per_page: params[:per_page].to_i).sort_by(&:created_at).reverse
         elsif
-          @posts = @posts.paginate(page: params[:page], per_page: 16).sort_by(&:created_at)
+          @posts = @posts.paginate(page: params[:page], per_page: 16).sort_by(&:created_at).reverse
         end
       end
   
@@ -67,10 +67,10 @@ class Api::V1::PostsController < Api::V1::ApiController
             @post.video_thumbnail.attach(thumbnail_blob)
           end
         end
-        if @post.post_image
-          video_preview = @post.compress
-          # thumbnail = video_preview.processed.url if video_preview.processed.present?
-        end
+        # if @post.post_image
+        #   video_preview = @post.compress
+        #   # thumbnail = video_preview.processed.url if video_preview.processed.present?
+        # end
         @post.update(duplicate_tags: @tags, thumbnail: thumbnail)
       else
         @post.update(duplicate_tags: @tags)
@@ -216,6 +216,10 @@ class Api::V1::PostsController < Api::V1::ApiController
       @post.update(post_params)
       # Post.add_image_variant_update(@post)
       @post.update(duplicate_tags: @tags) if @tags.present?
+      if params[:tag_list] == "[]"
+        @tags = []
+        @post.update(duplicate_tags: @tags)
+      end
       if params[:post_image].present?
         if params[:post_image].content_type[0..4]=="video"
           @post.update(thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
@@ -242,8 +246,9 @@ class Api::V1::PostsController < Api::V1::ApiController
 
     post_ids.each do |post_id|
       post = Post.find_by(id: post_id)
-      if post.present?
-        post.destroy
+      if post.present? 
+        post.destroy if post.tournament_meme == false
+        post.update(deleted_by_user: true) if post.tournament_meme == true
         deleted_posts << post_id
       end
     end
@@ -554,7 +559,8 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def current_user_tournament_posts
-    @user_tournament_post = params[:page].present? ? @current_user.posts.where(tournament_meme: true).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @current_user.posts.where(tournament_meme: true).by_recently_created(200)
+    
+    @user_tournament_post = params[:page].present? ? @current_user.posts.where(tournament_meme: true, deleted_by_user: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @current_user.posts.where(tournament_meme: true).by_recently_created(200)
     unless @user_tournament_post.present?
       render json: { message: "No tournament posts for this particular user" }, status: :not_found
     end

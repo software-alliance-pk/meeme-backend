@@ -57,13 +57,15 @@ class SupportController < ApplicationController
             if @message.save
                 ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
                 Notification.create(title:"New Message from #{@message.admin_user.admin_user_name}",
-                                    body: @message.body,
+                                    body: "#{@message.admin_user.admin_user_name} replied #{@message.body&.truncate(10)} to your conversation.",
                                     conversation_id: @conversation.id,
                                     user_id: params[:user_id],
                                     message_id: @message.id,
                                     sender_id: current_admin_user.id,
                                     sender_name: current_admin_user.admin_user_name,
-                                    redirection_type: 'support'
+                                    redirection_type: 'support',
+                                    notification_type: 'admin_chat',
+                                    message_ticket:  @message_ticket
                                     )
             end
         else

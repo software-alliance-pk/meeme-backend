@@ -26,7 +26,7 @@ class Api::V1::ApiController < ActionController::API
         render json: { message: 'Invalid Authentication' }, status: :unauthorized
       end
     else
-      render json: { message: 'User not logged in' }, status: :unauthorized
+      render json: { message: 'User is not logged in' }, status: :unauthorized
     end
   end
 end

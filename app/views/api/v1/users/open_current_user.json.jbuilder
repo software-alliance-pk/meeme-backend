@@ -1,6 +1,6 @@
 json.profile do
   json.user @current_user
-  json.user_image @current_user.profile_image.attached? ? @current_user.profile_image.blob.url : ''
+  json.user_image @current_user.profile_image.attached? ? @current_user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
   json.followers  @current_user.followers.where(user_id: @current_user.id, status: "follower_added").count
   json.following  @current_user.followings.where(follower_user_id: @current_user.id, status: "following_added").count
   json.badges_count  @current_user.badges.count

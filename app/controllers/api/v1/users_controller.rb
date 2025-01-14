@@ -91,7 +91,7 @@ class Api::V1::UsersController < Api::V1::ApiController
       @user = User.new(user_params)
       if @user.save
         render json: { user: @user,
-                       profile_image: @user.profile_image.attached? ? @user.profile_image.blob.url : '',
+                       profile_image: @user.profile_image.attached? ? @user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : '',
                        wallet: @user.get_wallet,
                        message: 'User created successfully' }, status: :ok
         MobileDevice.find_or_create_by(mobile_token: params[:mobile_token], user_id: @user.id)
@@ -121,7 +121,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     else
       @current_user.update(user_params)
       render json: { user: @current_user,
-                     profile_image: @current_user.profile_image.attached? ? @current_user.profile_image.blob.url : '',
+                     profile_image: @current_user.profile_image.attached? ? @current_user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : '',
                      message: "Profile Updated" },
              status: :ok
     end

@@ -1,6 +1,6 @@
 json.profile do
   json.user @user
-  json.user_image @user.profile_image.attached? ? @user.profile_image.blob.url : ''
+  json.user_image @user.profile_image.attached? ? @user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
   if @current_user.id==@user.id
     json.followers  @current_user.followers.count
     json.following  @current_user.followings.count
@@ -28,5 +28,5 @@ json.profile do
     json.rarity badge.rarity
     json.badge_image badge.badge_image.attached? ? badge.badge_image.blob.url : ''
   end
-  json.all_post_count @user.posts.count
+  json.all_post_count @user.posts.where(tournament_meme:false).count
 end

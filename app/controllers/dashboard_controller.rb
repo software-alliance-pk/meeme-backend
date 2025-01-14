@@ -96,9 +96,11 @@ class DashboardController < ApplicationController
 
   def tournament
     @tournament_banner_name = params[:tournament_banner_id]
-    @tournament_banner = Like.where(is_judged: true, status: 'like').joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true }).
-      group(:post_id).count(:post_id).sort_by(&:last).sort_by(&:last).reverse.to_h
-    @posts = Post.where(id: @tournament_banner.keys).joins(:likes).where(likes: {status: "like"}).group("posts.id").order('COUNT(likes.id) DESC').paginate(page: params[:page], per_page: 10)
+    @tournament_banner = Like.where(is_judged: true).joins(:post).where(post: { tournament_banner_id: params[:tournament_banner_id].present? ? params[:tournament_banner_id] : TournamentBanner&.first&.id, tournament_meme: true, flagged_by_user: [], deleted_by_user: false})
+      .group(:post_id).select('post_id, COUNT(CASE WHEN status = 1 THEN 1 END) AS likes, COUNT(CASE WHEN status = 2 THEN 1 END) AS dislikes').map { |record| [record.post_id, record.likes - record.dislikes] }.to_h.sort_by { |_, v| -v }.to_h
+    ordered_ids = @tournament_banner.keys
+    @posts = Post.where(id: ordered_ids).order(Arel.sql("array_position(ARRAY[#{ordered_ids.join(',')}], id)")).paginate(page: params[:page], per_page: 10)
+
     if params[:tournament_banner_id].present?
       @banner = TournamentBanner.find(params[:tournament_banner_id])
       session[:banner] = @banner
@@ -183,7 +185,8 @@ class DashboardController < ApplicationController
           likes: post.likes.where(is_judged: true).like.count,
           created_at: post.user.tournament_users.first.created_at.strftime('%b %d, %Y'),
           tournament_banner_id: post.tournament_banner_id,
-          post_image: post.post_image.attached? ? url_for(post.post_image) : nil
+          post_image: post.post_image.attached? ? post.post_image.blob.url : nil,
+          image_type: post.post_image.attached? ? post.post_image.content_type.split('/').first : ''
         }
       end
       render json: { posts: posts_with_images }
@@ -196,25 +199,26 @@ class DashboardController < ApplicationController
   
 
   def tournament_banner
-    @tournament_banner = TournamentBanner.all
+    @tournament_banner = TournamentBanner.order(start_date: :desc)
   end
 
   def tournament_banner_create
     @banner = TournamentBanner.new(banner_params)
     @banner.enable = true
+    @banner.end_date = params[:end_date].to_date.end_of_day
     existing_active_tournament = TournamentBanner.where(enable: true)
-    .where('end_date > ?', Time.zone.now.end_of_day)
-    
-    if existing_active_tournament.present?
-      flash[:alert] = "Cannot add another because Tournament
-                     #{TournamentBanner.where(enable: true).first.title} is being played."
+      .where('start_date <= ? AND end_date >= ?', @banner.end_date, params[:start_date].to_date)
+    if existing_active_tournament.exists?
+      overlapping_tournament = existing_active_tournament.last
+      flash[:alert] = "Cannot add another tournament because Tournament named 
+                      #{overlapping_tournament.title} overlaps with the selected dates."
       redirect_to tournament_banner_path
     else
       if @banner.save
         @today_date = Time.zone.now.end_of_day.to_datetime
         @tournament_end_date = @banner.end_date.strftime("%a, %d %b %Y").to_datetime
         @tournamnet_days = (@tournament_end_date - @today_date).to_i
-        TournamentWorker.perform_in((Time.now + @tournamnet_days.days))
+        # TournamentWorker.perform_in((Time.now + @tournamnet_days.days))
         # TournamentWorker.perform_in((Time.now + 1.minute))
         redirect_to tournament_banner_path
       end
@@ -223,7 +227,7 @@ class DashboardController < ApplicationController
 
   def tournament_banner_destroy
     @banner = TournamentBanner.find(params[:id])
-    SendJudgeCoinWorker.perform_in(Time.now, @banner.id)
+    # SendJudgeCoinWorker.perform_in(Time.now, @banner.id)
     if @banner.destroy
       redirect_to tournament_banner_path
     end
@@ -236,41 +240,60 @@ class DashboardController < ApplicationController
     if params[:coins].present? && params[:user_id].present?
       @user = User.find(params[:user_id])
       @user.update(coins: @user.coins + params[:coins].to_i)
+      Notification.create(title: "Winner Coins",
+                            body: "Congratulations you have won #{params[:coins].to_i} coins.",
+                            user_id: params[:user_id],
+                            sender_id: @current_admin_user.id,
+                            sender_name: @current_admin_user.admin_user_name,
+                            notification_type: 'tournament_winner',  
+                            )
       UserMailer.winner_email_for_coin(@user,@user.email, params[:coins], params[:rank]).deliver_now
+      flash.now.notice = "#{params[:coins]} coins sent to #{@user.username} successfully."
     end
     if params[:username].present?
+      
       @user = User.find_by(username: params[:username])
-      @user_image = @user.profile_image.attached? ? url_for(@user.profile_image) : ActionController::Base.helpers.asset_path('user.png')
-      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"]).where(id: params[:post_id])
-      @post_image = @post&.post_image.attached? ? url_for(@post.post_image) : ActionController::Base.helpers.asset_path('bg-img.jpg')
+      @user_image = @user.profile_image.attached? ?  @user.profile_image.blob.url : ActionController::Base.helpers.asset_path('user.png')
+      @post = @user.posts.where(tournament_banner_id: session[:banner]["id"]).where(id: params[:post_id]).first
+      @post_image = @post&.post_image&.attached? ? @post&.post_image&.blob&.url : ActionController::Base.helpers.asset_path('bg-img.jpg')
+      @content_type = @post&.post_image&.present? ? @post&.post_image&.content_type&.split('/')&.first : ""
       respond_to do |format|
-        format.json { render json: { user_image: @user_image, post_image: @post_image } }
+        format.json { render json: { user_image: @user_image, post_image: @post_image, content_type: @content_type } }
       end
     end
   end
 
   def winner_reward
-    if params[:name].present? && params[:coins].present? && params[:card_number].present? && params[:tournament_winner].present?
+    if params[:email].present? && params[:coins].present? && params[:card_number].present? && params[:tournament_winner].present?
       @gift_card = GiftReward.find_by(card_number: params[:card_number])
       if @gift_card.present?
         @gift_card.update(status: 1)
       end
-      @user = User.find_by(username: params[:name])
+      @user = User.find_by(email: params[:email])
       @user.update(coins: @user.coins + params[:coins].to_i)
       @tournament_winner = true
       UserMailer.winner_email(@user ,@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
-    elsif params[:name].present? && params[:coins].present? && params[:card_number].present? && params[:tournament].present?
+    elsif params[:email].present? && params[:coins].present? && params[:card_number].present? && params[:tournament].present?
       @gift_card = GiftReward.find_by(card_number: params[:card_number])
       if @gift_card.present?
         @gift_card.update(status: 1)
       end
-      @user = User.find_by(username: params[:name])
+      @user = User.find_by(email: params[:email])
       @user.update(coins: @user.coins + params[:coins].to_i)
       @tournament_winner = false
       UserMailer.winner_email(@user ,@user.email, params[:coins], params[:card_number], params[:rank]).deliver_now
     end
+    Notification.create(title: "Winner Coins",
+                            body: "Congratulations you have won a gift card #{params[:card_number]} and #{params[:coins].to_i} coins.",
+                            user_id: @user.id,
+                            sender_id: @current_admin_user.id,
+                            sender_name: @current_admin_user.admin_user_name,
+                            notification_type: 'tournament_winner',  
+                            )
+
     if @tournament_winner
-      redirect_to tournament_winner_list_path
+      render json: { user_name: params[:name], coins: params[:coins], gift_card: params[:card_number] }
+      # redirect_to tournament_winner_list_path
     else
       redirect_to tournament_path
     end
@@ -279,6 +302,10 @@ class DashboardController < ApplicationController
   def flag_tournament_post
     @user = User.find(params[:user_id])
     puts "user email --------#{@user.inspect}"
+    @post = Post.find_by(id: params[:post_id])
+    @flagged = @post.flagged_by_user
+    @flagged << @current_admin_user.id
+    @post.update(flagged_by_user: @flagged, flag_message: 'Post flagged by admin') 
     UserMailer.flag_tournament_post(@user ,@user.email).deliver_now
     render json: { message: "Flagged Email Sent" }, status: :ok
   end
@@ -286,7 +313,37 @@ class DashboardController < ApplicationController
   def show_top_10
     @name, @email, @joined = [], [], []
     if params[:banner_id].present?
-      @users = TournamentBanner.find(params[:banner_id]).tournament_users.joins(user: {posts:  :likes}).where(likes: {is_judged: true}).group("tournament_users.id").order("COUNT(likes.id) DESC").limit(10)
+      @users = TournamentUser.find_by_sql("
+                    SELECT ranked_users.*
+                    FROM (
+                      SELECT tu.*, 
+                        user_ranks.max_rank,
+                        ROW_NUMBER() OVER (PARTITION BY tu.user_id ORDER BY user_ranks.max_rank DESC) AS rn
+                      FROM tournament_users tu
+                      JOIN (
+                        SELECT p.user_id, MAX(likes_count - dislikes_count) AS max_rank
+                        FROM posts p
+                        JOIN (
+                          SELECT post_id, 
+                            COUNT(CASE WHEN status = 1 THEN 1 END) AS likes_count, 
+                            COUNT(CASE WHEN status = 2 THEN 1 END) AS dislikes_count
+                          FROM likes
+                          WHERE is_judged = true
+                          GROUP BY post_id
+                        ) AS like_dislike_counts
+                        ON like_dislike_counts.post_id = p.id
+                        WHERE p.tournament_banner_id = #{params[:banner_id]} 
+                        AND p.tournament_meme = true
+                        AND p.deleted_by_user = false
+                        AND (p.flagged_by_user = '{}' OR array_length(p.flagged_by_user, 1) IS NULL)
+                        GROUP BY p.user_id
+                      ) AS user_ranks
+                      ON user_ranks.user_id = tu.user_id
+                    ) AS ranked_users
+                    WHERE ranked_users.rn = 1
+                    ORDER BY ranked_users.max_rank DESC
+                    LIMIT 10
+                  ")
       if @users.present?
         @users.each do |user|
           @name << user.user.username
@@ -301,8 +358,8 @@ class DashboardController < ApplicationController
   end
 
   def add_reward
-    if params[:name].present? && params[:coins].present? && params[:card].present?
-      @user = User.find_by(username: params[:name])
+    if params[:email].present? && params[:coins].present? && params[:card].present?
+      @user = User.find_by(email: params[:email])
       if @user.present?
         @user.update(coins: @user.coins + params[:coins].to_i)
         UserMailer.reward_payout(@user,@user.email, params[:coins], params[:card]).deliver_now
@@ -310,13 +367,27 @@ class DashboardController < ApplicationController
         if @gift_card.present?
           @gift_card.update(status: 1)
         end
-        redirect_to tournament_winner_list_path
+        Notification.create(title: "Winner Coins",
+                            body: "Congratulations you have won a gift card #{params[:card]} and #{params[:coins].to_i} coins.",
+                            user_id: @user.id,
+                            sender_id: @current_admin_user.id,
+                            sender_name: @current_admin_user.admin_user_name,
+                            notification_type: 'tournament_winner',  
+                            )
+        render json: { user_name: @user.username, coins: params[:coins], gift_card: params[:card] }
       end
-    elsif params[:name].present? && params[:coins].present?
-      @user = User.find_by(username: params[:name])
+    elsif params[:email].present? && params[:coins].present?
+      @user = User.find_by(email: params[:email])
       if @user.present?
         @user.update(coins: @user.coins + params[:coins].to_i)
-        redirect_to tournament_winner_list_path
+         Notification.create(title: "Winner Coins",
+                            body: "Congratulations you have won #{params[:coins].to_i} coins.",
+                            user_id: @user.id,
+                            sender_id: @current_admin_user.id,
+                            sender_name: @current_admin_user.admin_user_name,
+                            notification_type: 'tournament_winner',  
+                            )
+        render json: { user_name: @user.username, coins: params[:coins] }
       end
     end
   end
@@ -355,11 +426,11 @@ class DashboardController < ApplicationController
     if User.first.present?
       User.all.where(checked: true).update(checked: false)
     end
-    @users = User.paginate(page: params[:page], per_page: 10)
+    @users = User.all.order("created_at DESC").paginate(page: params[:page], per_page: 10)
     if params[:search]
       @users = User.search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     else
-      @users = User.paginate(page: params[:page], per_page: 10)
+      @users = User.all.order("created_at DESC").paginate(page: params[:page], per_page: 10)
     end
   end
 
@@ -405,8 +476,10 @@ class DashboardController < ApplicationController
         @badge_images << ActionController::Base.helpers.asset_path('user.png')
       end
     end
+    @tournament_banners = []
+    @tournament_banners = @specific_user.tournament_banners.present? ? @specific_user.tournament_banners.pluck(:title): []
     respond_to do |format|
-      format.json { render json: { user: @user, image: @image, title: @badge_title, badge_images: @badge_images } }
+      format.json { render json: { user: @user, image: @image, title: @badge_title, tournament_banners: @tournament_banners, badge_images: @badge_images } }
     end
   end
 
@@ -447,16 +520,16 @@ class DashboardController < ApplicationController
   end
 
   def transactions   
-    if params[:search] && params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
+    if params[:search].present? && params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
       @transactions_list = Transaction.search(params[:search])
       @transactions_list =  @transactions_list.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
-    elsif params[:search] && params[:start_date].present? && params[:end_date] == "" && params[:start_date] != "false"
+    elsif params[:search].present? && params[:start_date].present? && params[:end_date] == "" && params[:start_date] != "false"
       @transactions_list = Transaction.search(params[:search])
       @transactions_list = @transactions_list.start_date_filter(params[:start_date]).search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
-    elsif params[:search] && params[:end_date].present? && params[:start_date] == "" 
+    elsif params[:search].present? && params[:end_date].present? && params[:start_date] == "" 
       @transactions_list = Transaction.search(params[:search])
       @transactions_list = @transactions_list.end_date_filter(params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10) if @transactions_list
-    elsif params[:search]
+    elsif params[:search].present? 
       @transactions_list = Transaction.search(params[:search]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
     elsif params[:start_date].present? && params[:end_date].present? && params[:start_date] != "false"
       @transactions_list = Transaction.date_filter(params[:start_date], params[:end_date]).order("created_at DESC").paginate(page: params[:page], per_page: 10)
@@ -591,8 +664,8 @@ class DashboardController < ApplicationController
   end
 
   def support
-    if params["/conversations"].present? && params["/conversations"][:subject].present?  && params["/conversations"][:subject] == 'Nothing_Happened'
-      @header_value = params["/conversations"][:subject]
+    if params["/conversations"].present? && params["/conversations"][:subject].present?  && params["/conversations"][:subject] == 'All'
+      @header_value = "All"
       @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC").where.not(admin_user_id: nil)
     elsif params["/conversations"].present? && params["/conversations"][:subject].present?
       @message = Message.subjects[params["/conversations"][:subject]]
@@ -621,16 +694,18 @@ class DashboardController < ApplicationController
 
   def send_gift_card
     @user = User.find_by(email: params[:email])
-    UserMailer.amazon_purshase_card(@user, params[:card_number], params[:coins]).deliver_now
-    coins_to_subtract = params[:coins].to_i
-    @user.update(coins: @user.coins - coins_to_subtract)
-    
     request = GiftCardRequest.find_by(id: params[:requestId])
-    if request
+    if request && @user.coins >= request.coins
       request.update(status: 1)
+      UserMailer.amazon_purshase_card(@user, params[:card_number], params[:coins]).deliver_now
+      coins_to_subtract = params[:coins].to_i
+      @user.update(coins: @user.coins - coins_to_subtract)
+      render json: { message: "Gift Card Sent Via Email" }, status: :ok
+    else 
+        render json: { message: "Failed to send Gift Card" }, status: :unprocessable_entity
     end
     
-    render json: { message: "Gift Card Sent Via Email" }, status: :ok
+    
   end
   
 

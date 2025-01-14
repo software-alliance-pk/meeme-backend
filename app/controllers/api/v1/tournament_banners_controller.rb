@@ -2,8 +2,8 @@ require 'tempfile'
 require 'securerandom'
 class Api::V1::TournamentBannersController < Api::V1::ApiController
   before_action :authorize_request
-  before_action :find_tournament ,except: [:create_tournament]
-  before_action :check_expiration, except: [:create_tournament]
+  before_action :find_tournament ,except: [:create_tournament, :future_tournament]
+  before_action :check_expiration, except: [:create_tournament, :future_tournament]
   before_action :check_user_is_in_tournament, only: [:enroll_in_tournament]
   before_action :find_post, only: [:forwarding_memee_to_tournament]
   before_action :find_tournament_rule, only: :show_tournament_rules
@@ -12,13 +12,14 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     render json: { tournament: @tournament,
                    tournament_banner_image: @tournament.tournament_banner_photo.attached? ? @tournament.tournament_banner_photo.blob.url : '',
                    tournament_users_count: @tournament.tournament_users.count,
-                   tournament_posts_count: @tournament.posts.count,
+                   tournament_posts_count: @tournament.posts.where(deleted_by_user: false).count,
                    is_current_user_enrolled: @tournament.users.find_by(id: @current_user.id).present?
     }, status: :ok
   end
 
   def tournament_posts
-    @tournament_posts = @tournament.posts.where.not(user_id: @current_user.id).paginate(page: params[:page], per_page: 25)
+    # @tournament_posts = @tournament.posts.where.not(user_id: @current_user.id).paginate(page: params[:page], per_page: 25)
+    @tournament_posts = @tournament.posts.where.not(user_id: @current_user.id).where(flagged_by_user: [], deleted_by_user: false).all
     if @tournament_posts.present?
     else
     end
@@ -159,7 +160,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     @today_date = Time.zone.now.end_of_day.to_datetime
     @tournament_end_date = @tournament_banner.end_date.strftime("%a, %d %b %Y").to_datetime
     @tournamnet_days = (@tournament_end_date - @today_date).to_i
-    TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @tournament_banner.id)
+    # TournamentWorker.perform_in((Time.now + @tournamnet_days.days), @tournament_banner.id)
     render json: { tournament_banner: @tournament_banner }, status: :ok
   end
 
@@ -167,6 +168,24 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     if @tournament.posts.find_by(id: params[:post_id]).present?
       # if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
         response = TournamentLikeService.new(params[:post_id], @current_user.id).create_for_tournament
+        start_of_day = Time.current.beginning_of_day
+        end_of_day = Time.current.end_of_day
+        daily_likes_count = Like.where(user_id: @current_user.id, created_at: start_of_day..end_of_day).count
+        if daily_likes_count == 100
+          daily_coins = 50
+          if DailyCoin.first.present?
+            daily_coins = DailyCoin.first.daily_coins_reward.to_i
+          end
+          current_coins = @current_user.coins.to_i + daily_coins
+          @current_user.update(coins: current_coins)
+          Notification.create(title: "Judge Reward",
+                          body: "Congratulations you have won #{daily_coins} coins for completing judgment of 100 posts.",
+                          user_id: @current_user.id,
+                          sender_id: @current_admin_user&.id,
+                          sender_name: @current_admin_user&.admin_user_name.present? ? @current_admin_user&.admin_user_name : AdminUser.first.admin_user_name,
+                          notification_type: 'tournament_judge',  
+                          )  
+        end
         render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
       # else
         # render json: { message: "User is not enrolled in this tournament" }, status: :not_found
@@ -182,6 +201,24 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     if @tournament.posts.find_by(id: params[:post_id]).present?
       # if @tournament.tournament_users.find_by(user_id: @current_user.id).present?
         response = TournamentLikeService.new(params[:post_id], @current_user.id).dislike_for_tournament
+        start_of_day = Time.current.beginning_of_day
+        end_of_day = Time.current.end_of_day
+        daily_likes_count = Like.where(user_id: @current_user.id, created_at: start_of_day..end_of_day).count
+        if daily_likes_count == 100
+          daily_coins = 50
+          if DailyCoin.first.present?
+            daily_coins = DailyCoin.first.daily_coins_reward.to_i
+          end
+          current_coins = @current_user.coins.to_i + daily_coins
+          @current_user.update(coins: current_coins)
+          Notification.create(title: "Judge Reward",
+                          body: "Congratulations you have won #{daily_coins} coins for completing judgment of 100 posts.",
+                          user_id: @current_user.id,
+                          sender_id: @current_admin_user&.id,
+                          sender_name: @current_admin_user&.admin_user_name.present? ? @current_admin_user&.admin_user_name : AdminUser.first.admin_user_name,
+                          notification_type: 'tournament_judge',  
+                          )  
+        end
         render json: { like: response[0], message: response[1], coin: response[2], check: response[3] }, status: :ok
       # else
         # render json: { message: "User is not enrolled in this tournament" }, status: :not_found
@@ -199,7 +236,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     # @difference = (@tournament_end_date - @tournament_start_date).to_i
     @tournamnet_days = (@tournament_end_date - @tournament_start_date).to_i
     @difference = (@today_date - @tournament_start_date).to_i
-    if ((@tournament_end_date <= @today_date) | (@tournament.enable == false))
+    if ((@tournament.end_date.end_of_day.to_datetime < @today_date) | (@tournament.enable == false))
       return render json: { message: "Tournament Ended" }, status: :ok
     else
       @posts_judged = Like.where(created_at: (@tournament_start_date).beginning_of_day..(@tournament_end_date).end_of_day, is_judged: true, user_id: @current_user.id).where.not(post_id: nil) if present?
@@ -232,11 +269,30 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
     render json: { forwarded_meme: @tournament_meme, post_type: @tournament_meme.post_image.content_type, message: 'Meme Forwarded Successfully' }, status: :ok
   end
 
+  def future_tournament  
+     @tournament = TournamentBanner.where(enable: true)
+    .where('start_date > ?', Time.zone.now.end_of_day.to_date)
+    .first
+
+    if @tournament
+      render json: { 
+        tournament: @tournament,
+        tournament_banner_image: @tournament.tournament_banner_photo.attached? ? @tournament.tournament_banner_photo.blob.url : '',
+        tournament_users_count: @tournament.tournament_users.count,
+        tournament_posts_count: @tournament.posts.count,
+        is_current_user_enrolled: @tournament.users.find_by(id: @current_user.id).present?
+      }, status: :ok
+    else
+      render json: { message: 'No Future Tournament' }, status: :not_found
+    end
+  end
+  
   private
 
   def find_tournament
     unless (@tournament = TournamentBanner.where(enable: true)
       .where('end_date >= ?', Time.zone.now.end_of_day.to_date)
+      .where('start_date <= ?', Time.zone.now.end_of_day.to_date)
       .first)
       return render json: { message: 'No Tournament Active' }, status: :not_found
     end

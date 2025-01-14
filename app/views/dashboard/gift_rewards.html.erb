@@ -120,6 +120,7 @@
                 <div class="row justify-content-center">
                     <div class="col-12">
                         <div class="_inner">
+                            <div id="toast" class="toast" style="display: none;"></div>
                             <button type="button" class="x_btn" onclick="close_tormnt_modal()"></button>
                             <h3>Send Gift Card</h3>
                             <div class="detail_blk">
@@ -154,7 +155,7 @@
                                                     <%= f.text_field :rank, id: "user_rank", hidden: true %>
                                                 </div>
                                                  <div class="btn_blk mt-5">
-                                            <button class="site_btn prime_btn round w-100" onclick="get_user_name()">Send</button>
+                                            <button class="site_btn prime_btn round w-100" onclick="get_user_name(event)">Send</button>
                                           </div>
                                             </div>
                                          
@@ -219,7 +220,6 @@
                                                     <h6 class="form_label">Rank</h6>
                                                     <div class = "form_blk">
                                                         <select class="input" name="rank" id="place" required>
-                                                            <li><option value="">Select Ranking</option></li>
                                                             <li><option value="1st Place">1st Place</option></li>
                                                             <li><option value="2nd Place">2nd Place</option></li>
                                                             <li><option value="3rd Place">3rd Place</option></li>
@@ -239,7 +239,6 @@
                                                     <h6 class="form_label">Amount</h6>
                                                     <div class = "form_blk">
                                                         <select class="input" id='cost' name="amount" required>
-                                                            <li><option value="">Select Value</option></li>
                                                             <li><option value="$100">$100</option></li>
                                                             <li><option value="$75">$75</option></li>
                                                             <li><option value="$50">$50</option></li>
@@ -376,7 +375,38 @@
         </div>
     </section>
 </main>
+<style>
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: white;
+    border-radius: 5px;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fade-in-out 10s forwards;
+}
 
+/* Success toast background */
+.toast.success {
+    background-color: #198754;
+}
+
+/* Error toast background */
+.toast.error {
+    background-color: #dc3545;
+}
+
+/* Keyframes for fade-in-out */
+@keyframes fade-in-out {
+    0% { opacity: 0; transform: translateY(20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(20px); }
+}
+</style>
 <script>
     $(document).ready(function(){
 
@@ -456,7 +486,8 @@
         document.getElementById("user_joined").innerHTML= created
   }
 
-  function get_user_name(){
+  function get_user_name(e){
+    e.preventDefault();
     var card_number = document.getElementById("gift_card_number").value
     var coins = document.getElementById("user_coins").innerText
     var email = document.getElementById("user_email").innerText
@@ -468,11 +499,33 @@
             data: {card_number: card_number, coins: coins, email:email, requestId: requestId},
             success: function (res) {
                 console.log("Card send success == ", res);
-                location.reload();
+                showToast("Gift card sent successfully");
+                location.reload();  // Reload page on success
+            },
+            error: function (xhr, status, error) {
+                console.log("Card send error == ", xhr.responseJSON);
+                showToast("User has insufficient coins.", true);
             }
         })
     }
   }
+
+  function showToast(message, isError = false) {
+      console.log("Inside toast");
+      const toast = document.getElementById("toast");
+
+      // Set the message and class
+      toast.innerText = message;
+      toast.className = `toast ${isError ? "error" : "success"}`;
+
+      // Show the toast
+      toast.style.display = "block";
+
+      // Automatically hide the toast after 3 seconds
+      setTimeout(() => {
+          toast.style.display = "none";  
+      }, 5000);
+    }
 
    function close_tormnt_modal(){
     document.getElementById("tormnt_modal").style.display="none"
