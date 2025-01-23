@@ -23,13 +23,16 @@ development:
 #   database: db-meme-production
 
 production:
- encoding: unicode
- port: 5432
- adapter: postgresql
- host: db-meme-production.ccbef2vbfix0.us-east-1.rds.amazonaws.com
- username: postgres
- password: postgres
- database: db_meme_production
+  encoding: unicode
+  port: 5432
+  pool: 5
+  adapter: postgresql
+  host: memee-db-stg.cpiy86gec3zu.eu-north-1.rds.amazonaws.com
+  username: postgres
+  password: Cruxosoft1997798
+  database: memeedbstg
+
+
 
 staging:
   encoding: unicode
