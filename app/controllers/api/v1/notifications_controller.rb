@@ -18,7 +18,7 @@ class Api::V1::NotificationsController < Api::V1::ApiController
 
   def change_opened_status
     notification = Notification.find(params[:notitification_id]) # Use singular Notification
-    notification.update(is_opened: true)
+    notification.update(is_opened: true, status: 'read')
     render json: { message: "Notification status changed successfully" }, status: :ok
   end
 
