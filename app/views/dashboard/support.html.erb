@@ -133,6 +133,7 @@
  * Open the conversation using coversationId on Notification Click
  * */
     const fileInput = document.getElementById('file-btn');
+    const docInput = document.getElementById('document-btn')
     const previewContainer = document.getElementById('file-preview');
     const previewContent = document.getElementById('preview-content');
     const removePreview = document.getElementById('remove-preview');
@@ -140,7 +141,7 @@
     
 
     // Handle file selection and preview display
-    $(document).on('change', '#file-btn', function(event) {
+    $(document).on('change', '#file-btn, #document-btn' , function(event) {
       console.log("file changing");
       
         const files = event.target.files;
@@ -188,6 +189,7 @@
 
         // Reset the file input
         $('#file-btn')[0].value = '';
+        $('#document-btn')[0].value = '';
 
         // Hide the preview container and cross icon
         $('#file-preview').hide();

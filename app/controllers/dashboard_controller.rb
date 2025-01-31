@@ -679,9 +679,9 @@ class DashboardController < ApplicationController
 
   def follower_count
     @user_id = User.find(params[:user_id])
-    @follower_count = @user_id.followers.count
-    @following_count = @user_id.followers.where(status: "pending").count
-    @posts_count = @user_id.posts.count
+    @follower_count = @user_id.followers.where(user_id: @user_id.id, status: "follower_added").count
+    @following_count = @user_id.followings.where(follower_user_id: @user_id.id, status: "following_added").count
+    @posts_count = @user_id.posts.where(tournament_meme: false).count
     respond_to do |format|
       format.json { render json: { followers: @follower_count, following: @following_count, posts: @posts_count } }
     end
