@@ -60,7 +60,7 @@ class PushNotificationBroadCastJob < ApplicationJob
           options = {
             message: {
               topic: "all_users",
-              notification: { body: self.body, title: self.title },
+              notification: { body: body, title: title },
               data: {},   
             }
           }
