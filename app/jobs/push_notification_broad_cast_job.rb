@@ -16,7 +16,7 @@ class PushNotificationBroadCastJob < ApplicationJob
             puts "----------------------------------------------"
             puts response.body
           end
-    def perform(body, title, date)
+    def perform(body, title, date, type)
         # require 'fcm'
         # fcm_client = FCM.new(ENV['FIREBASE_SERVER_KEY'])
         # options = { priority: 'high',
@@ -61,7 +61,7 @@ class PushNotificationBroadCastJob < ApplicationJob
             message: {
               topic: "all_users",
               notification: { body: body, title: title },
-              data: {},   
+              data: {notification_type: type},   
             }
           }
           send_fcm_notification(uri, options, token)
