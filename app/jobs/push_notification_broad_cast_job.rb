@@ -59,25 +59,13 @@ class PushNotificationBroadCastJob < ApplicationJob
           # Notification payload
           options = {
             message: {
-              token: "", # Token to be set below
-              notification: { body: body, title: title },
-              data: {}
+              topic: "all_users",
+              notification: { body: self.body, title: self.title },
+              data: {},   
             }
           }
-          User.all.each do |user|
-            if user.notifications_enabled? && user.mobile_devices.present?
-              registration_ids.concat(user.mobile_devices.pluck(:mobile_token))
-            end
-          end
+          send_fcm_notification(uri, options, token)
           
-          registration_ids.each do |registration_id|
-            options[:message][:token] = registration_id
-            puts "----------------------------------------------"
-            puts "------ Options ----------- #{options}"
-            puts "----------------------------------------------"
-          
-            send_fcm_notification(uri, options, token)
-          end
 
           
     end

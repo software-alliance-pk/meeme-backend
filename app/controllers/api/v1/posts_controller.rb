@@ -10,7 +10,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     if @user.present?
       @posts = @user.posts.where(tournament_meme: false)
       @posts_count = @posts.count.to_i
-      @posts = @posts.by_recently_created(200)
+      # @posts = @posts.by_recently_created(200)
       
         if params[:month].present?
           @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i)
