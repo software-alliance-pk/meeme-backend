@@ -347,13 +347,14 @@ class Api::V1::PostsController < Api::V1::ApiController
     # Fetch posts based on tag
     # Post Controller comment
     if params[:tag].present?
-      tag_posts = Post.tagged_with(params[:tag], any: true)
+      tag_posts = Post.tagged_with(params[:tag], any: true).includes(:user)
+      .where(users: { private_account: false })
       @posts.concat(tag_posts)
     end
   
     # Fetch posts based on username
     if params[:username].present?
-      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%")
+      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").where(private_account: false)
       if @users.present?
         @users.each do |user|
           user_posts = user.posts
