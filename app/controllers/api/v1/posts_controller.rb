@@ -270,6 +270,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       @posts = Post.includes(:user).where(tournament_meme: false)
              .where.not(user_id: blocked_user_ids)
              .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+             .where(users: { private_account: false })
              .by_recently_created(200)  
     else
       # Post.tagged_with(params[:tag], :any => true).each do |post|
@@ -281,6 +282,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       @posts = Post.includes(:user).tagged_with(params[:tag], any: true)
               .where.not(user_id: blocked_user_ids)
               .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+              .where(users: { private_account: false })
     end
       if @posts.present?
         if params[:per_page].present? 
@@ -559,8 +561,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def current_user_tournament_posts
-    
-    @user_tournament_post = params[:page].present? ? @current_user.posts.where(tournament_meme: true, deleted_by_user: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @current_user.posts.where(tournament_meme: true).by_recently_created(200)
+    @user_tournament_post = params[:page].present? ? @current_user.posts.where(tournament_meme: true, deleted_by_user: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @current_user.posts.where(tournament_meme: true, deleted_by_user: false).by_recently_created(200)
     unless @user_tournament_post.present?
       render json: { message: "No tournament posts for this particular user" }, status: :not_found
     end
