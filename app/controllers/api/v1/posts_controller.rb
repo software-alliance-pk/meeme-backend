@@ -303,7 +303,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       if @users.present?
       end
     elsif params[:tag] == "#"
-      @recent_posts = Post.where(tournament_meme: false)
+      @recent_posts = Post.where(tournament_meme: false).where(users: { private_account: false })
       @users = []
 
     else
@@ -323,7 +323,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       if @users.present?
       end
     elsif params[:tag] == "#"
-      @trending_posts = Post.where(tournament_meme: false)
+      @trending_posts = Post.where(tournament_meme: false).where(users: { private_account: false })
       @users = []
 
     else
@@ -503,6 +503,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     posts = Post.includes(:user, :comments)
                 .where(id: post_ids)
                 .where.not(user_id: @current_user.blocked_users.pluck(:blocked_user_id))
+                .where(users: { private_account: false })
                 .reject { |post| post.flagged_by_user.include?(@current_user.id) }
   
     # Collect posts with their respective scores
