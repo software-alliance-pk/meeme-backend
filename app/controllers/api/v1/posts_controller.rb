@@ -444,7 +444,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   def following_posts
     @following_posts = []
     @following = Follower.where(follower_user_id: @current_user.id , is_following: true , status: "following_added" || "follower_added" ).pluck(:user_id)
-    @following = params[:per_page].present? ? User.where(id: @following).paginate(page: params[:page], per_page: params[:per_page]) : User.where(id: @following).paginate(page: params[:page], per_page: 10)
+    @following = User.where(id: @following).all
     @following.each do |user|
       user.posts.where(tournament_meme: false).each do |post|
         if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
@@ -454,6 +454,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       end
     end
     @following_posts = @following_posts.shuffle
+    @following_posts = params[:per_page].present? ? @following_posts.paginate(page: params[:page], per_page: params[:per_page]) : @following_posts.paginate(page: params[:page], per_page: 10)
     if @following_posts.present?
     else
       render json: { following_posts: [], following_count: @following.count}, status: :ok
