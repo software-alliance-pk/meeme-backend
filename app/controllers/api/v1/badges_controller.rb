@@ -103,7 +103,8 @@ class Api::V1::BadgesController < Api::V1::ApiController
 
   def current_user_locked_badges
     @user_badges = @current_user.badges.pluck(:id)
-    @locked_badges = Badge.where.not(id: @user_badges).uniq
+    @locked_badges = Badge.all
+                      .order(:badge_type, Arel.sql('"limit" ASC')).uniq
     if @locked_badges.present?
     else
       render json: { badges: [] }, status: :ok

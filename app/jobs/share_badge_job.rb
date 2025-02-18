@@ -3,7 +3,7 @@ class ShareBadgeJob < ApplicationJob
   def perform(message,current_user)
    countt = User.find_by(id: current_user.id)&.shared
     if User.find_by(id: current_user.id)&.shared == 100
-      @badge = Badge.find_by(title: "Sharer Silver")
+      @badge = Badge.find_by(title: "Sharer Bronze")
       @check = UserBadge.find_by(user_id: current_user.id, badge_id: @badge.id)
       if @check.present?
       else
@@ -14,7 +14,7 @@ class ShareBadgeJob < ApplicationJob
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
       end
     elsif User.find_by(id: current_user.id)&.shared == 500000
-      @badge = Badge.find_by(title: "Sharer Bronze")
+      @badge = Badge.find_by(title: "Sharer Silver")
       @check = UserBadge.find_by(user_id: current_user.id, badge_id: @badge.id)
       if @check.present?
       else

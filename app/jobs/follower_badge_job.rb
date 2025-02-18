@@ -25,7 +25,7 @@ class FollowerBadgeJob < ApplicationJob
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
       end
-    elsif message.user.followers.follower_added.count == 100
+    elsif message.user.followers.follower_added.count == 100000
       @badge = Badge.find_by(title: "Gain Followers Gold")
       @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
       if @check.present?

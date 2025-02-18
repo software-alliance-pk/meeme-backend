@@ -8,12 +8,12 @@ class Api::V1::PostsController < Api::V1::ApiController
     @user = User.find_by(id: params[:user_id])
     
     if @user.present?
-      @posts = @user.posts.where(tournament_meme: false)
+      @posts = @user.posts.where(tournament_meme: false).sort_by(&:created_at).reverse
       @posts_count = @posts.count.to_i
       # @posts = @posts.by_recently_created(200)
       
         if params[:month].present?
-          @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i)
+          @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i).sort_by(&:created_at).reverse
           @posts_count = @posts.count.to_i
         else
           @posts_count = @posts.count.to_i
