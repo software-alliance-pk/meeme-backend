@@ -489,38 +489,36 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def trending_posts
     @trending_posts = []
-  
+
     # Fetch likes and associated post_ids in a single query
     likes = Like.where(status: 1, is_liked: true, is_judged: false)
                 .joins(:post)
                 .where(posts: { tournament_meme: false })
                 .group(:post_id)
                 .count
-  
-    # Sort likes by count in descending order
-    sorted_likes = likes.sort_by { |_, count| -count }.to_h
-  
+
     # Preload posts and users in a single query
-    post_ids = sorted_likes.keys
+    post_ids = likes.keys
     posts = Post.includes(:user, :comments)
                 .where(id: post_ids)
                 .where.not(user_id: @current_user.blocked_users.pluck(:blocked_user_id))
                 .where(users: { private_account: false })
                 .reject { |post| post.flagged_by_user.include?(@current_user.id) }
-  
-    # Collect posts with their respective scores
+
+    # Calculate trending score for each post (likes + comments * 2)
     @trending_posts = posts.map do |post|
-      [post, post.comments.count * 2]
-    end.to_h
-  
-    # Sort the posts by their scores in descending order
+      score = likes[post.id].to_i + (post.comments.count * 2)
+      [post, score]
+    end
+
+    # Sort posts by total score in descending order
     @trending_posts = @trending_posts.sort_by { |_, score| -score }
-  
+
     # Paginate the results
-    @trending_posts = params[:per_page].present? ? @trending_posts.paginate(page: params[:page], per_page: params[:per_page]) : @trending_posts.paginate(page: params[:page], per_page: 10)
-  
-    if @trending_posts
-      # Do something with @trending_posts
+    @trending_posts = if params[:per_page].present?
+      @trending_posts.paginate(page: params[:page], per_page: params[:per_page].to_i)
+    else
+      @trending_posts.paginate(page: params[:page], per_page: 10)
     end
   end
   
