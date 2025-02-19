@@ -171,7 +171,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
         start_of_day = Time.current.beginning_of_day
         end_of_day = Time.current.end_of_day
         daily_likes_count = Like.where(user_id: @current_user.id, created_at: start_of_day..end_of_day).count
-        if daily_likes_count == 100
+        if daily_likes_count == 25
           daily_coins = 50
           if DailyCoin.first.present?
             daily_coins = DailyCoin.first.daily_coins_reward.to_i
