@@ -179,7 +179,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
           current_coins = @current_user.coins.to_i + daily_coins
           @current_user.update(coins: current_coins)
           Notification.create(title: "Judge Reward",
-                          body: "Congratulations you have won #{daily_coins} coins for completing judgment of 100 posts.",
+                          body: "Congratulations you have won #{daily_coins} coins for completing judgment of 25 posts.",
                           user_id: @current_user.id,
                           sender_id: @current_admin_user&.id,
                           sender_name: @current_admin_user&.admin_user_name.present? ? @current_admin_user&.admin_user_name : AdminUser.first.admin_user_name,

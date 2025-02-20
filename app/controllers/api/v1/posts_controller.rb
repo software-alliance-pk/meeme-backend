@@ -463,6 +463,7 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def recent_posts
     @recent_posts = []
+    blocked_user_ids = @current_user.blocked_users.pluck(:blocked_user_id)
     # Post.where.not(tournament_meme: true).by_recently_created(500).each do |post|
     #   user = post.user
     #   next unless user && !user.private_account? 
@@ -472,19 +473,32 @@ class Api::V1::PostsController < Api::V1::ApiController
     #     @recent_posts << post
     #   end
     # end
-    blocked_user_ids = @current_user.blocked_users.pluck(:blocked_user_id)
-    @recent_posts = Post.includes(:user)
-      .where(tournament_meme: false)
-      .where.not(user_id: blocked_user_ids)
-      .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
-      .where(users: { private_account: false })
-      .by_recently_created(500)
+    # Check if 'created_at' parameter is present and valid
+    if params[:created_at].present?
+      created_at = Time.zone.parse(params[:created_at]) rescue nil
+      if created_at
+        @recent_posts = Post.includes(:user)
+          .where(tournament_meme: false)
+          .where.not(user_id: blocked_user_ids)
+          .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+          .where(users: { private_account: false })
+          .where('created_at > ?', created_at) # Filter posts created after the given timestamp
+          .by_recently_created(500)
+      else
+        render json: { message: "Invalid created_at format" }, status: :bad_request and return
+      end
+    else
+      # Default behavior when 'created_at' is not provided
+      @recent_posts = Post.includes(:user)
+        .where(tournament_meme: false)
+        .where.not(user_id: blocked_user_ids)
+        .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+        .where(users: { private_account: false })
+        .by_recently_created(500)
+    end
+
+    # Paginate the results
     @recent_posts = params[:per_page].present? ? @recent_posts.paginate(page: params[:page], per_page: params[:per_page]) : @recent_posts.paginate(page: params[:page], per_page: 25)
-    # @recent_posts = Post.where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
-    # @today_post = Post.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
-    # @random_posts = Post.where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).paginate(page: params[:page], per_page: 25).shuffle
-    # @recent_posts = @today_post + @random_posts
-    # @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).paginate(page: params[:page], per_page: 25).shuffle
   end
 
   def trending_posts
