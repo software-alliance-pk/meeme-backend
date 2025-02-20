@@ -460,10 +460,10 @@ class Api::V1::PostsController < Api::V1::ApiController
       #   else
       #     render json: { message: "Invalid created_at format" }, status: :bad_request and return
       #   end
-    end
+      # end
 
-      user_posts.each do |post|
-        unless post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
+      # user_posts.each do |post|
+      #   unless post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
           @following_posts << post
         end
       end
