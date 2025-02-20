@@ -453,7 +453,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       if params[:created_at].present?
         created_at = Time.zone.parse(params[:created_at]) rescue nil
         if created_at
-          user_posts = user_posts.where('created_at > ?', created_at)
+          user_posts = user_posts.where('posts.created_at > ?', created_at) # Specify the table for created_at
         else
           render json: { message: "Invalid created_at format" }, status: :bad_request and return
         end
