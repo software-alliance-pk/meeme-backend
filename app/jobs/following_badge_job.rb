@@ -3,7 +3,7 @@ class FollowingBadgeJob < ApplicationJob
 
   def perform(message)
     current_user = User.find_by(id: message.follower_user_id)
-    if message.user.followings.follower_added.count == 5
+    if message.user.followings.following_added.count == 5
       @badge = Badge.find_by(title: "Follower Bronze")
       @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
       if @check.present?
@@ -14,7 +14,7 @@ class FollowingBadgeJob < ApplicationJob
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
       end
-    elsif message.user.followings.follower_added.count == 5000
+    elsif message.user.followings.following_added.count == 5000
       @badge = Badge.find_by(title: "Follower Silver")
       @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
       if @check.present?
@@ -25,7 +25,7 @@ class FollowingBadgeJob < ApplicationJob
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
         puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
       end
-    elsif message.user.followings.follower_added.count == 100000
+    elsif message.user.followings.following_added.count == 100000
       @badge = Badge.find_by(title: "Follower Gold")
       @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
       if @check.present?
