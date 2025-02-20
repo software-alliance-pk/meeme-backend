@@ -438,21 +438,34 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def following_posts
     @following_posts = []
-    @following = Follower.where(follower_user_id: @current_user.id , is_following: true , status: "following_added" || "follower_added" ).pluck(:user_id)
+    @following = Follower.where(follower_user_id: @current_user.id, is_following: true, status: ["following_added", "follower_added"]).pluck(:user_id)
     @following = User.where(id: @following).all
+
     @following.each do |user|
-      user.posts.where(tournament_meme: false).each do |post|
-        if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
+      user_posts = user.posts.where(tournament_meme: false)
+
+      # Filter posts based on the 'created_at' parameter if present
+      if params[:created_at].present?
+        created_at = Time.zone.parse(params[:created_at]) rescue nil
+        if created_at
+          user_posts = user_posts.where('posts.created_at <= ?', created_at) # Specify the table for created_at
         else
+          render json: { message: "Invalid created_at format" }, status: :bad_request and return
+        end
+      end
+
+      user_posts.each do |post|
+        unless post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
           @following_posts << post
         end
       end
     end
+
     @following_posts = @following_posts.shuffle
     @following_posts = params[:per_page].present? ? @following_posts.paginate(page: params[:page], per_page: params[:per_page]) : @following_posts.paginate(page: params[:page], per_page: 10)
     if @following_posts.present?
     else
-      render json: { following_posts: [], following_count: @following.count}, status: :ok
+      render json: { following_posts: [], following_count: @following.count }, status: :ok
     end
   end
 
