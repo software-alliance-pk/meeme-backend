@@ -458,7 +458,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     @following_posts = params[:per_page].present? ? @following_posts.paginate(page: params[:page], per_page: params[:per_page]) : @following_posts.paginate(page: params[:page], per_page: 10)
 
     if @following_posts.present?
-      render json: { following_posts: @following_posts, following_count: @following.count }, status: :ok
+      
     else
       render json: { following_posts: [], following_count: @following.count }, status: :ok
     end
