@@ -30,7 +30,7 @@ class TournamentNotificationWorker
     message: {
       token: "", # Token to be set below
       notification: { body: body, title: title },
-      data: { notification_type: type, user_id: user_id.to_s, sender_name: sender_name, id: id}
+      data: { notification_type: type, user_id: user_id.to_s, sender_name: sender_name, id: id.to_s}
     }
   }
   
