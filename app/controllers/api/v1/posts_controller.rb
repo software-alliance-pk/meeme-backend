@@ -479,15 +479,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   def recent_posts
     @recent_posts = []
     blocked_user_ids = @current_user.blocked_users.pluck(:blocked_user_id)
-    # Post.where.not(tournament_meme: true).by_recently_created(500).each do |post|
-    #   user = post.user
-    #   next unless user && !user.private_account? 
-  
-    #   if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(user.id)
-    #   else
-    #     @recent_posts << post
-    #   end
-    # end
+    
     # Check if 'created_at' parameter is present and valid
     if params[:created_at].present?
       created_at = Time.zone.parse(params[:created_at]) rescue nil
@@ -497,7 +489,7 @@ class Api::V1::PostsController < Api::V1::ApiController
           .where.not(user_id: blocked_user_ids)
           .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
           .where(users: { private_account: false })
-          .where('created_at > ?', created_at) # Filter posts created after the given timestamp
+          .where('posts.created_at > ?', created_at) # Specify the table for created_at
           .by_recently_created(500)
       else
         render json: { message: "Invalid created_at format" }, status: :bad_request and return
