@@ -208,7 +208,8 @@ class Api::V1::PostsController < Api::V1::ApiController
   def update_posts
     puts "updating post"
     puts "params #{params}"
-    @post = Post.find_by(id: params[:post_id])
+    post_id = params.keys.find { |key| key.strip == "post_id" }
+    @post = Post.find_by(id: params[post_id]) if post_id
     puts "post #{@post}"
     unless @post
       render json: { error: "Post not found" }, status: :not_found
