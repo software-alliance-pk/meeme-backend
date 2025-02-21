@@ -631,7 +631,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def post_params
-    params.permit(:description, :tag_list) # Removed :post_id and any other unneeded parameters
+    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags, :share_count, :thumbnail,:compress_image)
   end
 
   def update_post_params
