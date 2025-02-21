@@ -437,14 +437,19 @@ class Api::V1::PostsController < Api::V1::ApiController
   
 
   def following_posts
-    @following_posts = []
-    @following = Follower.where(follower_user_id: @current_user.id, is_following: true, status: ["following_added", "follower_added"]).pluck(:user_id)
-    @following = User.where(id: @following).all
+    @following = Follower.where(follower_user_id: @current_user.id, 
+                               is_following: true, 
+                               status: ["following_added", "follower_added"]).pluck(:user_id)
+    
+    # Build base query with includes and where conditions
+    user_posts = Post.includes(:user)
+                     .where(user_id: @following, 
+                           tournament_meme: false)
+                     .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+                     .where.not(user_id: @current_user.blocked_users.pluck(:blocked_user_id))
+                     .order(created_at: :desc)
 
-    # Collect all posts from following users
-    user_posts = Post.where(user_id: @following.pluck(:id), tournament_meme: false)
-
-    # Filter posts based on the 'created_at' parameter if present
+    # Apply created_at filter if present
     if params[:created_at].present?
       created_at = Time.zone.parse(params[:created_at]) rescue nil
       if created_at
@@ -454,18 +459,15 @@ class Api::V1::PostsController < Api::V1::ApiController
       end
     end
 
-    # Filter out flagged or blocked posts
-    user_posts.each do |post|
-      unless post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
-        @following_posts << post
-      end
-    end
+    # Paginate results
+    @following_posts = params[:per_page].present? ? 
+      user_posts.paginate(page: params[:page], per_page: params[:per_page]) : 
+      user_posts.paginate(page: params[:page], per_page: 10)
 
-    # @following_posts = @following_posts.shuffle
-    @following_posts = params[:per_page].present? ? @following_posts.paginate(page: params[:page], per_page: params[:per_page]) : @following_posts.paginate(page: params[:page], per_page: 10)
     if @following_posts.present?
+      # Existing view will handle the response
     else
-      render json: { following_posts: [], following_count: @following.count }, status: :ok
+      render json: { following_posts: [], following_count: @following.length }, status: :ok
     end
   end
 
