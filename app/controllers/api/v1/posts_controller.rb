@@ -208,7 +208,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   def update_posts
     puts "updating post"
     puts "params #{params}"
-    @post = Post.find_by(id: 3260)
+    @post = Post.find_by(id: params[:post_id])
     puts "post #{@post}"
     unless @post
       render json: { error: "Post not found" }, status: :not_found
