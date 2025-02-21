@@ -206,31 +206,45 @@ class Api::V1::PostsController < Api::V1::ApiController
   
   
   def update_posts
-    puts "updating post"
-    puts "params #{params}"
-    post_id = params.keys.find { |key| key.strip == "post_id" }
-    @post = Post.find_by(id: params[post_id]) if post_id
-    puts "post #{@post}"
+    Rails.logger.debug "Received params: #{params.to_unsafe_h}"
+  
+    # Normalize post_id key by stripping spaces
+    post_id_key = params.keys.find { |key| key.strip == "post_id" }
+    @post = Post.find_by(id: params[post_id_key]) if post_id_key
+  
     unless @post
       render json: { error: "Post not found" }, status: :not_found
       return
     end
   
+    # Ensure tag_list is properly formatted as an array
+    begin
+      params[:tag_list] = params[:tag_list].is_a?(String) ? JSON.parse(params[:tag_list]) : params[:tag_list]
+    rescue JSON::ParserError
+      params[:tag_list] = []
+    end
+  
+    # Assign tag_list for duplicate tag processing
+    @post.tags_which_duplicate_tag = params[:tag_list]
+  
+    # Update only description and tag_list
     unless @post.update(update_post_params)
       render_error_messages(@post)
-    else
-      @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
-      @post.update(duplicate_tags: @tags) if @tags.present?
-  
-      if params[:tag_list] == "[]"
-        @post.update(duplicate_tags: [])
-      end
-  
-      render json: { 
-        post: @post.attributes.except('tag_list'),
-        message: "Post Updated" 
-      }, status: :ok
+      return
     end
+  
+    # Process duplicate tags
+    @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
+    @post.update(duplicate_tags: @tags) if @tags.present?
+  
+    # If tag_list is empty, reset duplicate tags
+    @post.update(duplicate_tags: []) if params[:tag_list].empty?
+  
+    # Return response
+    render json: {
+      post: @post.attributes.except('tag_list'),
+      message: "Post Updated"
+    }, status: :ok
   end
 
 
@@ -625,7 +639,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def update_post_params
-    params.permit(:post_id, :description, :tag_list)
+    params.permit(:post_id, :description, tag_list: [])
   end
 
 end
