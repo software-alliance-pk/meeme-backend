@@ -2,7 +2,7 @@ require 'tempfile'
 require 'securerandom'
 class Api::V1::PostsController < Api::V1::ApiController
   before_action :authorize_request
-  before_action :find_post, only: [:update_posts, :destroy]
+  before_action :find_post, only: [:destroy]
 
   def index
     @user = User.find_by(id: params[:user_id])
@@ -205,35 +205,61 @@ class Api::V1::PostsController < Api::V1::ApiController
   # end
   
   
-  
-
   def update_posts
-    @post.tags_which_duplicate_tag = params[:tag_list]
-    unless @post.update(post_params)
+    puts "updating post"
+    puts "params #{params}"
+    @post = Post.find_by(id: 3260)
+    puts "post #{@post}"
+    unless @post
+      render json: { error: "Post not found" }, status: :not_found
+      return
+    end
+  
+    unless @post.update(update_post_params)
       render_error_messages(@post)
     else
       @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
-      @post.update(post_params)
-      # Post.add_image_variant_update(@post)
       @post.update(duplicate_tags: @tags) if @tags.present?
+  
       if params[:tag_list] == "[]"
-        @tags = []
-        @post.update(duplicate_tags: @tags)
+        @post.update(duplicate_tags: [])
       end
-      if params[:post_image].present?
-        if params[:post_image].content_type[0..4]=="video"
-          @post.update(thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
-        else
-          @post.update(thumbnail: nil)
-        end
-      end
-      render json: { post: @post.attributes.except('tag_list'),
-                     post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
-                     post_type: @post.post_image.content_type,
-                     message: "Post Updated" },
-             status: :ok
+  
+      render json: { 
+        post: @post.attributes.except('tag_list'),
+        message: "Post Updated" 
+      }, status: :ok
     end
   end
+
+
+  # def update_posts
+  #   @post.tags_which_duplicate_tag = params[:tag_list]
+  #   unless @post.update(post_params)
+  #     render_error_messages(@post)
+  #   else
+  #     @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
+  #     @post.update(post_params)
+  #     # Post.add_image_variant_update(@post)
+  #     @post.update(duplicate_tags: @tags) if @tags.present?
+  #     if params[:tag_list] == "[]"
+  #       @tags = []
+  #       @post.update(duplicate_tags: @tags)
+  #     end
+  #     if params[:post_image].present?
+  #       if params[:post_image].content_type[0..4]=="video"
+  #         @post.update(thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
+  #       else
+  #         @post.update(thumbnail: nil)
+  #       end
+  #     end
+  #     render json: { post: @post.attributes.except('tag_list'),
+  #                    post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
+  #                    post_type: @post.post_image.content_type,
+  #                    message: "Post Updated" },
+  #            status: :ok
+  #   end
+  # end
 
   def destroy
     @post.destroy
@@ -595,6 +621,10 @@ class Api::V1::PostsController < Api::V1::ApiController
 
   def post_params
     params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags, :share_count, :thumbnail,:compress_image)
+  end
+
+  def update_post_params
+    params.permit(:post_id, :description, :tag_list)
   end
 
 end
