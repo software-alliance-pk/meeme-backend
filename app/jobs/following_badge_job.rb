@@ -3,7 +3,7 @@ class FollowingBadgeJob < ApplicationJob
 
   def perform(message)
     current_user = User.find_by(id: message.follower_user_id)
-    if current_user.followings.following_added.count == 20
+    if current_user.followings.following_added.count == 100
       @badge = Badge.find_by(title: "Follower Bronze")
       @check = UserBadge.find_by(user_id: current_user.id, badge_id: @badge.id)
       if @check.present?

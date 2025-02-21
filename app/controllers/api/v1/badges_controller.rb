@@ -57,7 +57,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     likes = User.find(@current_user.id).likes.where.not(post_id: nil).where(is_liked: true).count
     comments = @current_user.comments.count
     gain_follower = @current_user.followers.follower_added.count
-    follow =  @current_user.followings.follower_added.count
+    follow =  @current_user.followings.following_added.count
     memes = @current_user.posts.count
     shared = @current_user.shared || 0
     explored = @current_user.explored || 0
