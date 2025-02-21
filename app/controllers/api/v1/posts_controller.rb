@@ -207,11 +207,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   
   def update_posts
     Rails.logger.debug "Received params: #{params.to_unsafe_h}"
-  
-    # Normalize post_id key by stripping spaces
-    post_id_key = params.keys.find { |key| key.strip == "post_id" }
-    @post = Post.find_by(id: params[post_id_key]) if post_id_key
-  
+    @post = Post.find_by(id: params[:post_id])
     unless @post
       render json: { error: "Post not found" }, status: :not_found
       return
@@ -635,11 +631,11 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def post_params
-    params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags, :share_count, :thumbnail,:compress_image)
+    params.permit(:description, :tag_list) # Removed :post_id and any other unneeded parameters
   end
 
   def update_post_params
-    params.permit(:post_id, :description, tag_list: [])
+    params.permit(:description, tag_list: [])
   end
 
 end
