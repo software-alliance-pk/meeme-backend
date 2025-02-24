@@ -138,26 +138,46 @@
         document.getElementById("notify_confirm").style.display = "block"
     })
 
-    function save(){
-        var event = jQuery.Event( "submit" );
-        $( "#form" ).first().trigger( event );
-        var sendDate = document.querySelector('.datepicker').value; // Select the input by class name
-        if ( event.isDefaultPrevented() ) {
-            event.currentTarget.submit();
-            document.getElementById("notify_confirm").style.display = "none"
-        }
-        document.getElementById("notify_confirm").style.display = "none"
-        $("#title")[0].value = ""
-        $("#link")[0].value = ""
-        $("#body")[0].value = ""
-        $("#send_all").prop("checked", false)
-        if (!sendDate) {
-          showToast("Notification sent successfully.");
-        }
-        else {
-           showToast("Notification scheduled successfully.");
-        }
+    function save() {
+    var event = jQuery.Event("submit");
+    $("#form").first().trigger(event);
+
+    var sendDate = document.querySelector('.datepicker').value; // Select the input by class name
+    var title = $("#title").val();
+    var body = $("#body").val();
+    var sendAll = $("#send_all").prop("checked");
+
+    if (event.isDefaultPrevented()) {
+        event.currentTarget.submit();
+        document.getElementById("notify_confirm").style.display = "none";
     }
+    
+    document.getElementById("notify_confirm").style.display = "none";
+    $("#title").val("");
+    $("#body").val("");
+    $("#send_all").prop("checked", false);
+
+    var message = sendDate ? "Notification scheduled successfully." : "Notification sent successfully.";
+    showToast(message);
+
+    // Get the current date
+    var today = new Date();
+    var formattedDate = (today.getMonth() + 1).toString().padStart(2, '0') + '/' + today.getDate().toString().padStart(2, '0') + '/' + today.getFullYear();
+
+      // Append to history list dynamically
+      if (sendAll) {
+          var newHistoryItem = `
+              <li>
+                  <div class="item">
+                      <p class="date">${formattedDate}</p>
+                      <p class="txt">Notification was sent</p>
+                  </div>
+              </li>
+          `;
+          $(".list").prepend(newHistoryItem);
+      }
+  }
+
 
     function showToast(message, isError = false) {
       console.log("Inside toast");
