@@ -217,17 +217,19 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post.tags_which_duplicate_tag = params[:tag_list]
   
     # Update only description and tag_list
-    unless @post.update(update_post_params)
+    unless @post.update(post_params)
       render_error_messages(@post)
       return
     end
   
-    # Process duplicate tags
-    @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
-    @post.update(duplicate_tags: @tags) if @tags.present?
-  
-    # If tag_list is empty, reset duplicate tags
-    @post.update(duplicate_tags: []) if params[:tag_list].blank?
+    # Check if tag_list is empty or undefined
+    if params[:tag_list].blank? || (params[:tag_list].is_a?(Array) && params[:tag_list].empty?)
+      @post.update(duplicate_tags: []) # Remove previous tags
+    else
+      # Process duplicate tags
+      @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
+      @post.update(duplicate_tags: @tags) if @tags.present?
+    end
   
     # Return response
     render json: {
@@ -627,8 +629,8 @@ class Api::V1::PostsController < Api::V1::ApiController
     params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags, :share_count, :thumbnail,:compress_image)
   end
 
-  def update_post_params
-    params.permit(:description, tag_list: [])
-  end
+  # def update_post_params
+  #   params.permit(:description, tag_list: [])
+  # end
 
 end
