@@ -213,14 +213,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       return
     end
   
-    # Ensure tag_list is properly formatted as an array
-    begin
-      params[:tag_list] = params[:tag_list].is_a?(String) ? JSON.parse(params[:tag_list]) : params[:tag_list]
-    rescue JSON::ParserError
-      params[:tag_list] = []
-    end
-  
-    # Assign tag_list for duplicate tag processing
+    # Directly assign tag_list from params
     @post.tags_which_duplicate_tag = params[:tag_list]
   
     # Update only description and tag_list
@@ -234,7 +227,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     @post.update(duplicate_tags: @tags) if @tags.present?
   
     # If tag_list is empty, reset duplicate tags
-    @post.update(duplicate_tags: []) if params[:tag_list].empty?
+    @post.update(duplicate_tags: []) if params[:tag_list].blank?
   
     # Return response
     render json: {
