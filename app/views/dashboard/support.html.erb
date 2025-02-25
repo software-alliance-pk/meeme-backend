@@ -19,16 +19,76 @@
             <div class="dropdown form_blk" id="support_dropDown">
               <button type="button" class="dropdown-toggle site_btn chevron w-100" data-bs-auto-close="outside" data-bs-toggle="dropdown"><%= @header_value.present? ? @header_value : "" %></button>
               <ul class="dropdown-menu w-100">
-                <li><button selected type="button" onclick="submission(this.innerText)">All</button></li>
-                <li><button type="button" onclick="submission(this.innerText)">Abuse <span></span></button></li>
+                <li><button selected type="button" onclick="submission(this.innerText)">All
+                  <%if Conversation.where.not(unread_id: nil).where.not(admin_user_id: nil).exists?%>
+                    <span class="dot"></span>
+                  <%end%>
+                </button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Abuse 
+                  <% if Conversation.includes(:messages)
+                      .where.not(unread_id: nil)
+                      .where(messages: { subject: "Abuse" })
+                      .exists? %>
+                    <span class="dot"></span>
+                  <%end%>
+                  </button></li>
                 <%= f.text_field :subject, hidden: true, id: "subject" %>
-                <li><button type="button" onclick="submission(this.innerText)">Payment</button></li>
-                <li><button type="button" onclick="submission(this.innerText)">Image <span></span></button></li>
-                <li><button type="button" onclick="submission(this.innerText)">Profile</button></li>
-                <li><button type="button" onclick="submission(this.innerText)">Tournament_Winner <span></span></button></li>
-                <li><button type="button" onclick="submission(this.innerText)">Coins <span></span></button></li>
-                <li><button type="button" onclick="submission(this.innerText)">Plagiarism</button></li>
-                <li><button type="button" onclick="submission(this.innerText)">Winner_Feedback</button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Payment
+                  <% if Conversation.includes(:messages)
+                      .where.not(unread_id: nil)
+                      .where(messages: { subject: "Payment" })
+                      .exists? %>                    
+                    <span class="dot"></span>
+                  <%end%>
+                </button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Image 
+                  <% if Conversation.includes(:messages)
+                      .where.not(unread_id: nil)
+                      .where(messages: { subject: "Image" })
+                      .exists? %>
+                    <span class="dot"></span>
+                  <%end%>
+                </button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Profile
+                  <% if Conversation.includes(:messages)
+                      .where.not(unread_id: nil)
+                      .where(messages: { subject: "Profile" })
+                      .exists? %>
+                    <span class="dot"></span>
+                  <%end%>
+                </button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Tournament_Winner 
+                  <% if Conversation.includes(:messages)
+                      .where.not(unread_id: nil)
+                      .where(messages: { subject: "Tournament_Winner" })
+                      .exists? %>
+                    <span class="dot"></span>
+                  <%end%>
+                </button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Coins 
+                  <% if Conversation.includes(:messages)
+                      .where.not(unread_id: nil)
+                      .where(messages: { subject: "Coins" })
+                      .exists? %>
+                    <span class="dot"></span>
+                  <%end%>
+                </button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Plagiarism
+                  <% if Conversation.includes(:messages)
+                      .where.not(unread_id: nil)
+                      .where(messages: { subject: "Plagiarism" })
+                      .exists? %>
+                    <span class="dot"></span>
+                  <%end%>
+                </button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Winner_Feedback
+                  <% if Conversation.includes(:messages)
+                      .where.not(unread_id: nil)
+                      .where(messages: { subject: "Winner_Feedback" })
+                      .exists? %>
+                    <span class="dot"></span>
+                  <%end%>
+                </button></li>
                 <%= f.submit "", hidden: true, id: "form_submit" %>
               </ul>
             </div>

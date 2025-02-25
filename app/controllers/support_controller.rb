@@ -1,6 +1,7 @@
 class SupportController < ApplicationController
     def show_chat
         @conversation = Conversation.find_by(id: params[:conversation_id])
+        @conversation.update(unread_id: nil)
         if @conversation.present?
             @messages = @conversation.messages.all
             @image = []

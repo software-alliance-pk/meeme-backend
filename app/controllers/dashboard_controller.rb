@@ -667,13 +667,16 @@ class DashboardController < ApplicationController
     if params["/conversations"].present? && params["/conversations"][:subject].present?  && params["/conversations"][:subject] == 'All'
       @header_value = "All"
       @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC").where.not(admin_user_id: nil)
+      @conversation.update_all(unread_id: nil)
     elsif params["/conversations"].present? && params["/conversations"][:subject].present?
       @message = Message.subjects[params["/conversations"][:subject]]
       @header_value = params["/conversations"][:subject]
       @conversation = Conversation.includes(:messages).where("messages.subject = ?", @message).group("conversations.id", "messages.id").order("messages.created_at DESC")
+      @conversation.update_all(unread_id: nil)
     else
       @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC").where.not(admin_user_id: nil)
       @header_value = "Select Subject"
+      # @conversation.update_all(unread_id: nil)
     end
   end
 
