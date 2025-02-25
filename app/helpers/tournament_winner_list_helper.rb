@@ -5,7 +5,7 @@ module TournamentWinnerListHelper
       highest_score = nil
 
       # Iterate through all posts for the tournament banner
-      tournament_user.user.posts&.where(tournament_banner_id: banner_id, deleted_by_user: false)&.each do |post|
+      tournament_user.user.posts&.where(tournament_banner_id: banner_id, deleted_by_user: false)&.where("flagged_by_user = '{}' OR array_length(flagged_by_user, 1) IS NULL").each do |post|
         likes = post&.likes&.where(status: 'like')&.count || 0
         dislikes = post&.likes&.where(status: 'dislike')&.count || 0
 
