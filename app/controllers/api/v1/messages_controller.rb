@@ -73,9 +73,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
       @message = @conversation.messages.new(message_params)
       if message_images.present?
         message_images.each do |image|
-          if image.content_type == "image/heic" # Removed the incorrect '?' after content_type check
+          if image.content_type == "image/heic"
             message_blob = convert_heic_to_jpeg(image) # Use the correct method for conversion
-            debugger
             if message_blob.present? # Check if conversion was successful
               @message.message_images.attach(message_blob) # Directly attach the converted blob
             end
@@ -109,9 +108,8 @@ class Api::V1::MessagesController < Api::V1::ApiController
       @message.message_ticket = SecureRandom.hex(5)
       if message_images.present?
         message_images.each do |image|
-          if image.content_type == "image/heic" # Removed the incorrect '?' after content_type check
+          if image.content_type == "image/heic" 
             message_blob = convert_heic_to_jpeg(image) # Use the correct method for conversion
-            debugger
             if message_blob.present? # Check if conversion was successful
               @message.message_images.attach(message_blob) # Directly attach the converted blob
             end
@@ -141,37 +139,37 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
  
 
-def convert_heic_to_jpeg(uploaded_file)
-  begin
-    # Create a temporary file for the HEIC input
-    temp_heic = Tempfile.new(['image', '.heic'], binmode: true)
-    temp_heic.write(uploaded_file.read)
-    temp_heic.rewind
+  def convert_heic_to_jpeg(uploaded_file)
+    begin
+      # Create a temporary file for the HEIC input
+      temp_heic = Tempfile.new(['image', '.heic'], binmode: true)
+      temp_heic.write(uploaded_file.read)
+      temp_heic.rewind
 
-    # Create a temporary file for the converted JPEG output
-    temp_jpg = Tempfile.new(['image', '.jpg'], binmode: true)
-    temp_jpg.close # Close it to avoid conflicts with ImageMagick
+      # Create a temporary file for the converted JPEG output
+      temp_jpg = Tempfile.new(['image', '.jpg'], binmode: true)
+      temp_jpg.close # Close it to avoid conflicts with ImageMagick
 
-    # Convert HEIC to JPEG using ImageMagick
-    system("magick convert #{temp_heic.path} #{temp_jpg.path}")
+      # Convert HEIC to JPEG using ImageMagick
+      system("magick convert #{temp_heic.path} #{temp_jpg.path}")
 
-    # Upload the converted file to ActiveStorage
-    converted_blob = ActiveStorage::Blob.create_and_upload!(
-      io: File.open(temp_jpg.path, 'rb'),
-      filename: "#{SecureRandom.hex(10)}.jpg",
-      content_type: "image/jpeg"
-    )
+      # Upload the converted file to ActiveStorage
+      converted_blob = ActiveStorage::Blob.create_and_upload!(
+        io: File.open(temp_jpg.path, 'rb'),
+        filename: "#{SecureRandom.hex(10)}.jpg",
+        content_type: "image/jpeg"
+      )
 
-    converted_blob
-  rescue => e
-    Rails.logger.error "Error while converting HEIC: #{e.message}"
-    nil
-  ensure
-    # Cleanup temp files
-    temp_heic.close! if temp_heic
-    temp_jpg.close! if temp_jpg
+      converted_blob
+    rescue => e
+      Rails.logger.error "Error while converting HEIC: #{e.message}"
+      nil
+    ensure
+      # Cleanup temp files
+      temp_heic.close! if temp_heic
+      temp_jpg.close! if temp_jpg
+    end
   end
-end
   def support_chat
     @conversation = Conversation.find_by(id: params[:conversation_id])
     if @conversation.present?
@@ -225,7 +223,7 @@ end
         receiver_name: message.conversation.receiver.username,
         created_at: message.created_at,
         message_images_count:  message.message_images.count,
-        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
+        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''} ,
         # message_image: message.message_image.attached? ? message.message_image.blob.url : '',
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
         receiver_image: message.receiver.profile_image.attached? ? message.receiver.profile_image.blob.url : ''
@@ -244,7 +242,7 @@ end
         created_at: message.created_at,
         message_ticket: message.message_ticket,
         message_images_count:  message.message_images.count,
-        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
+        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''} ,
         # message_image: message.message_image.attached? ? message.message_image.blob.url : '',
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
         ticket_status: message.conversation.status,
