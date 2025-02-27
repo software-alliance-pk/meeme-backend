@@ -223,7 +223,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
         receiver_name: message.conversation.receiver.username,
         created_at: message.created_at,
         message_images_count:  message.message_images.count,
-        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''} ,
+        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
         # message_image: message.message_image.attached? ? message.message_image.blob.url : '',
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
         receiver_image: message.receiver.profile_image.attached? ? message.receiver.profile_image.blob.url : ''
