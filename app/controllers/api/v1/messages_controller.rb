@@ -73,7 +73,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
       @message = @conversation.messages.new(message_params)
       if message_images.present?
         message_images.each do |image|
-          if image.content_type == "image/heic"
+          if image.content_type == "image/heic" || image.content_type == "image/heif"
             message_blob = convert_heic_to_jpeg(image) # Use the correct method for conversion
             if message_blob.present? # Check if conversion was successful
               @message.message_images.attach(message_blob) # Directly attach the converted blob
@@ -108,7 +108,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
       @message.message_ticket = SecureRandom.hex(5)
       if message_images.present?
         message_images.each do |image|
-          if image.content_type == "image/heic" 
+          if image.content_type == "image/heic" || image.content_type == "image/heif"
             message_blob = convert_heic_to_jpeg(image) # Use the correct method for conversion
             if message_blob.present? # Check if conversion was successful
               @message.message_images.attach(message_blob) # Directly attach the converted blob

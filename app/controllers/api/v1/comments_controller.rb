@@ -39,7 +39,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     comment_image = params.delete(:comment_image)
     @comment = Post.find(params[:post_id]).comments.new(image_comments_params)
       if comment_image.present?
-        if comment_image.content_type == "image/heic"
+        if comment_image.content_type == "image/heic" || comment_image.content_type == "image/heif"
           comment_blob = convert_heic_to_jpeg(comment_image) # Use the correct method for conversion
           if comment_blob.present? # Check if conversion was successful
             @comment.comment_image.attach(comment_blob) # Directly attach the converted blob
@@ -74,7 +74,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     comment_image = params.delete(:comment_image)
     @comment = Post.find(params[:post_id]).comments.new(image_comments_params)
       if comment_image.present?
-        if comment_image.content_type == "image/heic"
+        if comment_image.content_type == "image/heic" || comment_image.content_type == "image/heif"
           comment_blob = convert_heic_to_jpeg(comment_image) # Use the correct method for conversion
           if comment_blob.present? # Check if conversion was successful
             @comment.comment_image.attach(comment_blob) # Directly attach the converted blob
