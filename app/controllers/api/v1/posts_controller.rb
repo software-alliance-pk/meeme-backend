@@ -311,7 +311,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       #     @posts << post
       #   end
       # end
-      @posts = Post.includes(:user).tagged_with(params[:tag], any: true)
+      @posts = Post.includes(:user).where(tournament_meme: false).tagged_with(params[:tag], any: true)
               .where.not(user_id: blocked_user_ids)
               .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
               .where(users: { private_account: false })
