@@ -563,7 +563,7 @@ class DashboardController < ApplicationController
   end
 
   def specific_user_transactions
-    @transactions = User.find(params[:user_id]).transactions
+    @transactions = User.find(params[:user_id]).transactions.order("created_at DESC")
     @specific_user = User.find(params[:user_id])
     @image = @specific_user.profile_image.attached? ? @specific_user.profile_image.blob.url : ActionController::Base.helpers.asset_path('user.png')
     respond_to do |format|

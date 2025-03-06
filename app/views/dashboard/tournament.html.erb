@@ -21,7 +21,7 @@
             <div class="form_blk">
               <%= form_for :post, :url => { :controller => 'dashboard', :action => 'tournament' }, :html => { :method => 'get', class: 'form_blk' } do |f| %>
                 <% if TournamentBanner.exists? %>
-                  <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onchange: "submit()" %>
+                  <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.order(start_date: :desc).pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onchange: "submit()" %>
                 <% else %>
                   <%= select_tag :tournament_banner_id, 
                                 options_for_select([['No active tournament', '']]), 
