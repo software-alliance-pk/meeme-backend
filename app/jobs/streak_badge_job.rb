@@ -5,13 +5,13 @@ class StreakBadgeJob < ApplicationJob
     @result = []
     @today_date = Time.zone.now.end_of_day.to_datetime
     60.times do |num|
-      status = Like.where(created_at: (@today_date - num).beginning_of_day..(@today_date - num).end_of_day, is_judged: true, user_id: @current_user.id).where.not(post_id: nil).present?
+      status = Like.where(created_at: (@today_date - num).beginning_of_day..(@today_date - num).end_of_day, is_judged: true, user_id: message.user_id).where.not(post_id: nil).present?
       @result << status
       case num
       when 30
         if @result.exclude? false
           @badge = Badge.find_by(title: "Judge Silver")
-          @check = UserBadge.find_by(user_id: @current_user.id, badge_id: @badge.id)
+          @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
           if @check.present?
             @awarded_badge = UserBadge.create!(user_id: message.user_id, badge_id: @badge.id)
           else
@@ -24,7 +24,7 @@ class StreakBadgeJob < ApplicationJob
       when 7
         if @result.exclude? false
           @badge = Badge.find_by(title: "Judge Bronze")
-          @check = UserBadge.find_by(user_id: @current_user.id, badge_id: @badge.id)
+          @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
           if @check.present?
           else
             @awarded_badge = UserBadge.create!(user_id: message.user_id, badge_id: @badge.id)
@@ -37,7 +37,7 @@ class StreakBadgeJob < ApplicationJob
       when 60
         if @result.exclude? false
           @badge = Badge.find_by(title: "Judge Gold")
-          @check = UserBadge.find_by(user_id: @current_user.id, badge_id: @badge.id)
+          @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
           if @check.present?
           else
             @awarded_badge = UserBadge.create!(user_id: message.user_id, badge_id: @badge.id)
