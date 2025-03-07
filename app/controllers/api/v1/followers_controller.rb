@@ -60,6 +60,8 @@ class Api::V1::FollowersController < Api::V1::ApiController
   def update_follower
     @follower = Follower.find_by(follower_user_id: params[:follower_user_id], user_id: @current_user.id)
     if @follower.present?
+      @notification = @current_user.notifications.find_by(follow_request_id: @follower.id,user_id: @follower.user.id)
+      @notification.update(is_opened: true, status: 'read') if @notification.present?
       if @follower.is_following.to_s == params[:is_following] && @follower.follower_added?
         render json: { message: 'User unfriend his follower' }, status: :ok
       elsif @follower.is_following.to_s == params[:is_following] && @follower.pending?

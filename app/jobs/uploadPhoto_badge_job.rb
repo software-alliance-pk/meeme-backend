@@ -3,7 +3,7 @@ class UploadPhotoBadgeJob < ApplicationJob
   
     def perform(message)
       if message.user.posts.count == 100
-        @badge = Badge.find_by(title: "Upload Photo Silver")
+        @badge = Badge.find_by(title: "Upload Photo Bronze")
         @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
         if @check.present?
         else
@@ -14,7 +14,7 @@ class UploadPhotoBadgeJob < ApplicationJob
           puts ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
         end
       elsif message.user.posts.count == 500000
-        @badge = Badge.find_by(title: "Upload Photo Gold")
+        @badge = Badge.find_by(title: "Upload Photo Silver")
         @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
         if @check.present?
         else

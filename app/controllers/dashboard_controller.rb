@@ -563,7 +563,7 @@ class DashboardController < ApplicationController
   end
 
   def specific_user_transactions
-    @transactions = User.find(params[:user_id]).transactions
+    @transactions = User.find(params[:user_id]).transactions.order("created_at DESC")
     @specific_user = User.find(params[:user_id])
     @image = @specific_user.profile_image.attached? ? @specific_user.profile_image.blob.url : ActionController::Base.helpers.asset_path('user.png')
     respond_to do |format|
@@ -667,21 +667,24 @@ class DashboardController < ApplicationController
     if params["/conversations"].present? && params["/conversations"][:subject].present?  && params["/conversations"][:subject] == 'All'
       @header_value = "All"
       @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC").where.not(admin_user_id: nil)
+      @conversation.update_all(unread_id: nil)
     elsif params["/conversations"].present? && params["/conversations"][:subject].present?
       @message = Message.subjects[params["/conversations"][:subject]]
       @header_value = params["/conversations"][:subject]
       @conversation = Conversation.includes(:messages).where("messages.subject = ?", @message).group("conversations.id", "messages.id").order("messages.created_at DESC")
+      @conversation.update_all(unread_id: nil)
     else
       @conversation = Conversation.includes(:messages).group("conversations.id", "messages.id").order("messages.created_at DESC").where.not(admin_user_id: nil)
       @header_value = "Select Subject"
+      # @conversation.update_all(unread_id: nil)
     end
   end
 
   def follower_count
     @user_id = User.find(params[:user_id])
-    @follower_count = @user_id.followers.count
-    @following_count = @user_id.followers.where(status: "pending").count
-    @posts_count = @user_id.posts.count
+    @follower_count = @user_id.followers.where(user_id: @user_id.id, status: "follower_added").count
+    @following_count = @user_id.followings.where(follower_user_id: @user_id.id, status: "following_added").count
+    @posts_count = @user_id.posts.where(tournament_meme: false).count
     respond_to do |format|
       format.json { render json: { followers: @follower_count, following: @following_count, posts: @posts_count } }
     end

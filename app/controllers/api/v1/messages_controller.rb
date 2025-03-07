@@ -1,3 +1,4 @@
+require 'tempfile'
 class Api::V1::MessagesController < Api::V1::ApiController
   before_action :authorize_request
 
@@ -68,7 +69,20 @@ class Api::V1::MessagesController < Api::V1::ApiController
   def create
     @conversation = Conversation.find_by(id: params[:conversation_id])
     if @conversation.present?
+      message_images = params.delete(:message_images)
       @message = @conversation.messages.new(message_params)
+      if message_images.present?
+        message_images.each do |image|
+          if image.content_type == "image/heic" || image.content_type == "image/heif"
+            message_blob = convert_heic_to_jpeg(image) # Use the correct method for conversion
+            if message_blob.present? # Check if conversion was successful
+              @message.message_images.attach(message_blob) # Directly attach the converted blob
+            end
+          elsif  image.content_type != "image/heic"
+            @message.message_images.attach(image) # Attach other image formats directly
+          end
+        end
+      end
       if @message.save
         @conversation.update(unread_id: @message.receiver_id)
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
@@ -87,10 +101,23 @@ class Api::V1::MessagesController < Api::V1::ApiController
   end
 
   def support_ticket
-    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Ongoing')
+    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Ongoing', unread_id: params[:admin_user_id])
     if @conversation.present?
+      message_images = params.delete(:message_images)
       @message = @conversation.messages.new(message_params)
       @message.message_ticket = SecureRandom.hex(5)
+      if message_images.present?
+        message_images.each do |image|
+          if image.content_type == "image/heic" || image.content_type == "image/heif"
+            message_blob = convert_heic_to_jpeg(image) # Use the correct method for conversion
+            if message_blob.present? # Check if conversion was successful
+              @message.message_images.attach(message_blob) # Directly attach the converted blob
+            end
+          elsif  image.content_type != "image/heic"
+            @message.message_images.attach(image) # Attach other image formats directly
+          end
+        end
+      end
       if @message.save
         # @message.update(message_ticket: SecureRandom.hex(5))
         ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message) })
@@ -110,6 +137,39 @@ class Api::V1::MessagesController < Api::V1::ApiController
     end
   end
 
+ 
+
+  def convert_heic_to_jpeg(uploaded_file)
+    begin
+      # Create a temporary file for the HEIC input
+      temp_heic = Tempfile.new(['image', '.heic'], binmode: true)
+      temp_heic.write(uploaded_file.read)
+      temp_heic.rewind
+
+      # Create a temporary file for the converted JPEG output
+      temp_jpg = Tempfile.new(['image', '.jpg'], binmode: true)
+      temp_jpg.close # Close it to avoid conflicts with ImageMagick
+
+      # Convert HEIC to JPEG using ImageMagick
+      system("magick convert #{temp_heic.path} #{temp_jpg.path}")
+
+      # Upload the converted file to ActiveStorage
+      converted_blob = ActiveStorage::Blob.create_and_upload!(
+        io: File.open(temp_jpg.path, 'rb'),
+        filename: "#{SecureRandom.hex(10)}.jpg",
+        content_type: "image/jpeg"
+      )
+
+      converted_blob
+    rescue => e
+      Rails.logger.error "Error while converting HEIC: #{e.message}"
+      nil
+    ensure
+      # Cleanup temp files
+      temp_heic.close! if temp_heic
+      temp_jpg.close! if temp_jpg
+    end
+  end
   def support_chat
     @conversation = Conversation.find_by(id: params[:conversation_id])
     if @conversation.present?
@@ -117,6 +177,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
       @message = @conversation.messages.new(message_params)
         @message.subject = subject[0]
         @message.message_ticket = subject[1]
+        @conversation.update(unread_id: @conversation.admin_user_id)
       if @message.save
         # @message.update(subject: subject[0], message_ticket: subject[1])
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
@@ -181,7 +242,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
         created_at: message.created_at,
         message_ticket: message.message_ticket,
         message_images_count:  message.message_images.count,
-        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.url : ''} ,
+        message_images: message.message_images.map{|message_image| message_image.present? ? message_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''} ,
         # message_image: message.message_image.attached? ? message.message_image.blob.url : '',
         sender_image: message.sender.profile_image.attached? ? message.sender.profile_image.blob.url : '',
         ticket_status: message.conversation.status,

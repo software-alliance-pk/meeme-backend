@@ -38,17 +38,17 @@ class Notification < ApplicationRecord
     message: {
       token: "", # Token to be set below
       notification: { body: self.body, title: self.title },
-      data: { notification_type: self.notification_type, conversation_id: self.conversation_id.to_s, sender_id: self.sender_id.to_s, sender_name: self.sender_name, reciever_id: self.user_id.to_s, reciever_name: reciever.username, sender_image: sender&.profile_image&.attached? ? sender.profile_image.blob.url : '', reciever_image: reciever.profile_image.attached? ? reciever.profile_image.blob.url : '', message_ticket: self.message_ticket},   
+      data: { notification_id: self.id.to_s, notification_type: self.notification_type, conversation_id: self.conversation_id.to_s, sender_id: self.sender_id.to_s, sender_name: self.sender_name, reciever_id: self.user_id.to_s, reciever_name: reciever.username, sender_image: sender&.profile_image&.attached? ? sender.profile_image.blob.url : '', reciever_image: reciever.profile_image.attached? ? reciever.profile_image.blob.url : '', message_ticket: self.message_ticket, id: self.id.to_s},   
     }
   }
   # send_fcm_notification(uri, options, token)
 
   if notification_type == 'comment'
-    CommentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id, user.id, self.post_id)
+    CommentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id, user.id, self.post_id, self.id)
   end
 
   if notification_type == 'tournament_winner' || notification_type == 'tournament_judge'
-    TournamentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id, self.sender_name)
+    TournamentNotificationWorker.perform_in(Time.now, self.body, self.title, notification_type, self.user_id, self.sender_name, self.id)
   end
 
   if notification_type != 'admin_message' && notification_type != 'push_notification' && notification_type != 'comment' && notification_type != 'tournament_winner' && notification_type != 'tournament_judge'

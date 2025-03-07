@@ -6,14 +6,20 @@ class Api::V1::ConversationsController < Api::V1::ApiController
   end
 
   def create
-    @conversation = Conversation.find_by(sender_id: @current_user.id, receiver_id: params[:receiver_id])
+    # Check if conversation exists with either user as sender or receiver
+    @conversation = Conversation.find_by(
+      "(sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)",
+      @current_user.id, params[:receiver_id],
+      params[:receiver_id], @current_user.id
+    )
+
     if @conversation.present?
       render json: { message: "Conversation Exists", conversation: @conversation }, status: :ok
     else
-      @conversation=  Conversation.create!(receiver_id: @current_user.id,
-                                           sender_id: params[:receiver_id].to_i)
-      @conversation = Conversation.create!(sender_id: @current_user.id,
-                                           receiver_id: params[:receiver_id].to_i)
+      @conversation = Conversation.create!(
+        sender_id: @current_user.id,
+        receiver_id: params[:receiver_id].to_i
+      )
       # Notification.create(body: 'Conversation created successfully ',
       #                     conversation_id: @conversation.id,
       #                     user_id: @current_user.id )

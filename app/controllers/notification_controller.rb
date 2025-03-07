@@ -3,13 +3,13 @@ class NotificationController < ApplicationController
         @notification = Notification.new(notification_params)
         if params[:send_all].present? && params[:send_all] == "on" && params[:send_date] == ""
             @notification.save
-            PushNotificationWorker.perform_in(Time.now, params[:body], params[:title], params[:send_date])
+            PushNotificationWorker.perform_in(Time.now, params[:body], params[:title], params[:send_date], @notification.notification_type)
         elsif params[:send_all].present? && params[:send_all] == "on" && params[:send_date] != ""
             @now = Time.now.strftime("%F") 
             @date = params[:send_date]
             @days = (@date.to_date - @now.to_date).to_i
             @notification.save
-            PushNotificationBroadCastJob.set(wait: @days.days).perform_later(params[:body], params[:title], params[:send_date])
+            PushNotificationBroadCastJob.set(wait: @days.days).perform_later(params[:body], params[:title], params[:send_date], @notification.notification_type)
         end
     end
 

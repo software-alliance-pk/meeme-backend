@@ -21,7 +21,7 @@
             <div class="form_blk">
               <%= form_for :post, :url => { :controller => 'dashboard', :action => 'tournament' }, :html => { :method => 'get', class: 'form_blk' } do |f| %>
                 <% if TournamentBanner.exists? %>
-                  <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onchange: "submit()" %>
+                  <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.order(start_date: :desc).pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onchange: "submit()" %>
                 <% else %>
                   <%= select_tag :tournament_banner_id, 
                                 options_for_select([['No active tournament', '']]), 
@@ -109,7 +109,7 @@
                       <img src="<%= asset_path("icon-vdots.svg")%>" alt="">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                      <li><button type="button" onclick="flagTournamentPost('<%= post.user.id %>', '<%= post.id %>')">Flag User</button></li>
+                      <li><button type="button" onclick="flagTournamentPost('<%= post.user.id %>', '<%= post.id %>')">Flag Post</button></li>
                       <li>
                         <% username = post.user.username %>
                         <% email = post.user.email %>
@@ -477,24 +477,20 @@ width: 65%;
                       </div>
                       <div class="right_blk custom-right-side">
                         <div class="vote_blk">
-                          <span class="vote" style="padding-right: 25px">
+                          <span class="vote" style="padding-right: 5px">
                             <img src="<%= asset_path("icon-vote-up.svg") %>" alt="">
                             <span id="side_user_likes-${ind}" style="text-decoration: underline">${item?.likes}</span>
                             <div class="btn-group" style="position: absolute; right: 0; flex-direction: column">
 
-                              <a id='up-btn'  onclick="increaseLikeCount('${item.id}', '${ind}')" >   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt=""> </a>
-                               <a id='down-btn' onclick="decreaseLikeCount('${item.id}', '${ind}')"  >   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("down-btn.png") %>" alt=""> </a>
-
+                             
                             </div>
                           </span>
-                          <span class="vote vote_down" style="padding-right: 25px">
+                          <span class="vote vote_down" style="padding-right: 5px">
                             <img src="<%= asset_path("icon-vote-down.svg") %>" alt="">
                             <span id="side_user_dislikes-${ind}" style="text-decoration: underline">${item?.dislikes}</span>
                             <div class="btn-group" style="position: absolute; right: 0; flex-direction: column">
 
-                              <a id='up-btn'  onclick="increaseDislikeCount('${item.id}', '${ind}')" >   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("up-btn.png") %>" alt=""> </a>
-                               <a id='down-btn' onclick="decreaseDislikeCount('${item.id}', '${ind}')"  >   <img style="width:35px; cursor:pointer;margin-bottom:3px;" src="<%= asset_path("down-btn.png") %>" alt=""> </a>
-
+                            
                             </div>
                           </span>
                         </div>

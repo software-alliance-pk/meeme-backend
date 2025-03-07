@@ -8,6 +8,18 @@ json.recent_posts do
       json.post_image post.post_image.attached? ? post.post_image.blob.url : ''
       json.post_thumbnail post.video_thumbnail.attached? ? post.video_thumbnail.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : post.thumbnail
       json.post_type post.post_image.content_type
+      json.image_height case post.post_image.blob.metadata[:height]
+                  when nil then ""  # Handle cases where height metadata is missing
+                  when 512 then "exact"
+                  when 0..511 then "less"
+                  else "high"
+                  end
+      json.image_width case post.post_image.blob.metadata[:width]
+                  when nil then ""  # Handle cases where height metadata is missing
+                  when 512 then "exact"
+                  when 0..511 then "less"
+                  else "high"
+                  end
       json.compress_image post.post_image.attached? && post.post_image&.image? ? post.post_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
       json.liked_by_current_user post.likes.where(post_id: post.id, user_id: @current_user.id).present? ? true : false
       json.post_likes post.likes.count

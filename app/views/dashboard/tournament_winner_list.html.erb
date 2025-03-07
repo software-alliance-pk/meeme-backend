@@ -84,7 +84,7 @@
             <% i = 0 %>
             <% if users.present? %>
               <% users.each do |tournament_user| %>
-                <% if tournament_user.user.posts.present? && tournament_user.user.posts.where(tournament_meme: true, tournament_banner_id: banner["id"]).present? %>
+                <% if tournament_user.user.posts.present? && tournament_user.user.posts.where(tournament_meme: true, tournament_banner_id: banner["id"], deleted_by_user: false).where("flagged_by_user = '{}' OR array_length(flagged_by_user, 1) IS NULL").present? %>
                   <tr>
                     <td>
                       <% if i == 0 %>

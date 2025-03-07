@@ -1,7 +1,7 @@
 class CommentNotificationWorker
   include Sidekiq::Worker
 
-  def perform(*args, body, title, type ,user_id, id, post_id)
+  def perform(*args, body, title, type ,user_id, id, post_id, notification_id)
     require 'googleauth'
     require 'net/http'
     require 'uri'
@@ -29,7 +29,7 @@ class CommentNotificationWorker
     message: {
       token: "", # Token to be set below
       notification: { body: body, title: title },
-      data: { notification_type: type, user_id: user_id.to_s, post_id: post_id.to_s }
+      data: { notification_type: type, user_id: user_id.to_s, post_id: post_id.to_s, id: notification_id.to_s }
     }
   }
 

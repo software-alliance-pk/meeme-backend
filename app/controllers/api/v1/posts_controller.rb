@@ -2,18 +2,18 @@ require 'tempfile'
 require 'securerandom'
 class Api::V1::PostsController < Api::V1::ApiController
   before_action :authorize_request
-  before_action :find_post, only: [:update_posts, :destroy]
+  before_action :find_post, only: [:destroy]
 
   def index
     @user = User.find_by(id: params[:user_id])
     
     if @user.present?
-      @posts = @user.posts.where(tournament_meme: false)
+      @posts = @user.posts.where(tournament_meme: false).sort_by(&:created_at).reverse
       @posts_count = @posts.count.to_i
-      @posts = @posts.by_recently_created(200)
+      # @posts = @posts.by_recently_created(200)
       
         if params[:month].present?
-          @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i)
+          @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i).sort_by(&:created_at).reverse
           @posts_count = @posts.count.to_i
         else
           @posts_count = @posts.count.to_i
@@ -205,35 +205,67 @@ class Api::V1::PostsController < Api::V1::ApiController
   # end
   
   
-  
-
   def update_posts
+    Rails.logger.debug "Received params: #{params.to_unsafe_h}"
+    @post = Post.find_by(id: params[:post_id])
+    unless @post
+      render json: { error: "Post not found" }, status: :not_found
+      return
+    end
+  
+    # Directly assign tag_list from params
     @post.tags_which_duplicate_tag = params[:tag_list]
+  
+    # Update only description and tag_list
     unless @post.update(post_params)
       render_error_messages(@post)
-    else
-      @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
-      @post.update(post_params)
-      # Post.add_image_variant_update(@post)
-      @post.update(duplicate_tags: @tags) if @tags.present?
-      if params[:tag_list] == "[]"
-        @tags = []
-        @post.update(duplicate_tags: @tags)
-      end
-      if params[:post_image].present?
-        if params[:post_image].content_type[0..4]=="video"
-          @post.update(thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
-        else
-          @post.update(thumbnail: nil)
-        end
-      end
-      render json: { post: @post.attributes.except('tag_list'),
-                     post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
-                     post_type: @post.post_image.content_type,
-                     message: "Post Updated" },
-             status: :ok
+      return
     end
+  
+    # Check if tag_list is empty or undefined
+    if params[:tag_list].blank? || (params[:tag_list].is_a?(Array) && params[:tag_list].empty?)
+      @post.update(duplicate_tags: []) # Remove previous tags
+    else
+      # Process duplicate tags
+      @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
+      @post.update(duplicate_tags: @tags) if @tags.present?
+    end
+  
+    # Return response
+    render json: {
+      post: @post.attributes.except('tag_list'),
+      message: "Post Updated"
+    }, status: :ok
   end
+
+
+  # def update_posts
+  #   @post.tags_which_duplicate_tag = params[:tag_list]
+  #   unless @post.update(post_params)
+  #     render_error_messages(@post)
+  #   else
+  #     @tags = @post.tag_list.map { |item| item&.split("dup")&.first }
+  #     @post.update(post_params)
+  #     # Post.add_image_variant_update(@post)
+  #     @post.update(duplicate_tags: @tags) if @tags.present?
+  #     if params[:tag_list] == "[]"
+  #       @tags = []
+  #       @post.update(duplicate_tags: @tags)
+  #     end
+  #     if params[:post_image].present?
+  #       if params[:post_image].content_type[0..4]=="video"
+  #         @post.update(thumbnail: @post.post_image.preview(resize_to_limit: [100, 100]).processed.url)
+  #       else
+  #         @post.update(thumbnail: nil)
+  #       end
+  #     end
+  #     render json: { post: @post.attributes.except('tag_list'),
+  #                    post_image: @post.post_image.attached? ? @post.post_image.blob.url : '',
+  #                    post_type: @post.post_image.content_type,
+  #                    message: "Post Updated" },
+  #            status: :ok
+  #   end
+  # end
 
   def destroy
     @post.destroy
@@ -270,6 +302,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       @posts = Post.includes(:user).where(tournament_meme: false)
              .where.not(user_id: blocked_user_ids)
              .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+             .where(users: { private_account: false })
              .by_recently_created(200)  
     else
       # Post.tagged_with(params[:tag], :any => true).each do |post|
@@ -278,9 +311,10 @@ class Api::V1::PostsController < Api::V1::ApiController
       #     @posts << post
       #   end
       # end
-      @posts = Post.includes(:user).tagged_with(params[:tag], any: true)
+      @posts = Post.includes(:user).where(tournament_meme: false).tagged_with(params[:tag], any: true)
               .where.not(user_id: blocked_user_ids)
               .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+              .where(users: { private_account: false })
     end
       if @posts.present?
         if params[:per_page].present? 
@@ -301,7 +335,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       if @users.present?
       end
     elsif params[:tag] == "#"
-      @recent_posts = Post.where(tournament_meme: false)
+      @recent_posts = Post.where(tournament_meme: false).where(users: { private_account: false })
       @users = []
 
     else
@@ -321,7 +355,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       if @users.present?
       end
     elsif params[:tag] == "#"
-      @trending_posts = Post.where(tournament_meme: false)
+      @trending_posts = Post.where(tournament_meme: false).where(users: { private_account: false })
       @users = []
 
     else
@@ -345,13 +379,14 @@ class Api::V1::PostsController < Api::V1::ApiController
     # Fetch posts based on tag
     # Post Controller comment
     if params[:tag].present?
-      tag_posts = Post.tagged_with(params[:tag], any: true)
+      tag_posts = Post.tagged_with(params[:tag], any: true).includes(:user)
+      .where(users: { private_account: false })
       @posts.concat(tag_posts)
     end
   
     # Fetch posts based on username
     if params[:username].present?
-      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%")
+      @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").where(private_account: false)
       if @users.present?
         @users.each do |user|
           user_posts = user.posts
@@ -432,90 +467,106 @@ class Api::V1::PostsController < Api::V1::ApiController
     render json: { tags: @tags }, status: :ok
   end
   
-  
-  
-  
-  
-  
 
   def following_posts
-    @following_posts = []
-    @following = Follower.where(follower_user_id: @current_user.id , is_following: true , status: "following_added" || "follower_added" ).pluck(:user_id)
-    @following = params[:per_page].present? ? User.where(id: @following).paginate(page: params[:page], per_page: params[:per_page]) : User.where(id: @following).paginate(page: params[:page], per_page: 10)
-    @following.each do |user|
-      user.posts.where(tournament_meme: false).each do |post|
-        if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(post.user.id)
-        else
-          @following_posts << post
-        end
+    @following = Follower.where(follower_user_id: @current_user.id, 
+                               is_following: true, 
+                               status: ["following_added", "follower_added"]).pluck(:user_id)
+    
+    # Build base query with includes and where conditions
+    user_posts = Post.includes(:user)
+                     .where(user_id: @following, 
+                           tournament_meme: false)
+                     .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+                     .where.not(user_id: @current_user.blocked_users.pluck(:blocked_user_id))
+                     .order(created_at: :desc)
+
+    # Apply created_at filter if present
+    if params[:created_at].present?
+      created_at = Time.zone.parse(params[:created_at]) rescue nil
+      if created_at
+        user_posts = user_posts.where('posts.created_at <= ?', created_at)
+      else
+        render json: { message: "Invalid created_at format" }, status: :bad_request and return
       end
     end
-    @following_posts = @following_posts.shuffle
+
+    # Paginate results
+    @following_posts = params[:per_page].present? ? 
+      user_posts.paginate(page: params[:page], per_page: params[:per_page]) : 
+      user_posts.paginate(page: params[:page], per_page: 10)
+
     if @following_posts.present?
+      # Existing view will handle the response
     else
-      render json: { following_posts: [], following_count: @following.count}, status: :ok
+      render json: { following_posts: [], following_count: @following.length }, status: :ok
     end
   end
 
   def recent_posts
     @recent_posts = []
-    # Post.where.not(tournament_meme: true).by_recently_created(500).each do |post|
-    #   user = post.user
-    #   next unless user && !user.private_account? 
-  
-    #   if post.flagged_by_user.include?(@current_user.id) || @current_user.blocked_users.pluck(:blocked_user_id).include?(user.id)
-    #   else
-    #     @recent_posts << post
-    #   end
-    # end
     blocked_user_ids = @current_user.blocked_users.pluck(:blocked_user_id)
-    @recent_posts = Post.includes(:user)
-      .where(tournament_meme: false)
-      .where.not(user_id: blocked_user_ids)
-      .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
-      .where(users: { private_account: false })
-      .by_recently_created(500)
+    
+    # Check if 'created_at' parameter is present and valid
+    if params[:created_at].present?
+      created_at = Time.zone.parse(params[:created_at]) rescue nil
+      if created_at
+        @recent_posts = Post.includes(:user)
+          .where(tournament_meme: false)
+          .where.not(user_id: blocked_user_ids)
+          .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+          .where(users: { private_account: false })
+          .where('posts.created_at <= ?', created_at) # Specify the table for created_at
+          .by_recently_created(500)
+      else
+        render json: { message: "Invalid created_at format" }, status: :bad_request and return
+      end
+    else
+      # Default behavior when 'created_at' is not provided
+      @recent_posts = Post.includes(:user)
+        .where(tournament_meme: false)
+        .where.not(user_id: blocked_user_ids)
+        .where.not('flagged_by_user @> ARRAY[?]::integer[]', [@current_user.id])
+        .where(users: { private_account: false })
+        .by_recently_created(500)
+    end
+
+    # Paginate the results
     @recent_posts = params[:per_page].present? ? @recent_posts.paginate(page: params[:page], per_page: params[:per_page]) : @recent_posts.paginate(page: params[:page], per_page: 25)
-    # @recent_posts = Post.where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
-    # @today_post = Post.where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).by_recently_created(25).paginate(page: params[:page], per_page: 25)
-    # @random_posts = Post.where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).where.not(tournament_meme: true).paginate(page: params[:page], per_page: 25).shuffle
-    # @recent_posts = @today_post + @random_posts
-    # @recent_posts = Post.where(tournament_meme: false).by_recently_created(20).paginate(page: params[:page], per_page: 25).shuffle
   end
 
   def trending_posts
     @trending_posts = []
-  
+
     # Fetch likes and associated post_ids in a single query
     likes = Like.where(status: 1, is_liked: true, is_judged: false)
                 .joins(:post)
                 .where(posts: { tournament_meme: false })
                 .group(:post_id)
                 .count
-  
-    # Sort likes by count in descending order
-    sorted_likes = likes.sort_by { |_, count| -count }.to_h
-  
+
     # Preload posts and users in a single query
-    post_ids = sorted_likes.keys
+    post_ids = likes.keys
     posts = Post.includes(:user, :comments)
                 .where(id: post_ids)
                 .where.not(user_id: @current_user.blocked_users.pluck(:blocked_user_id))
+                .where(users: { private_account: false })
                 .reject { |post| post.flagged_by_user.include?(@current_user.id) }
-  
-    # Collect posts with their respective scores
+
+    # Calculate trending score for each post (likes + comments * 2)
     @trending_posts = posts.map do |post|
-      [post, post.comments.count * 2]
-    end.to_h
-  
-    # Sort the posts by their scores in descending order
+      score = likes[post.id].to_i + (post.comments.count * 2)
+      [post, score]
+    end
+
+    # Sort posts by total score in descending order
     @trending_posts = @trending_posts.sort_by { |_, score| -score }
-  
+
     # Paginate the results
-    @trending_posts = params[:per_page].present? ? @trending_posts.paginate(page: params[:page], per_page: params[:per_page]) : @trending_posts.paginate(page: params[:page], per_page: 10)
-  
-    if @trending_posts
-      # Do something with @trending_posts
+    @trending_posts = if params[:per_page].present?
+      @trending_posts.paginate(page: params[:page], per_page: params[:per_page].to_i)
+    else
+      @trending_posts.paginate(page: params[:page], per_page: 10)
     end
   end
   
@@ -559,8 +610,7 @@ class Api::V1::PostsController < Api::V1::ApiController
   end
 
   def current_user_tournament_posts
-    
-    @user_tournament_post = params[:page].present? ? @current_user.posts.where(tournament_meme: true, deleted_by_user: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @current_user.posts.where(tournament_meme: true).by_recently_created(200)
+    @user_tournament_post = params[:page].present? ? @current_user.posts.where(tournament_meme: true, deleted_by_user: false).by_recently_created(200).paginate(page: params[:page], per_page: 25).shuffle : @current_user.posts.where(tournament_meme: true, deleted_by_user: false).by_recently_created(200)
     unless @user_tournament_post.present?
       render json: { message: "No tournament posts for this particular user" }, status: :not_found
     end
@@ -578,5 +628,9 @@ class Api::V1::PostsController < Api::V1::ApiController
   def post_params
     params.permit(:id, :description, :tag_list, :post_likes, :post_image, :user_id, :tournament_banner_id, :tournament_meme, :duplicate_tags, :share_count, :thumbnail,:compress_image)
   end
+
+  # def update_post_params
+  #   params.permit(:description, tag_list: [])
+  # end
 
 end

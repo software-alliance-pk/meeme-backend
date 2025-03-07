@@ -1,3 +1,4 @@
+require 'tempfile'
 class Api::V1::CommentsController < Api::V1::ApiController
   before_action :authorize_request
   before_action :find_post, only: [:create]
@@ -35,7 +36,18 @@ class Api::V1::CommentsController < Api::V1::ApiController
     # @comment = Post.find(params[:post_id]).comments.new(description: params[:description],
     #                                                     user_id: @current_user.id,
     #                                                     post_id: params[:post_id])
+    comment_image = params.delete(:comment_image)
     @comment = Post.find(params[:post_id]).comments.new(image_comments_params)
+      if comment_image.present?
+        if comment_image.content_type == "image/heic" || comment_image.content_type == "image/heif"
+          comment_blob = convert_heic_to_jpeg(comment_image) # Use the correct method for conversion
+          if comment_blob.present? # Check if conversion was successful
+            @comment.comment_image.attach(comment_blob) # Directly attach the converted blob
+          end
+        else
+          @comment.comment_image.attach(comment_image) # Attach other image formats directly
+        end
+      end
     @comment.user_id = @current_user.id
     if @comment.save
       if Post.find(params[:post_id]).user_id != @current_user.id
@@ -59,7 +71,18 @@ class Api::V1::CommentsController < Api::V1::ApiController
     #                                                     user_id: @current_user.id,
     #                                                     post_id: params[:post_id],
     #                                                     parent_id: params[:comment_id])
+    comment_image = params.delete(:comment_image)
     @comment = Post.find(params[:post_id]).comments.new(image_comments_params)
+      if comment_image.present?
+        if comment_image.content_type == "image/heic" || comment_image.content_type == "image/heif"
+          comment_blob = convert_heic_to_jpeg(comment_image) # Use the correct method for conversion
+          if comment_blob.present? # Check if conversion was successful
+            @comment.comment_image.attach(comment_blob) # Directly attach the converted blob
+          end
+        else
+          @comment.comment_image.attach(comment_image) # Attach other image formats directly
+        end
+      end
     @comment.user_id = @current_user.id
     @comment.parent_id = params[:comment_id]
     if @comment.save
@@ -120,6 +143,39 @@ class Api::V1::CommentsController < Api::V1::ApiController
       render json: { message: "Child Comment successfully destroyed" }, status: :ok
     else
       render json: { message: "Child Comment not found" }, status: :not_found
+    end
+  end
+
+
+  def convert_heic_to_jpeg(uploaded_file)
+    begin
+      # Create a temporary file for the HEIC input
+      temp_heic = Tempfile.new(['image', '.heic'], binmode: true)
+      temp_heic.write(uploaded_file.read)
+      temp_heic.rewind
+
+      # Create a temporary file for the converted JPEG output
+      temp_jpg = Tempfile.new(['image', '.jpg'], binmode: true)
+      temp_jpg.close # Close it to avoid conflicts with ImageMagick
+
+      # Convert HEIC to JPEG using ImageMagick
+      system("magick convert #{temp_heic.path} #{temp_jpg.path}")
+
+      # Upload the converted file to ActiveStorage
+      converted_blob = ActiveStorage::Blob.create_and_upload!(
+        io: File.open(temp_jpg.path, 'rb'),
+        filename: "#{SecureRandom.hex(10)}.jpg",
+        content_type: "image/jpeg"
+      )
+
+      converted_blob
+    rescue => e
+      Rails.logger.error "Error while converting HEIC: #{e.message}"
+      nil
+    ensure
+      # Cleanup temp files
+      temp_heic.close! if temp_heic
+      temp_jpg.close! if temp_jpg
     end
   end
 

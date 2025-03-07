@@ -30,7 +30,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
   end
 
   def create_support_ticket
-    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Ongoing')
+    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Ongoing',unread_id: params[:admin_user_id])
     if @conversation.present?
       @message = @conversation.messages.new(message_params)
       @message.subject = 'Abuse'

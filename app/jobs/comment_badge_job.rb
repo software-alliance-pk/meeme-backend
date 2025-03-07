@@ -2,7 +2,7 @@ class CommentBadgeJob < ApplicationJob
   queue_as :default
 
   def perform(message)
-    if message.user.comments.count == 72    #Todo limit = 100
+    if message.user.comments.count == 100    #Todo limit = 100
       @badge = Badge.find_by(title: "Commentator Bronze")
       @check = UserBadge.find_by(user_id: message.user_id, badge_id: @badge.id)
       if @check.present?

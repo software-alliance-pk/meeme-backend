@@ -16,7 +16,7 @@ class PushNotificationBroadCastJob < ApplicationJob
             puts "----------------------------------------------"
             puts response.body
           end
-    def perform(body, title, date)
+    def perform(body, title, date, type)
         # require 'fcm'
         # fcm_client = FCM.new(ENV['FIREBASE_SERVER_KEY'])
         # options = { priority: 'high',
@@ -59,25 +59,13 @@ class PushNotificationBroadCastJob < ApplicationJob
           # Notification payload
           options = {
             message: {
-              token: "", # Token to be set below
+              topic: "all_users",
               notification: { body: body, title: title },
-              data: {}
+              data: {notification_type: type},   
             }
           }
-          User.all.each do |user|
-            if user.notifications_enabled? && user.mobile_devices.present?
-              registration_ids.concat(user.mobile_devices.pluck(:mobile_token))
-            end
-          end
+          send_fcm_notification(uri, options, token)
           
-          registration_ids.each do |registration_id|
-            options[:message][:token] = registration_id
-            puts "----------------------------------------------"
-            puts "------ Options ----------- #{options}"
-            puts "----------------------------------------------"
-          
-            send_fcm_notification(uri, options, token)
-          end
 
           
     end

@@ -19,7 +19,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
 
   def tournament_posts
     # @tournament_posts = @tournament.posts.where.not(user_id: @current_user.id).paginate(page: params[:page], per_page: 25)
-    @tournament_posts = @tournament.posts.where.not(user_id: @current_user.id).where(flagged_by_user: [], deleted_by_user: false).all
+    @tournament_posts = @tournament.posts.where.not(user_id: @current_user.id).where(flagged_by_user: [], deleted_by_user: false).all.shuffle
     if @tournament_posts.present?
     else
     end
@@ -171,7 +171,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
         start_of_day = Time.current.beginning_of_day
         end_of_day = Time.current.end_of_day
         daily_likes_count = Like.where(user_id: @current_user.id, created_at: start_of_day..end_of_day).count
-        if daily_likes_count == 100
+        if daily_likes_count == 25
           daily_coins = 50
           if DailyCoin.first.present?
             daily_coins = DailyCoin.first.daily_coins_reward.to_i
@@ -179,7 +179,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
           current_coins = @current_user.coins.to_i + daily_coins
           @current_user.update(coins: current_coins)
           Notification.create(title: "Judge Reward",
-                          body: "Congratulations you have won #{daily_coins} coins for completing judgment of 100 posts.",
+                          body: "Congratulations you have won #{daily_coins} coins for completing judgment of 25 posts.",
                           user_id: @current_user.id,
                           sender_id: @current_admin_user&.id,
                           sender_name: @current_admin_user&.admin_user_name.present? ? @current_admin_user&.admin_user_name : AdminUser.first.admin_user_name,
@@ -212,7 +212,7 @@ class Api::V1::TournamentBannersController < Api::V1::ApiController
           current_coins = @current_user.coins.to_i + daily_coins
           @current_user.update(coins: current_coins)
           Notification.create(title: "Judge Reward",
-                          body: "Congratulations you have won #{daily_coins} coins for completing judgment of 100 posts.",
+                          body: "Congratulations you have won #{daily_coins} coins for completing judgment of 25 posts.",
                           user_id: @current_user.id,
                           sender_id: @current_admin_user&.id,
                           sender_name: @current_admin_user&.admin_user_name.present? ? @current_admin_user&.admin_user_name : AdminUser.first.admin_user_name,

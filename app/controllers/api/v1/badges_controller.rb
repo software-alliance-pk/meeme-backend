@@ -57,7 +57,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     likes = User.find(@current_user.id).likes.where.not(post_id: nil).where(is_liked: true).count
     comments = @current_user.comments.count
     gain_follower = @current_user.followers.follower_added.count
-    follow = Follower.where(follower_user_id:@current_user.id).count
+    follow =  @current_user.followings.following_added.count
     memes = @current_user.posts.count
     shared = @current_user.shared || 0
     explored = @current_user.explored || 0
@@ -69,7 +69,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     @result = []
     @today_date = Time.zone.now.end_of_day.to_datetime
     60.times do |num|
-      status = Like.where(created_at: (@today_date - num).beginning_of_day..(@today_date - num).end_of_day, is_judged: true, user_id: 52).where.not(post_id: nil).present?
+      status = Like.where(created_at: (@today_date - num).beginning_of_day..(@today_date - num).end_of_day, is_judged: true, user_id: @current_user.id).where.not(post_id: nil).present?
       @result << status
       if status
         current_streak += 1
@@ -84,7 +84,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
         { value:likes, badge_type: "likeable_badge" },
         { value: comments, badge_type: "commentator_badge"},
         { value: gain_follower, badge_type: "gain_followers_badge" },
-        { value: (follow/2), badge_type: "follower_badge"  },
+        { value: (follow), badge_type: "follower_badge"  },
         { value: memes, badge_type: "memes_badge" },
         { value: shared, badge_type: "sharer_badge"  },
         { value: explored, badge_type: "explore_guru_badge" },
@@ -103,7 +103,8 @@ class Api::V1::BadgesController < Api::V1::ApiController
 
   def current_user_locked_badges
     @user_badges = @current_user.badges.pluck(:id)
-    @locked_badges = Badge.where.not(id: @user_badges).uniq
+    @locked_badges = Badge.all
+                      .order(:badge_type, Arel.sql('"limit" ASC')).uniq
     if @locked_badges.present?
     else
       render json: { badges: [] }, status: :ok

@@ -49,9 +49,9 @@ class Api::V1::PaymentsController < Api::V1::ApiController
   end
 
   def add_a_card
-    if @current_user.user_cards.find_by(user_id: @current_user.id).present?
-      render json: { message: "Card already exists." }, status: :bad_request
-    else
+    # if @current_user.user_cards.find_by(user_id: @current_user.id).present?
+    #   render json: { message: "Card already exists." }, status: :bad_request
+    # else
       begin
       response = StripeService.create_stripe_customer_card(@current_user, params)
       return render json: { card:[] ,message: response}, status: :unprocessable_entity if response.class == String
@@ -63,7 +63,7 @@ class Api::V1::PaymentsController < Api::V1::ApiController
       rescue => e
         render json: { card: [], message: e.message }, status: :not_found
       end
-    end
+    # end
   end
 
   def edit_a_card
@@ -120,11 +120,8 @@ class Api::V1::PaymentsController < Api::V1::ApiController
   end
 
   def show_transactions_history
-    if params[:platform] == 'ios'
-      @history = Transaction.where(user_id: @current_user.id, customer_id: nil).order('created_at DESC')
-    else
-      @history = Transaction.where(user_id: @current_user.id).order('created_at DESC')
-    end
+
+    @history = Transaction.where(user_id: @current_user.id).order('created_at DESC')
     if @history.present?
       render json: { transaction_count: @history.count, total_history: @history }, status: :ok
     else

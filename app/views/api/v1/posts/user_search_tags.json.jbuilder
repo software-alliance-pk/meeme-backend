@@ -1,6 +1,7 @@
 json.recent_posts do
   json.(@recent_posts) do |post|
-      json.post post rescue ""
+    begin
+      json.post post
       json.pending_requests @current_user.followers.pending.count
       json.username post.user.username
       json.user_image post.user.profile_image.attached? ? post.user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
@@ -24,6 +25,11 @@ json.recent_posts do
           json.child_comment_likes child_comment.likes.count
         end
       end
+    rescue => e
+      Rails.logger.error "Skipping post due to error: #{e.message}"
+      next
     end
+  end
 end
+
 json.coins @current_user.coins
