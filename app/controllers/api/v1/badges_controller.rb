@@ -69,6 +69,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
     @result = []
     @today_date = Time.zone.now.end_of_day.to_datetime
     60.times do |num|
+      debugger
       status = Like.where(created_at: (@today_date - num).beginning_of_day..(@today_date - num).end_of_day, is_judged: true, user_id: @current_user.id).where.not(post_id: nil).present?
       @result << status
       if status
@@ -89,7 +90,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
         { value: shared, badge_type: "sharer_badge"  },
         { value: explored, badge_type: "explore_guru_badge" },
         { value: memes, badge_type: "upload_photo_badge" },
-        { current_streak: current_streak, value: current_streak, max_streak:max_streak, judge: judge ,badge_type: "judge_badge" },
+        { current_streak: current_streak, value: max_streak, max_streak:max_streak, judge: judge ,badge_type: "judge_badge" },
       ], status: :ok
   end
 
