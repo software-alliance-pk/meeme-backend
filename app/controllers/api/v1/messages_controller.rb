@@ -141,33 +141,68 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
   def convert_heic_to_jpeg(uploaded_file)
     begin
+      Rails.logger.info "Starting HEIC to JPEG conversion..."
+
       # Create a temporary file for the HEIC input
       temp_heic = Tempfile.new(['image', '.heic'], binmode: true)
       temp_heic.write(uploaded_file.read)
       temp_heic.rewind
+      Rails.logger.info "HEIC file written to temp path: #{temp_heic.path}"
 
       # Create a temporary file for the converted JPEG output
       temp_jpg = Tempfile.new(['image', '.jpg'], binmode: true)
       temp_jpg.close # Close it to avoid conflicts with ImageMagick
+      Rails.logger.info "JPEG temp file created at: #{temp_jpg.path}"
 
-      # Convert HEIC to JPEG using ImageMagick
-      system("magick convert #{temp_heic.path} #{temp_jpg.path}")
+      # Convert HEIC to JPEG using ImageMagick and log the output
+      convert_command = "magick convert #{temp_heic.path}[0] #{temp_jpg.path}"
+      if convert_command
+        Rails.logger.info "ImageMagick conversion successful!"
+      else
+        Rails.logger.warn "ImageMagick failed, trying heif-convert..."
+        system("heif-convert -q 100 #{temp_heic.path} #{temp_jpg.path}")
+      end
+      
+      Rails.logger.info "Running command: #{convert_command}"
+
+      convert_output = `#{convert_command} 2>&1`
+      convert_status = $?.exitstatus
+      Rails.logger.info "Conversion output: #{convert_output}"
+      Rails.logger.info "Conversion exit status: #{convert_status}"
+
+      # Check if the conversion failed
+      if convert_status != 0
+        Rails.logger.error "ImageMagick conversion failed!"
+        raise "ImageMagick failed with status #{convert_status}: #{convert_output}"
+      end
+
+      # Ensure the converted file is valid
+      unless File.exist?(temp_jpg.path) && File.size(temp_jpg.path) > 0
+        Rails.logger.error "Converted JPEG file is empty or does not exist."
+        raise "Converted JPEG file is empty or does not exist."
+      end
+
+      Rails.logger.info "Successfully converted HEIC to JPEG."
 
       # Upload the converted file to ActiveStorage
       converted_blob = ActiveStorage::Blob.create_and_upload!(
-        io: File.open(temp_jpg.path, 'rb'),
+        io: File.open(temp_jpg.path),
         filename: "#{SecureRandom.hex(10)}.jpg",
         content_type: "image/jpeg"
       )
 
+      Rails.logger.info "Image uploaded successfully to ActiveStorage: #{converted_blob.filename}"
+
       converted_blob
     rescue => e
       Rails.logger.error "Error while converting HEIC: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
       nil
     ensure
       # Cleanup temp files
       temp_heic.close! if temp_heic
       temp_jpg.close! if temp_jpg
+      Rails.logger.info "Temp files cleaned up."
     end
   end
   def support_chat

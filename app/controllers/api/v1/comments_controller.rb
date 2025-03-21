@@ -163,7 +163,14 @@ class Api::V1::CommentsController < Api::V1::ApiController
       Rails.logger.info "JPEG temp file created at: #{temp_jpg.path}"
 
       # Convert HEIC to JPEG using ImageMagick and log the output
-      convert_command = "magick convert #{temp_heic.path} #{temp_jpg.path}"
+      convert_command = "magick convert #{temp_heic.path}[0] #{temp_jpg.path}"
+      if convert_command
+        Rails.logger.info "ImageMagick conversion successful!"
+      else
+        Rails.logger.warn "ImageMagick failed, trying heif-convert..."
+        system("heif-convert -q 100 #{temp_heic.path} #{temp_jpg.path}")
+      end
+      
       Rails.logger.info "Running command: #{convert_command}"
 
       convert_output = `#{convert_command} 2>&1`
