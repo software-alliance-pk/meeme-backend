@@ -208,13 +208,29 @@
 /**
  * Open the conversation using coversationId on Notification Click
  * */
-    const fileInput = document.getElementById('file-btn');
-    const docInput = document.getElementById('document-btn')
-    const previewContainer = document.getElementById('file-preview');
-    const previewContent = document.getElementById('preview-content');
-    const removePreview = document.getElementById('remove-preview');
-    const blurBackground = document.getElementById('blur-background');
-    
+  if (typeof window.fileInput === "undefined") {
+      window.fileInput = document.getElementById('file-btn');
+  }
+
+  if (typeof window.docInput === "undefined") {
+      window.docInput = document.getElementById('document-btn');
+  }
+
+  if (typeof window.previewContainer === "undefined") {
+      window.previewContainer = document.getElementById('file-preview');
+  }
+
+  if (typeof window.previewContent === "undefined") {
+      window.previewContent = document.getElementById('preview-content');
+  }
+
+  if (typeof window.removePreview === "undefined") {
+      window.removePreview = document.getElementById('remove-preview');
+  }
+
+  if (typeof window.blurBackground === "undefined") {
+      window.blurBackground = document.getElementById('blur-background');
+}
 
     // Handle file selection and preview display
     $(document).on('change', '#file-btn, #document-btn' , function(event) {
@@ -418,8 +434,13 @@
 
     }
 
-   let isUserScrolling = false; // Flag to detect manual scroll
-   let lastScrollTop = 0;  
+ if (typeof window.isUserScrolling === "undefined") {
+    window.isUserScrolling = false; // Flag to detect manual scroll
+}
+
+if (typeof window.lastScrollTop === "undefined") {
+    window.lastScrollTop = 0;
+}
 
     // Function to scroll to the last message
     function scrollToLastMessage() {
@@ -445,13 +466,15 @@
     }
 
     // Observer to handle auto-scroll when a new message is added
-    let observer = new IntersectionObserver((entries) => {
+    if (!window.observer) {
+    window.observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (!entry.isIntersecting && !isUserScrolling) {
+            if (!entry.isIntersecting && !window.isUserScrolling) {
                 scrollToLastMessage();
             }
         });
     }, { threshold: 1.0 }); // Set threshold to 1 to observe full visibility
+}
 
   function message_design(message, images, user_image, admin_image) {
     var chat_list_id = document.getElementsByClassName("chat_list")[0].id;

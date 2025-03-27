@@ -9,7 +9,7 @@ class Message < ApplicationRecord
   belongs_to :admin_user, class_name: 'AdminUser', optional: true
   belongs_to :sender, class_name: 'User', optional: true
   has_many_attached :message_images, dependent: :destroy
-  enum subject: [:Nothing_Happened, :Flagged_Post, :Report_Post, :Abuse, :Payment, :Image, :Profile, :Tournament_Winner, :Coins, :Plagiarism, :Winner_Feedback]
+  enum subject: [:Nothing_Happened, :Abuse, :Payment, :Image, :Profile, :Tournament_Winner, :Coins, :Plagiarism, :Winner_Feedback, :Flagged_Post, :Report_Post]
 
   def notification_update
     broadcast_render_to "notifications", partial: "dashboard/notifications", formats: [:html]
