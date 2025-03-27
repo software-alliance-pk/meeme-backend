@@ -24,7 +24,7 @@
                     <span class="dot"></span>
                   <%end%>
                 </button></li>
-                <li><button type="button" onclick="submission(this.innerText)">Flagged Post 
+                <li><button type="button" onclick="submission(this.innerText)">Flagged_Post 
                   <% if Conversation.includes(:messages)
                       .where.not(unread_id: nil)
                       .where(messages: { subject: "Flagged_Post" })
@@ -32,7 +32,7 @@
                     <span class="dot"></span>
                   <%end%>
                   </button></li>
-                  <li><button type="button" onclick="submission(this.innerText)">Report Post 
+                  <li><button type="button" onclick="submission(this.innerText)">Report_Post 
                   <% if Conversation.includes(:messages)
                       .where.not(unread_id: nil)
                       .where(messages: { subject: "Report_Post" })

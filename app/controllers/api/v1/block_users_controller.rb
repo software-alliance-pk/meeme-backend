@@ -35,7 +35,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
       @message = @conversation.messages.new(message_params)
       @message.subject = 'Flagged_Post'
       @message.message_ticket = SecureRandom.hex(5)
-      @message.body = params[:message].present? ? params[:message] : "#{@current_user.username} report #{@user.username} as doing abusive activity"
+      @message.body = params[:message].present? ? params[:message] : "#{@current_user.username} falgged #{@user.username} post."
       @message.post_id = params[:post_id] if params[:post_id].present?
       if @message.save
         ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message) })
