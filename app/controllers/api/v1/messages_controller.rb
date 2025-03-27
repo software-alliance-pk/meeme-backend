@@ -18,7 +18,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
 
   def all_support_chats
     @messages = []
-    @support_chats = Conversation.where(admin_user_id: 1, sender_id: @current_user.id).reverse
+    @support_chats = Conversation.where(admin_user_id: 1, sender_id: @current_user.id).order("created_at DESC")
     @support_chats.each do |chat|
       @messages << chat.messages.last if chat.messages.last.present?
     end
