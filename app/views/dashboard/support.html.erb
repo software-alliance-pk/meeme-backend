@@ -24,6 +24,22 @@
                     <span class="dot"></span>
                   <%end%>
                 </button></li>
+                <li><button type="button" onclick="submission(this.innerText)">Flagged Post 
+                  <% if Conversation.includes(:messages)
+                      .where.not(unread_id: nil)
+                      .where(messages: { subject: "Flagged_Post" })
+                      .exists? %>
+                    <span class="dot"></span>
+                  <%end%>
+                  </button></li>
+                  <li><button type="button" onclick="submission(this.innerText)">Report Post 
+                  <% if Conversation.includes(:messages)
+                      .where.not(unread_id: nil)
+                      .where(messages: { subject: "Report_Post" })
+                      .exists? %>
+                    <span class="dot"></span>
+                  <%end%>
+                  </button></li>
                 <li><button type="button" onclick="submission(this.innerText)">Abuse 
                   <% if Conversation.includes(:messages)
                       .where.not(unread_id: nil)
