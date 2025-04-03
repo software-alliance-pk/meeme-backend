@@ -121,30 +121,28 @@
                     <div class="action">
                       <% if user_details.last_active_at && user_details.last_active_at < 10.minutes.ago %>
                         <% update_status(user_details) %>
-                        <% if user_details.disabled === false %>
-                          
-                          <button class="hide btn pop_btn" data-popup="btn_disable" onclick="open_disable_dialog('<%= user_details.id %>')">
-                            <div class="ico">
-                              <img src="<%= asset_path("Hide.svg") %>" alt="">
-                            </div>
-                          </button>
-
-
-                          <button class="hide btn pop_btn" data-popup="btn_disable" onclick="openSidebar('<%= user_details.id %>', '<%= user_details.username %>','<%= user_details.email %>',)">
-                            <div class="ico">
-                              <img src="<%= asset_path("image-icon.png") %>" alt="">
-                            </div>
-                          </button>
-                          
-                        <% elsif user_details.disabled === true %>
-                          <button class="show btn pop_btn" data-popup="btn_post" onclick="open_enable_dialog('<%= user_details.id %>')">
-                            <div class="ico">
-                              <img src="<%= asset_path("Show.svg") %>" alt="">
-                            </div>
-                          </button>      
-                        <% end %>
                       <%end%>
+                      <% if user_details.disabled === false %>
+                        <button class="hide btn pop_btn" data-popup="btn_disable" onclick="open_disable_dialog('<%= user_details.id %>')">
+                          <div class="ico">
+                            <img src="<%= asset_path("Hide.svg") %>" alt="">
+                          </div>
+                        </button>
 
+
+                        <button class="hide btn pop_btn" data-popup="btn_disable" onclick="openSidebar('<%= user_details.id %>', '<%= user_details.username %>','<%= user_details.email %>',)">
+                          <div class="ico">
+                            <img src="<%= asset_path("image-icon.png") %>" alt="">
+                          </div>
+                        </button>
+                        
+                      <% elsif user_details.disabled === true %>
+                        <button class="show btn pop_btn" data-popup="btn_post" onclick="open_enable_dialog('<%= user_details.id %>')">
+                          <div class="ico">
+                            <img src="<%= asset_path("Show.svg") %>" alt="">
+                          </div>
+                        </button>      
+                      <% end %>
                     </div>
                   </td>
                 </tr>
