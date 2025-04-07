@@ -60,7 +60,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
                             post_id: params[:post_id]
                             )
       end
-      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? (@comment.comment_image.variable? ? @comment.comment_image.blob.variant(resize_to_limit: [512, 512], quality: 50).processed.url : @comment.comment_image.blob.url) : '' }, status: :ok
+      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? @comment.comment_image.blob.url : '' }, status: :ok
     else
       render_error_messages(@comment)
     end
@@ -86,7 +86,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
     @comment.user_id = @current_user.id
     @comment.parent_id = params[:comment_id]
     if @comment.save
-      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? (@comment.comment_image.variable? ? @comment.comment_image.blob.variant(resize_to_limit: [512, 512], quality: 50).processed.url : @comment.comment_image.blob.url) : '' }, status: :ok
+      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? @comment.comment_image.blob.url : '' }, status: :ok
       if Post.find(params[:post_id]).user_id != @current_user.id
         Notification.create(title: "Comment",
                             body: "#{@current_user.username} commented on your post",
