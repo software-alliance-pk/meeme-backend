@@ -36,18 +36,18 @@ class Api::V1::CommentsController < Api::V1::ApiController
     # @comment = Post.find(params[:post_id]).comments.new(description: params[:description],
     #                                                     user_id: @current_user.id,
     #                                                     post_id: params[:post_id])
-    comment_image = params.delete(:comment_image)
+    # comment_image = params.delete(:comment_image)
     @comment = Post.find(params[:post_id]).comments.new(image_comments_params)
-      if comment_image.present?
-        if comment_image.content_type == "image/heic" || comment_image.content_type == "image/heif"
-          comment_blob = convert_heic_to_jpeg(comment_image) # Use the correct method for conversion
-          if comment_blob.present? # Check if conversion was successful
-            @comment.comment_image.attach(comment_blob) # Directly attach the converted blob
-          end
-        else
-          @comment.comment_image.attach(comment_image) # Attach other image formats directly
-        end
-      end
+      # if comment_image.present?
+      #   if comment_image.content_type == "image/heic" || comment_image.content_type == "image/heif"
+      #     comment_blob = convert_heic_to_jpeg(comment_image) # Use the correct method for conversion
+      #     if comment_blob.present? # Check if conversion was successful
+      #       @comment.comment_image.attach(comment_blob) # Directly attach the converted blob
+      #     end
+      #   else
+      #     @comment.comment_image.attach(comment_image) # Attach other image formats directly
+      #   end
+      # end
     @comment.user_id = @current_user.id
     if @comment.save
       if Post.find(params[:post_id]).user_id != @current_user.id
@@ -60,7 +60,7 @@ class Api::V1::CommentsController < Api::V1::ApiController
                             post_id: params[:post_id]
                             )
       end
-      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? @comment.comment_image.blob.url : '' }, status: :ok
+      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? (@comment.comment_image.variable? ? @comment.comment_image.blob.variant(resize_to_limit: [512, 512], quality: 50).processed.url : @comment.comment_image.blob.url) : '' }, status: :ok
     else
       render_error_messages(@comment)
     end
@@ -71,22 +71,22 @@ class Api::V1::CommentsController < Api::V1::ApiController
     #                                                     user_id: @current_user.id,
     #                                                     post_id: params[:post_id],
     #                                                     parent_id: params[:comment_id])
-    comment_image = params.delete(:comment_image)
+    # comment_image = params.delete(:comment_image)
     @comment = Post.find(params[:post_id]).comments.new(image_comments_params)
-      if comment_image.present?
-        if comment_image.content_type == "image/heic" || comment_image.content_type == "image/heif"
-          comment_blob = convert_heic_to_jpeg(comment_image) # Use the correct method for conversion
-          if comment_blob.present? # Check if conversion was successful
-            @comment.comment_image.attach(comment_blob) # Directly attach the converted blob
-          end
-        else
-          @comment.comment_image.attach(comment_image) # Attach other image formats directly
-        end
-      end
+      # if comment_image.present?
+      #   if comment_image.content_type == "image/heic" || comment_image.content_type == "image/heif"
+      #     comment_blob = convert_heic_to_jpeg(comment_image) # Use the correct method for conversion
+      #     if comment_blob.present? # Check if conversion was successful
+      #       @comment.comment_image.attach(comment_blob) # Directly attach the converted blob
+      #     end
+      #   else
+      #     @comment.comment_image.attach(comment_image) # Attach other image formats directly
+      #   end
+      # end
     @comment.user_id = @current_user.id
     @comment.parent_id = params[:comment_id]
     if @comment.save
-      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? @comment.comment_image.blob.url : '' }, status: :ok
+      render json: { comment: @comment, comment_image: @comment.comment_image.attached? ? (@comment.comment_image.variable? ? @comment.comment_image.blob.variant(resize_to_limit: [512, 512], quality: 50).processed.url : @comment.comment_image.blob.url) : '' }, status: :ok
       if Post.find(params[:post_id]).user_id != @current_user.id
         Notification.create(title: "Comment",
                             body: "#{@current_user.username} commented on your post",

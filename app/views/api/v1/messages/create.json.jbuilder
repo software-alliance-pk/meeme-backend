@@ -11,7 +11,7 @@ json.message do
   json.created_at @message.created_at
   json.message_images_count @message.message_images.count
   json.message_images @message.message_images.each do |message_image|
-    json.message_image message_image.present? ? message_image.blob.url : ''
+    json.message_image message_image.present? ? (message_image.variable? ? message_image.blob.variant(resize_to_limit: [512, 512], quality: 50).processed.url : message_image.blob.url) : ''
   end
   json.sender_image @message.sender.profile_image.attached? ? @message.sender.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
   json.receiver_image @message.receiver.profile_image.attached? ? @message.receiver.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''

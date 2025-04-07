@@ -69,20 +69,20 @@ class Api::V1::MessagesController < Api::V1::ApiController
   def create
     @conversation = Conversation.find_by(id: params[:conversation_id])
     if @conversation.present?
-      message_images = params.delete(:message_images)
+      # message_images = params.delete(:message_images)
       @message = @conversation.messages.new(message_params)
-      if message_images.present?
-        message_images.each do |image|
-          if image.content_type == "image/heic" || image.content_type == "image/heif"
-            message_blob = convert_heic_to_jpeg(image) # Use the correct method for conversion
-            if message_blob.present? # Check if conversion was successful
-              @message.message_images.attach(message_blob) # Directly attach the converted blob
-            end
-          elsif  image.content_type != "image/heic"
-            @message.message_images.attach(image) # Attach other image formats directly
-          end
-        end
-      end
+      # if message_images.present?
+      #   message_images.each do |image|
+      #     if image.content_type == "image/heic" || image.content_type == "image/heif"
+      #       message_blob = convert_heic_to_jpeg(image) # Use the correct method for conversion
+      #       if message_blob.present? # Check if conversion was successful
+      #         @message.message_images.attach(message_blob) # Directly attach the converted blob
+      #       end
+      #     elsif  image.content_type != "image/heic"
+      #       @message.message_images.attach(image) # Attach other image formats directly
+      #     end
+      #   end
+      # end
       if @message.save
         @conversation.update(unread_id: @message.receiver_id)
         ActionCable.server.broadcast("conversation_#{params[:conversation_id]}", { title: "message created", body: render_message(@message) })
@@ -103,21 +103,21 @@ class Api::V1::MessagesController < Api::V1::ApiController
   def support_ticket
     @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Ongoing', unread_id: params[:admin_user_id])
     if @conversation.present?
-      message_images = params.delete(:message_images)
+      # message_images = params.delete(:message_images)
       @message = @conversation.messages.new(message_params)
-      @message.message_ticket = SecureRandom.hex(5)
-      if message_images.present?
-        message_images.each do |image|
-          if image.content_type == "image/heic" || image.content_type == "image/heif"
-            message_blob = convert_heic_to_jpeg(image) # Use the correct method for conversion
-            if message_blob.present? # Check if conversion was successful
-              @message.message_images.attach(message_blob) # Directly attach the converted blob
-            end
-          elsif  image.content_type != "image/heic"
-            @message.message_images.attach(image) # Attach other image formats directly
-          end
-        end
-      end
+      # @message.message_ticket = SecureRandom.hex(5)
+      # if message_images.present?
+      #   message_images.each do |image|
+      #     if image.content_type == "image/heic" || image.content_type == "image/heif"
+      #       message_blob = convert_heic_to_jpeg(image) # Use the correct method for conversion
+      #       if message_blob.present? # Check if conversion was successful
+      #         @message.message_images.attach(message_blob) # Directly attach the converted blob
+      #       end
+      #     elsif  image.content_type != "image/heic"
+      #       @message.message_images.attach(image) # Attach other image formats directly
+      #     end
+      #   end
+      # end
       if @message.save
         # @message.update(message_ticket: SecureRandom.hex(5))
         ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message) })
