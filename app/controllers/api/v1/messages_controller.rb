@@ -105,7 +105,7 @@ class Api::V1::MessagesController < Api::V1::ApiController
     if @conversation.present?
       # message_images = params.delete(:message_images)
       @message = @conversation.messages.new(message_params)
-      # @message.message_ticket = SecureRandom.hex(5)
+      @message.message_ticket = SecureRandom.hex(5)
       # if message_images.present?
       #   message_images.each do |image|
       #     if image.content_type == "image/heic" || image.content_type == "image/heif"
