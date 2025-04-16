@@ -119,8 +119,10 @@
                   <% end %>
                   <td>
                     <div class="action">
+                      <% if user_details.last_active_at && user_details.last_active_at < 10.minutes.ago %>
+                        <% update_status(user_details) %>
+                      <%end%>
                       <% if user_details.disabled === false %>
-                        
                         <button class="hide btn pop_btn" data-popup="btn_disable" onclick="open_disable_dialog('<%= user_details.id %>')">
                           <div class="ico">
                             <img src="<%= asset_path("Hide.svg") %>" alt="">
@@ -141,7 +143,6 @@
                           </div>
                         </button>      
                       <% end %>
-
                     </div>
                   </td>
                 </tr>

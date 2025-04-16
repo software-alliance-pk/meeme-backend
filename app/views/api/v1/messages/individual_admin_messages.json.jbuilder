@@ -12,7 +12,7 @@ json.messages @messages.each do |message|
   json.message_images_count message.message_images.count
   json.message_images message.message_images.each do |message_image|
   if message_image.present?
-    json.message_image message_image.blob.url
+    json.message_image message_image.image? ? message_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : message_image.blob.url
     json.content_type message_image.blob.content_type
     json.thumbnail post&.video_thumbnail&.attached? ? post&.video_thumbnail&.blob&.url : ''
   else

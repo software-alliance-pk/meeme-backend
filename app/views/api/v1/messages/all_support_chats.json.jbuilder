@@ -15,6 +15,7 @@ json.messages @messages.each do|chat|
   json.message_images_count chat.message_images.count
   json.message_images chat.message_images.each do |message_image|
     json.message_image message_image.present? ? message_image.blob.url : ''
+    json.content_type message_image.present? && message_image.image? ? "image" : message_image.present? ? "video" : ""
   end
   # json.message_image chat&.message_image&.attached? ? chat.message_image.blob.url : ''
   json.sender_image chat&.admin_user&.admin_profile_image&.attached? ? chat.admin_user.admin_profile_image.blob.url : ''

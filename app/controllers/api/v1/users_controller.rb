@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiController
   before_action :authorize_request, except: %i[verify_otp create forgot_password reset_user_password email_validate get_sender_details delete_user]
-  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_account delete_user search get_admin_user]
+  before_action :find_user, except: %i[create index update_user all_posts open_current_user email_validate active_status_change notification_settings private_account delete_user search get_admin_user last_active]
   # GET /users
   def index
     @users = User.all
@@ -218,7 +218,23 @@ class Api::V1::UsersController < Api::V1::ApiController
     end
   end
 
+  def last_active
+    if params[:last_active_at].present? && valid_datetime?(params[:last_active_at]) 
+      @current_user.update(last_active_at: params[:last_active_at], status: true)
+      render json: { message: "Last active updated" }, status: :ok
+    else
+      render json: { message: "Not valid datetime" }, status: :unprocessable_entity
+    end
+  end
+
   private
+
+  def valid_datetime?(datetime_string)
+    DateTime.iso8601(datetime_string)
+    true
+  rescue ArgumentError
+    false
+  end
 
   def find_user
     unless (@user = User.find_by_email(params[:email]) || User.find_by_id(params[:id]))

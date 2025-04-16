@@ -24,8 +24,34 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
 
       @flagged << @current_user.id
       return render json: { error: @post.errors.full_messages }, status: :bad_request unless @post.update(flagged_by_user: @flagged, flag_message: params[:message])
-
+      create_flagged_support_ticket
       render json: { message: 'Post flagged successfully' }
+    end
+  end
+
+  def create_flagged_support_ticket
+    @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Ongoing',unread_id: params[:admin_user_id])
+    if @conversation.present?
+      @message = @conversation.messages.new(message_params)
+      @message.subject = 'Flagged_Post'
+      @message.message_ticket = SecureRandom.hex(5)
+      @message.body = params[:message].present? ? params[:message] : "#{@current_user.username} falgged #{@user.username} post."
+      @message.post_id = params[:post_id] if params[:post_id].present?
+      if @message.save
+        ActionCable.server.broadcast("conversation_#{@conversation.id}", { title: "message created", body: render_message(@message) })
+        Notification.create(title:"#{@message.sender.username} generated a support ticket",
+                            body: @message.body,
+                            conversation_id: @conversation.id,
+                            user_id: @message.sender_id,
+                            message_id: @message.id,
+                            notification_type: 'admin_message',
+                            sender_id: @current_user.id,
+                            sender_name: @current_user.username,
+                            redirection_type: 'support')
+        # render json: { report_details: { conversation: @conversation, message: @message } }
+      end
+    else
+      render json: { message: "No conversation present" }, status: :not_found
     end
   end
 
@@ -33,7 +59,7 @@ class Api::V1::BlockUsersController < Api::V1::ApiController
     @conversation = Conversation.create!(sender_id: @current_user.id, admin_user_id: params[:admin_user_id], status: 'Ongoing',unread_id: params[:admin_user_id])
     if @conversation.present?
       @message = @conversation.messages.new(message_params)
-      @message.subject = 'Abuse'
+      @message.subject = 'Report_Post'
       @message.message_ticket = SecureRandom.hex(5)
       @message.body = params[:body].present? ? params[:body] : "#{@current_user.username} report #{@user.username} as doing abusive activity"
       @message.post_id = params[:post_id] if params[:post_id].present?

@@ -13,7 +13,7 @@ Tutorial.destroy_all
 tutorials = { 1 => ["Memee will have a monthly Tournament that users can join."],
               2 => ["The Tournament starts every first day of the month and winners are announced during the last day of each month."],
               3 => ["End Users can join and post  memes in the tournament as many  as they want."],
-              4 => ["There are also other ways to accumulate coins. Judging is another way of acquiring coins from the app. End Users can  judge 25 memes daily and gain 150 coins on a daily basis."],
+              4 => ["There are also other ways to accumulate coins. Judging is another way of acquiring coins from the app. End Users can  judge 25 memes daily and gain 25 coins on a daily basis."],
               5 => ["Coins can buy icons, themes, profile and background overlays."],
               6 => ["There are hundreds of combination that you can choose from to make a unique experience using the app."],
               7 => ["The top 3 votes are the tournament winners and will be rewarded with Amazon gift cards."],

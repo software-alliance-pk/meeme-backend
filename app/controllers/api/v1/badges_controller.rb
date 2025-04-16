@@ -89,7 +89,7 @@ class Api::V1::BadgesController < Api::V1::ApiController
         { value: shared, badge_type: "sharer_badge"  },
         { value: explored, badge_type: "explore_guru_badge" },
         { value: memes, badge_type: "upload_photo_badge" },
-        { current_streak: current_streak, value: current_streak, max_streak:max_streak, judge: judge ,badge_type: "judge_badge" },
+        { current_streak: current_streak, value: max_streak, max_streak:max_streak, judge: judge ,badge_type: "judge_badge" },
       ], status: :ok
   end
 
