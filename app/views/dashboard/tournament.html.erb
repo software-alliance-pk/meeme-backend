@@ -101,7 +101,7 @@
                 </td>
                 <% @tournament = @banner.present? ? @banner : TournamentBanner&.last%>
                 <% if @tournament.present? %>
-                  <td><%=  @tournament&.end_date&.strftime('%b,%d,%y') >= Time.now.strftime('%b,%d,%y') ? "ongoing" : "finished" %></td>
+                  <td><%=  @tournament&.end_date&.strftime('%b,%d,%y') <= Time.now.strftime('%b,%d,%y') ? "ongoing" : "finished" %></td>
                 <%end%>
                 <td>
                   <div class="dropdown">
