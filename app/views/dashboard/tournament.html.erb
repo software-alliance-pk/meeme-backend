@@ -100,13 +100,14 @@
                   </div>
                 </td>
                 <% @tournament = @banner.present? ? @banner : TournamentBanner&.last%>
-               <% if @tournament.present? %>
-                  <% if @tournament.end_date.to_date <= Date.today %>
-                    <td>finished</td>
-                  <% else %>
-                    <td>ongoing</td>
-                  <% end %>
+              <% if @tournament.present? %>
+                <% if @tournament.end_date <= Time.current %>
+                  <td>finished</td>
+                <% else %>
+                  <td>ongoing</td>
                 <% end %>
+              <% end %>
+
 
                 <td>
                   <div class="dropdown">
