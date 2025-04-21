@@ -21,7 +21,7 @@
             <div class="form_blk">
               <%= form_for :post, :url => { :controller => 'dashboard', :action => 'tournament' }, :html => { :method => 'get', class: 'form_blk' } do |f| %>
                 <% if TournamentBanner.exists? %>
-                  <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.order(start_date: :desc).pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.first&.id), class: "input" ,onchange: "submit()" %>
+                  <%= select_tag  :tournament_banner_id, options_for_select(TournamentBanner.all.order(start_date: :desc).pluck(:title, :id),selected: @tournament_banner_name&.present? ? @tournament_banner_name : TournamentBanner&.last&.id), class: "input" ,onchange: "submit()" %>
                 <% else %>
                   <%= select_tag :tournament_banner_id, 
                                 options_for_select([['No active tournament', '']]), 
@@ -34,7 +34,7 @@
               <p class="ms-3"> Participants: <span id = "joined" style="font-size: 2.4rem"><%= if @banner.present?
                                                                                                 @banner.tournament_users.count
                                                                                               else
-                                                                                                TournamentBanner.first.present? ? TournamentBanner.first.tournament_users.count : ""
+                                                                                                TournamentBanner.last.present? ? TournamentBanner.last.tournament_users.count : ""
                                                                                             end %> </span></p>
             <%end%>  
             </div>
@@ -89,20 +89,25 @@
                 </td>
                 <td><%= post.user.try(:username) %></td>
                 <td><%=post.user.try(:email) %></td>
-                <td style="cursor: pointer;" onclick="openSidebar('<%=post.user.username %>','<%=post.user.email %>','<%=post.user.id %>', '<%= post.tournament_banner_id %>')"><%= @banner.present? ? @banner.posts.where(user_id: post&.user&.id).count : TournamentBanner.first.posts.where(user_id: post.user.id).count %>  </td>
+                <td style="cursor: pointer;" onclick="openSidebar('<%=post.user.username %>','<%=post.user.email %>','<%=post.user.id %>', '<%= post.tournament_banner_id %>')"><%= @banner.present? ? @banner.posts.where(user_id: post&.user&.id).count : TournamentBanner.last.posts.where(user_id: post.user.id).count %>  </td>
                 <td class="like-count" ><%=post.likes.where(is_judged: true).like.count %></td>
                 <td><%=post.likes.where(is_judged: true).dislike.count%></td>
-                <% banner_id = @banner.present? ? @banner.id : TournamentBanner&.first&.id %>
+                <% banner_id = @banner.present? ? @banner.id : TournamentBanner.last.id %>
                 <td><%=post.user.tournament_users.find_by(tournament_banner_id: banner_id).created_at.strftime('%b %d, %Y') %></td>
                 <td>
                   <div class="img">
                     <img src="<%= post.post_image.attached? && post.post_image.content_type.split('/').first == "image" ? post.post_image.blob.url : post&.video_thumbnail&.blob&.url %> " alt="">
                   </div>
                 </td>
-                <% @tournament = @banner.present? ? @banner : TournamentBanner&.first%>
-                <% if @tournament.present? %>
-                  <td><%=  @tournament&.end_date&.strftime('%b,%d,%y') >= Time.now.strftime('%b,%d,%y') ? "ongoing" : "finished" %></td>
-                <%end%>
+                <% @tournament = @banner.present? ? @banner : TournamentBanner&.last%>
+               <% if @tournament.present? %>
+                  <% if @tournament.end_date.to_date <= Date.today %>
+                    <td>finished</td>
+                  <% else %>
+                    <td>ongoing</td>
+                  <% end %>
+                <% end %>
+
                 <td>
                   <div class="dropdown">
                     <button class="btn drop_btn" data-bs-toggle="dropdown">

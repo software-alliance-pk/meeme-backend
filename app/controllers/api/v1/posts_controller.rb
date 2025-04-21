@@ -8,21 +8,21 @@ class Api::V1::PostsController < Api::V1::ApiController
     @user = User.find_by(id: params[:user_id])
     
     if @user.present?
-      @posts = @user.posts.where(tournament_meme: false).sort_by(&:created_at).reverse
+      @posts = @user.posts.where(tournament_meme: false).order(created_at: :desc)
       @posts_count = @posts.count.to_i
       # @posts = @posts.by_recently_created(200)
       
         if params[:month].present?
-          @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i).sort_by(&:created_at).reverse
+          @posts = @posts.where("EXTRACT(MONTH FROM created_at) = ?", params[:month].to_i).order(created_at: :desc)
           @posts_count = @posts.count.to_i
         else
           @posts_count = @posts.count.to_i
       end
         if params[:page].present?
         if params[:per_page].present? 
-          @posts = @posts.paginate(page: params[:page], per_page: params[:per_page].to_i).sort_by(&:created_at).reverse
+          @posts = @posts.paginate(page: params[:page], per_page: params[:per_page].to_i).order(created_at: :desc)
         elsif
-          @posts = @posts.paginate(page: params[:page], per_page: 16).sort_by(&:created_at).reverse
+          @posts = @posts.paginate(page: params[:page], per_page: 16).order(created_at: :desc)
         end
       end
   
@@ -380,7 +380,7 @@ class Api::V1::PostsController < Api::V1::ApiController
     # Post Controller comment
     if params[:tag].present?
       tag_posts = Post.tagged_with(params[:tag], any: true).includes(:user)
-      .where(users: { private_account: false })
+      .where(users: { private_account: false }).where(deleted_by_user: false)
       @posts.concat(tag_posts)
     end
   
@@ -389,7 +389,7 @@ class Api::V1::PostsController < Api::V1::ApiController
       @users = User.where("LOWER(username) LIKE ?", "%#{params[:username].downcase}%").where(private_account: false)
       if @users.present?
         @users.each do |user|
-          user_posts = user.posts
+          user_posts = user.posts.where(deleted_by_user: false)
           @posts.concat(user_posts)
         end
       end
