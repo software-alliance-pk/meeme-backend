@@ -230,6 +230,8 @@ class DashboardController < ApplicationController
     # SendJudgeCoinWorker.perform_in(Time.now, @banner.id)
     if @banner.destroy
       redirect_to tournament_banner_path
+    else
+      redirect_to tournament_banner_path
     end
   end
 

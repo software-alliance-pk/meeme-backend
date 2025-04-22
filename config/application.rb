@@ -34,6 +34,6 @@ module MemeeApp
         resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options, :head]
       end
     end
-        config.action_controller.default_url_options = { host: 'admin.stg2.memee.app/' }
+        # config.action_controller.default_url_options = { host: 'admin.stg2.memee.app/' }
   end
 end

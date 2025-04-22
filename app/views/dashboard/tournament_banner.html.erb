@@ -30,8 +30,11 @@
                 <div class="body">
                   <div class="row">
                     <div style="width: 40px; height: 40px; filter: brightness(0) saturate(100%) invert(14%) sepia(50%) saturate(7458%) hue-rotate(356deg) brightness(111%) contrast(118%)">
-                      <%= link_to image_tag("icon-delete.svg"), controller: 'dashboard', action: 'tournament_banner_destroy', id: tournament_banner.id, method: :delete %>
-                    </div>
+<%= link_to image_tag("icon-delete.svg"), 
+            { controller: 'dashboard', action: 'tournament_banner_destroy', id: tournament_banner.id }, 
+            method: :delete, 
+            data: { disable_with: "Deleting..." } %>                    </div>
+                    
                     <div style="width: 40px; height: 40px; cursor: pointer">
                       <a onclick="open_rules()"><%= image_tag('rules.png') %></a>
                     </div>
