@@ -1,0 +1,2 @@
+module CoinPricesHelper
+end

@@ -3,5 +3,5 @@ amazon:
   access_key_id: <%= ENV["BUCKETEER_AWS_ACCESS_KEY_ID"] %>
   secret_access_key: <%= ENV['BUCKETEER_AWS_SECRET_ACCESS_KEY'] %>
   bucket: <%= ENV['BUCKETEER_BUCKET_NAME'] %>
-  endpoint: https://sgp1.digitaloceanspaces.com
-  region: unused
+  endpoint: https://s3.amazonaws.com
+  region: eu-north-1

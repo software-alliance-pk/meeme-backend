@@ -25,8 +25,9 @@ else
       json.message_images_count @message.message_images.count
       json.message_images @message.message_images.each do |message_image|
         json.message_image message_image.present? ? message_image.blob.url : ''
+        json.thumbnail @post&.video_thumbnail&.attached? ? @post&.video_thumbnail&.blob&.url : ''
       end
-      json.sender_image @message.sender.profile_image.attached? ? @message.sender.profile_image.blob.url  : ''
+      json.sender_image @message.sender.profile_image.attached? ? @message.sender.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url  : ''
     end
   end
 end

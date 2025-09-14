@@ -23,7 +23,7 @@ json.nav_bar do
       json.profile_edit @theme.profile_edit_icon_image.blob.url
     end
     json.search @theme.search_icon_image.blob.url
-    json.shop @theme.shop_icon_image.blob.url
+    json.shop @theme.shop_icon_image&.blob&.url
     json.dots @theme.dots_icon_image.blob.url
     json.like @theme.like_icon_image.blob.url
     json.comment @theme.comment_icon_image.blob.url
@@ -37,8 +37,8 @@ json.nav_bar do
     json.send_support @theme.send_icon_image.blob.url
     json.gallery @theme.gallery_icon_image.blob.url
     json.backward @theme.backward_icon_image.blob.url
-    json.notification @theme.notification_icon_image.blob.url
-    json.dot_notification @theme.main_notification_icon_image.blob.url
+    json.notification @theme.notification_icon_image&.blob.url
+    json.dot_notification @theme.main_notification_icon_image&.blob&.url
   elsif @theme.filter_icon_image.attached? && @theme.filter_cross_icon_image.attached? && @theme.search_icon_image.attached?
     json.filter @theme.filter_icon_image.blob.url
     json.filter_cross @theme.filter_cross_icon_image.blob.url

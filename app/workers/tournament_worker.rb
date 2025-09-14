@@ -9,7 +9,7 @@ class TournamentWorker
         tournament_user.user.update(coins: coins)
         UserMailer.tournament_judged_coins(tournament_user.user, tournament_user.total_judged_coins).deliver_now
       end
-      TournamentBanner.first.destroy
+      # TournamentBanner.first.destroy
       puts "Banner Deleted"
     end
   end

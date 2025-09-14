@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_17_123312) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -101,6 +101,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "rarity", default: 0
+    t.integer "limit"
+    t.string "badge_type"
   end
 
   create_table "block_users", force: :cascade do |t|
@@ -110,6 +112,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
     t.datetime "updated_at", null: false
     t.index ["blocked_user_id"], name: "index_block_users_on_blocked_user_id"
     t.index ["user_id"], name: "index_block_users_on_user_id"
+  end
+
+  create_table "coin_prices", force: :cascade do |t|
+    t.string "coin"
+    t.decimal "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "comments", force: :cascade do |t|
@@ -129,6 +138,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
     t.integer "sender_id"
     t.integer "admin_user_id"
     t.integer "status", default: 0
+    t.integer "unread_id"
   end
 
   create_table "daily_coins", force: :cascade do |t|
@@ -168,6 +178,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
     t.integer "status", default: 0
   end
 
+  create_table "gift_card_requests", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "status"
+    t.decimal "amount"
+    t.integer "coins"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_email"
+  end
+
   create_table "gift_rewards", force: :cascade do |t|
     t.string "rank"
     t.string "card_number"
@@ -201,6 +221,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
     t.integer "admin_user_id"
     t.integer "subject", default: 0
     t.string "message_ticket"
+    t.integer "post_id"
   end
 
   create_table "mobile_devices", force: :cascade do |t|
@@ -226,7 +247,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
     t.integer "notification_type", default: 0
     t.integer "sender_id"
     t.string "sender_name"
-    t.string "sender_image"
+    t.string "redirection_type"
+    t.integer "request_id"
+    t.integer "post_id"
+    t.boolean "is_opened"
   end
 
   create_table "popups", force: :cascade do |t|
@@ -248,6 +272,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
     t.string "thumbnail"
     t.string "compress_image"
     t.integer "flagged_by_user", default: [], array: true
+    t.string "flag_message"
   end
 
   create_table "privacies", force: :cascade do |t|
@@ -399,6 +424,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
     t.boolean "status", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "theme_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -417,6 +443,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_141836) do
     t.boolean "disabled", default: false
     t.boolean "checked", default: false
     t.boolean "private_account", default: false
+    t.integer "shared"
+    t.integer "explored"
+    t.string "user_themes"
+    t.string "backgroung_image"
+    t.string "font"
   end
 
   create_table "verification_tokens", force: :cascade do |t|

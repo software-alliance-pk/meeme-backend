@@ -5,8 +5,4 @@ test:
   adapter: test
 
 production:
-  adapter: redis
-  channel_prefix: meme_staging
-  url: "rediss://default:avns_tjkgivs0ubfnlpb8ikg@memee-redis-sfo3-57242-do-user-14425281-0.b.db.ondigitalocean.com:25061"
-  ssl_params:
-    verify_mode: <%= OpenSSL::SSL::VERIFY_NONE %>
+  adapter: async

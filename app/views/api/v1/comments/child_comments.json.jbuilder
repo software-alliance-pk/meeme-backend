@@ -6,7 +6,7 @@
     json.child_comment_time  child_comment.created_at
     json.user child_comment.user.username
     json.comment_image child_comment.comment_image.attached? ? child_comment.comment_image.blob.url : ''
-    json.user_image child_comment.user.profile_image.attached? ? child_comment.user.profile_image.blob.url : ''
+    json.user_image child_comment.user.profile_image.attached? ? child_comment.user.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
     # json.comment_like_status child_comment.likes.present? ? true : false
     json.child_comment_like_status child_comment.likes.where(user_id: @current_user.id).present? ? true : false
     json.comment_like_count child_comment.likes.count

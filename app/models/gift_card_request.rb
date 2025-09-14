@@ -1,0 +1,3 @@
+class GiftCardRequest < ApplicationRecord
+  
+  end

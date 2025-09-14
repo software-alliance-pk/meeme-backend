@@ -2,7 +2,7 @@ json.user @current_user.username
 json.open_profile_of do
     json.user_id @profile.id
     json.username @profile.username
-    json.user_image @profile.profile_image.attached? ? @profile.profile_image.blob.url : ''
+    json.user_image @profile.profile_image.attached? ? @profile.profile_image.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : ''
     json.post_count @profile.posts.count
     json.profile_posts @profile.posts.each do |post|
       json.post_description post.description
@@ -11,7 +11,7 @@ json.open_profile_of do
       json.post_comments_count post.comments.count
       json.post_share_count post.share_count
       json.post_type post.post_image.content_type
-      json.post_thumbnail post.thumbnail
+      json.post_thumbnail post.video_thumbnail.attached? ? post.video_thumbnail.blob.variant(resize_to_limit: [512, 512],quality:50).processed.url : post.thumbnail
 
 
       json.post_comments post.comments.each do |comment|

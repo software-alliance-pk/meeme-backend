@@ -40,7 +40,7 @@
             <div class="col-12">
               <div class="form_blk forget_blk">
                 <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-                  <%= link_to "Forgot password?", new_password_path(resource_name) %><br />
+                  <%# <%= link_to "Forgot password?", new_password_path(resource_name) %>
                 <% end %>
               </div>
             </div>

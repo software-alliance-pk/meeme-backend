@@ -10,7 +10,7 @@ class StreakBadgeJob < ApplicationJob
       case num
       when 7
         if @result.exclude? false
-          @badge = Badge.find_by(title: "Judgment Level 1 Badge")
+          @badge = Badge.find_by(title: "Judge Silver")
           @check = UserBadge.find_by(user_id: current_user.id, badge_id: @badge.id)
           if @check.present?
             @awarded_badge = UserBadge.create!(user_id: message.user_id, badge_id: @badge.id)
@@ -23,7 +23,7 @@ class StreakBadgeJob < ApplicationJob
         end
       when 30
         if @result.exclude? false
-          @badge = Badge.find_by(title: "Judgment Level 2 Badge")
+          @badge = Badge.find_by(title: "Judge Bronze")
           @check = UserBadge.find_by(user_id: current_user.id, badge_id: @badge.id)
           if @check.present?
           else
@@ -36,7 +36,7 @@ class StreakBadgeJob < ApplicationJob
         end
       when 30
         if @result.exclude? false
-          @badge = Badge.find_by(title: "Judgment Level 3 Badge")
+          @badge = Badge.find_by(title: "Judge Gold")
           @check = UserBadge.find_by(user_id: current_user.id, badge_id: @badge.id)
           if @check.present?
           else
